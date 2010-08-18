@@ -26,14 +26,14 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.dao.impl;
 
-import com.ufinity.marchant.ubank.bean.User;
-import com.ufinity.marchant.ubank.dao.UserDao;
+import com.ufinity.marchant.ubank.bean.Folder;
+import com.ufinity.marchant.ubank.dao.FolderDao;
 
 /**
  * 
  * @author WenQiang Wu
  * @version Aug 18, 2010
  */
-public class UserDaoImpl extends GenericDaoSupport<User, Long> implements
-        UserDao {
+public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
+        FolderDao {
 }

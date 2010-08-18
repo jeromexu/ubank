@@ -24,16 +24,15 @@
 // SPECIFICALLY DISCLAIMS ANY EXPRESS OR IMPLIED WARRANTY OF FITNESS FOR
 // HIGH RISK ACTIVITIES.
 // -------------------------------------------------------------------------
-package com.ufinity.marchant.ubank.dao.impl;
+package com.ufinity.marchant.ubank.dao;
 
-import com.ufinity.marchant.ubank.bean.User;
-import com.ufinity.marchant.ubank.dao.UserDao;
+import com.ufinity.marchant.ubank.bean.Folder;
 
 /**
  * 
  * @author WenQiang Wu
  * @version Aug 18, 2010
  */
-public class UserDaoImpl extends GenericDaoSupport<User, Long> implements
-        UserDao {
+public interface FolderDao extends GenericDao<Folder, Long> {
+
 }

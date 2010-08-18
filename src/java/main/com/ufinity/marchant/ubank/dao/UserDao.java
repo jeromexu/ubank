@@ -29,9 +29,9 @@ package com.ufinity.marchant.ubank.dao;
 import com.ufinity.marchant.ubank.bean.User;
 
 /**
- * @author WenQiang Wu
  * 
- * @time Jul 6, 2009 2:59:42 PM
+ * @author WenQiang Wu
+ * @version Aug 18, 2010
  */
 public interface UserDao extends GenericDao<User, Long> {
 
