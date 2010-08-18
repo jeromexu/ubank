@@ -183,7 +183,7 @@ public class File implements Serializable {
     /**
      * @return the share
      */
-    @Column(name = "SHARE", nullable = false)
+    @Column(name = "SHARE", nullable = false, columnDefinition = "bool default false")
     public Boolean getShare() {
         return share;
     }
