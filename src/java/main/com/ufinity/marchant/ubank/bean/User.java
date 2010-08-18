@@ -27,11 +27,140 @@
 package com.ufinity.marchant.ubank.bean;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * @author WenQiang Wu
  * @version Aug 18, 2010
  */
+@Entity
+@Table(name = "U_USER")
 public class User implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7304065716881828296L;
+
+    private Long userId;
+    private String userName;
+    private String password;
+    private Date createTime;
+    private Integer overSize;
+    
+    private Set<Folder> folders = new HashSet<Folder>();
+    
+    /**
+     * @return the userId
+     */
+    @Column(name = "USER_ID")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long getUserId() {
+        return userId;
+    }
+
+    /**
+     * @param userId
+     *            the userId to set
+     */
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    /**
+     * @return the userName
+     */
+    @Column(nullable = false, unique = true, name = "USER_NAME")
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * @param userName
+     *            the userName to set
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    /**
+     * @return the password
+     */
+    @Column(nullable = false, name = "PASSWORD")
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password
+     *            the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return the createTime
+     */
+    @Temporal(TemporalType.DATE)
+    @Column(name = "CREATE_TIME", nullable = false)
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * @param createTime
+     *            the createTime to set
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * @return the overSize
+     */
+    @Column(name = "OVER_SIZE", nullable = false)
+    public Integer getOverSize() {
+        return overSize;
+    }
+
+    /**
+     * @param overSize
+     *            the overSize to set
+     */
+    public void setOverSize(Integer overSize) {
+        this.overSize = overSize;
+    }
+
+    /**
+     * @return the folders
+     */
+    @OneToMany(cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy="user")
+    public Set<Folder> getFolders() {
+        return folders;
+    }
+
+    /**
+     * @param folders the folders to set
+     */
+    public void setFolders(Set<Folder> folders) {
+        this.folders = folders;
+    }
+    
+    
 }
