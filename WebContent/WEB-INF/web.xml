@@ -4,6 +4,18 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
 	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<servlet>
+		<description>
+		</description>
+		<display-name>jcaptcha</display-name>
+		<servlet-name>jcaptcha</servlet-name>
+		<servlet-class>
+		com.ufinity.marchant.ubank.common.ImageCaptchaServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>jcaptcha</servlet-name>
+		<url-pattern>/jcaptcha</url-pattern>
+	</servlet-mapping>
   
   <servlet>
     <servlet-name>loginServlet</servlet-name>
