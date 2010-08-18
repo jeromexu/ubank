@@ -1,5 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://"
+			+ request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -33,9 +39,9 @@
 		<tr>
 			<th>验 证 码：</th>
 			<td align="left">
-			<p><input  id=captcha title="输入验证码" maxlength="4" name=userDomain.vercode /> <a class=code
-				href="javascript:reloadcaptcha('/accounts/getRegisterCaptcha.action?userDomain.token=91788143');">看不清，换一张</a>
-			<em class=tipred id=captchaTip></em></p>
+			<input  id="captchaCode" title="输入验证码" maxlength="4" name="captchaCode" /> 
+			<img src="<%=basePath%>/jcaptcha" ><br/> 看不清，换一张
+				
 			</td>
 		</tr>
 		
