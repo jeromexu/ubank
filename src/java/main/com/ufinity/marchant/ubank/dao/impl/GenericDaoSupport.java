@@ -35,7 +35,7 @@ import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ufinity.marchant.ubank.common.JPAEntityManagerFactory;
+import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.GenericDao;
 
 /**
@@ -48,8 +48,8 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     // get logger method
     protected Logger log = LoggerFactory.getLogger(GenericDaoSupport.class);
 
-    protected EntityManager entityManager = JPAEntityManagerFactory
-            .getInstance().getEntityManager();
+    protected EntityManager entityManager = EntityManagerUtil
+            .getEntityManager();
 
     // save parameter class type
     private Class<T> type;
@@ -65,13 +65,6 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         return this.type;
     }
 
-    /**
-     * @return the entityManager
-     */
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-    
     /*
      * (non-Javadoc)
      * 

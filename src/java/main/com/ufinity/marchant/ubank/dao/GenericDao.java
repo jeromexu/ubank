@@ -29,8 +29,6 @@ package com.ufinity.marchant.ubank.dao;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-
 /**
  * 
  * @author WenQiang Wu
@@ -109,11 +107,4 @@ public interface GenericDao<T, PK extends Serializable> {
      *            if you want to update entity.
      */
     public void modify(T entity);
-
-    /**
-     * 
-     * @return
-     * @author skyqiang
-     */
-    public EntityManager getEntityManager();
 }

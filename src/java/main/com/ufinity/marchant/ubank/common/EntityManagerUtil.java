@@ -34,39 +34,80 @@ import javax.persistence.Persistence;
  * @author WenQiang Wu
  * @version Aug 18, 2010
  */
-public class JPAEntityManagerFactory {
-    public static JPAEntityManagerFactory instance = null;
+public class EntityManagerUtil {
+
+    private static final EntityManagerFactory emFactoty;
+    private static final ThreadLocal<EntityManager> threadLocal;
     private static final String JPA_PERSISTENCE_NAME = "ubank";
+
+    static {
+        emFactoty = Persistence
+                .createEntityManagerFactory(JPA_PERSISTENCE_NAME);
+        threadLocal = new ThreadLocal<EntityManager>();
+    }
     
     /**
      * 
-     */
-    private JPAEntityManagerFactory() {
-
-    }
-
-    /**
-     * this method is get JPAEntityManagerFactory
-     * 
-     * @return JPAEntityManagerFactory manager factory
+     * @return
      * @author skyqiang
      */
-    public static JPAEntityManagerFactory getInstance() {
-        if (null == instance) {
-            instance = new JPAEntityManagerFactory();
+    public static EntityManager getEntityManager() {
+        EntityManager entityManager = threadLocal.get();
+        if (null != entityManager || !entityManager.isOpen()) {
+            entityManager = emFactoty.createEntityManager();
+            threadLocal.set(entityManager);
         }
-        return instance;
+        return entityManager;
     }
-
+    
     /**
-     * this method is get entity manager
      * 
-     * @return EntityManager entity manager
+     * 
      * @author skyqiang
      */
-    public EntityManager getEntityManager() {
-        EntityManagerFactory emFactory = Persistence
-                .createEntityManagerFactory(JPA_PERSISTENCE_NAME);
-        return emFactory.createEntityManager();
+    public static void closeEntityManager() {
+        EntityManager entityManager = threadLocal.get();
+        threadLocal.set(null);
+        if (null != entityManager) {
+            entityManager.close();
+        }
+    }
+    
+    /**
+     * 
+     * 
+     * @author skyqiang
+     */
+    public static void closeFactory() {
+        if (null != emFactoty && emFactoty.isOpen()) {
+            emFactoty.close();
+        }
+    }
+    
+    /**
+     * 
+     * 
+     * @author skyqiang
+     */
+    public static void begin() {
+        getEntityManager().getTransaction().begin();
+    }
+    
+    /**
+     * 
+     * 
+     * @author skyqiang
+     */
+    public static void commit() {
+        getEntityManager().getTransaction().commit();
+    }
+    
+    /**
+     * 
+     * 
+     * @author skyqiang
+     */
+    public static void rollback() {
+        getEntityManager().getTransaction().rollback();
     }
 }
