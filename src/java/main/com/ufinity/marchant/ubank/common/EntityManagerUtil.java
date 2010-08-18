@@ -45,10 +45,11 @@ public class EntityManagerUtil {
                 .createEntityManagerFactory(JPA_PERSISTENCE_NAME);
         threadLocal = new ThreadLocal<EntityManager>();
     }
-    
+
     /**
+     * this method is get entity manager
      * 
-     * @return
+     * @return EntityManager EntityManager Ojbect
      * @author skyqiang
      */
     public static EntityManager getEntityManager() {
@@ -59,9 +60,10 @@ public class EntityManagerUtil {
         }
         return entityManager;
     }
-    
+
     /**
      * 
+     * this method is close entity manager
      * 
      * @author skyqiang
      */
@@ -72,9 +74,10 @@ public class EntityManagerUtil {
             entityManager.close();
         }
     }
-    
+
     /**
      * 
+     * this method is close entity manager factory
      * 
      * @author skyqiang
      */
@@ -83,27 +86,30 @@ public class EntityManagerUtil {
             emFactoty.close();
         }
     }
-    
+
     /**
      * 
+     * this method is begin transaction
      * 
      * @author skyqiang
      */
     public static void begin() {
         getEntityManager().getTransaction().begin();
     }
-    
+
     /**
      * 
+     * this method is commit transaction
      * 
      * @author skyqiang
      */
     public static void commit() {
         getEntityManager().getTransaction().commit();
     }
-    
+
     /**
      * 
+     * this method is transaction roll back
      * 
      * @author skyqiang
      */
