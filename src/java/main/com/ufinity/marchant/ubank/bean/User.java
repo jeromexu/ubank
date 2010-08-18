@@ -24,7 +24,7 @@
 // SPECIFICALLY DISCLAIMS ANY EXPRESS OR IMPLIED WARRANTY OF FITNESS FOR
 // HIGH RISK ACTIVITIES.
 // -------------------------------------------------------------------------
-package com.ufinity.marchant.ubank.beans;
+package com.ufinity.marchant.ubank.bean;
 
 import java.io.Serializable;
 
