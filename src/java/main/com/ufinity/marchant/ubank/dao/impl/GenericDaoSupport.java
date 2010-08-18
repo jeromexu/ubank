@@ -71,15 +71,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     public EntityManager getEntityManager() {
         return entityManager;
     }
-
-    /**
-     * @param entityManager
-     *            the entityManager to set
-     */
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
+    
     /*
      * (non-Javadoc)
      * 
