@@ -64,7 +64,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     public Class<T> getType() {
         return this.type;
     }
-    
+
     /**
      * @return the entityManager
      */
@@ -73,7 +73,8 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     }
 
     /**
-     * @param entityManager the entityManager to set
+     * @param entityManager
+     *            the entityManager to set
      */
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -93,11 +94,8 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
             return;
         }
         // this.getHibernateTemplate().save(entity);
-       // entityManager.getTransaction().begin();
         entityManager.persist(entity);
-      //  entityManager.getTransaction().commit();
         log.debug(method, "", "Execute persist method is successful!");
-        
 
     }
 
@@ -132,7 +130,6 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
             log.error(method, "", "Parameter value is invalidate!");
             return;
         }
-
         entityManager.remove(entityManager.getReference(this.type, id));
         log.debug(method, "", "Execute deleteById method is successful!");
 
@@ -167,10 +164,9 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         String method = "getRecordCount";
 
         String jpal = "SELECT COUNT(*) FROM " + this.type.getName();
-        Integer count = null;
+        Long count = null;
 
-        count = ((Long) entityManager.createQuery(jpal).getSingleResult())
-                .intValue();
+        count = ((Long) entityManager.createQuery(jpal).getSingleResult());
         log.debug(method, "", "Execute getRecordCount method is successful!");
 
         return (PK) count;
@@ -193,7 +189,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         log.debug(method, "", "Execute entity method is successful!");
 
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -205,7 +201,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     public List<T> queryList(PK startRecord, PK pageSize) {
         String method = "queryList";
 
-        String jpal = "SELECT A FROM " + this.getType().getName() + "AS A";
+        String jpal = "SELECT A FROM " + this.getType().getName() + " AS A";
         List<T> lists = null;
         if (null == startRecord || null == pageSize) {
             log.error(method, "", "Parameter value is invalidate!");
@@ -213,10 +209,9 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         }
 
         lists = (List<T>) entityManager.createQuery(jpal).setFirstResult(
-                (Integer) startRecord).setMaxResults((Integer) pageSize)
-                .getResultList();
+                ((Long) startRecord).intValue()).setMaxResults(
+                ((Long) pageSize).intValue()).getResultList();
         log.debug(method, "", "Execute queryList method is successful!");
-
         return lists;
     }
 
