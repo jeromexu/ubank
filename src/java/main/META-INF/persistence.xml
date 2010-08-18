@@ -1,0 +1,31 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+  version="1.0">
+
+  <persistence-unit name="ubank" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <properties>
+      <property name="hibernate.connection.driver_class"
+        value="com.mysql.jdbc.Driver" />
+      <property name="hibernate.connection.url"
+        value="jdbc:mysql://localhost:3306/ubank?useUnicode=true&amp;characterEncoding=utf-8" />
+
+      <property name="hibernate.connection.username" value="root" />
+      <property name="hibernate.connection.password" value="admin" />
+
+      <property name="hibernate.hbm2ddl.auto" value="update" />
+
+      <!-- JDBC connection pool (use the built-in) -->
+      <property name="hibernate.connection.pool_size" value="10" />
+      <!-- SQL dialect -->
+      <property name="hibernate.dialect"
+        value="org.hibernate.dialect.MySQL5Dialect" />
+
+      <!-- Echo all executed SQL to stdout  -->
+      <property name="hibernate.show_sql" value="true" />
+      <property name="hibernate.format_sql" value="false" />
+
+    </properties>
+  </persistence-unit>
+</persistence>
