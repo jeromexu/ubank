@@ -128,3 +128,12 @@ author zdxue
 	width:80px;
 	height:26px;
 }
+
+.errorMsgDiv{
+	margin-left:20px;
+	background-color:#D2B4F0;
+	width:240px;
+	height:22px;
+	line-height: 22px;
+	text-align: center;
+}

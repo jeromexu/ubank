@@ -1,4 +1,6 @@
-﻿<html>
+<%@ include file="/WEB-INF/taglib/taglibs.jinc" %>
+
+<html>
 	<head>
 		<script type="text/javascript" src="../js/home.js"></script>
 		<link href="../css/home.css" rel="stylesheet" type="text/css">
@@ -124,12 +126,19 @@
 			<div class="rightDiv">
 				
 				<div class="loginDiv">
-					<form action="#" method="post">
+					<form action="login.do" method="post">
 						Username:<input class="username_clz" type="text" name="username" maxlength="50"><br>
 						Password:<input class="password_clz" type="password" name="password" maxlength="50"><br>
-						<input class="login_btn" type="button" value="Login"><input class="register_btn" type="button" value="Register" onclick="goPage('register.html')">
+						<input class="login_btn" type="button" value="Login" onclick="submit(this.id)" id="loginBtn" >
+                        <input class="register_btn" type="button" value="Register" onclick="goPage('register.html')">
 					</form>
 				</div>
+        
+                <c:if test="${not empty error_msg}">
+                  <div class="errorMsgDiv">
+                    <span title="${error_msg}">${error_msg}</span>
+                  </div>
+                </c:if>
 				
 			</div>	
 			

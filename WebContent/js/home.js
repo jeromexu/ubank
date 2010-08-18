@@ -40,3 +40,14 @@ function goPage(url) {
 	location.href=url;	//open new page in current window
 	//window.open(url);  //open new page in new window
 }
+
+/**
+ * Submit a form
+ * 
+ * @param form_id form id
+ * @return void
+ * @author zdxue
+ */
+function submit(form_id) {
+	document.getElementById(form_id).submit();
+}
