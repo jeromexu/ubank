@@ -1,0 +1,130 @@
+/*
+
+home page stylesheet
+author zdxue
+
+*/
+
+.mainDiv{
+   	margin-left:100px;
+	background-color:black;
+	width:1200px;
+	height:950px;
+}
+
+
+.topDiv{
+	background-color:#78B4F0;
+	width:1200px;
+	height:100px;
+	float:left;
+}
+
+.leftDiv{
+	background-color:#D0DEE9;
+	width:900px;
+	height:800px;
+	float:left;
+}
+
+.rightDiv{
+	background-color:#D0DEE9;
+	width:300px;
+	height:800px;
+	float:left;
+}
+
+.footDiv{
+	background-color:#78B4F0;
+	width:1200px;
+	height:50px;
+	float:left;
+}
+
+.loginDiv{
+	background-color:#D0DEE9;
+	margin-top:20px;
+	margin-left:10px;
+	width:280px;
+	height:150px;
+}
+
+.username_clz{
+	margin-top:20px;
+	margin-left:20px;
+	width:160px;
+	height:26px;
+}
+
+.password_clz{
+	margin-top:10px;
+	margin-left:20px;
+	width:160px;
+	height:26px;
+}
+
+.login_btn{
+	margin-top:10px;
+	margin-left:50px;
+	width:80px;
+	height:26px;
+}
+
+.register_btn{
+	margin-top:10px;
+	margin-left:20px;
+	width:80px;
+	height:26px;
+}
+
+.search_div{
+	background-color:#D0DEE9;
+	margin-top:50px;
+	margin-left:150px;
+	width:600px;
+	height:50px;
+}
+
+.resultset_div{
+	background-color:white;
+	margin-top:10px;
+	margin-left:50px;
+	width:800px;
+	height:600px;
+}
+
+.pagination_div{
+	background-color:white;
+	margin-top:10px;
+	margin-left:140px;
+	width:600px;
+	height:20px;
+}
+
+.file_size_select{
+	margin-top:15px;
+	margin-left:10px;
+	width:160px;
+	height:26px;
+}
+
+.file_range_select{
+	margin-top:15px;
+	margin-left:5px;
+	width:160px;
+	height:26px;
+}
+
+.file_name_ipt{
+	margin-top:15px;
+	margin-left:5px;
+	width:120px;
+	height:22px;
+}
+
+.search_btn{
+	margin-top:15px;
+	margin-left:5px;
+	width:80px;
+	height:26px;
+}
