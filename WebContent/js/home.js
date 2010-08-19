@@ -51,3 +51,50 @@ function goPage(url) {
 function submit(form_id) {
 	document.getElementById(form_id).submit();
 }
+
+function search() {
+	var url = 'search.do';
+	var data = "fileSize=" + $("#fileSize").val() + "&publishDate=" + $("#publishDate").val() + "&fileName=" + $("#fileNameId").val();
+	
+	ajaxRequest(url, data);
+}
+
+function ajaxRequest(url, data) {
+	var timeoutMillsec = 180 * 1000;
+	
+	if(data){
+		$.ajax({
+			type:'POST',
+			url:url,
+			data:data,
+	        beforeSend:loading,
+			success:callback,
+	        timeout:timeoutMillsec,
+	        error:requestTimeout
+	        
+		});
+	}else{
+		$.ajax({
+			type:'POST',
+			url:url,
+	        beforeSend:loading,
+			success:callback,
+	        timeout:timeoutMillsec,
+	        error:requestTimeout
+		});
+	}
+}
+
+function loading(){
+	var text = "<div class='loadingImage'><img src='../imgs/loading.gif'/></div>"
+	$('#searchResultDiv').empty().append(text);
+}
+
+function callback(text){
+	$('#searchResultDiv').empty().append(text);
+}
+
+function requestTimeout(){
+	var text = "<div class='errorTimeout'>request timeout</div>"
+	$('#searchResultDiv').empty().append(text);
+}

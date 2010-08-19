@@ -66,7 +66,7 @@ a:hover{
 
 .loginDiv{
 	background-color:#D0DEE9;
-	margin-top:20px;
+	margin-top:5px;
 	margin-left:10px;
 	width:280px;
 	height:150px;
@@ -153,10 +153,45 @@ a:hover{
 }
 
 .errorMsgDiv{
+	margin-top:20px;
 	margin-left:20px;
 	background-color:#D2B4F0;
 	width:240px;
 	height:22px;
 	line-height: 22px;
 	text-align: center;
+}
+
+.loadingImage {
+	width: 795px;
+	height: 500px;
+	overflow: hidden;
+	position: relative;
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle
+}
+
+.loadingImage p {
+	position: static; +
+	position: absolute;
+	top: 50%
+}
+
+.loadingImage img {
+	position: static; +
+	position: relative;
+	top: -50%;
+	left: -50%;
+}
+
+.errorTimeout {
+	color:red;
+	width: 795px;
+	height: 500px;
+	overflow: hidden;
+	position: relative;
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle
 }
