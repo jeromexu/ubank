@@ -88,30 +88,32 @@ public class RegServlet extends AbstractServlet {
 			if (!isValidateCode) {
 				//captcha code is not right
 				request.setAttribute(CAPTCHA_ERR, Constant.CAPTCHA_ERR_MSG);
+			} else {
+				String userName = request.getParameter("userName");
+				String pass = request.getParameter("password");
+				String repass = request.getParameter("repassword");
+				if (logger.isDebugEnabled()) {
+					logger.debug("userName = "+userName);
+					logger.debug("pass = "+pass);
+					logger.debug("repass = "+repass);
+				}
+				if (null == userName || "".equals(userName.trim())) {
+					request.setAttribute(USERNAME_ERR, Constant.USERNAME_ERR_MSG);
+				} 
+				if (null == pass || "".equals(pass.trim())) {
+					request.setAttribute(PASS_ERR, Constant.PASS_ERR_MSG);
+				} else if (!pass.equals(repass)) {
+					request.setAttribute(REPASS_ERR, Constant.REPASS_ERR_MSG);
+				}
+				User user = new User();
+				user.setUserName(userName);
+				user.setPassword(pass);
+				user.setCreateTime(new Date());
+				user.setOverSize(Constant.ONE_G_SPACE);
+				String registerMsg = userService.doRegister(user);
+				request.setAttribute(REGISTER_MSG, registerMsg);
 			}
-			String userName = request.getParameter("userName");
-			String pass = request.getParameter("password");
-			String repass = request.getParameter("repassword");
-			if (logger.isDebugEnabled()) {
-				logger.debug("userName = "+userName);
-				logger.debug("pass = "+pass);
-				logger.debug("repass = "+repass);
-			}
-			if (null == userName || "".equals(userName.trim())) {
-				request.setAttribute(USERNAME_ERR, Constant.USERNAME_ERR_MSG);
-			} 
-			if (null == pass || "".equals(pass.trim())) {
-				request.setAttribute(PASS_ERR, Constant.PASS_ERR_MSG);
-			} else if (!pass.equals(repass)) {
-				request.setAttribute(REPASS_ERR, Constant.REPASS_ERR_MSG);
-			}
-			User user = new User();
-			user.setUserName(userName);
-			user.setPassword(pass);
-			user.setCreateTime(new Date());
-			user.setOverSize(Constant.ONE_G_SPACE);
-			String registerMsg = userService.doRegister(user);
-			request.setAttribute(REGISTER_MSG, registerMsg);
+			
 			request.getRequestDispatcher("register.jsp").forward(request, response);
 		}catch(Exception e){
 			logger.error("error message :"+e.getMessage());
