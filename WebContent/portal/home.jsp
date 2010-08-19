@@ -61,7 +61,7 @@
 						账号:<input class="username_clz" type="text" name="username" maxlength="50"><br>
 						密码:<input class="password_clz" type="password" name="password" maxlength="50"><br>
 						<input class="login_btn" type="button" value="登录" onclick="submit(this.id)" id="loginBtn" >
-                        <input class="register_btn" type="button" value="注册" onclick="goPage('register.html')">
+                        <input class="register_btn" type="button" value="注册" onclick="goPage('register.jsp')">
 					</form>
 				</div>
         
