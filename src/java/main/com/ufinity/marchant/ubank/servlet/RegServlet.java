@@ -1,10 +1,19 @@
 package com.ufinity.marchant.ubank.servlet;
 
 import java.io.IOException;
+import java.util.Date;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
+import com.octo.captcha.service.CaptchaServiceException;
+import com.octo.captcha.service.image.ImageCaptchaService;
+import com.ufinity.marchant.ubank.bean.User;
+import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.service.ServiceFactory;
+import com.ufinity.marchant.ubank.service.UserService;
 
 /**
  * 
@@ -14,15 +23,21 @@ import javax.servlet.http.HttpServletResponse;
  * @version 1.0
  * @since 2010-8-19
  */
-public class RegServlet extends HttpServlet {
+public class RegServlet extends AbstractServlet {
+	
+	// Logger for this class
+    protected final Logger logger = Logger.getLogger(RegServlet.class);
 	private static final long serialVersionUID = 1L;
-
+	private UserService userService = ServiceFactory.getInstance().getUserService();
+	private ImageCaptchaService imageCaptchaService;
+	private final String  USERNAME_ERR = "userName_error_msg";
+	private final String  PASS_ERR = "pass_error_msg";
+	private final String  REPASS_ERR = "repass_error_msg";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
 	public RegServlet() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -51,9 +66,58 @@ public class RegServlet extends HttpServlet {
 	 * @param response res
 	 * @author jerome
 	 */
-	private void processRequest(HttpServletRequest request,
-			HttpServletResponse response) {
-
+	private void processRequest(HttpServletRequest request, HttpServletResponse response) {
+		
+		try{
+			String captchaCode = request.getParameter("captchaCode");
+			if(logger.isDebugEnabled()){
+				logger.debug("captchaCode = "+captchaCode);
+			}
+			String captchaId = request.getSession().getId();
+			Boolean isValidateCode = false;
+			try {
+				// Call the Service method
+				isValidateCode = imageCaptchaService.validateResponseForID(captchaId, captchaCode);
+			} catch (CaptchaServiceException e) {
+				// should not happen, may be thrown if the id is not valid
+				logger.error(e.getMessage());
+			}
+			if (!isValidateCode) {
+				//captcha code is not right
+				//do............
+			}
+			String userName = request.getParameter("userName");
+			String pass = request.getParameter("password");
+			String repass = request.getParameter("repassword");
+			if (logger.isDebugEnabled()) {
+				logger.debug("userName = "+userName);
+				logger.debug("pass = "+pass);
+				logger.debug("repass = "+repass);
+			}
+			if (null == userName || "".equals(userName)) {
+				request.setAttribute(USERNAME_ERR, Constant.USERNAME_ERR_MSG);
+			} 
+			if (null == pass || "".equals(pass)) {
+				request.setAttribute(PASS_ERR, Constant.PASS_ERR_MSG);
+			} else if (!pass.equals(repass)) {
+				request.setAttribute(REPASS_ERR, Constant.REPASS_ERR_MSG);
+			}
+			User user = new User();
+			user.setUserName(userName);
+			user.setPassword(pass);
+			user.setCreateTime(new Date());
+			user.setOverSize(Constant.ONE_G_SPACE);
+			userService.doRegister(user);
+			
+		}catch(Exception e){
+			logger.error("error message :"+e.getMessage());
+			try {
+				response.sendRedirect("");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
 	}
 
 }
