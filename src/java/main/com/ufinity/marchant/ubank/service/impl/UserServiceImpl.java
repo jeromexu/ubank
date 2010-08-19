@@ -26,6 +26,9 @@
 //-------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service.impl;
 
+import com.ufinity.marchant.ubank.bean.User;
+import com.ufinity.marchant.ubank.common.DaoFactory;
+import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.service.UserService;
 
 /**
@@ -37,5 +40,20 @@ import com.ufinity.marchant.ubank.service.UserService;
  * @since 2010-8-18
  */
 public class UserServiceImpl implements UserService {
+    
+    private UserDao userDao;
+    
+    public UserServiceImpl() {
+        userDao = DaoFactory.getUserDao();
+    }
+
+    /**
+     * @see com.ufinity.marchant.ubank.service.UserService#getUser(java.lang.String, java.lang.String)
+     */
+    public User getUser(String username, String password) {
+        //userDao.
+        //TODO
+        return null;
+    }
 
 }

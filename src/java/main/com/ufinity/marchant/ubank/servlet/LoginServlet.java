@@ -3,9 +3,13 @@ package com.ufinity.marchant.ubank.servlet;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ufinity.marchant.ubank.bean.User;
+import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.service.ServiceFactory;
+import com.ufinity.marchant.ubank.service.UserService;
 
 /**
  * Login Servlet used to process users' login or logout.
@@ -14,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author zdxue     
  */
 @SuppressWarnings("serial")
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends AbstractServlet {
 
     private static final String LOGIN = "login";
     private static final String LOGOUT = "logout";
@@ -62,11 +66,14 @@ public class LoginServlet extends HttpServlet {
         String username = req.getParameter(USERNAME);
         String password = req.getParameter(PASSWORD);
         
-        if("admin".equals(username) && "admin".equals(password)) {
-            //TODO
-            return "profile";
-        }else{
+        UserService userService = ServiceFactory.getInstance().getUserService();
+        User user = userService.getUser(username, password);
+        
+        if(user == null) {
             req.setAttribute("error_msg", "username or password error.");
+        }else{
+            req.getSession().setAttribute(Constant.SESSION_USER, user);
+            return "profile";            
         }
         
         return "home.jsp";
@@ -83,12 +90,5 @@ public class LoginServlet extends HttpServlet {
     private String logout(HttpServletRequest req, HttpServletResponse resp) {
         return null;
     }
-    
-    private String parseActionName(HttpServletRequest req) {
-        String servletPath = req.getServletPath();
-        servletPath = servletPath.substring(servletPath.lastIndexOf("/")+1, servletPath.lastIndexOf("."));
-        return servletPath;
-    }
-    
 }
 

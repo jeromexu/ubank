@@ -26,6 +26,8 @@
 //-------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service;
 
+import com.ufinity.marchant.ubank.bean.User;
+
 /**
  * 
  * user business logic interface
@@ -36,4 +38,13 @@ package com.ufinity.marchant.ubank.service;
  */
 public interface UserService {
 
+    /**
+     * Get User by username and password 
+     *
+     * @param username user's name
+     * @param password user's password
+     * @return User obj
+     * @author zdxue
+     */
+    public User getUser(String username, String password);
 }
