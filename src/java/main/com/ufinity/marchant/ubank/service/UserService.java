@@ -38,6 +38,16 @@ import com.ufinity.marchant.ubank.bean.User;
  */
 public interface UserService {
 
+	/**
+	 * 
+	 * do user register
+	 * 
+	 * @param user
+	 *            a person who do register
+	 * @author jerome
+	 */
+	public void doRegister(User user);
+
     /**
      * Get User by username and password 
      *

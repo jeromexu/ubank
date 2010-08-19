@@ -42,10 +42,25 @@ import com.ufinity.marchant.ubank.service.UserService;
 public class UserServiceImpl implements UserService {
     
     private UserDao userDao;
-    
+    /**
+     * 
+     * Constructor for UserServiceImpl
+     */
     public UserServiceImpl() {
         userDao = DaoFactory.getUserDao();
     }
+
+	/**
+	 * 
+	 * do user register
+	 * 
+	 * @param user
+	 *            a person who do register
+	 * @author jerome
+	 */
+	public void doRegister(User user) {
+		
+	}
 
     /**
      * @see com.ufinity.marchant.ubank.service.UserService#getUser(java.lang.String, java.lang.String)
