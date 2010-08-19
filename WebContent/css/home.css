@@ -52,6 +52,7 @@ a:hover{
 
 .rightDiv{
 	background-color:#D0DEE9;
+	/*border-left: 1px solid white;*/
 	width:300px;
 	height:800px;
 	float:left;
