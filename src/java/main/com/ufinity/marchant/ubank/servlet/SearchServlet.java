@@ -64,11 +64,11 @@ public class SearchServlet extends AbstractServlet {
         if(publishDate == null) {
             publishDate = "0";
         }
-        
+
         System.out.println("fileName=" + fileName + " , fileSize=" + fileSize + " , publishDate=" + publishDate);
         //TODO
         
-        return Constant.HOME_PAGE;
+        return Constant.SEARCH_RESULT_PAGE;
     }
     
 }
