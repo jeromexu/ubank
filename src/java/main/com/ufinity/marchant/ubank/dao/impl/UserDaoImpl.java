@@ -26,6 +26,8 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.dao.impl;
 
+import java.util.List;
+
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.dao.UserDao;
 
@@ -36,4 +38,28 @@ import com.ufinity.marchant.ubank.dao.UserDao;
  */
 public class UserDaoImpl extends GenericDaoSupport<User, Long> implements
         UserDao {
+
+    /**
+     * this method is find user according user name and password
+     * 
+     * @param userName
+     *            user name
+     * @param password
+     *            user's password
+     * @return User Object
+     * @author skyqiang
+     */
+    @SuppressWarnings("unchecked")
+    public User findUser(String userName, String password) {
+        String jpaQuery = "SELECT u FROM User AS u WHERE u.userName = :name AND u.password = :pass";
+        List<User> list = entityManager.createQuery(jpaQuery).setParameter(
+                "name", userName).setParameter("pass", password)
+                .getResultList();
+
+        if (null != list && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
+
 }
