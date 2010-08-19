@@ -1,11 +1,13 @@
 package com.ufinity.marchant.ubank.servlet;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ufinity.marchant.ubank.bean.File;
 import com.ufinity.marchant.ubank.common.Constant;
 
 /**
@@ -67,6 +69,10 @@ public class SearchServlet extends AbstractServlet {
 
         System.out.println("fileName=" + fileName + " , fileSize=" + fileSize + " , publishDate=" + publishDate);
         //TODO
+        
+        List<File> fileList = null;
+        
+        req.setAttribute(Constant.ATTR_FILELIST, fileList);
         
         return Constant.SEARCH_RESULT_PAGE;
     }

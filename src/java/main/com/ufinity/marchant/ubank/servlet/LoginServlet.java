@@ -72,7 +72,7 @@ public class LoginServlet extends AbstractServlet {
         User user = userService.getUser(username, password);
         
         if(user == null) {
-            req.setAttribute(Constant.ERROR_MSG, MessageResource.getMessage(MessageKeys.MSG_LOGIN_FAILURE));
+            req.setAttribute(Constant.ATTR_ERROR_MSG, MessageResource.getMessage(MessageKeys.MSG_LOGIN_FAILURE));
         }else{
             req.getSession().setAttribute(Constant.SESSION_USER, user);
             return Constant.MAIN_PAGE;         

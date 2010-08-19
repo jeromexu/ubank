@@ -9,7 +9,8 @@ package com.ufinity.marchant.ubank.common;
 public interface Constant {
 
     /** error message key */
-    String ERROR_MSG = "error_msg";
+    String ATTR_ERROR_MSG = "error_msg";
+    String ATTR_FILELIST = "fileList";
     
     /** servlet filter config */
     String ENABLE_FILTER = "true"; 
