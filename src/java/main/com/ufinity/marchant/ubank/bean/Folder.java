@@ -41,6 +41,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -127,7 +128,7 @@ public class Folder implements Serializable {
      * @return the modifyTime
      */
     @Temporal(TemporalType.DATE)
-    @Column(name = "MODIFIED_TIME", nullable = false)
+    @Column(name = "MODIFIED_TIME")
     public Date getModifyTime() {
         return modifyTime;
     }
@@ -210,6 +211,7 @@ public class Folder implements Serializable {
      */
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REFRESH,
             CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "parent")
+    @OrderBy("folderId desc")
     public Set<Folder> getChildren() {
         return children;
     }
@@ -243,13 +245,14 @@ public class Folder implements Serializable {
     /**
      * @return the files
      */
-    @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "folder")
+    @OneToMany(cascade = { CascadeType.REMOVE,CascadeType.MERGE,CascadeType.PERSIST }, fetch = FetchType.LAZY, mappedBy = "folder")
     public Set<File> getFiles() {
         return files;
     }
 
     /**
-     * @param files the files to set
+     * @param files
+     *            the files to set
      */
     public void setFiles(Set<File> files) {
         this.files = files;

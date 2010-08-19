@@ -119,7 +119,7 @@ public class File implements Serializable {
      * @return the modifyTime
      */
     @Temporal(TemporalType.DATE)
-    @Column(name = "MODIFIED_TIME", nullable = false)
+    @Column(name = "MODIFIED_TIME")
     public Date getModifyTime() {
         return modifyTime;
     }
