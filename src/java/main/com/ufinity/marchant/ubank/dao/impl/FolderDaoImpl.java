@@ -48,7 +48,7 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
      * @author skyqiang
      */
     @SuppressWarnings("unchecked")
-    public List<Folder> findFolderByUserName(Long userId) {
+    public List<Folder> findFolderListByUserName(Long userId) {
 
         String sqlQuery = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,"
                 + "a.FOLDER_TYPE,a.MODIFIED_TIME,a.SHARE,a.USER_ID,a.PARENT_ID FROM U_FOLDER a "
