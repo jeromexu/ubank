@@ -4,12 +4,17 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 /**
- * @author WenQiang Wu
  * 
- * @time Jun 24, 2009 11:05:13 AM
+ * @author WenQiang Wu
+ * @version Aug 19, 2010
  */
 public class ExpertDB {
 
+    /**
+     * 
+     * @param args
+     * @author skyqiang
+     */
     @SuppressWarnings("unused")
     public static void main(String[] args) {
         EntityManagerFactory emFactory = Persistence

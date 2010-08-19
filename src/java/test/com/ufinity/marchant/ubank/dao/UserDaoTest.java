@@ -37,13 +37,16 @@ import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.impl.UserDaoImpl;
 
 /**
- * @author WenQiang Wu
  * 
- * @time Jun 25, 2009 10:07:23 AM
+ * @author WenQiang Wu
+ * @version Aug 19, 2010
  */
 public class UserDaoTest {
     /**
-     * @throws java.lang.Exception
+     * 
+     * @throws Exception
+     *             exception
+     * @author skyqiang
      */
     @Before
     public void setUp() throws Exception {
@@ -51,12 +54,21 @@ public class UserDaoTest {
     }
 
     /**
-     * @throws java.lang.Exception
+     * 
+     * @throws Exception
+     *             exception
+     * @author skyqiang
      */
     @After
     public void tearDown() throws Exception {
     }
 
+    /**
+     * 
+     * @throws Exception
+     *             exception
+     * @author skyqiang
+     */
     @Test
     public void save() throws Exception {
         User user = new User();
@@ -69,7 +81,9 @@ public class UserDaoTest {
         // userDao.getEntityManager().getTransaction().begin();
 
         EntityManagerUtil.begin();
-        userDao.add(user);
+        // userDao.add(user);
+        User user1 = userDao.findUser("sky3", "skyqian1g");
+        System.out.println(user1);
         EntityManagerUtil.commit();
         // System.out.println(userDao.queryList(0l, 10L));;
         // userDao.deleteById(1L);
