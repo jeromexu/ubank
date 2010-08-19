@@ -26,6 +26,8 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.dao.impl;
 
+import java.util.List;
+
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 
@@ -36,4 +38,24 @@ import com.ufinity.marchant.ubank.dao.FolderDao;
  */
 public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
         FolderDao {
+
+    /**
+     * this method is find folder collection according user name
+     * 
+     * @param userId
+     *            user's id
+     * @return List<Folder> folder's collection
+     * @author skyqiang
+     */
+    @SuppressWarnings("unchecked")
+    public List<Folder> findFolderByUserName(Long userId) {
+
+        String sqlQuery = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,"
+                + "a.FOLDER_TYPE,a.MODIFIED_TIME,a.SHARE,a.USER_ID,a.PARENT_ID FROM U_FOLDER a "
+                + "LEFT JOIN U_FOLDER b on a.PARENT_ID = b.PARENT_ID WHERE a.USER_ID = :userId"
+                + " ORDER BY a.PARENT_ID , a.CREATE_TIME desc";
+
+        return entityManager.createNativeQuery(sqlQuery, Folder.class)
+                .setParameter("userId", userId).getResultList();
+    }
 }
