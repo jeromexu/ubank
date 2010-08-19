@@ -18,7 +18,7 @@
 <div class="main_Div">
 <div align="right"><a href="###">登陆</a> | <a href="###">注册</a></div>
 <div style="text-align:center;">
-<h1 style="color: #00FF00;">注册</h1>
+<h1 style="color: #555;">注册</h1>
 </div>
 <hr width="380px" align="center" />
 <div align="center"><c:if test="${not empty register_msg }">
