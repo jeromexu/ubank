@@ -10,6 +10,14 @@ padding:0;
 font-family:Arial;
 	
 }
+a:link{
+	color:#666;
+	text-decoration: none;	
+}
+a:hover{
+	color:#aaa;
+	text-decoration: underline;	
+}
 .mainDiv{
    	margin-left:100px;
 	background-color:black;
