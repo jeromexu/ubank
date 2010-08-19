@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=utf-8" %>
 <%@ include file="/WEB-INF/taglib/taglibs.jinc" %>
 
 <html>
@@ -16,7 +17,7 @@
 				<div class="search_div">
 					<form action="#" method="post">
 						<select class="file_size_select" name="fileSize">
-							<option value="0">Please choose size</option>
+							<option value="0">请选择文件大小</option>
 							<option value="1">1KB - 1MB</option>
 							<option value="2">1MB - 5MB</option>
 							<option value="3">5MB - 10MB</option>
@@ -24,17 +25,17 @@
 						</select>
 						
 						<select class="file_range_select" name="publishDate">
-							<option value="0">Please choose range</option>
-							<option value="1">recent one day</option>
-							<option value="2">recent three days</option>
-							<option value="3">recent one week</option>
-							<option value="4">recent one month</option>
-							<option value="4">earlier</option>
+							<option value="0">请选择发布日期</option>
+							<option value="1">近一天</option>
+							<option value="2">近三天</option>
+							<option value="3">近一周</option>
+							<option value="4">近一月</option>
+							<option value="4">更早的</option>
 						</select>
 						
-						<input class="file_name_ipt" id="fileNameId" type="text" name="fileName" maxlength="50" value="input file name" onfocus="clearInput(this.id, 'input file name')" onblur="resetInput(this.id, 'input file name')">
+						<input class="file_name_ipt" id="fileNameId" type="text" name="fileName" maxlength="50" value="请输入文件名" onfocus="clearInput(this.id, '请输入文件名')" onblur="resetInput(this.id, '请输入文件名')">
 						
-						<input class="search_btn" type="button" value="Search">
+						<input class="search_btn" type="button" value="搜索">
 					</form>
 				</div>
 				
@@ -127,10 +128,10 @@
 				
 				<div class="loginDiv">
 					<form action="login.do" method="post">
-						Username:<input class="username_clz" type="text" name="username" maxlength="50"><br>
-						Password:<input class="password_clz" type="password" name="password" maxlength="50"><br>
-						<input class="login_btn" type="button" value="Login" onclick="submit(this.id)" id="loginBtn" >
-                        <input class="register_btn" type="button" value="Register" onclick="goPage('register.html')">
+						账号:<input class="username_clz" type="text" name="username" maxlength="50"><br>
+						密码:<input class="password_clz" type="password" name="password" maxlength="50"><br>
+						<input class="login_btn" type="button" value="登录" onclick="submit(this.id)" id="loginBtn" >
+                        <input class="register_btn" type="button" value="注册" onclick="goPage('register.html')">
 					</form>
 				</div>
         
