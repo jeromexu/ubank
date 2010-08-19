@@ -67,7 +67,7 @@ a:hover{
 
 .loginDiv{
 	background-color:#D0DEE9;
-	margin-top:5px;
+	margin-top:50px;
 	margin-left:10px;
 	width:280px;
 	height:150px;
@@ -77,14 +77,14 @@ a:hover{
 	margin-top:20px;
 	margin-left:20px;
 	width:160px;
-	height:26px;
+	height:21px;
 }
 
 .password_clz{
 	margin-top:10px;
 	margin-left:20px;
 	width:160px;
-	height:26px;
+	height:21px;
 }
 
 .login_btn{

@@ -50,13 +50,13 @@
 			
 			<div class="rightDiv">
       
-                <c:if test="${not empty error_msg}">
-                  <div class="errorMsgDiv">
-                    <span title="${error_msg}">${error_msg}</span>
-                  </div>
-                </c:if>
-				
 				<div class="loginDiv">
+                    <c:if test="${not empty error_msg}">
+                      <div class="errorMsgDiv">
+                        <span title="${error_msg}">${error_msg}</span>
+                      </div>
+                    </c:if>
+        
 					<form action="login.do" method="post">
 						账号:<input class="username_clz" type="text" name="username" maxlength="50"><br>
 						密码:<input class="password_clz" type="password" name="password" maxlength="50"><br>
