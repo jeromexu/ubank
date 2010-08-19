@@ -9,7 +9,7 @@
 <title>ubank-注册</title>
 </head>
 <body>
-<div align="right"><a href="###">登陆</a> | <a href="###">注册</a></div>
+<div align="right"><a href="home.jsp">登陆</a> | <a href="register.jsp">注册</a></div>
 <div style="margin-left: 510px">
 <h1 style="color: #00FF00;">注册</h1>
 </div>
