@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import com.octo.captcha.service.CaptchaServiceException;
 import com.octo.captcha.service.image.ImageCaptchaService;
 import com.ufinity.marchant.ubank.bean.User;
+import com.ufinity.marchant.ubank.captcha.MyCaptchaService;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UserService;
@@ -29,10 +30,11 @@ public class RegServlet extends AbstractServlet {
     protected final Logger logger = Logger.getLogger(RegServlet.class);
 	private static final long serialVersionUID = 1L;
 	private UserService userService = ServiceFactory.getInstance().getUserService();
-	private ImageCaptchaService imageCaptchaService;
+	private ImageCaptchaService imageCaptchaService = MyCaptchaService.getInstance();
 	private final String  USERNAME_ERR = "userName_error_msg";
 	private final String  PASS_ERR = "pass_error_msg";
 	private final String  REPASS_ERR = "repass_error_msg";
+	private final String  CAPTCHA_ERR = "captcha_error_msg";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -84,7 +86,7 @@ public class RegServlet extends AbstractServlet {
 			}
 			if (!isValidateCode) {
 				//captcha code is not right
-				//do............
+				request.setAttribute(CAPTCHA_ERR, Constant.CAPTCHA_ERR_MSG);
 			}
 			String userName = request.getParameter("userName");
 			String pass = request.getParameter("password");
@@ -94,25 +96,26 @@ public class RegServlet extends AbstractServlet {
 				logger.debug("pass = "+pass);
 				logger.debug("repass = "+repass);
 			}
-			if (null == userName || "".equals(userName)) {
+			if (null == userName || "".equals(userName.trim())) {
 				request.setAttribute(USERNAME_ERR, Constant.USERNAME_ERR_MSG);
 			} 
-			if (null == pass || "".equals(pass)) {
+			if (null == pass || "".equals(pass.trim())) {
 				request.setAttribute(PASS_ERR, Constant.PASS_ERR_MSG);
 			} else if (!pass.equals(repass)) {
 				request.setAttribute(REPASS_ERR, Constant.REPASS_ERR_MSG);
 			}
+		
 			User user = new User();
 			user.setUserName(userName);
 			user.setPassword(pass);
 			user.setCreateTime(new Date());
 			user.setOverSize(Constant.ONE_G_SPACE);
 			userService.doRegister(user);
-			request.getRequestDispatcher("home.jsp").forward(request, response);
+			request.getRequestDispatcher("register.jsp").forward(request, response);
 		}catch(Exception e){
 			logger.error("error message :"+e.getMessage());
 			try {
-				response.sendRedirect("/common/error.jsp");
+				response.sendRedirect(request.getContextPath()+"/common/error.jsp");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

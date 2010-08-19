@@ -32,4 +32,7 @@ public interface Constant {
     public static final Integer  ONE_G_SPACE = 1;
     
     String HOME_PATH = "home.jsp";
+    
+    // captcha code error
+    public static final String CAPTCHA_ERR_MSG = "captcha code is not valid!";
 }
