@@ -8,7 +8,7 @@
 		<display-name>jcaptcha</display-name>
 		<servlet-name>jcaptcha</servlet-name>
 		<servlet-class>
-		com.ufinity.marchant.ubank.common.ImageCaptchaServlet</servlet-class>
+		com.ufinity.marchant.ubank.captcha.ImageCaptchaServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>jcaptcha</servlet-name>
@@ -19,6 +19,11 @@
     <servlet-name>loginServlet</servlet-name>
     <servlet-class>com.ufinity.marchant.ubank.servlet.LoginServlet</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>regServlet</servlet-name>
+  	<servlet-class>
+  	com.ufinity.marchant.ubank.servlet.RegServlet</servlet-class>
+  </servlet>
   
   <servlet-mapping>
     <servlet-name>loginServlet</servlet-name>
@@ -27,6 +32,10 @@
   <servlet-mapping>
     <servlet-name>loginServlet</servlet-name>
     <url-pattern>/portal/logout.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>regServlet</servlet-name>
+  	<url-pattern>/portal/register.do</url-pattern>
   </servlet-mapping>
   
   <servlet>

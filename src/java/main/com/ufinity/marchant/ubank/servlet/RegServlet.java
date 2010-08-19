@@ -108,11 +108,11 @@ public class RegServlet extends AbstractServlet {
 			user.setCreateTime(new Date());
 			user.setOverSize(Constant.ONE_G_SPACE);
 			userService.doRegister(user);
-			
+			request.getRequestDispatcher("home.jsp").forward(request, response);
 		}catch(Exception e){
 			logger.error("error message :"+e.getMessage());
 			try {
-				response.sendRedirect("");
+				response.sendRedirect("/common/error.jsp");
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

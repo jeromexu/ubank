@@ -1,11 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%
-	String path = request.getContextPath();
-	String basePath = request.getScheme() + "://"
-			+ request.getServerName() + ":" + request.getServerPort()
-			+ path + "/";
-%>
+    
+<%@ include file="/WEB-INF/taglib/taglibs.jinc" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -19,6 +16,7 @@
 </div>
 <hr width="380px" align="center" />
 <div align="center">
+<form action="/portal/register.do" method="post" id="userFomr" name="userFomr" >
 <table  width="380px" height="220px">
 	<tbody>
 		<tr>
@@ -39,18 +37,19 @@
 		<tr>
 			<th>验 证 码：</th>
 			<td align="left">
-			<input  id="captchaCode" title="输入验证码" maxlength="4" name="captchaCode" /> 
-			<img src="<%=basePath%>/jcaptcha" ><br/> 看不清，换一张
-				
+			<input  id="captchaCode" name="captchaCode"  title="输入验证码" maxlength="4" /> 
+			<img id="validateImg" name="validateImg" src="${contextPath}/jcaptcha"  style="display: block; margin-bottom: 5px; margin-top: 5px;height: 50px;width: 150px;">
+			<a href="###" onclick="validateImg.src='${contextPath}/jcaptcha?now='+ new Date().getTime()" >看不清</a>
 			</td>
 		</tr>
 		
 		<tr>
-			<th colspan="2" align="left"><input id="regsubmit" type="submit"
-				name="regsubmit" value="注册"/></th>
+			<th colspan="2" align="left">
+			<input id="regsubmit" type="submit" name="regsubmit" value="注册"/></th>
 		</tr>
 	</tbody>
 </table>
+</form>
 </div>
 </body>
 </html>
