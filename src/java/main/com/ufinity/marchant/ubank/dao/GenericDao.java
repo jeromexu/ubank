@@ -33,6 +33,10 @@ import java.util.List;
  * 
  * @author WenQiang Wu
  * @version Aug 18, 2010
+ * @param <T>
+ *            your inject object's type
+ * @param <PK>
+ *            prime key
  */
 public interface GenericDao<T, PK extends Serializable> {
 

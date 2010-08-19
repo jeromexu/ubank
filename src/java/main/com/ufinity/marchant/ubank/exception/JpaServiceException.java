@@ -37,6 +37,12 @@ public class JpaServiceException extends UBankException {
 
     private static final long serialVersionUID = 3552362439677830302L;
 
+    /**
+     * server exception
+     * 
+     * @param desc
+     *            exception description
+     */
     public JpaServiceException(String desc) {
         super(desc);
     }

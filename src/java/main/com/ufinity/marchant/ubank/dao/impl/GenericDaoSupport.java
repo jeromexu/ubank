@@ -39,9 +39,13 @@ import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.GenericDao;
 
 /**
- * @author WenQiang Wu
  * 
- * @time Mar 30, 2009 4:28:58 PM
+ * @author WenQiang Wu
+ * @version Aug 19, 2010
+ * @param <T>
+ *            your inject object's type
+ * @param <PK>
+ *            prime key
  */
 public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         GenericDao<T, PK> {
@@ -54,7 +58,9 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     // save parameter class type
     private Class<T> type;
 
-    // get super class's type
+    /**
+     * get super class's type
+     */
     @SuppressWarnings("unchecked")
     public GenericDaoSupport() {
         this.type = (Class<T>) ((ParameterizedType) (this.getClass()
@@ -65,10 +71,12 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         return this.type;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * The <code>add(T entity)</code> method is add object to database.
      * 
-     * @see com.ufinity.shopping.dao.GenericDao#add(java.lang.Object)
+     * @param entity
+     *            if you want to add entity.
+     * 
      */
     public void add(T entity) {
         String method = "add";
@@ -84,10 +92,12 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
 
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * The <code>delete(T entity)</code> method is delete object to database.
      * 
-     * @see com.ufinity.shopping.dao.GenericDao#delete(java.lang.Object)
+     * @param entity
+     *            if you want to delete entity.
+     * 
      */
     public void delete(T entity) {
         String method = "delete";
@@ -102,10 +112,13 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
 
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * The <code>delete(PK id)</code> method is delete object by id to
+     * database.
      * 
-     * @see com.ufinity.shopping.dao.GenericDao#deleteById(java.io.Serializable)
+     * @param id
+     *            if you want to delete object's condition.
+     * 
      */
     public void deleteById(PK id) {
         String method = "deleteById";
@@ -120,10 +133,14 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
 
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * The <code>find(PK id)</code> method is find object according primary
+     * key.
      * 
-     * @see com.ufinity.shopping.dao.GenericDao#find(java.io.Serializable)
+     * @param id
+     *            if you want to find object's primary key
+     * @return T insject object @ when accessing and manipulating database
+     *         happen exception.
      */
     public T find(PK id) {
         String method = "find";
@@ -139,10 +156,11 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         return entity;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * The <code>getRecordCount()</code> method is used for getting the total
+     * count of records.
      * 
-     * @see com.ufinity.shopping.dao.GenericDao#getRecordCount()
+     * @return PK return total of record counts
      */
     @SuppressWarnings("unchecked")
     public PK getRecordCount() {
@@ -157,10 +175,11 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         return (PK) count;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * The <code>modify(T entity)</code> method is update object to database.
      * 
-     * @see com.ufinity.shopping.dao.GenericDao#modify(java.lang.Object)
+     * @param entity
+     *            if you want to update entity.
      */
     public void modify(T entity) {
         String method = "modifty";
@@ -175,13 +194,21 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
 
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * The <code>queryList(PK startRecord, PK pageSize)</code> method is query
+     * objects according startRecord and pagesize're number, object type is
+     * according your implements this method's define type, and implements this
+     * interface abstract class must be override all method and inject entity
+     * type.
      * 
-     * @see com.ufinity.shopping.dao.GenericDao#queryList(java.io.Serializable,
-     *      java.io.Serializable)
+     * @param startRecord
+     *            Where from the beginning to show this record
+     * @param pageSize
+     *            The number of records per page
+     * @return List<T> T is your inject object's type, List is query all object
+     *         connection
+     * 
      */
-
     @SuppressWarnings("unchecked")
     public List<T> queryList(PK startRecord, PK pageSize) {
         String method = "queryList";
