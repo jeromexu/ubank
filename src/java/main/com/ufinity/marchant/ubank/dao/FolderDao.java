@@ -38,12 +38,12 @@ import com.ufinity.marchant.ubank.bean.Folder;
 public interface FolderDao extends GenericDao<Folder, Long> {
 
     /**
-     * this method is find folder collection according user name
+     * this method is find folder collection according user id
      * 
      * @param userId
      *            user's id
      * @return List<Folder> folder's collection
      * @author skyqiang
      */
-    public List<Folder> findFolderListByUserName(Long userId);
+    public List<Folder> findFolderListByUserId(Long userId);
 }
