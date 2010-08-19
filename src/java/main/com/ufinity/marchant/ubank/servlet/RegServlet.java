@@ -35,6 +35,7 @@ public class RegServlet extends AbstractServlet {
 	private final String  PASS_ERR = "pass_error_msg";
 	private final String  REPASS_ERR = "repass_error_msg";
 	private final String  CAPTCHA_ERR = "captcha_error_msg";
+	private final String  REGISTER_MSG = "register_msg";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -104,13 +105,13 @@ public class RegServlet extends AbstractServlet {
 			} else if (!pass.equals(repass)) {
 				request.setAttribute(REPASS_ERR, Constant.REPASS_ERR_MSG);
 			}
-		
 			User user = new User();
 			user.setUserName(userName);
 			user.setPassword(pass);
 			user.setCreateTime(new Date());
 			user.setOverSize(Constant.ONE_G_SPACE);
-			userService.doRegister(user);
+			String registerMsg = userService.doRegister(user);
+			request.setAttribute(REGISTER_MSG, registerMsg);
 			request.getRequestDispatcher("register.jsp").forward(request, response);
 		}catch(Exception e){
 			logger.error("error message :"+e.getMessage());

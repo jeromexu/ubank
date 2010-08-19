@@ -26,11 +26,15 @@
 //-------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service.impl;
 
+import org.apache.log4j.Logger;
+
 import com.ufinity.marchant.ubank.bean.User;
+import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DaoFactory;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.service.UserService;
+import com.ufinity.marchant.ubank.servlet.RegServlet;
 
 /**
  * 
@@ -41,15 +45,18 @@ import com.ufinity.marchant.ubank.service.UserService;
  * @since 2010-8-18
  */
 public class UserServiceImpl implements UserService {
-    
-    private UserDao userDao;
-    /**
-     * 
-     * Constructor for UserServiceImpl
-     */
-    public UserServiceImpl() {
-        userDao = DaoFactory.getUserDao();
-    }
+
+	// Logger for this class
+    protected final Logger logger = Logger.getLogger(UserServiceImpl.class);
+	private UserDao userDao;
+	
+	/**
+	 * 
+	 * Constructor for UserServiceImpl
+	 */
+	public UserServiceImpl() {
+		userDao = DaoFactory.getUserDao();
+	}
 
 	/**
 	 * 
@@ -57,24 +64,55 @@ public class UserServiceImpl implements UserService {
 	 * 
 	 * @param user
 	 *            a person who do register
+	 * @return the number which register a user
 	 * @author jerome
 	 */
-	public void doRegister(User user) {
+	public String doRegister(User user) {
+		
+		logger.debug( "doRegister:param[user]=" + user );
 		EntityManagerUtil.begin();
-		userDao.add(user);
+		String userName = null;
+		if (user != null) {
+			userName = user.getUserName();
+		}
+		// query current user exist or not
+		User queryUser = userDao.findUserByName(userName);
+		if(queryUser == null){
+			userDao.add(user);
+		} else {
+			// user exist,do not register
+			return Constant.REGISTER_FAILURE;
+		}
 		EntityManagerUtil.commit();
+		logger.debug( "doRegister:-----complete--------" );
+		//register success
+		return Constant.REGISTER_SUCCESS;
 	}
 
 	/**
-     * Get User by username and password 
-     *
-     * @param username user's name
-     * @param password user's password
-     * @return User obj
-     * @author zdxue
-     */
-    public User getUser(String username, String password) {
-        return userDao.findUser(username, password);
-    }
+	 * Get User by username and password
+	 * 
+	 * @param username
+	 *            user's name
+	 * @param password
+	 *            user's password
+	 * @return User obj
+	 * @author zdxue
+	 */
+	public User getUser(String username, String password) {
+		return userDao.findUser(username, password);
+	}
+
+	/**
+	 * 
+	 * get user by userName
+	 * 
+	 * @param userName
+	 *            user's name
+	 * @return user object
+	 */
+	public User getUserByUserName(String userName) {
+		return userDao.findUserByName(userName);
+	}
 
 }

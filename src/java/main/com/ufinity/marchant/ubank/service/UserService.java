@@ -44,17 +44,30 @@ public interface UserService {
 	 * 
 	 * @param user
 	 *            a person who do register
+	 * @return return the message which register a user
 	 * @author jerome
 	 */
-	public void doRegister(User user);
+	public String doRegister(User user);
 
-    /**
-     * Get User by username and password 
-     *
-     * @param username user's name
-     * @param password user's password
-     * @return User obj
-     * @author zdxue
-     */
-    public User getUser(String username, String password);
+	/**
+	 * Get User by username and password
+	 * 
+	 * @param username
+	 *            user's name
+	 * @param password
+	 *            user's password
+	 * @return User obj
+	 * @author zdxue
+	 */
+	public User getUser(String username, String password);
+
+	/**
+	 * 
+	 * get user by userName
+	 * 
+	 * @param userName
+	 *            user's name
+	 * @return user object
+	 */
+	public User getUserByUserName(String userName);
 }

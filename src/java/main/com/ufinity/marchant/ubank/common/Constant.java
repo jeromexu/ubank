@@ -53,4 +53,10 @@ public interface Constant {
     
     // captcha code error
     public static final String CAPTCHA_ERR_MSG = "captcha code is not valid!";
+    
+    // register failue message
+    public static final String REGISTER_FAILURE = "user has existed and register failure!";
+    
+    // register success msg
+    public static final String REGISTER_SUCCESS = "register success!";
 }

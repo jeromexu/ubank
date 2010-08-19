@@ -15,7 +15,10 @@
 </div>
 <hr width="380px" align="center" />
 <div align="center">
-<form action="${contextPath}/portal/register.do" method="post" id="userFomr" name="userFomr" >
+<c:if test="${not empty register_msg }">
+				${register_msg}
+			</c:if>
+<form action="${contextPath}/portal/register.do" method="post" id="userFomr" name="userFomr" onsubmit="return checkUserForm();">
 <table  width="380px" height="220px">
 	<tbody>
 		<tr>
@@ -65,5 +68,41 @@
 </table>
 </form>
 </div>
+
+<script type="text/javascript">
+		function checkUserForm(){
+			var userName = document.getElementById("userName").value;
+			if(userName == '' || userName.length == 0){	
+				alert("请输入用户名！");
+				return false;
+			}else if(userName.length > 20){
+				alert("用户名过长！");
+				return false;
+			}
+			var password = document.getElementById("password").value;
+			var passpord2 = document.getElementById("repassword").value;
+			if(password.replace(/ /g,"") == ""){
+				alert("请输入密码");
+				return false;
+			}
+			if(password.length < 6){
+				alert("密码长度不能小于6");
+				return false;
+			}
+			if(password2.replace(/ /g,"") == ""){
+				alert("请输入密码确认");
+				return false;
+			}
+			if(password != password2){
+				alert("两次输入的密码不一致");
+				return false;
+			}
+			var captchaCode = document.getElementById("captchaCode").value;
+			if(captchaCode == '' || captchaCode.length == 0){
+				alert("验证码不能为空！");
+				return false;
+			}
+		}
+</script>
 </body>
 </html>
