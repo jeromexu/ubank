@@ -1,4 +1,4 @@
-package com.ufinity.marchant.ubank.common;
+package com.ufinity.marchant.ubank.captcha;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;

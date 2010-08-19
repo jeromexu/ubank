@@ -10,5 +10,17 @@ public interface Constant {
 
     /** the key for set session attribute */
     String SESSION_USER = "session_user"; 
+    
+    //userName error message
+    public static final String USERNAME_ERR_MSG = "userName is not valid!";
+    
+    // password error message
+    public static final String PASS_ERR_MSG = "password is not valid!";
+    
+    // repass error
+    public static final String REPASS_ERR_MSG = "repass is not valid!";
+    
+    // default 1G space for each user
+    public static final Integer  ONE_G_SPACE = 1;
 }
 

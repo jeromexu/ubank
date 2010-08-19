@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 	 * @author jerome
 	 */
 	public void doRegister(User user) {
-		
+		userDao.add(user);
 	}
 
 	/**
