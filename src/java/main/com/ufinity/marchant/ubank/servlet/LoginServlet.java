@@ -73,7 +73,7 @@ public class LoginServlet extends AbstractServlet {
             req.setAttribute("error_msg", "username or password error.");
         }else{
             req.getSession().setAttribute(Constant.SESSION_USER, user);
-            return "profile";            
+            return null; //TODO            
         }
         
         return "home.jsp";

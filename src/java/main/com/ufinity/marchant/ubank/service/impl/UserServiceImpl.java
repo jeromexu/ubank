@@ -62,13 +62,16 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
-    /**
-     * @see com.ufinity.marchant.ubank.service.UserService#getUser(java.lang.String, java.lang.String)
+	/**
+     * Get User by username and password 
+     *
+     * @param username user's name
+     * @param password user's password
+     * @return User obj
+     * @author zdxue
      */
     public User getUser(String username, String password) {
-        //userDao.
-        //TODO
-        return null;
+        return userDao.findUser(username, password);
     }
 
 }

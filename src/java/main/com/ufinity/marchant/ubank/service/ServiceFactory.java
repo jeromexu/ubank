@@ -1,6 +1,7 @@
 package com.ufinity.marchant.ubank.service;
 
-import com.ufinity.marchant.ubank.service.impl.UserServiceImpl;
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
+import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 
 /**
  * Service Factory
@@ -9,11 +10,11 @@ import com.ufinity.marchant.ubank.service.impl.UserServiceImpl;
  * @author zdxue     
  */
 public final class ServiceFactory {
-    
+
     private static final ServiceFactory SF = new ServiceFactory();
-    
+
     private ServiceFactory(){}
-    
+
     /**
      * Get ServiceFactory instance 
      *
@@ -23,7 +24,7 @@ public final class ServiceFactory {
     public static ServiceFactory getInstance() {
         return SF;
     } 
-    
+
     /**
      * Get UserService
      *  
@@ -31,8 +32,11 @@ public final class ServiceFactory {
      * @author zdxue
      */
     public UserService getUserService() {
-        //TODO
-        return new UserServiceImpl();
+        try{
+            return (UserService)Class.forName(SystemGlobals.getString(ConfigKeys.SERVICE_USER)).newInstance();
+        }catch(Exception e) {
+            throw new RuntimeException("get UserService implements exception.");
+        }
     }
 
 }
