@@ -70,7 +70,7 @@ public class LoginServlet extends AbstractServlet {
             return ""; //TODO            
         }
         
-        return "home.jsp";
+        return Constant.HOME_PATH;
     }
     
     /**
@@ -83,7 +83,7 @@ public class LoginServlet extends AbstractServlet {
      */
     private String logout(HttpServletRequest req, HttpServletResponse resp) {
         req.getSession().invalidate();
-        return "home.jsp";
+        return Constant.HOME_PATH;
     }
 }
 

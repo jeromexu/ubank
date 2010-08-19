@@ -30,4 +30,6 @@ public interface Constant {
     
     // default 1G space for each user
     public static final Integer  ONE_G_SPACE = 1;
+    
+    String HOME_PATH = "home.jsp";
 }
