@@ -46,4 +46,14 @@ public interface UserDao extends GenericDao<User, Long> {
      * @author skyqiang
      */
     public User findUser(String userName, String password);
+
+    /**
+     * this method is find user according name
+     * 
+     * @param userName
+     *            user name
+     * @return User object
+     * @author skyqiang
+     */
+    public User findUserByName(String userName);
 }
