@@ -1,8 +1,9 @@
-<%@ page contentType="text/html; charset=utf-8" %>
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 <%@ include file="/WEB-INF/taglib/taglibs.jinc" %>
 
 <html>
 	<head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<script type="text/javascript" src="../js/home.js"></script>
 		<link href="../css/home.css" rel="stylesheet" type="text/css">
 		<title>Home</title>	
@@ -15,7 +16,7 @@
 			<div class="leftDiv">
 				
 				<div class="search_div">
-					<form action="#" method="post">
+					<form action="search.do" method="post">
 						<select class="file_size_select" name="fileSize">
 							<option value="0">请选择文件大小</option>
 							<option value="1">1KB - 1MB</option>
@@ -35,7 +36,7 @@
 						
 						<input class="file_name_ipt" id="fileNameId" type="text" name="fileName" maxlength="50" value="请输入文件名" onfocus="clearInput(this.id, '请输入文件名')" onblur="resetInput(this.id, '请输入文件名')">
 						
-						<input class="search_btn" type="button" value="搜索">
+						<input class="search_btn" type="button" value="搜索" onclick="submit(this.id)" id="searchBtn">
 					</form>
 				</div>
 				
