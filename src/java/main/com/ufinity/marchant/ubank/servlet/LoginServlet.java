@@ -37,7 +37,7 @@ public class LoginServlet extends AbstractServlet {
             throws ServletException, IOException {
 
         String method = parseActionName(req);
-        String rslt = "";
+        String rslt = Constant.ERROR_PAGE;
         
         if(Constant.ACTION_LOGIN.equals(method)){
             rslt = login(req, resp);
@@ -45,7 +45,7 @@ public class LoginServlet extends AbstractServlet {
             rslt = logout(req, resp);
         }
         
-        req.getRequestDispatcher(rslt).forward(req, resp);
+        forward(req, resp, rslt);
     }
     
     /**
@@ -60,6 +60,14 @@ public class LoginServlet extends AbstractServlet {
         String username = req.getParameter(Constant.REQ_PARAM_USERNAME);
         String password = req.getParameter(Constant.REQ_PARAM_PASSWORD);
         
+        if(username == null) {
+            username = "";
+        }
+        
+        if(password == null) {
+            password = "";
+        }
+        
         UserService userService = ServiceFactory.getInstance().getUserService();
         User user = userService.getUser(username, password);
         
@@ -67,10 +75,10 @@ public class LoginServlet extends AbstractServlet {
             req.setAttribute(Constant.ERROR_MSG, MessageResource.getMessage(MessageKeys.MSG_LOGIN_FAILURE));
         }else{
             req.getSession().setAttribute(Constant.SESSION_USER, user);
-            return ""; //TODO            
+            return Constant.MAIN_PAGE;         
         }
         
-        return Constant.HOME_PATH;
+        return Constant.HOME_PAGE;
     }
     
     /**
@@ -83,7 +91,7 @@ public class LoginServlet extends AbstractServlet {
      */
     private String logout(HttpServletRequest req, HttpServletResponse resp) {
         req.getSession().invalidate();
-        return Constant.HOME_PATH;
+        return Constant.HOME_PAGE;
     }
 }
 
