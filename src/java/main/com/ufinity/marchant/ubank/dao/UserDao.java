@@ -35,4 +35,15 @@ import com.ufinity.marchant.ubank.bean.User;
  */
 public interface UserDao extends GenericDao<User, Long> {
 
+    /**
+     * this method is find user according user name and password
+     * 
+     * @param userName
+     *            user name
+     * @param password
+     *            user's password
+     * @return User Object
+     * @author skyqiang
+     */
+    public User findUser(String userName, String password);
 }
