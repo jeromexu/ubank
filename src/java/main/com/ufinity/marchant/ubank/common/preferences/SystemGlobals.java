@@ -1,5 +1,7 @@
 package com.ufinity.marchant.ubank.common.preferences;
 
+import java.util.Locale;
+
 
 /**
  * System global configurations
@@ -9,7 +11,7 @@ package com.ufinity.marchant.ubank.common.preferences;
  */
 public final class SystemGlobals {
 
-    private static final UBankResourceBundle RB = new UBankResourceBundle("SystemGlobals"); 
+    private static final UBankResourceBundle RB = new UBankResourceBundle("SystemGlobals", Locale.US); 
 
     /**
      * Private Constructor

@@ -1,5 +1,6 @@
 package com.ufinity.marchant.ubank.common.preferences;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -16,9 +17,9 @@ public class UBankResourceBundle {
      * 
      * @author zdxue
      */
-    public UBankResourceBundle(String baseName) {
+    public UBankResourceBundle(String baseName, Locale locale) {
         try{
-            rb = ResourceBundle.getBundle(baseName);
+            rb = ResourceBundle.getBundle(baseName, locale);
         }catch(Exception e) {
             throw new RuntimeException("init ResourceBundle exception with - " + baseName);
         }

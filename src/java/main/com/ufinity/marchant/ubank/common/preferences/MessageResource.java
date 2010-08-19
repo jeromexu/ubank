@@ -1,5 +1,7 @@
 package com.ufinity.marchant.ubank.common.preferences;
 
+import java.util.Locale;
+
 
 /**
  * Message resources for ubank
@@ -9,7 +11,7 @@ package com.ufinity.marchant.ubank.common.preferences;
  */
 public final class MessageResource {
     
-    private static final UBankResourceBundle RB = new UBankResourceBundle("MessageResources");
+    private static final UBankResourceBundle RB = new UBankResourceBundle("MessageResources", Locale.CHINA);
     
     /**
      * Private Constructor
