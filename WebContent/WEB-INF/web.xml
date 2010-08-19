@@ -29,6 +29,16 @@
     <url-pattern>/portal/logout.do</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>folderServlet</servlet-name>
+    <servlet-class>com.ufinity.marchant.ubank.servlet.FolderServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>folderServlet</servlet-name>
+    <url-pattern>/portal/show.do</url-pattern>
+  </servlet-mapping>
+  
   <error-page>
     <error-code>404</error-code>
     <location>/common/404.html</location>
