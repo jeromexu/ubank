@@ -1,6 +1,5 @@
 package com.ufinity.marchant.ubank.common.preferences;
 
-import java.util.ResourceBundle;
 
 /**
  * System global configurations
@@ -10,8 +9,11 @@ import java.util.ResourceBundle;
  */
 public final class SystemGlobals {
 
-    private static final ResourceBundle RB = ResourceBundle.getBundle("SystemGlobals"); 
+    private static final UBankResourceBundle RB = new UBankResourceBundle("SystemGlobals"); 
 
+    /**
+     * Private Constructor
+     */
     private SystemGlobals(){}
 
     /**
@@ -22,11 +24,7 @@ public final class SystemGlobals {
      * @author zdxue
      */
     public static String getString(String key) {
-        try{
-            return RB.getString(key);
-        }catch(Exception e) {
-            return "";
-        }
+        return RB.getValue(key);
     }
 
 }

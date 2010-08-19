@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
+import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UserService;
 
@@ -20,11 +22,6 @@ import com.ufinity.marchant.ubank.service.UserService;
 @SuppressWarnings("serial")
 public class LoginServlet extends AbstractServlet {
 
-    private static final String LOGIN = "login";
-    private static final String LOGOUT = "logout";
-    private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
-    
     /**
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -38,16 +35,13 @@ public class LoginServlet extends AbstractServlet {
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
-        //System.out.println("Coming ...");
-        
+
         String method = parseActionName(req);
         String rslt = "";
         
-        //System.out.println("method=" + method);
-        if(LOGIN.equals(method)){
+        if(Constant.ACTION_LOGIN.equals(method)){
             rslt = login(req, resp);
-        }else if(LOGOUT.equals(method)) {
+        }else if(Constant.ACTION_LOGOUT.equals(method)) {
             rslt = logout(req, resp);
         }
         
@@ -63,17 +57,17 @@ public class LoginServlet extends AbstractServlet {
      * @author zdxue
      */
     private String login(HttpServletRequest req, HttpServletResponse resp) {
-        String username = req.getParameter(USERNAME);
-        String password = req.getParameter(PASSWORD);
+        String username = req.getParameter(Constant.REQ_PARAM_USERNAME);
+        String password = req.getParameter(Constant.REQ_PARAM_PASSWORD);
         
         UserService userService = ServiceFactory.getInstance().getUserService();
         User user = userService.getUser(username, password);
         
         if(user == null) {
-            req.setAttribute("error_msg", "username or password error.");
+            req.setAttribute(Constant.ERROR_MSG, MessageResource.getMessage(MessageKeys.MSG_LOGIN_FAILURE));
         }else{
             req.getSession().setAttribute(Constant.SESSION_USER, user);
-            return null; //TODO            
+            return ""; //TODO            
         }
         
         return "home.jsp";
@@ -88,7 +82,8 @@ public class LoginServlet extends AbstractServlet {
      * @author zdxue
      */
     private String logout(HttpServletRequest req, HttpServletResponse resp) {
-        return null;
+        req.getSession().invalidate();
+        return "home.jsp";
     }
 }
 
