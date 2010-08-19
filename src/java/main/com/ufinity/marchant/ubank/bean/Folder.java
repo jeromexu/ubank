@@ -245,7 +245,8 @@ public class Folder implements Serializable {
     /**
      * @return the files
      */
-    @OneToMany(cascade = { CascadeType.REMOVE,CascadeType.MERGE,CascadeType.PERSIST }, fetch = FetchType.LAZY, mappedBy = "folder")
+    @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE,
+            CascadeType.PERSIST }, fetch = FetchType.LAZY, mappedBy = "folder")
     public Set<File> getFiles() {
         return files;
     }
@@ -256,6 +257,42 @@ public class Folder implements Serializable {
      */
     public void setFiles(Set<File> files) {
         this.files = files;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (null != obj && obj instanceof Folder) {
+            return this.folderId.equals(((Folder) obj).getFolderId());
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return null == this.folderId ? super.hashCode() : this.folderId
+                .hashCode();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Folder : folderId = " + this.getFolderId()
+                + "\tfolderName = " + this.getFolderName() + "\tshare = "
+                + this.getShare() + "\tdirectory = " + this.getDirectory();
     }
 
 }

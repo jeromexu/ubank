@@ -61,9 +61,9 @@ public class User implements Serializable {
     private String password;
     private Date createTime;
     private Integer overSize;
-    
+
     private Set<Folder> folders = new HashSet<Folder>();
-    
+
     /**
      * @return the userId
      */
@@ -150,17 +150,51 @@ public class User implements Serializable {
     /**
      * @return the folders
      */
-    @OneToMany(cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY, mappedBy="user")
+    @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "user")
     public Set<Folder> getFolders() {
         return folders;
     }
 
     /**
-     * @param folders the folders to set
+     * @param folders
+     *            the folders to set
      */
     public void setFolders(Set<Folder> folders) {
         this.folders = folders;
     }
-    
-    
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (null != obj && obj instanceof User) {
+            return this.userId.equals(((User) obj).getUserId());
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return null == this.userId ? super.hashCode() : this.userId.hashCode();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "User : userId = " + this.getUserId() + "\tuserName = "
+                + this.getUserName() + "\toverSize = " + this.getOverSize();
+    }
+
 }

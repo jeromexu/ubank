@@ -214,4 +214,38 @@ public class File implements Serializable {
         this.folder = folder;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (null != obj && obj instanceof File) {
+            return this.fileId.equals(((File) obj).getFileId());
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return null == this.fileId ? super.hashCode() : this.fileId.hashCode();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "File : fileId = " + this.getFileId() + " \tfolderName = "
+                + this.getFileName() + "\tshare = " + this.getShare()
+                + "\tdirectory = " + this.getDirectory();
+    }
 }
