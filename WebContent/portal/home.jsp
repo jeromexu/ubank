@@ -31,7 +31,7 @@
 							<option value="2">近三天</option>
 							<option value="3">近一周</option>
 							<option value="4">近一月</option>
-							<option value="4">更早的</option>
+							<option value="5">更早的</option>
 						</select>
 						
 						<input class="file_name_ipt" id="fileNameId" type="text" name="fileName" maxlength="50" value="请输入文件名" onfocus="clearInput(this.id, '请输入文件名')" onblur="resetInput(this.id, '请输入文件名')">
