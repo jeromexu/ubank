@@ -36,14 +36,14 @@ import javax.persistence.Persistence;
  */
 public class EntityManagerUtil {
 
-    private static final EntityManagerFactory emFactoty;
-    private static final ThreadLocal<EntityManager> threadLocal;
+    private static final EntityManagerFactory EM_FACTOTY;
+    private static final ThreadLocal<EntityManager> THREAD_LOCAL;
     private static final String JPA_PERSISTENCE_NAME = "ubank";
 
     static {
-        emFactoty = Persistence
+        EM_FACTOTY = Persistence
                 .createEntityManagerFactory(JPA_PERSISTENCE_NAME);
-        threadLocal = new ThreadLocal<EntityManager>();
+        THREAD_LOCAL = new ThreadLocal<EntityManager>();
     }
 
     /**
@@ -53,10 +53,10 @@ public class EntityManagerUtil {
      * @author skyqiang
      */
     public static EntityManager getEntityManager() {
-        EntityManager entityManager = threadLocal.get();
-        if (null != entityManager || !entityManager.isOpen()) {
-            entityManager = emFactoty.createEntityManager();
-            threadLocal.set(entityManager);
+        EntityManager entityManager = THREAD_LOCAL.get();
+        if (null == entityManager || !entityManager.isOpen()) {
+            entityManager = EM_FACTOTY.createEntityManager();
+            THREAD_LOCAL.set(entityManager);
         }
         return entityManager;
     }
@@ -68,8 +68,8 @@ public class EntityManagerUtil {
      * @author skyqiang
      */
     public static void closeEntityManager() {
-        EntityManager entityManager = threadLocal.get();
-        threadLocal.set(null);
+        EntityManager entityManager = THREAD_LOCAL.get();
+        THREAD_LOCAL.set(null);
         if (null != entityManager) {
             entityManager.close();
         }
@@ -82,8 +82,8 @@ public class EntityManagerUtil {
      * @author skyqiang
      */
     public static void closeFactory() {
-        if (null != emFactoty && emFactoty.isOpen()) {
-            emFactoty.close();
+        if (null != EM_FACTOTY && EM_FACTOTY.isOpen()) {
+            EM_FACTOTY.close();
         }
     }
 
