@@ -28,6 +28,7 @@ package com.ufinity.marchant.ubank.service.impl;
 
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.DaoFactory;
+import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.service.UserService;
 
@@ -59,7 +60,9 @@ public class UserServiceImpl implements UserService {
 	 * @author jerome
 	 */
 	public void doRegister(User user) {
+		EntityManagerUtil.begin();
 		userDao.add(user);
+		EntityManagerUtil.commit();
 	}
 
 	/**
