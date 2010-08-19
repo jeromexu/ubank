@@ -6,12 +6,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<script type="text/javascript" src="../js/home.js"></script>
 		<link href="../css/home.css" rel="stylesheet" type="text/css">
-		<title>Home</title>	
+		<title>UBank --- 首页</title>	
 	</head>
 
 	<body>
 		<div class="mainDiv">
-			<div class="topDiv"></div>
+			<div class="topDiv">
+			<h2>UBank</h2>
+			</div>
 			
 			<div class="leftDiv">
 				
