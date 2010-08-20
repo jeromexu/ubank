@@ -31,9 +31,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageResource;
-import com.ufinity.marchant.ubank.service.ServiceFactory;
+import com.ufinity.marchant.ubank.service.ServiceRetrieve;
 import com.ufinity.marchant.ubank.service.UserService;
 
 /**
@@ -91,7 +92,7 @@ public class LoginServlet extends AbstractServlet {
             password = "";
         }
         
-        UserService userService = ServiceFactory.getInstance().getUserService();
+        UserService userService = ServiceRetrieve.retrieve(UserService.class, ConfigKeys.SERVICE_USER);
         User user = userService.getUser(username, password);
         
         if(user == null) {

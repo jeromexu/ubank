@@ -13,9 +13,10 @@ import com.octo.captcha.service.image.ImageCaptchaService;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.captcha.MyCaptchaService;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageResource;
-import com.ufinity.marchant.ubank.service.ServiceFactory;
+import com.ufinity.marchant.ubank.service.ServiceRetrieve;
 import com.ufinity.marchant.ubank.service.UserService;
 
 /**
@@ -33,6 +34,7 @@ public class RegServlet extends AbstractServlet {
 	protected final Logger logger = Logger.getLogger(RegServlet.class);
 	
 	// user service business logic instance
+
 	private UserService userService = null;
 	
 	// captcha code service instance
@@ -121,7 +123,7 @@ public class RegServlet extends AbstractServlet {
 				user.setPassword(pass);
 				user.setCreateTime(new Date());
 				user.setOverSize(Constant.ONE_G_SPACE);
-				userService = ServiceFactory.getInstance().getUserService();
+				userService = ServiceRetrieve.retrieve(UserService.class, ConfigKeys.SERVICE_USER);
 				String registerMsg = userService.doRegister(user);
 				request.setAttribute(Constant.REGISTER_MSG, registerMsg);
 			}
