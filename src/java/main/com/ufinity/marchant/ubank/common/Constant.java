@@ -51,6 +51,8 @@ public interface Constant {
     /** user login parameters */
     String REQ_PARAM_USERNAME = "userName";
     String REQ_PARAM_PASSWORD = "password";
+    public final String REQ_PARAM_REPASSWORD = "repassword";
+    public final String REQ_PARAM_CAPTCHACODE= "captchaCode";
     
     /** file search parameters */
     String REQ_PARAM_FILESIZE = "fileSize";
@@ -67,6 +69,7 @@ public interface Constant {
     String MAIN_PAGE = "main.jsp";
     String SEARCH_RESULT_PAGE = "searchResult.jsp";
     String ERROR_PAGE = "/common/404.html";
+    public final String REGISTER_PAGE = "register.jsp";
     
     // user register error message
     public  final String  USERNAME_ERR = "userName_error_msg";
@@ -75,6 +78,7 @@ public interface Constant {
 	public  final String  CAPTCHA_ERR = "captcha_error_msg";
 	public  final String  REGISTER_MSG = "register_msg";
 	
+	// user download action
 	public final String ACTION_DOWNLOAD = "download";
     
    

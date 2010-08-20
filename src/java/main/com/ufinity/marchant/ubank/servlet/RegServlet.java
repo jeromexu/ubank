@@ -33,8 +33,7 @@ public class RegServlet extends AbstractServlet {
 	protected final Logger logger = Logger.getLogger(RegServlet.class);
 	
 	// user service business logic instance
-	private UserService userService = ServiceFactory.getInstance()
-			.getUserService();
+	private UserService userService = null;
 	
 	// captcha code service instance
 	private ImageCaptchaService imageCaptchaService = MyCaptchaService
@@ -79,7 +78,7 @@ public class RegServlet extends AbstractServlet {
 			HttpServletResponse response) {
 
 		try {
-			String captchaCode = request.getParameter("captchaCode");
+			String captchaCode = request.getParameter(Constant.REQ_PARAM_CAPTCHACODE);
 			if (logger.isDebugEnabled()) {
 				logger.debug("captchaCode = " + captchaCode);
 			}
@@ -98,9 +97,9 @@ public class RegServlet extends AbstractServlet {
 				request.setAttribute(Constant.CAPTCHA_ERR, MessageResource
 						.getMessage(MessageKeys.CAPTCHA_ERR_MSG));
 			} else {
-				String userName = request.getParameter("userName");
-				String pass = request.getParameter("password");
-				String repass = request.getParameter("repassword");
+				String userName = request.getParameter(Constant.REQ_PARAM_USERNAME);
+				String pass = request.getParameter(Constant.REQ_PARAM_PASSWORD);
+				String repass = request.getParameter(Constant.REQ_PARAM_REPASSWORD);
 				if (logger.isDebugEnabled()) {
 					logger.debug("userName = " + userName);
 					logger.debug("pass = " + pass);
@@ -122,17 +121,17 @@ public class RegServlet extends AbstractServlet {
 				user.setPassword(pass);
 				user.setCreateTime(new Date());
 				user.setOverSize(Constant.ONE_G_SPACE);
+				userService = ServiceFactory.getInstance().getUserService();
 				String registerMsg = userService.doRegister(user);
 				request.setAttribute(Constant.REGISTER_MSG, registerMsg);
 			}
 
-			request.getRequestDispatcher("register.jsp").forward(request,
-					response);
+			forward(request, response, Constant.REGISTER_PAGE);
 		} catch (Exception e) {
 			logger.error("error message :" + e.getMessage());
 			try {
 				response.sendRedirect(request.getContextPath()
-						+ "/common/error.jsp");
+						+ Constant.ERROR_PAGE);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
