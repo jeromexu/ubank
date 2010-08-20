@@ -36,15 +36,6 @@ public interface Constant {
     /** the key for set session attribute */
     String SESSION_USER = "session_user"; 
     
-    //userName error message
-    public static final String USERNAME_ERR_MSG = "userName is not valid!";
-    
-    // password error message
-    public static final String PASS_ERR_MSG = "password is not valid!";
-    
-    // repass error
-    public static final String REPASS_ERR_MSG = "repass is not valid!";
-    
     // default 1G space for each user
     public static final Integer  ONE_G_SPACE = 1;
     
@@ -53,12 +44,12 @@ public interface Constant {
     String SEARCH_RESULT_PAGE = "searchResult.jsp";
     String ERROR_PAGE = "/common/404.html";
     
-    // captcha code error
-    public static final String CAPTCHA_ERR_MSG = "captcha code is not valid!";
+    // user register error message
+    public  final String  USERNAME_ERR = "userName_error_msg";
+	public  final String  PASS_ERR = "pass_error_msg";
+	public  final String  REPASS_ERR = "repass_error_msg";
+	public  final String  CAPTCHA_ERR = "captcha_error_msg";
+	public  final String  REGISTER_MSG = "register_msg";
     
-    // register failue message
-    public static final String REGISTER_FAILURE = "user has existed and register failure!";
-    
-    // register success msg
-    public static final String REGISTER_SUCCESS = "register success!";
+   
 }
