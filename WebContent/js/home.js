@@ -41,6 +41,25 @@ function goPage(url) {
 	//window.open(url);  //open new page in new window
 }
 
+function login() {
+	var userName = $("#userName").val();
+	var pwd = $("#password").val();
+	
+	if($.trim(userName) == ''){
+		alert("请输入用户名");
+		$("#userName").focus();
+		return false;
+	}
+	
+	if(pwd.length == 0) {
+		alert("请输入密码");
+		$("#password").focus();
+		return false;
+	}
+	
+	submit('loginForm');
+}
+
 /**
  * Submit a form
  * 

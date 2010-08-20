@@ -57,10 +57,10 @@
                       </div>
                     </c:if>
         
-					<form action="login.do" method="post">
-						账号:<input class="username_clz" type="text" name="userName" maxlength="50"><br>
-						密码:<input class="password_clz" type="password" name="password" maxlength="50"><br>
-						<input class="login_btn" type="button" value="登录" onclick="submit(this.id)" id="loginBtn" >
+					<form action="login.do" method="post" id="loginForm">
+						账号:<input class="username_clz" type="text" name="userName" maxlength="50" id="userName"><br>
+						密码:<input class="password_clz" type="password" name="password" maxlength="50" id="password"><br>
+						<input class="login_btn" type="button" value="登录" onclick="return login()" id="loginBtn" >
                         <input class="register_btn" type="button" value="注册" onclick="goPage('register.jsp')">
 					</form>
 				</div>
