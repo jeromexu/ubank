@@ -73,6 +73,8 @@ public class UserServiceImpl implements UserService {
 		String userName = null;
 		if (user != null) {
 			userName = user.getUserName();
+		} else {
+			return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
 		}
 		// query current user exist or not
 		User queryUser = userDao.findUserByName(userName);
