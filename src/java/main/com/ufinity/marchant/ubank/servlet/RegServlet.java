@@ -2,14 +2,12 @@ package com.ufinity.marchant.ubank.servlet;
 
 import java.io.IOException;
 import java.util.Date;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
-import com.octo.captcha.service.CaptchaServiceException;
-import com.octo.captcha.service.image.ImageCaptchaService;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.captcha.MyCaptchaService;
 import com.ufinity.marchant.ubank.common.Constant;
@@ -36,10 +34,6 @@ public class RegServlet extends AbstractServlet {
 	// user service business logic instance
 
 	private UserService userService = null;
-	
-	// captcha code service instance
-	private ImageCaptchaService imageCaptchaService = MyCaptchaService
-			.getInstance();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -84,16 +78,11 @@ public class RegServlet extends AbstractServlet {
 			if (logger.isDebugEnabled()) {
 				logger.debug("captchaCode = " + captchaCode);
 			}
-			String captchaId = request.getSession().getId();
-			Boolean isValidateCode = false;
-			try {
-				// Call the Service method
-				isValidateCode = imageCaptchaService.validateResponseForID(
-						captchaId, captchaCode);
-			} catch (CaptchaServiceException e) {
-				// should not happen, may be thrown if the id is not valid
-				logger.error(e.getMessage());
-			}
+			HttpSession session = request.getSession();   
+			boolean isValidateCode = false;   
+			// retrieve the response   
+			String validateCode = captchaCode.trim();   
+			isValidateCode = MyCaptchaService.getInstance().validateCaptchaResponse(validateCode, session);   
 			if (!isValidateCode) {
 				// captcha code is not right
 				request.setAttribute(Constant.CAPTCHA_ERR, MessageResource

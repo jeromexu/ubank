@@ -57,9 +57,9 @@
 		<tr>
 			<th>验 证 码：</th>
 			<td align="left"><input id="captchaCode" name="captchaCode"
-				title="输入验证码" /> <img id="validateImg" name="validateImg"
+				title="输入验证码"/> <img id="validateImg" name="validateImg"
 				src="${contextPath}/jcaptcha"
-				style="display: block; margin-bottom: 5px; margin-top: 5px; height: 50px; width: 150px;">
+				style="display: block; margin-bottom: 5px; margin-top: 5px;">
 			<a href="javascript:;"
 				onclick="validateImg.src='${contextPath}/jcaptcha?now='+ new Date().getTime()">看不清</a>
 			</td>
