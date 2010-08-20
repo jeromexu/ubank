@@ -44,7 +44,7 @@ public class FileServiceImpl implements FileService {
      * construtor
      */
     public FileServiceImpl() {
-        fileDao = DaoFactory.getFileDao();
+        fileDao = DaoFactory.createDao(FileDao.class);
     }
 
     /**

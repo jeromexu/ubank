@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 	 * Constructor for UserServiceImpl
 	 */
 	public UserServiceImpl() {
-		userDao = DaoFactory.getUserDao();
+		userDao = DaoFactory.createDao(UserDao.class);
 	}
 
 	/**
