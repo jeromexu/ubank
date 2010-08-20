@@ -27,10 +27,16 @@
 package com.ufinity.marchant.ubank.service;
 
 import com.ufinity.marchant.ubank.bean.Folder;
+import com.ufinity.marchant.ubank.exception.UBankException;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  * this class is a node of in directory tree
@@ -39,8 +45,24 @@ import java.util.Map;
  * @version 2010-8-17
  */
 public class FolderNode {
-    private Folder folder;
-    private List<FolderNode> subNodes = new ArrayList<FolderNode>();
+
+    private Long folderId;
+    private Long parentId;
+    private String folderName;
+    private Date createTime;
+    private Date modifyTime;
+    private String directory;
+    private Boolean share;
+    private String folderType;
+    private Long userId;
+    private List<FolderNode> subNodes;
+
+    /**
+     * Constructor for FolderNode
+     */
+    private FolderNode() {
+        this.subNodes = new ArrayList<FolderNode>();
+    }
 
     /**
      * Generate a directory Tree
@@ -50,73 +72,250 @@ public class FolderNode {
      *            collection
      * @return return a FolderNode
      */
-    public static FolderNode GenerateFolderTree(List<Folder> folders) {
+    public static FolderNode generateFolderTree(List<Folder> folders) {
         FolderNode rootNode = null;
         Map<Long, FolderNode> nodes = new HashMap<Long, FolderNode>();
 
         if (folders == null || folders.isEmpty()) {
             return rootNode;
         }
-
         // if contains top root directory then the root directory is last one
         Folder lastFolder = folders.get(folders.size() - 1);
         if (lastFolder.getParent() == null) {
             rootNode = new FolderNode();
-            rootNode.setFolder(lastFolder);
-            nodes.put(lastFolder.getFolderId(), rootNode);
+            copyProperties(rootNode, lastFolder);
+            addToTree(nodes, rootNode);
 
             for (int i = 0; i < folders.size() - 1; i++) {
                 Folder folder = folders.get(i);
                 FolderNode node = new FolderNode();
-                node.setFolder(folder);
-                nodes.put(folder.getFolderId(), node);
-                FolderNode parentNode = null;
-                if (folder.getParent() != null) {
-                    parentNode = nodes.get(folder.getParent().getFolderId());
-                }
-                if (parentNode != null) {
-                    parentNode.getSubNodes().add(node);
-                }
+                copyProperties(node, folder);
+                addToTree(nodes, node);
             }
         }
         else { // part of the tree
             for (int i = 0; i < folders.size(); i++) {
                 Folder folder = folders.get(i);
                 FolderNode node = new FolderNode();
-                node.setFolder(folder);
-                if (i == 0) {
-                    rootNode = node;
-                }
-                nodes.put(folder.getFolderId(), node);
-                FolderNode parentNode = null;
-                if (folder.getParent() != null) {
-                    parentNode = nodes.get(folder.getParent().getFolderId());
-                }
-                if (parentNode != null) {
-                    parentNode.getSubNodes().add(node);
-                }
+                copyProperties(node, folder);
+                addToTree(nodes, node);
             }
         }
         return rootNode;
     }
 
     /**
-     * the getter method of folder
+     * this method copy a part of 'Folder' property to 'FolderNode'
      * 
-     * @return the folder
+     * @param node
+     *            tree node
+     * @param folder
+     *            folder object
      */
-    public Folder getFolder() {
-        return folder;
+    private static void copyProperties(FolderNode node, Folder folder) {
+        try {
+            BeanUtils.copyProperties(node, folder);
+        }
+        catch (Exception e) {
+        }
+
+        Folder parentFolder = folder.getParent();
+        if (parentFolder != null) {
+            node.setParentId(parentFolder.getFolderId());
+        }
+        node.setUserId(folder.getUser().getUserId());
     }
 
     /**
-     * the setter method of the folder
+     * Will be Folder Node added to the directory tree
      * 
-     * @param folder
-     *            the folder to set
+     * @param nodes
+     *            FolderNode set
+     * @param node
+     *            a folderNOde
+     * @throws UBankException
+     *             throw exception when nodes is null
      */
-    public void setFolder(Folder folder) {
-        this.folder = folder;
+    private static void addToTree(Map<Long, FolderNode> nodes, FolderNode node) {
+        if (node == null) {
+            return;
+        }
+        if (node.getParentId() != null) {
+            FolderNode parentNode = nodes.get(node.getParentId());
+            parentNode.getSubNodes().add(node);
+        }
+        nodes.put(node.getFolderId(), node);
+    }
+
+    /**
+     * the getter method of folderId
+     * 
+     * @return the folderId
+     */
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    /**
+     * the setter method of the folderId
+     * 
+     * @param folderId
+     *            the folderId to set
+     */
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
+    }
+
+    /**
+     * the getter method of parentId
+     * 
+     * @return the parentId
+     */
+    public Long getParentId() {
+        return parentId;
+    }
+
+    /**
+     * the setter method of the parentId
+     * 
+     * @param parentId
+     *            the parentId to set
+     */
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    /**
+     * the getter method of folderName
+     * 
+     * @return the folderName
+     */
+    public String getFolderName() {
+        return folderName;
+    }
+
+    /**
+     * the setter method of the folderName
+     * 
+     * @param folderName
+     *            the folderName to set
+     */
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
+
+    /**
+     * the getter method of createTime
+     * 
+     * @return the createTime
+     */
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * the setter method of the createTime
+     * 
+     * @param createTime
+     *            the createTime to set
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * the getter method of modifyTime
+     * 
+     * @return the modifyTime
+     */
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    /**
+     * the setter method of the modifyTime
+     * 
+     * @param modifyTime
+     *            the modifyTime to set
+     */
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    /**
+     * the getter method of directory
+     * 
+     * @return the directory
+     */
+    public String getDirectory() {
+        return directory;
+    }
+
+    /**
+     * the setter method of the directory
+     * 
+     * @param directory
+     *            the directory to set
+     */
+    public void setDirectory(String directory) {
+        this.directory = directory;
+    }
+
+    /**
+     * the getter method of share
+     * 
+     * @return the share
+     */
+    public Boolean getShare() {
+        return share;
+    }
+
+    /**
+     * the setter method of the share
+     * 
+     * @param share
+     *            the share to set
+     */
+    public void setShare(Boolean share) {
+        this.share = share;
+    }
+
+    /**
+     * the getter method of folderType
+     * 
+     * @return the folderType
+     */
+    public String getFolderType() {
+        return folderType;
+    }
+
+    /**
+     * the setter method of the folderType
+     * 
+     * @param folderType
+     *            the folderType to set
+     */
+    public void setFolderType(String folderType) {
+        this.folderType = folderType;
+    }
+
+    /**
+     * the getter method of userId
+     * 
+     * @return the userId
+     */
+    public Long getUserId() {
+        return userId;
+    }
+
+    /**
+     * the setter method of the userId
+     * 
+     * @param userId
+     *            the userId to set
+     */
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     /**
