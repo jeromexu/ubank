@@ -34,10 +34,11 @@ import org.slf4j.LoggerFactory;
 
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageResource;
-import com.ufinity.marchant.ubank.service.ServiceRetrieve;
+import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UserService;
 
 /**
@@ -96,15 +97,15 @@ public class LoginServlet extends AbstractServlet {
         LOG.debug("username=" + username + " , password=" + password);
         
         //If validate failure, then return.
-        if(username == null || username.length() > Constant.USERNAME_LENGTH 
-                || password == null || password.length() > Constant.PASSWORD_LENGTH) {
+        if(Validity.isEmpty(username) || username.length() > Constant.USERNAME_LENGTH 
+                || Validity.isEmpty(password) || password.length() > Constant.PASSWORD_LENGTH) {
             LOG.debug("login validation failure!");
 
             req.setAttribute(Constant.ATTR_ERROR_MSG, MessageResource.getMessage(MessageKeys.MSG_LOGIN_FAILURE));
             return Constant.HOME_PAGE;
         }
         
-        UserService userService = ServiceRetrieve.retrieve(UserService.class, ConfigKeys.SERVICE_USER);
+        UserService userService = ServiceFactory.createService(UserService.class, ConfigKeys.SERVICE_USER);
         User user = userService.getUser(username, password);
         
         if(user == null) {
