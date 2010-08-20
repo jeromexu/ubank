@@ -49,7 +49,7 @@ public interface Constant {
     String ACTION_SEARCH = "search";
 
     /** user login parameters */
-    String REQ_PARAM_USERNAME = "username";
+    String REQ_PARAM_USERNAME = "userName";
     String REQ_PARAM_PASSWORD = "password";
     
     /** file search parameters */
