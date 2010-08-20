@@ -17,7 +17,7 @@
 </div>
 <div class="main_Div">
 <div align="right"><a href="###">登陆</a> | <a href="###">注册</a></div>
-<div style="text-align:center;">
+<div style="text-align: center;">
 <h1 style="color: #555;">注册</h1>
 </div>
 <hr width="380px" align="center" />
@@ -57,10 +57,6 @@
 
 		<tr>
 			<th>验 证 码：</th>
-		<td align="left">
-			<input  id="captchaCode" name="captchaCode"  title="输入验证码"/> 
-			<img id="validateImg" name="validateImg" src="${contextPath}/jcaptcha"  style="display: block; margin-bottom: 5px; margin-top: 5px;height: 50px;width: 150px;">
-			<a href="javascript:;" onclick="validateImg.src='${contextPath}/jcaptcha?now='+ new Date().getTime()" >看不清</a>
 			<td align="left"><input id="captchaCode" name="captchaCode"
 				title="输入验证码" /> <img id="validateImg" name="validateImg"
 				src="${contextPath}/jcaptcha"
