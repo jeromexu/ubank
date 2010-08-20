@@ -22,8 +22,8 @@ public final class ServiceFactory {
      *
      * @param <T> Service interface
      * @param serviceClz Service interface class
-     * @param serviceKey Service interface key
-     * @return Service interface instance
+     * @param serviceKey Service interface key that decared in the SystemGlobals.properties
+     * @return Service interface impl instance
      * @author zdxue
      */
     public static <T> T createService(Class<T> serviceClz, String serviceKey) {
