@@ -23,7 +23,15 @@
 <hr width="380px" align="center" />
 <div align="center"><c:if test="${not empty register_msg }">
 				${register_msg}
-			</c:if>
+</c:if> <c:if test="${not empty userName_error_msg }">
+				${userName_error_msg}
+</c:if> <c:if test="${not empty pass_error_msg }">
+				${pass_error_msg}
+</c:if> <c:if test="${not empty repass_error_msg }">
+				${repass_error_msg}
+</c:if> <c:if test="${not empty captcha_error_msg }">
+				${captcha_error_msg}
+</c:if>
 <form action="${contextPath}/portal/register.do" method="post"
 	id="userFomr" name="userFomr" onsubmit="return checkUserForm();">
 <table width="380px" height="220px">
@@ -32,27 +40,18 @@
 			<th>帐 号：</th>
 			<td align="left"><input type="text" id="userName"
 				name="userName" /></td>
-			<td><c:if test="${not empty userName_error_msg }">
-				${userName_error_msg}
-			</c:if></td>
 		</tr>
 
 		<tr>
 			<th>密 码：</th>
 			<td align="left"><input type="password" id="password"
 				name="password" /></td>
-			<td><c:if test="${not empty pass_error_msg }">
-				${pass_error_msg}
-			</c:if></td>
 		</tr>
 
 		<tr>
 			<th>重复密码：</th>
 			<td align="left"><input type="password" id="repassword"
 				name="repassword" /></td>
-			<td><c:if test="${not empty repass_error_msg }">
-				${repass_error_msg}
-			</c:if></td>
 		</tr>
 
 		<tr>
@@ -64,9 +63,6 @@
 			<a href="javascript:;"
 				onclick="validateImg.src='${contextPath}/jcaptcha?now='+ new Date().getTime()">看不清</a>
 			</td>
-			<td><c:if test="${not empty captcha_error_msg }">
-				${captcha_error_msg}
-			</c:if></td>
 		</tr>
 		<tr>
 			<th colspan="2" align="left"><input id="regsubmit" type="submit"
