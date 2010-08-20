@@ -26,7 +26,7 @@ package com.ufinity.marchant.ubank.service.impl;
 import java.util.List;
 
 import com.ufinity.marchant.ubank.bean.File;
-import com.ufinity.marchant.ubank.common.DaoFactory;
+import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.service.FileService;
 
