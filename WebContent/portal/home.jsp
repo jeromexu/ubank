@@ -14,7 +14,7 @@
 	<body>
 		<div class="mainDiv">
 			<div class="topDiv">
-			<h2>UBank          <a href="logout.do">退出</a></h2>
+			<h2>UBank</h2>
 			</div>
 			
 			<div class="leftDiv">
