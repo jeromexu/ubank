@@ -29,6 +29,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
@@ -45,7 +48,9 @@ import com.ufinity.marchant.ubank.service.UserService;
  */
 @SuppressWarnings("serial")
 public class LoginServlet extends AbstractServlet {
-
+    
+    private final Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
+    
     /**
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -62,12 +67,16 @@ public class LoginServlet extends AbstractServlet {
 
         String method = parseActionName(req);
         String rslt = Constant.ERROR_PAGE;
+
+        LOG.debug("action method=" + method);
         
         if(Constant.ACTION_LOGIN.equals(method)){
             rslt = login(req, resp);
         }else if(Constant.ACTION_LOGOUT.equals(method)) {
             rslt = logout(req, resp);
         }
+        
+        LOG.debug("go page=" + rslt);
         
         forward(req, resp, rslt);
     }
@@ -84,25 +93,29 @@ public class LoginServlet extends AbstractServlet {
         String username = req.getParameter(Constant.REQ_PARAM_USERNAME);
         String password = req.getParameter(Constant.REQ_PARAM_PASSWORD);
         
-        if(username == null) {
-            username = "";
-        }
+        LOG.debug("username=" + username + " , password=" + password);
         
-        if(password == null) {
-            password = "";
+        //If validate failure, then return.
+        if(username == null || username.length() > Constant.USERNAME_LENGTH 
+                || password == null || password.length() > Constant.PASSWORD_LENGTH) {
+            LOG.debug("login validation failure!");
+
+            req.setAttribute(Constant.ATTR_ERROR_MSG, MessageResource.getMessage(MessageKeys.MSG_LOGIN_FAILURE));
+            return Constant.HOME_PAGE;
         }
         
         UserService userService = ServiceRetrieve.retrieve(UserService.class, ConfigKeys.SERVICE_USER);
         User user = userService.getUser(username, password);
         
         if(user == null) {
+            LOG.debug("user not exists, login failure");
             req.setAttribute(Constant.ATTR_ERROR_MSG, MessageResource.getMessage(MessageKeys.MSG_LOGIN_FAILURE));
+            return Constant.HOME_PAGE;
         }else{
+            LOG.debug("login success");
             req.getSession().setAttribute(Constant.SESSION_USER, user);
             return Constant.MAIN_PAGE;         
         }
-        
-        return Constant.HOME_PAGE;
     }
     
     /**
@@ -114,6 +127,8 @@ public class LoginServlet extends AbstractServlet {
      * @author zdxue
      */
     private String logout(HttpServletRequest req, HttpServletResponse resp) {
+        LOG.debug("invalidate session");
+        
         req.getSession().invalidate();
         return Constant.HOME_PAGE;
     }

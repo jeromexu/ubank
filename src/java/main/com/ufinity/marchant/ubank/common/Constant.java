@@ -72,14 +72,17 @@ public interface Constant {
     public final String REGISTER_PAGE = "register.jsp";
 
     // user register error message
-    public final String USERNAME_ERR = "userName_error_msg";
-    public final String PASS_ERR = "pass_error_msg";
-    public final String REPASS_ERR = "repass_error_msg";
-    public final String CAPTCHA_ERR = "captcha_error_msg";
-    public final String REGISTER_MSG = "register_msg";
-
-    // user download action
-    public final String ACTION_DOWNLOAD = "download";
+    public  final String  USERNAME_ERR = "userName_error_msg";
+	public  final String  PASS_ERR = "pass_error_msg";
+	public  final String  REPASS_ERR = "repass_error_msg";
+	public  final String  CAPTCHA_ERR = "captcha_error_msg";
+	public  final String  REGISTER_MSG = "register_msg";
+	
+	// user download action
+	public final String ACTION_DOWNLOAD = "download";
+    
+	short USERNAME_LENGTH = 30;
+	short PASSWORD_LENGTH = 50;
 
     /*
      * Folder type: root--root directory; 
