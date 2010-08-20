@@ -29,7 +29,7 @@ package com.ufinity.marchant.ubank.dao.impl;
 import java.util.Date;
 import java.util.Map;
 
-import com.ufinity.marchant.ubank.bean.File;
+import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.FileDao;
 
@@ -38,7 +38,7 @@ import com.ufinity.marchant.ubank.dao.FileDao;
  * @author WenQiang Wu
  * @version Aug 18, 2010
  */
-public class FileDaoImpl extends GenericDaoSupport<File, Long> implements
+public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
         FileDao {
 
     /**
@@ -53,7 +53,7 @@ public class FileDaoImpl extends GenericDaoSupport<File, Long> implements
      * @return Pager pager object
      * @author skyqiang
      */
-    public Pager<File> searchPaginatedForFile(int currentPage, int pageSize,
+    public Pager<FileBean> searchPaginatedForFile(int currentPage, int pageSize,
             Map<String, Object> condition) {
         String jpaQuery = "SELECT f from File f "
                 + getJPAQueryString(condition);

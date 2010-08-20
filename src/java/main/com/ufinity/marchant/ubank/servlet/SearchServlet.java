@@ -30,7 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ufinity.marchant.ubank.bean.File;
+import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
@@ -97,7 +97,7 @@ public class SearchServlet extends AbstractServlet {
         FileService fileService = ServiceFactory.createService(FileService.class);
         fileService.searchShareFiles(fileName, fileSize, publishDate);
         
-        List<File> fileList = null;
+        List<FileBean> fileList = null;
         
         req.setAttribute(Constant.ATTR_FILELIST, fileList);
         

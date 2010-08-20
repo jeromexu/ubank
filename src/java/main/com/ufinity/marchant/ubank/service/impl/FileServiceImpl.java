@@ -25,7 +25,7 @@ package com.ufinity.marchant.ubank.service.impl;
 
 import java.util.List;
 
-import com.ufinity.marchant.ubank.bean.File;
+import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.service.FileService;
@@ -56,7 +56,7 @@ public class FileServiceImpl implements FileService {
      * @return file list
      * @author zdxue
      */
-    public List<File> searchShareFiles(String fileName, String fileSize,
+    public List<FileBean> searchShareFiles(String fileName, String fileSize,
             String publishDate) {
         
         

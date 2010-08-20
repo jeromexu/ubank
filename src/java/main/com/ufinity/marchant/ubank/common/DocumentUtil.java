@@ -1,6 +1,6 @@
 package com.ufinity.marchant.ubank.common;
 
-import com.ufinity.marchant.ubank.bean.File;
+import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
 
 /**
@@ -23,7 +23,7 @@ public class DocumentUtil {
 	 * @return integer 
 	 * 				success or not
 	 */
-	public static int addNewFile(File file) {
+	public static int addNewFile(FileBean file) {
 		return 0;
 	}
 
@@ -48,7 +48,7 @@ public class DocumentUtil {
 	 * @return integer
 	 * 			success or not
 	 */
-	public static int renameFile(File file,String newName) {
+	public static int renameFile(FileBean file,String newName) {
 		return 0;
 	}
 
@@ -73,7 +73,7 @@ public class DocumentUtil {
 	 * @return integer
 	 * 				success or not
 	 */
-	public static int moveFileTo(File file,Folder newPath) {
+	public static int moveFileTo(FileBean file,Folder newPath) {
 		return 0;
 	}
 
@@ -98,7 +98,7 @@ public class DocumentUtil {
 	 * @return integer
 	 * 			success or not
 	 */
-	public static int removeFile(File file) {
+	public static int removeFile(FileBean file) {
 		return 0;
 	}
 

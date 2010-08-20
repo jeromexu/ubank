@@ -71,7 +71,7 @@ public class Folder implements Serializable {
     private Set<Folder> children = new HashSet<Folder>();
 
     private User user;
-    private Set<File> files = new HashSet<File>();
+    private Set<FileBean> files = new HashSet<FileBean>();
 
     /**
      * @return the folderId
@@ -247,7 +247,7 @@ public class Folder implements Serializable {
      */
     @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE,
             CascadeType.PERSIST }, fetch = FetchType.LAZY, mappedBy = "folder")
-    public Set<File> getFiles() {
+    public Set<FileBean> getFiles() {
         return files;
     }
 
@@ -255,7 +255,7 @@ public class Folder implements Serializable {
      * @param files
      *            the files to set
      */
-    public void setFiles(Set<File> files) {
+    public void setFiles(Set<FileBean> files) {
         this.files = files;
     }
 

@@ -28,7 +28,7 @@ package com.ufinity.marchant.ubank.dao;
 
 import java.util.Map;
 
-import com.ufinity.marchant.ubank.bean.File;
+import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Pager;
 
 /**
@@ -36,7 +36,7 @@ import com.ufinity.marchant.ubank.common.Pager;
  * @author WenQiang Wu
  * @version Aug 18, 2010
  */
-public interface FileDao extends GenericDao<File, Long> {
+public interface FileDao extends GenericDao<FileBean, Long> {
 
     /**
      * this method is search file and return Pager object
@@ -50,7 +50,7 @@ public interface FileDao extends GenericDao<File, Long> {
      * @return Pager pager object
      * @author skyqiang
      */
-    public Pager<File> searchPaginatedForFile(int currentPage, int pageSize,
+    public Pager<FileBean> searchPaginatedForFile(int currentPage, int pageSize,
             Map<String, Object> condition);
 
 }

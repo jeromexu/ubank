@@ -25,7 +25,7 @@ package com.ufinity.marchant.ubank.service;
 
 import java.util.List;
 
-import com.ufinity.marchant.ubank.bean.File;
+import com.ufinity.marchant.ubank.bean.FileBean;
 
 /**
  * File Service
@@ -44,6 +44,6 @@ public interface FileService {
      * @return file list
      * @author zdxue
      */
-    public List<File> searchShareFiles(String fileName, String fileSize, String publishDate);
+    public List<FileBean> searchShareFiles(String fileName, String fileSize, String publishDate);
 }
 

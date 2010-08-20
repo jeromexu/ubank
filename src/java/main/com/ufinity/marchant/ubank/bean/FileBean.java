@@ -48,7 +48,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "U_FILE")
-public class File implements Serializable {
+public class FileBean implements Serializable {
     /**
      * 
      */
@@ -221,8 +221,8 @@ public class File implements Serializable {
      */
     @Override
     public boolean equals(Object obj) {
-        if (null != obj && obj instanceof File) {
-            return this.fileId.equals(((File) obj).getFileId());
+        if (null != obj && obj instanceof FileBean) {
+            return this.fileId.equals(((FileBean) obj).getFileId());
         }
         return false;
     }
