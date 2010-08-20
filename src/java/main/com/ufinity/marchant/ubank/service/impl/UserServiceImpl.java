@@ -27,14 +27,12 @@
 package com.ufinity.marchant.ubank.service.impl;
 
 import org.apache.log4j.Logger;
-
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DaoFactory;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.service.UserService;
-import com.ufinity.marchant.ubank.servlet.RegServlet;
 
 /**
  * 
