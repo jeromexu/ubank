@@ -72,7 +72,7 @@ public class UserDaoTest {
     @Test
     public void save() throws Exception {
         User user = new User();
-        user.setUserName("sky3");
+        user.setUserName("sky");
         user.setCreateTime(new Date());
         user.setPassword("skyqiang");
         user.setOverSize(1);
@@ -81,9 +81,9 @@ public class UserDaoTest {
         // userDao.getEntityManager().getTransaction().begin();
 
         EntityManagerUtil.begin();
-        // userDao.add(user);
+         //userDao.add(user);
         User user1 = userDao.findUser("sky3", "skyqian1g");
-        System.out.println(user1);
+        //System.out.println(user1);
         EntityManagerUtil.commit();
         // System.out.println(userDao.queryList(0l, 10L));;
         // userDao.deleteById(1L);
