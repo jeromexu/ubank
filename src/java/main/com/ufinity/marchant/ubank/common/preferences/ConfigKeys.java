@@ -36,6 +36,9 @@ public class ConfigKeys {
 
     /** FileService key */
     public static final String SERVICE_FILE = "file.service";
+    
+    /** FolderService key */
+    public static final String SERVICE_FOLDER = "folder.service";
 
     public static final String SERVICE_DOWNLOAD = "download.service";
 
