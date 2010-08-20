@@ -26,7 +26,11 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.dao.impl;
 
+import java.util.Date;
+import java.util.Map;
+
 import com.ufinity.marchant.ubank.bean.File;
+import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.FileDao;
 
 /**
@@ -36,4 +40,64 @@ import com.ufinity.marchant.ubank.dao.FileDao;
  */
 public class FileDaoImpl extends GenericDaoSupport<File, Long> implements
         FileDao {
+
+    /**
+     * this method is search file and return Pager object
+     * 
+     * @param condition
+     *            search's condition
+     * @param currentPage
+     *            current page size
+     * @param pageSize
+     *            page size
+     * @return Pager pager object
+     * @author skyqiang
+     */
+    public Pager<File> searchPaginatedForFile(int currentPage, int pageSize,
+            Map<String, Object> condition) {
+        String jpaQuery = "SELECT f from File f "
+                + getJPAQueryString(condition);
+        String fileName = (String) condition.get("fileName");
+        if (null != condition && null != fileName && !"".equals(fileName)) {
+            fileName = "%" + fileName + "%";
+            condition.put("fileName", fileName);
+        }
+        return findPager(jpaQuery, currentPage, pageSize, condition);
+    }
+
+    /**
+     * this method is get jpa query string
+     * 
+     * @param condition
+     *            query's condition
+     * @return String jpa query string
+     * @author skyqiang
+     */
+    private String getJPAQueryString(Map<String, Object> condition) {
+        StringBuffer jpqQuery = new StringBuffer("WHERE 1=1 AND f.share=true ");
+
+        String fileName = (String) condition.get("fileName");
+        if (null != fileName && !"".equals(fileName)) {
+            jpqQuery.append("AND f.fileName LIKE :fileName ");
+        }
+
+        Long minFileSize = (Long) condition.get("minFileSize");
+        Long maxFileSize = (Long) condition.get("maxFileSize");
+        if (null != minFileSize && null != maxFileSize) {
+            jpqQuery
+                    .append("AND f.size BETWEEN :minFileSize AND :maxFileSize ");
+        }
+
+        Date minModifyTime = (Date) condition.get("minModifyTime");
+        Date maxModifyTime = (Date) condition.get("maxModifyTime");
+        if (null != minModifyTime && null != maxModifyTime) {
+            jpqQuery
+                    .append("AND f.modifyTime BETWEEN :minModifyTime AND :maxModifyTime ");
+        }
+
+        StringBuffer order = new StringBuffer("ORDER BY f.modifyTime DESC");
+        jpqQuery.append(order);
+
+        return jpqQuery.toString();
+    }
 }

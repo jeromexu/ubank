@@ -65,7 +65,7 @@ public class Folder implements Serializable {
     private Date modifyTime;
     private String directory;
     private Boolean share;
-    private Boolean FolderType;
+    private String folderType;
 
     private Folder parent;
     private Set<Folder> children = new HashSet<Folder>();
@@ -176,17 +176,17 @@ public class Folder implements Serializable {
     /**
      * @return the folderType
      */
-    @Column(name = "FOLDER_TYPE")
-    public Boolean getFolderType() {
-        return FolderType;
+    @Column(name = "FOLDER_TYPE", length = 1)
+    public String getFolderType() {
+        return folderType;
     }
 
     /**
      * @param folderType
      *            the folderType to set
      */
-    public void setFolderType(Boolean folderType) {
-        FolderType = folderType;
+    public void setFolderType(String folderType) {
+        this.folderType = folderType;
     }
 
     /**
@@ -290,9 +290,9 @@ public class Folder implements Serializable {
      */
     @Override
     public String toString() {
-        return "Folder : folderId = " + this.getFolderId()
-                + "\tfolderName = " + this.getFolderName() + "\tshare = "
-                + this.getShare() + "\tdirectory = " + this.getDirectory();
+        return "Folder : folderId = " + this.getFolderId() + "\tfolderName = "
+                + this.getFolderName() + "\tshare = " + this.getShare()
+                + "\tdirectory = " + this.getDirectory();
     }
 
 }

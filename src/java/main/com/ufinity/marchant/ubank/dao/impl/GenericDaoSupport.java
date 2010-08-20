@@ -29,13 +29,18 @@ package com.ufinity.marchant.ubank.dao.impl;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
+import com.ufinity.marchant.ubank.common.Pager;
+import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.dao.GenericDao;
 
 /**
@@ -227,4 +232,170 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         return lists;
     }
 
+    /**
+     * find page object's connection with hql and param map
+     * 
+     * @param hql
+     *            according hql if class param is null
+     * @param currentPage
+     *            current page
+     * @param pageSize
+     *            the number of records per page
+     * @param properties
+     *            according param map
+     * @return Object's connection
+     */
+    public Pager<T> findPager(String hql, int currentPage, int pageSize,
+            Map<String, Object> properties) {
+        return findPager(hql, currentPage, pageSize, null, properties);
+    }
+
+    /**
+     * find page object's connection with hql class and param map
+     * 
+     * @param hql
+     *            according hql
+     * @param currentPage
+     *            current page
+     * @param pageSize
+     *            the number of records per page
+     * @param clazz
+     *            according class
+     * @param properties
+     *            according param map
+     * @return Object's connection
+     */
+    @SuppressWarnings("unused")
+    private Pager<T> findPager(String hql, int currentPage, int pageSize,
+            Class<T> clazz, Map<String, Object> properties) {
+        if (currentPage <= 0) {
+            return null;
+        }
+        int totalRecords = 0;
+        if (clazz != null) {
+            totalRecords = (int) this.getRecordCount(clazz);
+        } else {
+            totalRecords = this.getRecordCount(hql, properties);
+        }
+        Pager<T> page = new Pager<T>();
+        List<T> list = null;
+        page.setTotalRecords(totalRecords);
+        page.setPageSize(pageSize);
+        page.setCurrentPage(currentPage);
+
+        list = this.queryList(hql, (currentPage - 1) * pageSize, pageSize,
+                clazz, properties);
+
+        page.setPageRecords(list);
+        return page;
+    }
+
+    /**
+     * find object's connection with hql class and param map
+     * 
+     * @param hql
+     *            according hql if class param is null
+     * @param startRecord
+     *            Where from the beginning to show this record
+     * @param pageSize
+     *            the number of records per page
+     * @param clazz
+     *            according class
+     * @param properties
+     *            according param map
+     * @return List<T> object connection
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> queryList(String hql, int startRecord, int pageSize,
+            Class<T> clazz, Map<String, Object> properties) {
+        if (hql == null && clazz == null) {
+            return null;
+        }
+        if (clazz != null) {
+            hql = "FROM " + clazz.getName();
+        }
+        String queryHql = hql;
+        Query query = ((Session) entityManager.getDelegate())
+                .createQuery(queryHql);
+
+        if (!Validity.isEmpty(properties)) {
+            query.setProperties(properties);
+        }
+        if (startRecord >= 0 && pageSize >= 0) {
+            query.setFirstResult(startRecord).setMaxResults(pageSize);
+        }
+        return query.list();
+
+    }
+
+    /**
+     * The <code>getRecordCount(Class<T> clazz)</code> method is used for
+     * getting the total count of records.
+     * 
+     * @return PK return total of record counts
+     */
+    public int getRecordCount(Class<T> clazz) {
+        String jpaQuery = "SELECT COUNT(*) FROM " + clazz.getName();
+        Integer count = null;
+
+        count = ((Integer) entityManager.createQuery(jpaQuery)
+                .getSingleResult());
+        log.debug("Execute getRecordCount method is successful!");
+        return count;
+    }
+
+    /**
+     * get count with select hql and param map
+     * 
+     * @param selectHql
+     *            according select hql
+     * @param properties
+     *            according param map
+     * @return count of hql
+     */
+    public int getRecordCount(String selectHql, Map<String, Object> properties) {
+        String countHql = getCountHql(selectHql);
+        return ((Long) getUniqueBeanResult(countHql, properties)).intValue();
+    }
+
+    /**
+     * get count hql with select hql
+     * 
+     * @param hql
+     *            select hql
+     * @return count hql
+     */
+    protected String getCountHql(String hql) {
+        if (Validity.isEmpty(hql)) {
+            log.error("Error getHqlBean because hql is empty");
+            return "";
+        }
+        return "select count(*) "
+                + hql
+                        .substring(hql.indexOf("from"))
+                        .replace("fetch", "")
+                        .replaceAll(
+                                "\\s((?mi)(left|right|inner)?\\s+join)\\s+[^\\s]*Set\\b",
+                                " ").split("order by")[0];
+    }
+
+    /**
+     * find object with hql and param map
+     * 
+     * @param hql
+     *            according hql
+     * @param properties
+     *            according param map
+     * @return Object which find
+     */
+    public Object getUniqueBeanResult(String hql, Map<String, Object> properties) {
+        Query query = ((Session) entityManager.getDelegate()).createQuery(hql);
+
+        if (!Validity.isEmpty(properties)) {
+            query.setProperties(properties);
+        }
+        Object object = query.uniqueResult();
+        return object;
+
+    }
 }

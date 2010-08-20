@@ -53,7 +53,7 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
         String sqlQuery = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,"
                 + "a.FOLDER_TYPE,a.MODIFIED_TIME,a.SHARE,a.USER_ID,a.PARENT_ID FROM U_FOLDER a "
                 + "LEFT JOIN U_FOLDER b on a.PARENT_ID = b.PARENT_ID WHERE a.USER_ID = :userId"
-                + " ORDER BY a.PARENT_ID , a.CREATE_TIME desc";
+                + " ORDER BY a.PARENT_ID , a.CREATE_TIME DESC";
 
         return entityManager.createNativeQuery(sqlQuery, Folder.class)
                 .setParameter("userId", userId).getResultList();
