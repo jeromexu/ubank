@@ -25,18 +25,21 @@ package com.ufinity.marchant.ubank.common.preferences;
 
 /**
  * System configuration keys
- *
+ * 
  * @version 1.0 - 2010-8-19
- * @author zdxue     
+ * @author zdxue
  */
 public class ConfigKeys {
-    
+
     /** UserService key */
     public static final String SERVICE_USER = "user.service";
-    
+
     /** FileService key */
     public static final String SERVICE_FILE = "file.service";
-    
-    public static final String SERVICE_DOWNLOAD = "download.service";
-}
 
+    public static final String SERVICE_DOWNLOAD = "download.service";
+
+    public static final String DAO_USER = "user.dao";
+    public static final String DAO_FILE = "file.dao";
+    public static final String DAO_FOLDER = "folder.dao";
+}
