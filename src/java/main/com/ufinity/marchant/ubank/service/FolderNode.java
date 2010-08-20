@@ -29,7 +29,6 @@ package com.ufinity.marchant.ubank.service;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.exception.UBankException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -97,6 +96,9 @@ public class FolderNode {
             for (int i = 0; i < folders.size(); i++) {
                 Folder folder = folders.get(i);
                 FolderNode node = new FolderNode();
+                if (i == 0) {
+                    rootNode = node;
+                }
                 copyProperties(node, folder);
                 addToTree(nodes, node);
             }
