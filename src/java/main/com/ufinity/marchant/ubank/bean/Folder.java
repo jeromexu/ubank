@@ -176,7 +176,7 @@ public class Folder implements Serializable {
     /**
      * @return the folderType
      */
-    @Column(name = "FOLDER_TYPE", length = 1)
+    @Column(name = "FOLDER_TYPE", length = 1, nullable = false)
     public String getFolderType() {
         return folderType;
     }
