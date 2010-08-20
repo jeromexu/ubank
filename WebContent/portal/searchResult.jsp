@@ -24,7 +24,7 @@
     </c:when>
     <c:otherwise>
       <tr align="center">
-        <td colspan="5">没有任何记录！</td>
+        <td colspan="5">${u:getMessage("message.sharefile.search.result.empty")}</td>
       </tr>
     </c:otherwise>
   </c:choose>
