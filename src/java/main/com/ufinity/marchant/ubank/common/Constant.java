@@ -74,6 +74,8 @@ public interface Constant {
 	public  final String  REPASS_ERR = "repass_error_msg";
 	public  final String  CAPTCHA_ERR = "captcha_error_msg";
 	public  final String  REGISTER_MSG = "register_msg";
+	
+	public final String ACTION_DOWNLOAD = "download";
     
    
 }

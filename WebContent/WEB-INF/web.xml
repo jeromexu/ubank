@@ -52,9 +52,18 @@
     <servlet-name>searchServlet</servlet-name>
     <servlet-class>com.ufinity.marchant.ubank.servlet.SearchServlet</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>DownLoadServlet</servlet-name>
+  	<servlet-class>
+  	com.ufinity.marchant.ubank.servlet.DownLoadServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>searchServlet</servlet-name>
     <url-pattern>/portal/search.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>DownLoadServlet</servlet-name>
+  	<url-pattern>/portal/download.do</url-pattern>
   </servlet-mapping>
   
   <filter>
