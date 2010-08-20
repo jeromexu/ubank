@@ -10,5 +10,8 @@ public class ConfigKeys {
     
     /** UserService key */
     public static final String SERVICE_USER = "user.service";
+    
+    /** FileService key */
+    public static final String SERVICE_FILE = "file.service";
 }
 

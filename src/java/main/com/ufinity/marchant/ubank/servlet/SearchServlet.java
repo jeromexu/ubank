@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ufinity.marchant.ubank.bean.File;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.service.FileService;
+import com.ufinity.marchant.ubank.service.ServiceFactory;
 
 /**
  * Search Servlet
@@ -69,6 +71,8 @@ public class SearchServlet extends AbstractServlet {
 
         System.out.println("fileName=" + fileName + " , fileSize=" + fileSize + " , publishDate=" + publishDate);
         //TODO
+        FileService fileService = ServiceFactory.getInstance().getFileService();
+        fileService.searchShareFiles(fileName, fileSize, publishDate);
         
         List<File> fileList = null;
         

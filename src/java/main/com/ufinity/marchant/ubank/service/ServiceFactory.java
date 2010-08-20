@@ -38,6 +38,20 @@ public final class ServiceFactory {
             throw new RuntimeException("get UserService implements exception.");
         }
     }
+    
+    /**
+     * Get FileService
+     *  
+     * @return FileService impl
+     * @author zdxue
+     */
+    public FileService getFileService() {
+        try{
+            return (FileService)Class.forName(SystemGlobals.getString(ConfigKeys.SERVICE_FILE)).newInstance();
+        }catch(Exception e) {
+            throw new RuntimeException("get FileService implements exception.");
+        }
+    }
 
 }
 
