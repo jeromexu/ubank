@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Validity;
-import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
@@ -105,7 +104,7 @@ public class LoginServlet extends AbstractServlet {
             return Constant.HOME_PAGE;
         }
         
-        UserService userService = ServiceFactory.createService(UserService.class, ConfigKeys.SERVICE_USER);
+        UserService userService = ServiceFactory.createService(UserService.class);
         User user = userService.getUser(username, password);
         
         if(user == null) {

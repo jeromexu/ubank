@@ -1,5 +1,6 @@
 package com.ufinity.marchant.ubank.service;
 
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.ObjectRetrieve;
 
 /**
@@ -22,11 +23,18 @@ public final class ServiceFactory {
      *
      * @param <T> Service interface
      * @param serviceClz Service interface class
-     * @param serviceKey Service interface key that decared in the SystemGlobals.properties
      * @return Service interface impl instance
      * @author zdxue
      */
-    public static <T> T createService(Class<T> serviceClz, String serviceKey) {
+    public static <T> T createService(Class<T> serviceClz) {
+        String serviceKey = "";
+        
+        if(UserService.class.equals(serviceClz)) {
+            serviceKey = ConfigKeys.SERVICE_USER;
+        }else if(FileService.class.equals(serviceClz)) {
+            serviceKey = ConfigKeys.SERVICE_FILE;
+        }
+        
         return ObjectRetrieve.retrieve(serviceClz, serviceKey);
     }
 }

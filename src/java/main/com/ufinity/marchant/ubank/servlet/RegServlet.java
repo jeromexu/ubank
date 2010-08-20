@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.captcha.MyCaptchaService;
 import com.ufinity.marchant.ubank.common.Constant;
-import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
@@ -115,7 +114,7 @@ public class RegServlet extends AbstractServlet {
 				user.setPassword(pass);
 				user.setCreateTime(new Date());
 				user.setOverSize(Constant.ONE_G_SPACE);
-				userService = ServiceFactory.createService(UserService.class, ConfigKeys.SERVICE_USER);
+				userService = ServiceFactory.createService(UserService.class);
 				String registerMsg = userService.doRegister(user);
 				request.setAttribute(Constant.REGISTER_MSG, registerMsg);
 			}
