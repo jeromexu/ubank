@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.captcha.MyCaptchaService;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
@@ -59,7 +60,13 @@ public class RegServlet extends AbstractServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		processRequest(request, response);
+		
+		 String method = parseActionName(request);
+	     String rslt = Constant.ERROR_PAGE;
+	     if(Constant.ACTION_REGISTER.equals(method)) {
+	          rslt = register(request);
+	     }
+	     forward(request, response, rslt);
 	}
 
 	/**
@@ -72,8 +79,7 @@ public class RegServlet extends AbstractServlet {
 	 *            res
 	 * @author jerome
 	 */
-	private void processRequest(HttpServletRequest request,
-			HttpServletResponse response) {
+	private String register(HttpServletRequest request) {
 
 		try {
 			String captchaCode = request.getParameter(Constant.REQ_PARAM_CAPTCHACODE);
@@ -98,16 +104,19 @@ public class RegServlet extends AbstractServlet {
 					logger.debug("pass = " + pass);
 					logger.debug("repass = " + repass);
 				}
-				if (null == userName || "".equals(userName.trim())) {
+				if (Validity.isEmpty(userName.trim())) {
 					request.setAttribute(Constant.USERNAME_ERR, MessageResource
 							.getMessage(MessageKeys.USERNAME_ERR_MSG));
+					return Constant.REGISTER_PAGE; 
 				}
-				if (null == pass || "".equals(pass.trim())) {
+				if (Validity.isEmpty(pass.trim())) {
 					request.setAttribute(Constant.PASS_ERR, MessageResource
 							.getMessage(MessageKeys.PASS_ERR_MSG));
+					return Constant.REGISTER_PAGE; 
 				} else if (!pass.equals(repass)) {
 					request.setAttribute(Constant.REPASS_ERR, MessageResource
 							.getMessage(MessageKeys.REPASS_ERR_MSG));
+					return Constant.REGISTER_PAGE; 
 				}
 				User user = new User();
 				user.setUserName(userName);
@@ -118,18 +127,12 @@ public class RegServlet extends AbstractServlet {
 				String registerMsg = userService.doRegister(user);
 				request.setAttribute(Constant.REGISTER_MSG, registerMsg);
 			}
-
-			forward(request, response, Constant.REGISTER_PAGE);
+				
 		} catch (Exception e) {
-			logger.error("error message :" + e.getMessage());
-			try {
-				response.sendRedirect(request.getContextPath()
-						+ Constant.ERROR_PAGE);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			logger.error("error message :",e);
+			return	Constant.REGISTER_PAGE;
 		}
-
+		return Constant.REGISTER_PAGE;
 	}
 
 }

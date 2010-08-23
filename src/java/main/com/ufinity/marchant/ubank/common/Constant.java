@@ -80,6 +80,8 @@ public interface Constant {
 	
 	// user download action
 	public final String ACTION_DOWNLOAD = "download";
+	// user register action
+	public final String ACTION_REGISTER = "register";
     
 	short USERNAME_LENGTH = 30;
 	short PASSWORD_LENGTH = 50;
