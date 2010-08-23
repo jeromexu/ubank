@@ -14,6 +14,7 @@ import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.common.JsonUtil;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl;
+import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 
@@ -106,7 +107,12 @@ public class FolderServlet extends AbstractServlet {
             FolderService folderService = ServiceFactory
                     .createService(FolderService.class);
             EntityManagerUtil.commit();
-            treeRootNode = folderService.getTreeRoot(user.getUserId());
+            try {
+                treeRootNode = folderService.getTreeRoot(user.getUserId());
+            }
+            catch (UBankException e) {
+                e.printStackTrace();
+            }
             EntityManagerUtil.commit();
         }
 
@@ -123,7 +129,6 @@ public class FolderServlet extends AbstractServlet {
             }
             return "/portal/main.jsp";
         }
-
         return null;
 
     }

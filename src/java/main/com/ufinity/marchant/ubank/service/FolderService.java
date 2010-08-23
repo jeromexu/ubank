@@ -26,7 +26,10 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service;
 
+import java.util.List;
+
 import com.ufinity.marchant.ubank.bean.Folder;
+import com.ufinity.marchant.ubank.common.FileOrFolderJsonEntity;
 import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.exception.UBankException;
 
@@ -39,7 +42,7 @@ import com.ufinity.marchant.ubank.exception.UBankException;
 public interface FolderService {
 
     /**
-     *  create a new folder on disk and save to database
+     * create a new folder on disk and save to database
      * 
      * @param folderName
      *            folderName
@@ -47,13 +50,14 @@ public interface FolderService {
      *            default folder for the user to add
      * @param parentId
      *            parent foler 'folderId'
-     * @param userId user ID identification
+     * @param userId
+     *            user ID identification
      * @return return a folder object
      * @throws UBankException
      *             throw Possible exception
      */
-    public Folder addFolder(Long userId, Long parentId, String folderName, String FolderType)
-            throws UBankException;
+    public Folder addFolder(Long userId, Long parentId, String folderName,
+            String FolderType) throws UBankException;
 
     /**
      * this method get a user directory tree
@@ -61,7 +65,19 @@ public interface FolderService {
      * @param userId
      *            User id identification
      * @return return this user directory tree Struct
+     * @throws UBankException throw Possible exception
      */
-    public FolderNode getTreeRoot(Long userId);
+    public FolderNode getTreeRoot(Long userId) throws UBankException;
+
+    /**
+     * Get all files and sub-folders under specified directory,return
+     * FileOrFolderJsonEntity class list {method description}
+     * 
+     * @param folderId  specified folder id
+     * @return FileOrFolderJsonEntity list
+     * @author bxji
+     * @throws UBankException   throw Possible exception
+     */
+    public List<FileOrFolderJsonEntity> getAllByFolder(Long folderId) throws UBankException;
 
 }
