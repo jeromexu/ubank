@@ -44,8 +44,6 @@ import org.apache.commons.beanutils.BeanUtils;
  * @version 2010-8-17
  */
 public class FolderNode {
-    public static final String STATE_OPEN = "open";
-    public static final String STATE_CLASED = "closed";
     private Long folderId;
     private Long parentId;
     private String folderName;
@@ -63,6 +61,19 @@ public class FolderNode {
      */
     private FolderNode() {
         this.subNodes = new ArrayList<FolderNode>();
+    }
+
+    /**
+     * {method description}
+     * 
+     * @return String
+     */
+    public String convertJsonString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("{");
+
+        return "";
+
     }
 
     /**
@@ -343,6 +354,7 @@ public class FolderNode {
 
     /**
      * the getter method of state
+     * 
      * @return the state
      */
     public String getState() {
@@ -351,11 +363,12 @@ public class FolderNode {
 
     /**
      * the setter method of the state
-     * @param state the state to set
+     * 
+     * @param state
+     *            the state to set
      */
     public void setState(String state) {
         this.state = state;
     }
 
-    
 }
