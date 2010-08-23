@@ -67,8 +67,8 @@ public class FolderServiceImpl implements FolderService {
      * @return return a folder object
      * @throws UBankException
      *             throw Possible exception
+     * @author bxji
      */
-    @Override
     public Folder addFolder(Long userId, Long parentId, String folderName,
             String FolderType) throws UBankException {
         if (parentId == null || folderName == null
@@ -108,8 +108,8 @@ public class FolderServiceImpl implements FolderService {
      * @param userId
      *            User id identification
      * @return return this user directory tree Struct
+     * @author bxji
      */
-    @Override
     public FolderNode getTreeRoot(Long userId) {
         FolderDao folderDao = DaoFactory.createDao(FolderDao.class);
         List<Folder> floders = folderDao.findFolderListByUserId(userId);
