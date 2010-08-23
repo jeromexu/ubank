@@ -26,6 +26,7 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,6 +41,14 @@ public class JsonNode {
     private String text;
     private String state;
     private List<JsonNode> children;
+    
+    /**
+     * 
+     * Constructor for JsonNode
+     */
+    public JsonNode(){
+        this.children = new ArrayList<JsonNode>();
+    }
 
     /**
      * the getter method of id
