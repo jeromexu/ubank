@@ -73,7 +73,9 @@ function submit(form_id) {
 
 function search() {
 	var url = 'search.do';
-	var data = "fileSize=" + $("#fileSize").val() + "&publishDate=" + $("#publishDate").val() + "&fileName=" + $("#fileNameId").val();
+	var rnd = new Date();
+	var data = "fileSize=" + $("#fileSize").val() + "&publishDate=" + $("#publishDate").val() + "&fileName=" + $("#fileNameId").val() + "&rnd=" + rnd;
+	alert(data);
 	
 	ajaxRequest(url, data);
 }

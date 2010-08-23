@@ -14,10 +14,10 @@
     <c:when test="${not empty filePager.pageRecords}">
       <c:forEach var="file" items="${filePager.pageRecords}">
           <tr align="center">
-            <td>${file.name }</td>
+            <td>${file.fileName }</td>
             <td>${file.size }KB</td>
-            <td>${file.user.username }</td>
-            <td>${file.modifyDate }</td>
+            <td>${file.folder.user.userName }</td>
+            <td>${file.modifyTime }</td>
             <td><a href="#">Download</a></td>
           </tr>
       </c:forEach>
