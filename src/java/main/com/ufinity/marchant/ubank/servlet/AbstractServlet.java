@@ -65,6 +65,8 @@ public class AbstractServlet extends HttpServlet {
      * @author zdxue
      */
     protected void forward(HttpServletRequest req, HttpServletResponse resp, String path) throws ServletException, IOException {
-        req.getRequestDispatcher(path).forward(req, resp);
+        if(path != null) {
+            req.getRequestDispatcher(path).forward(req, resp);            
+        }
     }
 }
