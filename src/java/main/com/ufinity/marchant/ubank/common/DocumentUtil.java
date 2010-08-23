@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import org.apache.log4j.Logger;
-
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
 
@@ -83,7 +81,12 @@ public class DocumentUtil {
 		}
 		File sFile = createFile(FILE_DIRECTORY, FILENAME);
 		File dFile = createFile(FILE_DIRECTORY, newName);
-		boolean result = sFile.renameTo(dFile);
+		boolean result = false;
+		if(sFile.exists()){
+			result = sFile.renameTo(dFile);
+		} else  {
+			return 0;
+		}
 
 		return result ? 1 : 0;
 
@@ -108,7 +111,12 @@ public class DocumentUtil {
 		}
 		File sFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
 		File dFile = createFile(FOLDER_DIRECTORY, newFolder);
-		boolean result = sFile.renameTo(dFile);
+		boolean result = false;
+		if(sFile.exists()){
+			result = sFile.renameTo(dFile);
+		} else {
+			return 0;
+		}
 
 		return result ? 1 : 0;
 
@@ -188,11 +196,20 @@ public class DocumentUtil {
 			newPath = newFolderDirecotry + File.separator + newFolderName
 					+ File.separator + FOLDERNAME;
 		}
-		LOGGER.info("olderPath=" + olderPath);
-		LOGGER.info("newPath=" + newPath);
-		copyFolder(olderPath, newPath);
-		delFolder(olderPath);
-		return 1;
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("olderPath=" + olderPath);
+			LOGGER.debug("newPath=" + newPath);
+		}
+		File oldFile = new File(olderPath);
+		boolean result = false;
+		if(oldFile.exists()){
+			copyFolder(olderPath, newPath);
+			result = delFolder(olderPath);
+		} else {
+			return 0;
+		}
+		
+		return result ? 1 : 0;
 	}
 
 	/**
@@ -241,12 +258,13 @@ public class DocumentUtil {
 			path = FOLDER_DIRECTORY + File.separator + FOLDERNAME;
 		}
 		File baseFile = new File(path);
+		boolean result = false;
 		if (baseFile.exists()) {
-			delFolder(path);
+			result = delFolder(path);
 		} else {
 			return 0;
 		}
-		return 1;
+		return result ? 1 : 0;
 	}
 
 	/**
@@ -315,21 +333,23 @@ public class DocumentUtil {
 	 * 
 	 * @param folderPath
 	 *            the folder path
+	 * @return true:delete success false: delete failure
 	 * @author jerome
 	 */
-	public static void delFolder(String folderPath) {
-
+	public static boolean delFolder(String folderPath) {
+		boolean result = false;
 		try {
 			// delete all files of the folder
 			delAllFile(folderPath);
 			File myFilePath = new File(folderPath);
 			// delete the empty folder
-			myFilePath.delete();
+			result = myFilePath.delete();
 
 		} catch (Exception e) {
 			LOGGER.debug("delete file exception", e);
+			return false;
 		}
-
+		return result;
 	}
 
 	/**
