@@ -317,8 +317,7 @@ public class DocumentUtil {
 			try {
 				output.close();
 				input.close();
-
-				// 回收所有占用对象，不然资源释放不了
+				// recover all the occupancy object so that all the resource release
 				System.gc();
 			} catch (IOException e) {
 				e.printStackTrace();
