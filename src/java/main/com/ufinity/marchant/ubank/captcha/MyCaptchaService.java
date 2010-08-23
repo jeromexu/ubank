@@ -197,7 +197,7 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 			encoder.encode(image);
 			outputStream.flush();
 		} catch (IOException ex) {
-			LOGGER.error("gernate the picture exception：", ex);
+			LOGGER.error("gernate the picture exception:", ex);
 		} finally {
 			if (outputStream != null) {
 				try {
