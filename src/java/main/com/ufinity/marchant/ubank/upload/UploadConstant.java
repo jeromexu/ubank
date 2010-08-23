@@ -48,5 +48,6 @@ public interface UploadConstant {
     String PROGRESS_INFO = "progressInfo";
     String HEADER_ENCODE ="UTF-8";
     
-    
+    //updates info every 10kb
+    long UPDATE_THRESHOLD = 10 * 1024L;
 }

@@ -41,14 +41,9 @@ public class UploadListener implements ProgressListener {
     
     private Logger logger = Logger.getLogger(UploadListener.class);
 
-    private static final long UPDATE_THRESHOLD = 100 * 1024L;  //kb
-
     private long megaBytes = -1;
 
     private ProgressInfo pi = null;
-
-    public UploadListener() {
-    }
 
     /**
      * UploadListener
@@ -77,7 +72,7 @@ public class UploadListener implements ProgressListener {
             } catch (InterruptedException e) {}
         }
         
-        long mBytes = pBytesRead / UPDATE_THRESHOLD;
+        long mBytes = pBytesRead / UploadConstant.UPDATE_THRESHOLD;
         if (megaBytes == mBytes) {
             return;
         }
