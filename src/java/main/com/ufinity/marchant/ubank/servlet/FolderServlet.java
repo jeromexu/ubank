@@ -7,6 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
@@ -17,6 +19,7 @@ import com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
+import com.ufinity.marchant.ubank.service.impl.FolderServiceImpl;
 
 /**
  * Folder Servlet used to operation folder
@@ -30,6 +33,8 @@ public class FolderServlet extends AbstractServlet {
      * 
      */
     private static final long serialVersionUID = -8297805269743197486L;
+    // Logger for this class
+    protected final Logger logger = Logger.getLogger(FolderServlet.class);
 
     private static final String SHOW_MAIN = "showMain";
     private static final String SHOW_TREE = "showTree";
@@ -111,7 +116,8 @@ public class FolderServlet extends AbstractServlet {
                 treeRootNode = folderService.getTreeRoot(user.getUserId());
             }
             catch (UBankException e) {
-                e.printStackTrace();
+                logger.debug("when try get user root directory, "
+                        + "throw an exception:user id can not be null", e);
             }
             EntityManagerUtil.commit();
         }
