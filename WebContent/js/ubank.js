@@ -17,7 +17,6 @@ function reload() {
 
 $(function() {
 	$('#test').datagrid( {
-
 		height : 570,
 		nowrap : false,
 		striped : true,
