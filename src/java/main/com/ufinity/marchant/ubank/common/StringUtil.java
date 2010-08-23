@@ -21,48 +21,41 @@
 // SPECIFICALLY DISCLAIMS ANY EXPRESS OR IMPLIED WARRANTY OF FITNESS FOR
 // HIGH RISK ACTIVITIES.
 // -------------------------------------------------------------------------
-package com.ufinity.marchant.ubank.common.preferences;
-
-import java.util.Locale;
-
-import com.ufinity.marchant.ubank.common.StringUtil;
+package com.ufinity.marchant.ubank.common;
 
 /**
- * System global preferences configurations
+ * StringUtil
  *
- * @version 1.0 - 2010-8-19
+ * @version 1.0 - 2010-8-23
  * @author zdxue     
  */
-public final class SystemGlobals {
-
-    private static final UBankResourceBundle RB = new UBankResourceBundle("SystemGlobals", Locale.US); 
+public class StringUtil {
 
     /**
-     * Private Constructor
-     */
-    private SystemGlobals(){}
-
-    /**
-     * Get string value by key, if cannot get config value, then return empty string
+     * Parse string to int,  if parse occur exception, then return default value 
      *
-     * @param key key
-     * @return value
+     * @param s string
+     * @param defVal if parse occur exception, then return default value
+     * @return int value
      * @author zdxue
      */
-    public static String getString(String key) {
-        return RB.getValue(key);
+    public static int parseInt(String s, int defVal) {
+        try{
+            return Integer.parseInt(s);
+        }catch(Exception e) {
+            return defVal;
+        }
     }
-
+    
     /**
-     * Get int value by key, if the value is not a number, then return 0.
+     * Parse string to int , if occur exception , then return 0
      *
-     * @param key key
-     * @return int value.  if the value is not a number, then return 0.
+     * @param s string
+     * @return int value, if parse occur exception, then return default value
      * @author zdxue
      */
-    public static int getInt(String key) {
-        String str = getString(key);
-        return StringUtil.parseInt(str);
+    public static int parseInt(String s) {
+        return parseInt(s, 0);
     }
 }
 

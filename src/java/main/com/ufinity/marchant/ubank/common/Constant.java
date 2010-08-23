@@ -23,6 +23,7 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common;
 
+
 /**
  * Constants for ubank system
  * 
@@ -34,7 +35,7 @@ public interface Constant {
     /** error message key */
     String ATTR_ERROR_MSG = "error_msg";
 
-    String ATTR_FILELIST = "fileList";
+    String ATTR_FILEPAGER = "filePager";
 
     /** charset filter config */
     String ENABLE_FILTER = "true";
@@ -95,4 +96,24 @@ public interface Constant {
     public final String I = "init";
     public final String C = "customer";
 
+    /** file search pagenum */
+    String REQ_PARAM_PAGENUM = "pageNum";
+    
+    /** file search constant */
+    String FILE_SIZE_SEPARATOR = ",";
+    String FILE_SIZE_1 = "1";
+    String FILE_SIZE_2 = "2";
+    String FILE_SIZE_3 = "3";
+    String FILE_SIZE_4 = "4";
+    String FILE_PUBLISHDATE_1 = "1";
+    String FILE_PUBLISHDATE_2 = "2";
+    String FILE_PUBLISHDATE_3 = "3";
+    String FILE_PUBLISHDATE_4 = "4";
+    String FILE_PUBLISHDATE_5 = "5";
+    String FILENAME = "fileName";
+    String MIN_FILE_SIZE = "minFileSize";
+    String MAX_FILE_SIZE = "maxFileSize";
+    String MIN_MODIFY_TIME = "minModifyTime";
+    String MAX_MODIFY_TIME = "maxModifyTime";
+    
 }

@@ -45,4 +45,18 @@ public class ConfigKeys {
     public static final String DAO_USER = "user.dao";
     public static final String DAO_FILE = "file.dao";
     public static final String DAO_FOLDER = "folder.dao";
+    
+    /** ubank pagination config : for per page count */
+    public static final String PAGE_SIZE = "page.size";
+    
+    /** file search config keys */
+    public static final String FILE_SIZE_1 = "file.size.1";
+    public static final String FILE_SIZE_2 = "file.size.2";
+    public static final String FILE_SIZE_3 = "file.size.3";
+    public static final String FILE_SIZE_4 = "file.size.4";
+    public static final String FILE_PUBLISHDATE_1 = "file.publishDate.1";
+    public static final String FILE_PUBLISHDATE_2 = "file.publishDate.2";
+    public static final String FILE_PUBLISHDATE_3 = "file.publishDate.3";
+    public static final String FILE_PUBLISHDATE_4 = "file.publishDate.4";
+    public static final String FILE_PUBLISHDATE_5 = "file.publishDate.5";
 }

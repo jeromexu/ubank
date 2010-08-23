@@ -23,9 +23,19 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service.impl;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
+import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.DateUtil;
+import com.ufinity.marchant.ubank.common.Pager;
+import com.ufinity.marchant.ubank.common.StringUtil;
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
+import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.service.FileService;
@@ -41,7 +51,7 @@ public class FileServiceImpl implements FileService {
     private FileDao fileDao;
 
     /**
-     * construtor
+     * Constructor
      */
     public FileServiceImpl() {
         fileDao = DaoFactory.createDao(FileDao.class);
@@ -53,19 +63,105 @@ public class FileServiceImpl implements FileService {
      * @param fileName
      *            file name
      * @param fileSize
-     *            file size flag
+     *            file size level
      * @param publishDate
-     *            publish date flag
-     * @return file list
+     *            publish date level
+     * @param pageNum
+     *            pageNum
+     * @param pageSize
+     *            pageSize
+     * @return file pager obj
      * @author zdxue
      */
-    public List<FileBean> searchShareFiles(String fileName, String fileSize,
-            String publishDate) {
+    public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
+            String publishDate, int pageNum, int pageSize) {
 
-        System.out.println(fileDao);
+        Map<String, Object> condition = new HashMap<String, Object>();
+        condition.put(Constant.FILENAME, fileName);
+        condition.put(Constant.MIN_FILE_SIZE, getMinFileSize(fileSize));
+        condition.put(Constant.MAX_FILE_SIZE, getMaxFileSize(fileSize));
 
-        // TODO Auto-generated method stub
-        return null;
+        Calendar cal = Calendar.getInstance();
+        String datePattern = DateUtil.YYYY_MM_DD_HH_MM_SS;
+        Date minDate = getMaxModifyDate(publishDate, (Calendar)cal.clone());
+        Date maxDate = cal.getTime();
+        condition.put(Constant.MIN_MODIFY_TIME, DateUtil.parse(DateUtil.format(minDate, datePattern), datePattern));
+        condition.put(Constant.MAX_MODIFY_TIME, DateUtil.parse(DateUtil.format(maxDate, datePattern), datePattern));
+
+        return fileDao.searchPaginatedForFile(pageNum, pageSize, condition);
+    }
+
+    /**
+     * Get file size config condition
+     *
+     * @param fileSize fileSize level
+     * @return file size config
+     * @author zdxue
+     */
+    private String getFileSizeConf(String fileSize) {
+        String fileSizeConf = "";
+        if(Constant.FILE_SIZE_1.equals(fileSize)) {
+            fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_1);
+        }else if(Constant.FILE_SIZE_2.equals(fileSize)) {
+            fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_2);
+        }else if(Constant.FILE_SIZE_3.equals(fileSize)) {
+            fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_3);
+        }else if(Constant.FILE_SIZE_4.equals(fileSize)) {
+            fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_4);
+        }
+        return fileSizeConf;
+    }
+
+    /**
+     * Get min file size
+     *
+     * @param fileSize file size level
+     * @return min file size
+     * @author zdxue
+     */
+    private long getMinFileSize(String fileSize) {
+        return StringUtil.parseInt(getFileSizeConf(fileSize).split(Constant.FILE_SIZE_SEPARATOR)[0]);
+    }
+
+    /**
+     * Get max file size 
+     *
+     * @param fileSize file size level
+     * @return max file size
+     * @author zdxue
+     */
+    private long getMaxFileSize(String fileSize) {
+        return StringUtil.parseInt(getFileSizeConf(fileSize).split(Constant.FILE_SIZE_SEPARATOR)[1]);
+    }
+
+    /**
+     * Get file modify date
+     *
+     * @param publishDate publish date level
+     * @param cal min modify date
+     * @return max modify date
+     * @author zdxue
+     */
+    private Date getMaxModifyDate(String publishDate, Calendar cal) {
+        int amount = 0;
+        if(Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_1);  
+        }else if(Constant.FILE_PUBLISHDATE_2.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_2);  
+        }else if(Constant.FILE_PUBLISHDATE_3.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_3);  
+        }else if(Constant.FILE_PUBLISHDATE_4.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_4);  
+        }else if(Constant.FILE_PUBLISHDATE_5.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_5);  
+        }
+
+        if(amount == 1) {
+            return null;
+        }
+
+        DateUtil.roll(cal, Calendar.DAY_OF_YEAR, amount);
+        return cal.getTime();
     }
 
     /**

@@ -26,25 +26,34 @@ package com.ufinity.marchant.ubank.service;
 import java.util.List;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
+import com.ufinity.marchant.ubank.common.Pager;
 
 /**
  * File Service
- *
+ * 
  * @version 1.0 - 2010-8-19
- * @author zdxue     
+ * @author zdxue
  */
 public interface FileService {
 
     /**
      * Search share files
-     *
-     * @param fileName file name
-     * @param fileSize file size flag
-     * @param publishDate publish date flag
-     * @return file list
+     * 
+     * @param fileName
+     *            file name
+     * @param fileSize
+     *            file size flag
+     * @param publishDate
+     *            publish date flag
+     * @param pageNum
+     *            pageNum
+     * @param pageSize
+     *            pageSize
+     * @return file pager obj
      * @author zdxue
      */
-    public List<FileBean> searchShareFiles(String fileName, String fileSize, String publishDate);
+    public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
+            String publishDate, int pageNum, int pageSize);
     
     /**
      * get all files under specified directory
@@ -55,4 +64,3 @@ public interface FileService {
      */
     public List<FileBean> getFilesByFolder(Long folderId);
 }
-

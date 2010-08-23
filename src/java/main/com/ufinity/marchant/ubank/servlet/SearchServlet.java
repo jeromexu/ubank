@@ -24,7 +24,6 @@
 package com.ufinity.marchant.ubank.servlet;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +31,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.Pager;
+import com.ufinity.marchant.ubank.common.StringUtil;
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
+import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 
@@ -79,7 +82,8 @@ public class SearchServlet extends AbstractServlet {
         String fileName = req.getParameter(Constant.REQ_PARAM_FILENAME);
         String fileSize = req.getParameter(Constant.REQ_PARAM_FILESIZE);
         String publishDate = req.getParameter(Constant.REQ_PARAM_PUBLISHDATE);
-
+        String pageNumber = req.getParameter(Constant.REQ_PARAM_PAGENUM);
+        
         if(fileName == null) {
             fileName = "";
         }
@@ -92,14 +96,16 @@ public class SearchServlet extends AbstractServlet {
             publishDate = "0";
         }
 
-        System.out.println("fileName=" + fileName + " , fileSize=" + fileSize + " , publishDate=" + publishDate);
-        //TODO
+        int pageNum = StringUtil.parseInt(pageNumber, 1);
+
+        //TODO log 
+        System.out.println("fileName=" + fileName + " , fileSize=" + fileSize + " , publishDate=" + publishDate + " , pageNum=" + pageNum);
+        
         FileService fileService = ServiceFactory.createService(FileService.class);
-        fileService.searchShareFiles(fileName, fileSize, publishDate);
         
-        List<FileBean> fileList = null;
-        
-        req.setAttribute(Constant.ATTR_FILELIST, fileList);
+        int pageSize = SystemGlobals.getInt(ConfigKeys.PAGE_SIZE);
+        Pager<FileBean> filePager = fileService.searchShareFiles(fileName, fileSize, publishDate, pageNum, pageSize);
+        req.setAttribute(Constant.ATTR_FILEPAGER, filePager);
         
         return Constant.SEARCH_RESULT_PAGE;
     }
