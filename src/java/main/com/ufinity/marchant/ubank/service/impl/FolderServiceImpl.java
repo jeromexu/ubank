@@ -35,11 +35,11 @@ import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DocumentUtil;
+import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.UBankException;
-import com.ufinity.marchant.ubank.service.FolderNode;
 import com.ufinity.marchant.ubank.service.FolderService;
 
 /**
