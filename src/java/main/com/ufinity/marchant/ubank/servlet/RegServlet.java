@@ -35,15 +35,7 @@ public class RegServlet extends AbstractServlet {
 	protected final Logger logger = Logger.getLogger(RegServlet.class);
 	
 	// user service business logic instance
-
 	private UserService userService = null;
-
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public RegServlet() {
-		super();
-	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse

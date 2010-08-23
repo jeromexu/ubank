@@ -30,13 +30,8 @@ public class DownLoadServlet extends AbstractServlet {
 	// Logger for this class
     protected static  final Logger LOGGER = Logger.getLogger(DownLoadServlet.class);
     
+    // file service business logic instance
     private FileService fileService = null;
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public DownLoadServlet() {
-		super();
-	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -53,13 +48,13 @@ public class DownLoadServlet extends AbstractServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		
 		String method = parseActionName(request);
         String rslt = "";
-        
         if(Constant.ACTION_DOWNLOAD.equals(method)){
             rslt = download(request, response);
         }
-        if(!"".equals(rslt)){
+        if(rslt != null){
         	forward(request, response, rslt);
         }
 	}
