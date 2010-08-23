@@ -117,7 +117,7 @@ public class User implements Serializable {
     /**
      * @return the createTime
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CREATE_TIME", nullable = false)
     public Date getCreateTime() {
         return createTime;
