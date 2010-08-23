@@ -21,34 +21,34 @@
 // SPECIFICALLY DISCLAIMS ANY EXPRESS OR IMPLIED WARRANTY OF FITNESS FOR
 // HIGH RISK ACTIVITIES.
 // -------------------------------------------------------------------------
-package com.ufinity.marchant.ubank.upload;
+package com.ufinity.marchant.ubank.service;
+
+import org.apache.commons.fileupload.FileItemIterator;
+
+import com.ufinity.marchant.ubank.bean.Folder;
+import com.ufinity.marchant.ubank.upload.ProgressInfo;
 
 /**
- * Constants for ubank system
+ * Upload Service
  * 
- * @version 1.0 - 2010-8-20
+ * @version 1.0 - 2010-8-23
  * @author liujun
  */
-public interface UploadConstant {
-    
-    //servlet method
-    String UPLOAD_METHOD = "upload";
-    String CONTINUE_UOLOAD_METHOD = "continueUpload";
-    String GET_INFO_METHOD = "getInfo";
-    String PAUSE_METHOD="pause";
-    
-    //upload max size 10M
-    long MAX_LENGTH = 100 * 1024 * 1024L;
-    //1KB
-    int HTTP_REDUNDANT_LENGTH = 1024;
-    
-    String CONTENT_TYPE = "application/json;charset=UTF-8";
-    
-    //param
-    String PROGRESS_INFO = "progressInfo";
-    String HEADER_ENCODE ="UTF-8";
-    String CURRENT_FOLDER = "currentFolder";
-    
-    //updates info every 10kb
-    long UPDATE_THRESHOLD = 10 * 1024L;
+public interface UploadService {
+
+    /**
+     * upload file and save to db
+     * 
+     * @param folder
+     *            current folder
+     * @param pi
+     *            info of upload
+     * @param fIter
+     *            the FileItemIterator
+     * @throws Exception
+     *             if have exception
+     */
+    public void uploadAndSaveDb(Folder folder, ProgressInfo pi,
+            FileItemIterator fIter) throws Exception;
+
 }

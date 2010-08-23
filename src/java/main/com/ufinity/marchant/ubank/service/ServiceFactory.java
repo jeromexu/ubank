@@ -35,7 +35,9 @@ public final class ServiceFactory {
             serviceKey = ConfigKeys.SERVICE_FILE;
         }else if(FolderService.class.equals(serviceClz)){
         	serviceKey = ConfigKeys.SERVICE_FOLDER;
-        } 
+        }else if(UploadService.class.equals(serviceClz)){
+            serviceKey = ConfigKeys.SERVICE_UPLOAD;
+        }
         return ObjectRetrieve.retrieve(serviceClz, serviceKey);
     }
 }

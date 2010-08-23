@@ -26,12 +26,7 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.servlet;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
@@ -40,15 +35,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.util.Streams;
 import org.apache.log4j.Logger;
 
+import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.JsonUtil;
+import com.ufinity.marchant.ubank.service.ServiceFactory;
+import com.ufinity.marchant.ubank.service.UploadService;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
-import com.ufinity.marchant.ubank.upload.UploadListener;
 import com.ufinity.marchant.ubank.upload.UploadConstant;
+import com.ufinity.marchant.ubank.upload.UploadListener;
 
 /**
  * 
@@ -63,6 +59,8 @@ public class FileUploadServlet extends AbstractServlet {
     private static final long serialVersionUID = 6092584996678971635L;
 
     private Logger logger = Logger.getLogger(FileUploadServlet.class);
+    
+    private UploadService uploadService = ServiceFactory.createService(UploadService.class);;
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -113,19 +111,6 @@ public class FileUploadServlet extends AbstractServlet {
                 out.close();
             }
         }
-    }
-
-    /**
-     * 
-     * get file name
-     * 
-     * @param String
-     *            fileName
-     */
-    private String getFileName(String fileName) {
-        String name = fileName.substring(fileName.lastIndexOf("\\") + 1);
-        // TODO
-        return "E:/temp/" + name;
     }
 
     /**
@@ -190,14 +175,10 @@ public class FileUploadServlet extends AbstractServlet {
      *            request
      */
     private void doUpload(HttpServletRequest request) {
+        Folder currentFolder = (Folder)request.getSession().getAttribute(UploadConstant.CURRENT_FOLDER);
         ProgressInfo pi = new ProgressInfo();
         request.getSession().setAttribute(UploadConstant.PROGRESS_INFO, pi);
 
-        String fldName = "";
-        FileItemStream item = null;
-        BufferedInputStream stream = null;
-        OutputStream out = null;
-        ByteArrayOutputStream bStream = null;
         try {
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
             if (isMultipart) {
@@ -219,42 +200,12 @@ public class FileUploadServlet extends AbstractServlet {
                 upload.setProgressListener(uploadListener);
                 // Parse the request
                 FileItemIterator fIter = upload.getItemIterator(request);
-                while (fIter.hasNext()) {
-                    item = fIter.next();
-                    if (!item.isFormField()) {
-                        fldName = item.getFieldName();
-                        if (item.getName() == null
-                                || "".equals(item.getName().trim())) {
-                            continue;
-                        }
-
-                        pi.setCurFileName(item.getName());
-                        pi.setUploadedFiles(pi.getUploadedFiles() + "<b>"
-                                + item.getName() + "</b><br/>");
-
-                        stream = new BufferedInputStream(item.openStream());
-                        bStream = new ByteArrayOutputStream();
-                        long bStreamLen = Streams.copy(stream, bStream, true);
-
-                        // logger.debug("Upload path is :" +
-                        // this.getFileName(item.getName()));
-                        System.out.println("Upload path is :"
-                                + this.getFileName(item.getName()));
-
-                        File file = new File(this.getFileName(item.getName()));
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                        out = new FileOutputStream(file);
-                        bStream.writeTo(out);
-
-                        // logger.debug("Upload fldName :" + fldName
-                        // + ",just was uploaded len:" + bStreamLen);
-                        System.out.println("Upload fldName :" + fldName
-                                + ",just was uploaded len:" + bStreamLen);
-                    }
-                }
-
+                
+                //TODO
+                currentFolder.setFolderId(1l);
+                currentFolder.setDirectory("E:/temp/");
+                uploadService.uploadAndSaveDb(currentFolder, pi, fIter);
+                
                 pi.setInProgress(false);
                 pi.setCurrentTime(System.currentTimeMillis());
                 pi.setBytesRead(filesSize);
@@ -262,18 +213,8 @@ public class FileUploadServlet extends AbstractServlet {
             }
         } catch (Exception e) {
             pi.setInProgress(false);
-            logger.warn("Upload cancelled or interrupted!", e);
-        } finally {
-            try {
-                if (bStream != null) {
-                    bStream.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-            } catch (Exception e) {
-            }
-        }
+            logger.warn("Upload cancelled or interrupted!"+ e.getMessage());
+        } 
     }
 
 }
