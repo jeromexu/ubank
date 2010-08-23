@@ -46,6 +46,7 @@ public class DocumentUtil {
 	 * @param folder
 	 *            folder object
 	 * @return integer success or not: success 1 failure 0
+	 * @author jerome
 	 */
 	public static int addNewFolder(Folder folder) {
 
@@ -70,6 +71,7 @@ public class DocumentUtil {
 	 * @param newName
 	 *            the new file name
 	 * @return integer success or not: success 1 failure 0
+	 * @author jerome
 	 */
 	public static int renameFile(FileBean fileBean, String newName) {
 
@@ -94,6 +96,7 @@ public class DocumentUtil {
 	 *            the target folder
 	 * @param newFolder
 	 * @return integer success or not: success 1 failure 0
+	 * @author jerome
 	 */
 	public static int renameFolder(Folder folder, String newFolder) {
 
@@ -119,6 +122,7 @@ public class DocumentUtil {
 	 * @param fileBean
 	 *            the target file
 	 * @return integer success or not: success 1 failure 0
+	 * @author jerome
 	 */
 	public static int moveFileTo(FileBean fileBean, Folder newPath) {
 		if (fileBean != null) {
@@ -154,6 +158,7 @@ public class DocumentUtil {
 	 * @param folder
 	 *            the target folder
 	 * @return integer success or not
+	 * @author jerome
 	 */
 	public static int moveFolderTo(Folder folder, Folder newFolder) {
 		if (folder != null) {
@@ -196,6 +201,7 @@ public class DocumentUtil {
 	 * @param fileBean
 	 *            the target file
 	 * @return integer success or not: success 1 failure 0
+	 * @author jerome
 	 */
 	public static int removeFile(FileBean fileBean) {
 		if (fileBean != null) {
@@ -219,6 +225,7 @@ public class DocumentUtil {
 	 * @param folder
 	 *            the target folder
 	 * @return integer success or not: success 1 failure 0
+	 * @author jerome
 	 */
 	public static int removeFolder(Folder folder) {
 		if (folder != null) {
@@ -249,7 +256,7 @@ public class DocumentUtil {
 	 *            String the source path for example：c:/hello
 	 * @param newPath
 	 *            String the dest path for example：f:/hello/ee
-	 * 
+	 * @author jerome
 	 */
 	public static void copyFolder(String oldPath, String newPath) {
 		FileInputStream input = null;
@@ -308,6 +315,7 @@ public class DocumentUtil {
 	 * 
 	 * @param folderPath
 	 *            the folder path
+	 * @author jerome
 	 */
 	public static void delFolder(String folderPath) {
 
@@ -329,6 +337,7 @@ public class DocumentUtil {
 	 * 
 	 * @param path
 	 *            String the folder path for example c:/hello
+	 * @author jerome
 	 */
 	public static void delAllFile(String path) {
 		File file = new File(path);
@@ -339,7 +348,7 @@ public class DocumentUtil {
 			return;
 		}
 		String[] tempList = file.list();
-		//System.out.println("total files count：" + tempList.length);
+		// System.out.println("total files count：" + tempList.length);
 		File tempFile = null;
 		for (int i = 0; i < tempList.length; i++) {
 			if (path.endsWith(File.separator)) {
@@ -349,9 +358,9 @@ public class DocumentUtil {
 			}
 			if (tempFile.isFile()) {
 				try {
-					//System.out.println("tempFile=" + tempFile);
+					// System.out.println("tempFile=" + tempFile);
 					boolean result = tempFile.delete();
-					//System.out.println("delete files：" + result);
+					// System.out.println("delete files：" + result);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -369,9 +378,12 @@ public class DocumentUtil {
 	 * 
 	 * create a File by the old folder path and folder name
 	 * 
-	 * @param folderPath the folder path
-	 * @param folderName the folder name
+	 * @param folderPath
+	 *            the folder path
+	 * @param folderName
+	 *            the folder name
 	 * @return a file object
+	 * @author jerome
 	 */
 	private static File createFile(String folderPath, String folderName) {
 		File file = null;
@@ -384,9 +396,9 @@ public class DocumentUtil {
 	}
 
 	/**
-	 * test method {method description}
+	 * test method 
 	 * 
-	 * @param args
+	 * @param args the param
 	 */
 	public static void main(String[] args) {
 		/*
@@ -397,22 +409,23 @@ public class DocumentUtil {
 		 * Integer a = moveFileTo(fileBean, folder);
 		 */
 
-		
-		 /*Folder folder1 = new Folder(); folder1.setDirectory("D:\\test");
-		 folder1.setFolderName("a"); Folder folder2 = new Folder();
-		 folder2.setDirectory("D:\\test"); folder2.setFolderName("b");
-		 moveFolderTo(folder1, folder2);*/
-		 
+		/*
+		 * Folder folder1 = new Folder(); folder1.setDirectory("D:\\test");
+		 * folder1.setFolderName("a"); Folder folder2 = new Folder();
+		 * folder2.setDirectory("D:\\test"); folder2.setFolderName("b");
+		 * moveFolderTo(folder1, folder2);
+		 */
 
-		
-		/* Folder folder = new Folder(); folder.setDirectory("D:\\test\\b");
-		 folder.setFolderName("a"); Integer result = removeFolder(folder);
-		 System.out.println(result);*/
-		
-		/*Folder folder = new Folder(); 
-		folder.setDirectory("D:\\test\\b");
-		folder.setFolderName("c");
-		Integer result =renameFolder(folder,"ggggggg");
-		System.out.println(result);*/
+		/*
+		 * Folder folder = new Folder(); folder.setDirectory("D:\\test\\b");
+		 * folder.setFolderName("a"); Integer result = removeFolder(folder);
+		 * System.out.println(result);
+		 */
+
+		/*
+		 * Folder folder = new Folder(); folder.setDirectory("D:\\test\\b");
+		 * folder.setFolderName("c"); Integer result
+		 * =renameFolder(folder,"ggggggg"); System.out.println(result);
+		 */
 	}
 }
