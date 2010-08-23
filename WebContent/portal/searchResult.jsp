@@ -11,8 +11,8 @@
   </tr>
   
   <c:choose>
-    <c:when test="${not empty fileList}">
-      <c:forEach var="file" items="${fileList}">
+    <c:when test="${not empty filePager.pageRecords}">
+      <c:forEach var="file" items="${filePager.pageRecords}">
           <tr align="center">
             <td>${file.name }</td>
             <td>${file.size }KB</td>
