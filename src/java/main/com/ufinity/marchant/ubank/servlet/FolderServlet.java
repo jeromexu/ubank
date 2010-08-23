@@ -113,18 +113,18 @@ public class FolderServlet extends AbstractServlet {
         String treeJson = "";
         if (treeRootNode != null) {
             treeJson = JsonUtil.bean2json(treeRootNode);
+            resp.setContentType("application/json;charset=UTF-8");
+            try {
+                PrintWriter pw = resp.getWriter();
+                resp.getWriter().write(treeJson);
+                pw.flush();
+            }
+            catch (IOException e) {
+            }
+            return "/portal/main.jsp";
         }
 
-        resp.setContentType("application/json;charset=UTF-8");
-        try {
-            PrintWriter pw = resp.getWriter();
-            resp.getWriter().write(treeJson);
-            pw.flush();
-        }
-        catch (IOException e) {
-        }
-
-        return "/portal/main.jsp";
+        return null;
 
     }
 
