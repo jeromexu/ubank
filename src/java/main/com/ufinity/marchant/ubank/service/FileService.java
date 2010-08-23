@@ -45,5 +45,14 @@ public interface FileService {
      * @author zdxue
      */
     public List<FileBean> searchShareFiles(String fileName, String fileSize, String publishDate);
+    
+    /**
+     * get all files under specified directory
+     * 
+     * @param folderId folder directory ID
+     * @return files list
+     * @author bxji
+     */
+    public List<FileBean> getFilesByFolder(Long folderId);
 }
 
