@@ -368,7 +368,6 @@ public class DocumentUtil {
 			return;
 		}
 		String[] tempList = file.list();
-		// System.out.println("total files count：" + tempList.length);
 		File tempFile = null;
 		for (int i = 0; i < tempList.length; i++) {
 			if (path.endsWith(File.separator)) {
@@ -378,9 +377,7 @@ public class DocumentUtil {
 			}
 			if (tempFile.isFile()) {
 				try {
-					// System.out.println("tempFile=" + tempFile);
-					boolean result = tempFile.delete();
-					// System.out.println("delete files：" + result);
+					tempFile.delete();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
