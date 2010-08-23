@@ -18,7 +18,7 @@
             <td>${file.size }KB</td>
             <td>${file.folder.user.userName }</td>
             <td>${file.modifyTime }</td>
-            <td><a href="#">Download</a></td>
+            <td><a href="download.do?id=${file.fileId }">Download</a></td>
           </tr>
       </c:forEach>
     </c:when>
