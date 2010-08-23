@@ -90,6 +90,12 @@ public class FileServiceImpl implements FileService {
 
         return fileDao.searchPaginatedForFile(pageNum, pageSize, condition);
     }
+    
+    @Override
+	public Integer downloadFile(Long fileId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
     /**
      * Get file size config condition

@@ -40,8 +40,6 @@ public class ConfigKeys {
     /** FolderService key */
     public static final String SERVICE_FOLDER = "folder.service";
 
-    public static final String SERVICE_DOWNLOAD = "download.service";
-
     public static final String DAO_USER = "user.dao";
     public static final String DAO_FILE = "file.dao";
     public static final String DAO_FOLDER = "folder.dao";

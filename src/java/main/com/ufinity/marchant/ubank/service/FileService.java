@@ -63,4 +63,14 @@ public interface FileService {
      * @author bxji
      */
     public List<FileBean> getFilesByFolder(Long folderId);
+    
+	/**
+	 * 
+	 * download file by fileId
+	 * 
+	 * @param fileId the Id of the file
+	 * @return success or failure
+	 * @author jerome
+	 */
+	public Integer downloadFile(Long fileId);
 }
