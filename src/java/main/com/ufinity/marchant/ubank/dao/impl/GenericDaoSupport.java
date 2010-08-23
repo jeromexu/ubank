@@ -33,8 +33,11 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Projections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -396,6 +399,45 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         }
         Object object = query.uniqueResult();
         return object;
+    }
 
+    /**
+     * 
+     * @param currentPage
+     * @param pageSize
+     * @param criterion
+     * @return Pager<T>
+     * @author skyqiang
+     */
+    @SuppressWarnings("unchecked")
+    public Pager<T> queryEntitiesByCriteriaWithPager(int currentPage,
+            int pageSize, Criterion... criterion) {
+        List<T> list = null;
+        Criteria criteria = ((Session) this.entityManager.getDelegate())
+                .createCriteria(this.type);
+
+        //add query's condition
+        if (null != criterion) {
+            for (Criterion c : criterion) {
+                criteria.add(c);
+            }
+        }
+
+        //query total records according search's condition
+        int totalRecords = (Integer) criteria.setProjection(
+                Projections.rowCount()).uniqueResult();
+
+        //query result
+        list = criteria.setProjection(null).setFirstResult(
+                (currentPage - 1) * pageSize).setMaxResults(pageSize).list();
+
+        //encapsulation Pager object
+        Pager<T> page = new Pager<T>();
+        page.setTotalRecords(totalRecords);
+        page.setPageSize(pageSize);
+        page.setCurrentPage(currentPage);
+        page.setPageRecords(list);
+
+        return page;
     }
 }

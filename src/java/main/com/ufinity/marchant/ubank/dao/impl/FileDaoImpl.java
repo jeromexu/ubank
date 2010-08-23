@@ -29,6 +29,9 @@ package com.ufinity.marchant.ubank.dao.impl;
 import java.util.Date;
 import java.util.Map;
 
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
+
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.FileDao;
@@ -42,6 +45,33 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
         FileDao {
 
     /**
+     * this method is search file by critera and return Page object
+     * 
+     * @param condition
+     *            search's condition
+     * @param currentPage
+     *            current page size
+     * @param pageSize
+     *            page size
+     * @return Pager pager object
+     * @author skyqiang
+     */
+    public Pager<FileBean> searchPaginatedByCriteriaWithFile(int currentPage,
+            int pageSize, Map<String, Object> condition) {
+        Criterion[] criterion = new Criterion[] {
+                Restrictions.eq("share", condition.get("share")),
+                Restrictions.like("fileName", "%" + condition.get("fileName")
+                        + "%"),
+                Restrictions.between("size", condition.get("minFileSize"),
+                        condition.get("maxFileSize")),
+                Restrictions.between("modifyTime", condition
+                        .get("minModifyTime"), condition.get("maxModifyTime")) };
+
+        return queryEntitiesByCriteriaWithPager(currentPage, pageSize,
+                criterion);
+    }
+
+    /**
      * this method is search file and return Pager object
      * 
      * @param condition
@@ -53,15 +83,18 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
      * @return Pager pager object
      * @author skyqiang
      */
-    public Pager<FileBean> searchPaginatedForFile(int currentPage, int pageSize,
-            Map<String, Object> condition) {
-        String jpaQuery = "SELECT f from File f "
+    public Pager<FileBean> searchPaginatedForFile(int currentPage,
+            int pageSize, Map<String, Object> condition) {
+        String jpaQuery = "SELECT f from FileBean f "
                 + getJPAQueryString(condition);
         String fileName = (String) condition.get("fileName");
-        if (null != condition && null != fileName && !"".equals(fileName)) {
-            fileName = "%" + fileName + "%";
-            condition.put("fileName", fileName);
+        if (null != condition) {
+            if (null != fileName) {
+                fileName = "%" + fileName + "%";
+                condition.put("fileName", fileName);
+            }
         }
+
         return findPager(jpaQuery, currentPage, pageSize, condition);
     }
 
@@ -90,9 +123,13 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
 
         Date minModifyTime = (Date) condition.get("minModifyTime");
         Date maxModifyTime = (Date) condition.get("maxModifyTime");
-        if (null != minModifyTime && null != maxModifyTime) {
-            jpqQuery
-                    .append("AND f.modifyTime BETWEEN :minModifyTime AND :maxModifyTime ");
+        if (null != maxModifyTime) {
+            if (null != minModifyTime) {
+                jpqQuery
+                        .append("AND f.modifyTime BETWEEN :minModifyTime AND :maxModifyTime ");
+            } else {
+                jpqQuery.append("AND f.modifyTime <= :maxModifyTime ");
+            }
         }
 
         StringBuffer order = new StringBuffer("ORDER BY f.modifyTime DESC");

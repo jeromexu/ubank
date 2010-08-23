@@ -50,7 +50,21 @@ public interface FileDao extends GenericDao<FileBean, Long> {
      * @return Pager pager object
      * @author skyqiang
      */
-    public Pager<FileBean> searchPaginatedForFile(int currentPage, int pageSize,
-            Map<String, Object> condition);
+    public Pager<FileBean> searchPaginatedForFile(int currentPage,
+            int pageSize, Map<String, Object> condition);
 
+    /**
+     * this method is search file by critera and return Page object
+     * 
+     * @param condition
+     *            search's condition
+     * @param currentPage
+     *            current page size
+     * @param pageSize
+     *            page size
+     * @return Pager pager object
+     * @author skyqiang
+     */
+    public Pager<FileBean> searchPaginatedByCriteriaWithFile(int currentPage,
+            int pageSize, Map<String, Object> condition);
 }
