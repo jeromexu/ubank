@@ -101,10 +101,12 @@ public interface Constant {
     
     /** file search constant */
     String FILE_SIZE_SEPARATOR = ",";
+    String FILE_SIZE_0 = "0";
     String FILE_SIZE_1 = "1";
     String FILE_SIZE_2 = "2";
     String FILE_SIZE_3 = "3";
     String FILE_SIZE_4 = "4";
+    String FILE_PUBLISHDATE_0 = "0";
     String FILE_PUBLISHDATE_1 = "1";
     String FILE_PUBLISHDATE_2 = "2";
     String FILE_PUBLISHDATE_3 = "3";

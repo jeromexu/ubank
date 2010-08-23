@@ -106,7 +106,9 @@ public class FileServiceImpl implements FileService {
      */
     private String getFileSizeConf(String fileSize) {
         String fileSizeConf = "";
-        if(Constant.FILE_SIZE_1.equals(fileSize)) {
+        if(Constant.FILE_SIZE_0.equals(fileSize)) {
+            fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_0);
+        }else if(Constant.FILE_SIZE_1.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_1);
         }else if(Constant.FILE_SIZE_2.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_2);
@@ -150,7 +152,9 @@ public class FileServiceImpl implements FileService {
      */
     private Date getMaxModifyDate(String publishDate, Calendar cal) {
         int amount = 0;
-        if(Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
+        if(Constant.FILE_PUBLISHDATE_0.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_0);  
+        }else if(Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_1);  
         }else if(Constant.FILE_PUBLISHDATE_2.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_2);  

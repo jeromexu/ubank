@@ -48,10 +48,12 @@ public class ConfigKeys {
     public static final String PAGE_SIZE = "page.size";
     
     /** file search config keys */
+    public static final String FILE_SIZE_0 = "file.size.0";
     public static final String FILE_SIZE_1 = "file.size.1";
     public static final String FILE_SIZE_2 = "file.size.2";
     public static final String FILE_SIZE_3 = "file.size.3";
     public static final String FILE_SIZE_4 = "file.size.4";
+    public static final String FILE_PUBLISHDATE_0 = "file.publishDate.0";
     public static final String FILE_PUBLISHDATE_1 = "file.publishDate.1";
     public static final String FILE_PUBLISHDATE_2 = "file.publishDate.2";
     public static final String FILE_PUBLISHDATE_3 = "file.publishDate.3";
