@@ -75,7 +75,14 @@ function search() {
 	var url = 'search.do';
 	var rnd = new Date();
 	var data = "fileSize=" + $("#fileSize").val() + "&publishDate=" + $("#publishDate").val() + "&fileName=" + $("#fileNameId").val() + "&rnd=" + rnd;
-	alert(data);
+	
+	ajaxRequest(url, data);
+}
+
+function searchForPager(pageNum, url) {
+	var url = 'search.do';
+	var rnd = new Date();
+	var data = "fileSize=" + $("#hidFileSize").val() + "&publishDate=" + $("#hidPublishDate").val() + "&fileName=" + $("#hidFileName").val() + "&pageNum=" + pageNum + "&rnd=" + rnd;
 	
 	ajaxRequest(url, data);
 }

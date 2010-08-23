@@ -30,3 +30,15 @@
   </c:choose>
 
 </table>
+
+<c:if test="${not empty filePager.pageRecords}">
+  <input type="hidden" value="${fileSize}" id="hidFileSize">
+  <input type="hidden" value="${publishDate}" id="hidPublishDate">
+  <input type="hidden" value="${fileName }" id="hidFileName">
+
+  <jsp:include page="pager.jsp">
+    <jsp:param name="pageNum" value="${filePager.currentPage}" />
+    <jsp:param name="pageCount" value="${filePager.pageCount}" />
+    <jsp:param name="targetUrl" value="search.do" />
+  </jsp:include>
+</c:if>
