@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
+import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.common.JsonUtil;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl;
-import com.ufinity.marchant.ubank.service.FolderNode;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 
