@@ -60,7 +60,7 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
  * 
  * @author jerome
  * @version 1.0
- * @since	2010-8-20
+ * @since 2010-8-20
  */
 public class MyCaptchaService extends ListImageCaptchaEngine {
 
@@ -82,27 +82,21 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 
 	private static final String UPPER_ASCII_CHARS = "ABCDEFGHJKLMNPQRSTXYZ";
 
+	@SuppressWarnings("unused")
 	private static final String LOWER_ASCII_CHARS = "abcdefghjkmnpqrstxyz";
-
-	/**
-	 * Singleton instance of this class
-	 */
+	// Singleton instance of this class
 	private static MyCaptchaService INSTANCE = new MyCaptchaService();
 
+	@SuppressWarnings("unchecked")
 	private ArrayList textPasterList;
 
+	@SuppressWarnings("unchecked")
 	private ArrayList backgroundGeneratorList;
 
+	@SuppressWarnings("unchecked")
 	private ArrayList fontGeneratorList;
 
 	ImageCaptcha imageCaptcha = null;
-
-	/**
-	 * Private constructor to prevent instantiation
-	 */
-	private MyCaptchaService() {
-		
-	}
 
 	public static MyCaptchaService getInstance() {
 		return INSTANCE;
@@ -148,8 +142,9 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 
 			fontGeneratorList.add(new RandomFontGenerator(MIN_FONT_SIZE,
 					MAX_FONT_SIZE));
+			// use the number and upper letter to generate the captcha code
 			WordGenerator words = new RandomWordGenerator(NUMERIC_CHARS
-					 + UPPER_ASCII_CHARS);
+					+ UPPER_ASCII_CHARS);
 
 			for (Iterator fontIter = fontGeneratorList.iterator(); fontIter
 					.hasNext();) {
@@ -161,7 +156,6 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 					for (Iterator textIter = textPasterList.iterator(); textIter
 							.hasNext();) {
 						TextPaster parser = (TextPaster) textIter.next();
-
 						WordToImage word2image = new ComposedWordToImage(font,
 								back, parser);
 						ImageCaptchaFactory factory = new GimpyFactory(words,
@@ -171,7 +165,7 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 				}
 			}
 		} catch (Exception ex) {
-			LOGGER.error("产生校验码初始化异常 ＝＝ " + ex);
+			LOGGER.error("gernate the captcha code expcetion ", ex);
 		}
 	}
 
@@ -186,7 +180,6 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 	 */
 	public void writeCaptchaImage(HttpServletRequest request,
 			HttpServletResponse response) {
-
 		imageCaptcha = getNextImageCaptcha();
 		HttpSession session = request.getSession();
 		session.setAttribute("imageCaptcha", imageCaptcha);
@@ -198,18 +191,13 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 			response.setHeader("Cache-Control", "no-store");
 			response.setHeader("Pragma", "no-cache");
 			response.setDateHeader("Expires", 0);
-
 			response.setContentType("image/jpeg");
-
 			JPEGImageEncoder encoder = JPEGCodec
 					.createJPEGEncoder(outputStream);
 			encoder.encode(image);
-
 			outputStream.flush();
-			outputStream.close();
-			outputStream = null;// no close twice
 		} catch (IOException ex) {
-			LOGGER.error("产生图片异常 ＝＝ " + ex);
+			LOGGER.error("gernate the picture exception：", ex);
 		} finally {
 			if (outputStream != null) {
 				try {
@@ -244,7 +232,7 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 			return flag;
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			LOGGER.error("校验码校验异常 ＝＝ " + ex);
+			LOGGER.error("check the captcha code expcetion: ", ex);
 			return false;
 		}
 	}
