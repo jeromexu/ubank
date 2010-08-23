@@ -38,7 +38,7 @@ public interface UploadConstant {
     String PAUSE_METHOD="pause";
     
     //upload max size 10M
-    long MAX_LENGTH = 100 * 1024 * 1024L;
+    long MAX_LENGTH = 10 * 1024 * 1024L;
     //1KB
     int HTTP_REDUNDANT_LENGTH = 1024;
     

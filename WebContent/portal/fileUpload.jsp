@@ -7,6 +7,7 @@
 		<link rel="stylesheet" type="text/css"
 			href="../css/themes/default/easyui.css">
 		<link rel="stylesheet" type="text/css" href="../css/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../css/upload.css">
 		<script type="text/javascript" src="../js/jquery-1.2.6.js"></script>
 		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
 		<script type="text/javascript" src="../js/ubank.js"></script>
@@ -87,11 +88,15 @@
 			    	$("#uploadedFiles").html(uploadInfo.uploadedFiles + '<br/><b>Total size: ' + Math.ceil(uploadInfo.totalSize/1024) + 'KB</b>');
 			   	}
 			   	
-			   	if(uploadInfo.completed == "true" || uploadInfo.inProgress == "false"){
+			   	if(uploadInfo.inProgress == "false"){
 				  	window.clearInterval(getInfo);
 				  	$("#uploadbutton").show();
 				  	$("#controlbutton").hide();
 				  	pauseOrContinue = true;
+				  	if(uploadInfo.completed == "true"){
+				  		 $("#progressBarText").html('Time elapsed: <b>' + secondsElapsed + '</b> seconds;Average Speed: <b>' + speed + 'KB/s</b><br/>Uploading <b>' + uploadInfo.curFileName + '.. [100%]</b>');
+				  		 $("#progressBarBoxContent").attr("style","width:"+ parseInt(100 * 3.5) + "px");
+				  	}
 				}
 			}
 

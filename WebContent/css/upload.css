@@ -1,0 +1,6 @@
+#progressBarBoxContent {
+	width: 3px;
+	height: 20px;
+	border-right: 2px solid #444;
+	background: #9ACB34;
+}

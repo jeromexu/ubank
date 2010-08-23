@@ -60,7 +60,7 @@ public class FileUploadServlet extends AbstractServlet {
 
     private Logger logger = Logger.getLogger(FileUploadServlet.class);
     
-    private UploadService uploadService = ServiceFactory.createService(UploadService.class);;
+    private UploadService uploadService = ServiceFactory.createService(UploadService.class);
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -68,6 +68,7 @@ public class FileUploadServlet extends AbstractServlet {
      */
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+        doPost(request, response);
     }
 
     /**
@@ -187,9 +188,10 @@ public class FileUploadServlet extends AbstractServlet {
                 if (filesSize >= UploadConstant.MAX_LENGTH) {
                     String errorMsg = "Error: Current files size is "
                             + filesSize / (1024 * 1024)
-                            + "MB which has exceeded max " + "10MB";
+                            + "MB which has exceeded max " + UploadConstant.MAX_LENGTH/(1024*1024)+"M";
                     pi.setCompleted(true);
                     pi.setErrorMsg(errorMsg);
+                    System.out.println("Current files size is to big");
                     throw new Exception(errorMsg);
                 }
                 ServletFileUpload upload = new ServletFileUpload();
@@ -202,17 +204,18 @@ public class FileUploadServlet extends AbstractServlet {
                 FileItemIterator fIter = upload.getItemIterator(request);
                 
                 //TODO
+                currentFolder = new Folder();
                 currentFolder.setFolderId(1l);
-                currentFolder.setDirectory("E:/temp/");
+                currentFolder.setDirectory("E:/temp/folder/");
                 uploadService.uploadAndSaveDb(currentFolder, pi, fIter);
                 
-                pi.setInProgress(false);
                 pi.setCurrentTime(System.currentTimeMillis());
                 pi.setBytesRead(filesSize);
                 pi.setCompleted(true);
             }
         } catch (Exception e) {
             pi.setInProgress(false);
+            pi.setErrorMsg("Upload file has some Exception.");
             logger.warn("Upload cancelled or interrupted!"+ e.getMessage());
         } 
     }

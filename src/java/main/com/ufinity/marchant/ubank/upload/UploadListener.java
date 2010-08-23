@@ -27,7 +27,6 @@
 package com.ufinity.marchant.ubank.upload;
 
 import org.apache.commons.fileupload.ProgressListener;
-import org.apache.log4j.Logger;
 
 /**
  * 
@@ -39,8 +38,6 @@ import org.apache.log4j.Logger;
  */
 public class UploadListener implements ProgressListener {
     
-    private Logger logger = Logger.getLogger(UploadListener.class);
-
     private long megaBytes = -1;
 
     private ProgressInfo pi = null;
@@ -82,20 +79,13 @@ public class UploadListener implements ProgressListener {
         pi.setTotalSize(pContentLength);
         pi.setCurrentTime(System.currentTimeMillis());
         
-        //TODO remove log
-        if (pContentLength == -1) {
-            logger.debug("So far, " + pBytesRead
-                    + " bytes have been read.");
-            
-            System.out.println("So far, " + pBytesRead
-                    + " bytes have been read.");
-        } else {
-            logger.debug("So far, " + pBytesRead + " of "
-                    + pContentLength + " bytes have been read.");
-            
-            System.out.println("So far, " + pBytesRead + " of "
-                    + pContentLength + " bytes have been read.");
-        }
+//        if (pContentLength == -1) {
+//            System.out.println("So far, " + pBytesRead
+//                    + " bytes have been read.");
+//        } else {
+//            System.out.println("So far, " + pBytesRead + " of "
+//                    + pContentLength + " bytes have been read.");
+//        }
     }
 
 }
