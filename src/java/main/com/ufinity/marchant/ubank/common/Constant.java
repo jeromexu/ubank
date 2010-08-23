@@ -36,6 +36,9 @@ public interface Constant {
     String ATTR_ERROR_MSG = "error_msg";
 
     String ATTR_FILEPAGER = "filePager";
+    String ATTR_FILENAME = "fileName";
+    String ATTR_FILESIZE = "fileSize";
+    String ATTR_PUBLISHDATE = "publishDate";
 
     /** charset filter config */
     String ENABLE_FILTER = "true";

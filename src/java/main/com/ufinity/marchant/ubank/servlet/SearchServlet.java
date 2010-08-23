@@ -106,6 +106,9 @@ public class SearchServlet extends AbstractServlet {
         int pageSize = SystemGlobals.getInt(ConfigKeys.PAGE_SIZE);
         Pager<FileBean> filePager = fileService.searchShareFiles(fileName, fileSize, publishDate, pageNum, pageSize);
         req.setAttribute(Constant.ATTR_FILEPAGER, filePager);
+        req.setAttribute(Constant.ATTR_FILENAME, fileName);
+        req.setAttribute(Constant.ATTR_FILESIZE, fileSize);
+        req.setAttribute(Constant.ATTR_PUBLISHDATE, publishDate);
         
         return Constant.SEARCH_RESULT_PAGE;
     }

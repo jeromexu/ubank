@@ -32,6 +32,7 @@ import java.util.Map;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DateUtil;
+import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.common.StringUtil;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
@@ -88,10 +89,11 @@ public class FileServiceImpl implements FileService {
         condition.put(Constant.MIN_MODIFY_TIME, DateUtil.parse(DateUtil.format(minDate, datePattern), datePattern));
         condition.put(Constant.MAX_MODIFY_TIME, DateUtil.parse(DateUtil.format(maxDate, datePattern), datePattern));
 
-        return fileDao.searchPaginatedForFile(pageNum, pageSize, condition);
+        Pager<FileBean> pager = fileDao.searchPaginatedForFile(pageNum, pageSize, condition);
+        
+        return pager;
     }
     
-    @Override
 	public Integer downloadFile(Long fileId) {
 		// TODO Auto-generated method stub
 		return null;
