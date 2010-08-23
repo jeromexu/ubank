@@ -22,17 +22,14 @@
 // HIGH RISK ACTIVITIES.
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service.impl;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DateUtil;
-import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.common.StringUtil;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
@@ -94,9 +91,16 @@ public class FileServiceImpl implements FileService {
         return pager;
     }
     
-	public Integer downloadFile(Long fileId) {
-		// TODO Auto-generated method stub
-		return null;
+    /**
+	 * 
+	 * get the file path by the file id
+	 * 
+	 * @param fileId the id of the file
+	 * @return the fileBean object
+	 * @author jerome
+	 */
+	public FileBean getFileBean(Long fileId){
+		return fileDao.find(fileId);
 	}
 
     /**

@@ -36,41 +36,42 @@ import com.ufinity.marchant.ubank.common.Pager;
  */
 public interface FileService {
 
-    /**
-     * Search share files
-     * 
-     * @param fileName
-     *            file name
-     * @param fileSize
-     *            file size flag
-     * @param publishDate
-     *            publish date flag
-     * @param pageNum
-     *            pageNum
-     * @param pageSize
-     *            pageSize
-     * @return file pager obj
-     * @author zdxue
-     */
-    public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
-            String publishDate, int pageNum, int pageSize);
-    
-    /**
-     * get all files under specified directory
-     * 
-     * @param folderId folder directory ID
-     * @return files list
-     * @author bxji
-     */
-    public List<FileBean> getFilesByFolder(Long folderId);
-    
+	/**
+	 * Search share files
+	 * 
+	 * @param fileName
+	 *            file name
+	 * @param fileSize
+	 *            file size flag
+	 * @param publishDate
+	 *            publish date flag
+	 * @param pageNum
+	 *            pageNum
+	 * @param pageSize
+	 *            pageSize
+	 * @return file pager obj
+	 * @author zdxue
+	 */
+	public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
+			String publishDate, int pageNum, int pageSize);
+
+	/**
+	 * get all files under specified directory
+	 * 
+	 * @param folderId
+	 *            folder directory ID
+	 * @return files list
+	 * @author bxji
+	 */
+	public List<FileBean> getFilesByFolder(Long folderId);
+
 	/**
 	 * 
-	 * download file by fileId
+	 * get the file path by the file id
 	 * 
-	 * @param fileId the Id of the file
-	 * @return success or failure
+	 * @param fileId the id of the file
+	 * @return the fileBean object
 	 * @author jerome
 	 */
-	public Integer downloadFile(Long fileId);
+	public FileBean getFileBean(Long fileId);
 }
