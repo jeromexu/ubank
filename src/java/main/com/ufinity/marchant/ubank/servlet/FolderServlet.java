@@ -87,9 +87,9 @@ public class FolderServlet extends AbstractServlet {
     /**
      * {method description}
      * 
-     * @param req
-     * @param resp
-     * @return
+     * @param req request
+     * @param resp response
+     * @return forward page
      */
     @SuppressWarnings("unused")
     private String showTree(HttpServletRequest req, HttpServletResponse resp) {
