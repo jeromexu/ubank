@@ -27,6 +27,7 @@
 package com.ufinity.marchant.ubank.service;
 
 import com.ufinity.marchant.ubank.bean.Folder;
+import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.exception.UBankException;
 
 /**
