@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ufinity.marchant.ubank.bean.User;
+import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.common.JsonUtil;
@@ -30,8 +31,8 @@ public class FolderServlet extends AbstractServlet {
     private static final long serialVersionUID = -8297805269743197486L;
 
     private static final String SHOW_MAIN = "showMain";
+    private static final String SHOW_TREE = "showTree";
     private static final String USERNAME = "username";
-    private static final String USER_ID = "userId";
 
     /**
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
@@ -55,6 +56,9 @@ public class FolderServlet extends AbstractServlet {
         if (SHOW_MAIN.equals(method)) {
             rslt = showMain(req, resp);
         }
+        else if (SHOW_TREE.equals(method)) {
+            rslt = showTree(req, resp);
+        }
 
         if (rslt == null || rslt.equals("")) {
             rslt = "../common/404.html";
@@ -73,7 +77,7 @@ public class FolderServlet extends AbstractServlet {
      * @return forward page
      */
     private String showMain(HttpServletRequest req, HttpServletResponse resp) {
-//        String username = req.getParameter(USERNAME);
+        // String username = req.getParameter(USERNAME);
 
         FolderDao folderDao = new FolderDaoImpl();
         EntityManagerUtil.begin();
@@ -87,22 +91,30 @@ public class FolderServlet extends AbstractServlet {
     /**
      * {method description}
      * 
-     * @param req request
-     * @param resp response
+     * @param req
+     *            request
+     * @param resp
+     *            response
      * @return forward page
+     * @author bxji
      */
-    @SuppressWarnings("unused")
     private String showTree(HttpServletRequest req, HttpServletResponse resp) {
-       User user = (User)req.getSession().getAttribute("");
+        User user = (User) req.getSession().getAttribute(Constant.SESSION_USER);
+        FolderNode treeRootNode = null;
 
-        String userId = req.getParameter(USER_ID);
-        FolderService folderService = ServiceFactory.createService(FolderService.class);
-        
-        EntityManagerUtil.commit();
-        FolderNode  treeRootNode = folderService.getTreeRoot(Long.parseLong(userId.trim()));
-        EntityManagerUtil.commit();
-        
-        String treeJson = JsonUtil.bean2json(treeRootNode);
+        if (user != null) {
+            FolderService folderService = ServiceFactory
+                    .createService(FolderService.class);
+            EntityManagerUtil.commit();
+            treeRootNode = folderService.getTreeRoot(user.getUserId());
+            EntityManagerUtil.commit();
+        }
+
+        String treeJson = "";
+        if (treeRootNode != null) {
+            treeJson = JsonUtil.bean2json(treeRootNode);
+        }
+
         resp.setContentType("application/json;charset=UTF-8");
         try {
             PrintWriter pw = resp.getWriter();
@@ -112,7 +124,7 @@ public class FolderServlet extends AbstractServlet {
         catch (IOException e) {
         }
 
-        return "";
+        return "/portal/main.jsp";
 
     }
 
