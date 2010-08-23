@@ -32,14 +32,14 @@ import com.ufinity.marchant.ubank.service.FileService;
 
 /**
  * FileService implements
- *
+ * 
  * @version 1.0 - 2010-8-19
- * @author zdxue     
+ * @author zdxue
  */
 public class FileServiceImpl implements FileService {
-    
+
     private FileDao fileDao;
-    
+
     /**
      * construtor
      */
@@ -49,22 +49,36 @@ public class FileServiceImpl implements FileService {
 
     /**
      * Search share files
-     *
-     * @param fileName file name
-     * @param fileSize file size flag
-     * @param publishDate publish date flag
+     * 
+     * @param fileName
+     *            file name
+     * @param fileSize
+     *            file size flag
+     * @param publishDate
+     *            publish date flag
      * @return file list
      * @author zdxue
      */
     public List<FileBean> searchShareFiles(String fileName, String fileSize,
             String publishDate) {
-        
-        
+
         System.out.println(fileDao);
-        
+
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * get all files under specified directory
+     * 
+     * @param folderId
+     *            folder directory ID
+     * @return files list
+     * @author bxji
+     */
+    public List<FileBean> getFilesByFolder(Long folderId) {
         // TODO Auto-generated method stub
         return null;
     }
 
 }
-
