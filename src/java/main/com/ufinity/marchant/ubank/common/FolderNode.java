@@ -44,7 +44,8 @@ import org.apache.commons.beanutils.BeanUtils;
  * @version 2010-8-17
  */
 public class FolderNode {
-
+    public static final String STATE_OPEN = "open";
+    public static final String STATE_CLASED = "closed";
     private Long folderId;
     private Long parentId;
     private String folderName;
@@ -54,6 +55,7 @@ public class FolderNode {
     private Boolean share;
     private String folderType;
     private Long userId;
+    private String state;
     private List<FolderNode> subNodes;
 
     /**
@@ -339,4 +341,21 @@ public class FolderNode {
         this.subNodes = subNodes;
     }
 
+    /**
+     * the getter method of state
+     * @return the state
+     */
+    public String getState() {
+        return state;
+    }
+
+    /**
+     * the setter method of the state
+     * @param state the state to set
+     */
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    
 }
