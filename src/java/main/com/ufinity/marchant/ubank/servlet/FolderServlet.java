@@ -50,7 +50,7 @@ public class FolderServlet extends AbstractServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String method = parseActionName(req);
+        String method = req.getParameter("method");
         String rslt = "";
 
         if (SHOW_MAIN.equals(method)) {
