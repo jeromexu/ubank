@@ -227,8 +227,7 @@ public class Folder implements Serializable {
     /**
      * @return the user
      */
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.REFRESH,
-            CascadeType.MERGE }, optional = true, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = { CascadeType.REFRESH }, optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
     public User getUser() {
         return user;
@@ -245,8 +244,7 @@ public class Folder implements Serializable {
     /**
      * @return the files
      */
-    @OneToMany(cascade = { CascadeType.REMOVE, CascadeType.MERGE,
-            CascadeType.PERSIST }, fetch = FetchType.LAZY, mappedBy = "folder")
+    @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "folder")
     public Set<FileBean> getFiles() {
         return files;
     }
