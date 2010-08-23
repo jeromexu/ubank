@@ -64,7 +64,7 @@ public class FolderServlet extends AbstractServlet {
             rslt = "../common/404.html";
         }
 
-        req.getRequestDispatcher(rslt).forward(req, resp);
+        forward(req, resp, rslt);
     }
 
     /**
