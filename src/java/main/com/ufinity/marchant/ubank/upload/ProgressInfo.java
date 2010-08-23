@@ -50,13 +50,13 @@ public class ProgressInfo {
     private boolean isCompleted;
 
     private String curFileName = "";
-    
+
     private String uploadedFiles = "";
-    
+
     private String errorMsg = "";
-    
+
     private long deltaTime = 0;
-    
+
     private boolean isPause;
 
     public boolean isPause() {
@@ -107,6 +107,11 @@ public class ProgressInfo {
         this.currentTime = currentTime;
     }
 
+    /**
+     * get delta time
+     * 
+     * @return delta time
+     */
     public long getDeltaTime() {
         deltaTime = this.currentTime - this.startTime;
         return deltaTime;
@@ -128,10 +133,15 @@ public class ProgressInfo {
         return isCompleted;
     }
 
+    /**
+     * set is completed
+     * 
+     * @param isCompleted
+     *            is completed
+     */
     public void setCompleted(boolean isCompleted) {
         this.isCompleted = isCompleted;
         this.isInProgress = false;
-
     }
 
     public void setInProgress(boolean isInProgress) {

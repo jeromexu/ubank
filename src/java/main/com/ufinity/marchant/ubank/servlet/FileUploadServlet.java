@@ -48,6 +48,7 @@ import org.apache.log4j.Logger;
 import com.ufinity.marchant.ubank.common.JsonUtil;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
 import com.ufinity.marchant.ubank.upload.UploadListener;
+import com.ufinity.marchant.ubank.upload.UploadConstant;
 
 /**
  * 
@@ -62,18 +63,6 @@ public class FileUploadServlet extends AbstractServlet {
     private static final long serialVersionUID = 6092584996678971635L;
 
     private Logger logger = Logger.getLogger(FileUploadServlet.class);
-
-    private static final String UPLOAD = "upload";
-
-    private static final String CONTINUE_UOLOAD = "continueUpload";
-
-    private static final String GET_INFO = "getInfo";
-
-    private static final String PAUSE = "pause";
-
-    private static final long MAX_LENGTH = 100 * 1024 * 1024L; // 10MB
-
-    private static final int HTTP_REDUNDANT_LENGTH = 1024; // 1KB
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -90,13 +79,13 @@ public class FileUploadServlet extends AbstractServlet {
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         String method = parseActionName(request);
-        if (UPLOAD.equals(method)) {
+        if (UploadConstant.UPLOAD_METHOD.equals(method)) {
             doUpload(request);
-        } else if (GET_INFO.equals(method)) {
+        } else if (UploadConstant.GET_INFO_METHOD.equals(method)) {
             getUploadInfo(request, response);
-        } else if (PAUSE.equals(method)) {
+        } else if (UploadConstant.PAUSE_METHOD.equals(method)) {
             pause(request);
-        } else if (CONTINUE_UOLOAD.equals(method)) {
+        } else if (UploadConstant.CONTINUE_UOLOAD_METHOD.equals(method)) {
             continueUpload(request);
         }
     }
@@ -111,7 +100,7 @@ public class FileUploadServlet extends AbstractServlet {
      *            json
      */
     private void responseClient(HttpServletResponse response, String json) {
-        response.setContentType("application/json;charset=UTF-8");
+        response.setContentType(UploadConstant.CONTENT_TYPE);
         PrintWriter out = null;
         try {
             out = response.getWriter();
@@ -152,7 +141,7 @@ public class FileUploadServlet extends AbstractServlet {
             HttpServletResponse response) {
         // System.out.println("getUploadInfo.........");
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
-                "progressInfo");
+                UploadConstant.PROGRESS_INFO);
         if (pi != null) {
             String json = JsonUtil.bean2json(pi);
             responseClient(response, json);
@@ -169,10 +158,10 @@ public class FileUploadServlet extends AbstractServlet {
     private void pause(HttpServletRequest request) {
         // System.out.println("pause~~~~~~~~~~~~~~~~~");
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
-                "progressInfo");
+                UploadConstant.PROGRESS_INFO);
         if (pi != null) {
             pi.setPause(true);
-            request.getSession().setAttribute("progressInfo", pi);
+            request.getSession().setAttribute(UploadConstant.PROGRESS_INFO, pi);
         }
     }
 
@@ -186,10 +175,10 @@ public class FileUploadServlet extends AbstractServlet {
     private void continueUpload(HttpServletRequest request) {
         // System.out.println("continue upload~~~~~~~~~~~~~~~~~");
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
-                "progressInfo");
+                UploadConstant.PROGRESS_INFO);
         if (pi != null) {
             pi.setPause(false);
-            request.getSession().setAttribute("progressInfo", pi);
+            request.getSession().setAttribute(UploadConstant.PROGRESS_INFO, pi);
         }
     }
 
@@ -202,7 +191,7 @@ public class FileUploadServlet extends AbstractServlet {
      */
     private void doUpload(HttpServletRequest request) {
         ProgressInfo pi = new ProgressInfo();
-        request.getSession().setAttribute("progressInfo", pi);
+        request.getSession().setAttribute(UploadConstant.PROGRESS_INFO, pi);
 
         String fldName = "";
         FileItemStream item = null;
@@ -211,11 +200,10 @@ public class FileUploadServlet extends AbstractServlet {
         ByteArrayOutputStream bStream = null;
         try {
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-
             if (isMultipart) {
                 int filesSize = request.getContentLength()
-                        - HTTP_REDUNDANT_LENGTH;
-                if (filesSize >= MAX_LENGTH) {
+                        - UploadConstant.HTTP_REDUNDANT_LENGTH;
+                if (filesSize >= UploadConstant.MAX_LENGTH) {
                     String errorMsg = "Error: Current files size is "
                             + filesSize / (1024 * 1024)
                             + "MB which has exceeded max " + "10MB";
@@ -224,9 +212,9 @@ public class FileUploadServlet extends AbstractServlet {
                     throw new Exception(errorMsg);
                 }
                 ServletFileUpload upload = new ServletFileUpload();
-                upload.setHeaderEncoding("UTF-8");
-                upload.setFileSizeMax(MAX_LENGTH);
-                upload.setSizeMax(MAX_LENGTH);
+                upload.setHeaderEncoding(UploadConstant.HEADER_ENCODE);
+                upload.setFileSizeMax(UploadConstant.MAX_LENGTH);
+                upload.setSizeMax(UploadConstant.MAX_LENGTH);
                 UploadListener uploadListener = new UploadListener(pi);
                 upload.setProgressListener(uploadListener);
                 // Parse the request
