@@ -28,6 +28,7 @@ package com.ufinity.marchant.ubank.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -233,7 +234,7 @@ public class FolderServiceImpl implements FolderService {
      * 
      * @return ddd
      */
-    public boolean copyTo(Long targetFolderId, Long sourceFolderId) {
+    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId) {
         if (targetFolderId == null || 0l == targetFolderId
                 || sourceFolderId == null || 0l == sourceFolderId) {
             logger.debug("Folder replication fails, "
@@ -242,40 +243,85 @@ public class FolderServiceImpl implements FolderService {
         }
         Folder source = folderDao.find(sourceFolderId);
         Folder target = folderDao.find(targetFolderId);
-
-        // DocumentUtil.copyFolder(oldPath, newPath);
-
+        boolean result = copyFolder(target, source);
+        if (result) {
+            DocumentUtil.copyFolder(source.getDirectory()
+                    + source.getFolderName(), target.getDirectory()
+                    + target.getFolderName());
+            return true;
+        }
         return false;
     }
 
     /**
-     * {method description}
+     * Move all the contents of the source directory to the destination folder,
+     * This method is the physical disk move and database move
      * 
-     * @return ddd
+     * @param targetFolderId
+     *            target Folder object identification
+     * @param sourceFolderId
+     *            source Folder object identification
+     * @return success return true else return false
+     * @author bxji
      */
-    public boolean moveTo(Long targetFolderId, Long sourceFolderId) {
-        return false;
-    }
-
-    private Folder copyFolder(Long targetFolderId, Long sourceFolderId) {
+    public boolean moveFolderTo(Long targetFolderId, Long sourceFolderId) {
         if (targetFolderId == null || 0l == targetFolderId
                 || sourceFolderId == null || 0l == sourceFolderId) {
-            logger.debug("Folder replication fails, "
+            logger.debug("Folder moved fails, "
                     + "'targetFolderId' and 'sourceFolderId' can not be null.");
-            return null;
+            return false;
         }
         Folder source = folderDao.find(sourceFolderId);
         Folder target = folderDao.find(targetFolderId);
-        Set<FileBean> files = source.getFiles();
-        Set<Folder> folders = source.getChildren();
+        target.getChildren().add(source);
+        source.setParent(target);
+        DocumentUtil.moveFolderTo(source, target);
+        folderDao.modify(source);
+        return true;
+    }
+
+    /**
+     * Copy all the contents of the source directory to the destination folder
+     * 
+     * @param targetFolder
+     *            target Folder
+     * @param sourceFolder
+     *            source folder
+     * @return success return true else return false
+     * @author bxji
+     */
+    private boolean copyFolder(Folder targetFolder, Folder sourceFolder) {
+        if (targetFolder == null || sourceFolder == null) {
+            logger.debug("Folder replication fails, "
+                    + "'targetFolder' and 'sourceFolder' can not be null.");
+            return false;
+        }
+
+        Folder temp = new Folder();
+        try {
+            temp = (Folder) BeanUtils.cloneBean(sourceFolder);
+        }
+        catch (Exception e) {
+        }
+        temp.setParent(targetFolder);
+        temp.setDirectory(temp.getParent().getDirectory()
+                + temp.getFolderName());
+        temp.setFiles(new HashSet<FileBean>());
+        temp.setChildren(new HashSet<Folder>());
+        targetFolder.getChildren().add(temp);
+        folderDao.add(temp);
+        folderDao.modify(targetFolder);
+
+        Set<FileBean> files = sourceFolder.getFiles();
+        Set<Folder> folders = sourceFolder.getChildren();
 
         // If there are files in the directory,
         // copy the documents and save to database
         if (files.size() > 0) {
-            for (FileBean fileBean : files) {
+            for (FileBean file : files) {
                 try {
-                    FileBean copy = (FileBean) BeanUtils.cloneBean(fileBean);
-                    copy.setFolder(target);
+                    FileBean copy = (FileBean) BeanUtils.cloneBean(file);
+                    copy.setFolder(temp);
                     fileDao.add(copy);
                 }
                 catch (Exception e) {
@@ -283,22 +329,13 @@ public class FolderServiceImpl implements FolderService {
             }
         }
 
+        // If the directory has a subdirectory, copy the entire directory
         if (folders.size() > 0) {
             for (Folder folder : folders) {
-                Folder temp = new Folder();
-                
-                try {
-                    temp = (Folder) BeanUtils.cloneBean(folder);
-                }
-                catch (Exception e) {
-                }
-               
-                target.getChildren().add(temp);
+                // Subfolders recursive copy
+                copyFolder(temp, folder);
             }
-
         }
-
-        return null;
-
+        return true;
     }
 }

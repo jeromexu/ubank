@@ -92,17 +92,29 @@ public interface FolderService {
     public boolean delFolder(Long folderId);
 
     /**
-     * {method description}
+     * Move all the contents of the source directory to the destination folder,
+     * This method is the physical disk move and database move
      * 
-     * @return dd
+     * @param targetFolderId
+     *            target Folder object identification
+     * @param sourceFolderId
+     *            source Folder object identification
+     * @return success return true else return false
+     * @author bxji
      */
-    public boolean moveTo(Long targetFolderId, Long sourceFolderId);
+    public boolean moveFolderTo(Long targetFolderId, Long sourceFolderId);
 
     /**
-     * {method description}
+     * Copy all the contents of the source directory to the destination folder,
+     * This method is the physical disk copy and database copy
      * 
-     * @return ddd
+     * @param targetFolderId
+     *            target Folder object identification
+     * @param sourceFolderId
+     *            source Folder object identification
+     * @return success return true else return false
+     * @author bxji
      */
-    public boolean copyTo(Long targetFolderId, Long sourceFolderId);
+    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId);
 
 }
