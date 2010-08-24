@@ -346,8 +346,7 @@ public class DocumentUtil {
 				}
 			}
 		}
-		// first copy file and second delete the file
-		return removeFile(fileBean);
+		return 1;
 	}
 
 	/**
