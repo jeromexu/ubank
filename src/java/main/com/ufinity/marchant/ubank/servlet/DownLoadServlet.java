@@ -50,7 +50,7 @@ public class DownLoadServlet extends AbstractServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		
 		String method = parseActionName(request);
-        String rslt = "";
+        String rslt = null;
         if(Constant.ACTION_DOWNLOAD.equals(method)){
             rslt = download(request, response);
         }
@@ -102,7 +102,7 @@ public class DownLoadServlet extends AbstractServlet {
 		try {
 			 // read file into i/o
 			 buff = new BufferedInputStream(new FileInputStream(file));
-			 // cache
+			 // cache data
 		     byte [] b = new byte[5*1024];
 		     // count the file size which file has downloaded currently
 		     long k = 0;
