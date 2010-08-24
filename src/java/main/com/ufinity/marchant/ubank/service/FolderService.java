@@ -65,7 +65,8 @@ public interface FolderService {
      * @param userId
      *            User id identification
      * @return return this user directory tree Struct
-     * @throws UBankException throw Possible exception
+     * @throws UBankException
+     *             throw Possible exception
      */
     public FolderNode getTreeRoot(Long userId) throws UBankException;
 
@@ -73,11 +74,20 @@ public interface FolderService {
      * Get all files and sub-folders under specified directory,return
      * FileOrFolderJsonEntity class list {method description}
      * 
-     * @param folderId  specified folder id
+     * @param folderId
+     *            specified folder id
      * @return FileOrFolderJsonEntity list
      * @author bxji
-     * @throws UBankException   throw Possible exception
      */
-    public List<FileOrFolderJsonEntity> getAllByFolder(Long folderId) throws UBankException;
+    public List<FileOrFolderJsonEntity> getAllByFolder(Long folderId);
+
+/**
+ * 
+ * this method is removed 'Folder' from the disk and database
+ * @param folderId  folder identification  
+ * @return  success return true else return false
+ * @author bxji
+ */
+    public boolean removeFolder(Long folderId);
 
 }
