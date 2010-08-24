@@ -95,9 +95,9 @@ public interface Constant {
      * init--Initialization directoy;
      * customer--user directory
      */
-    public final String R = "root";
-    public final String I = "init";
-    public final String C = "customer";
+    public final String ROOT = "R";
+    public final String INIT = "I";
+    public final String CUSTOMER = "C";
 
     /** file search pagenum */
     String REQ_PARAM_PAGENUM = "pageNum";
@@ -120,5 +120,17 @@ public interface Constant {
     String MAX_FILE_SIZE = "maxFileSize";
     String MIN_MODIFY_TIME = "minModifyTime";
     String MAX_MODIFY_TIME = "maxModifyTime";
+    
+    // all user's directory space
+    public static final String USER_SPACE_DIR = "/user";
+    
+    public static final String MY_File_NAME = "我的文件";
+    
+    public static final String SOFTWARE_NAME = "软件";
+    
+    public static final String DOCUMENT_NAME = "文档";
+    
+    public static final String PHOTO_NAME = "照片";
+   
     
 }

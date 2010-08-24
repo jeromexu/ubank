@@ -97,7 +97,7 @@ public class FolderServiceImpl implements FolderService {
         newFolder.setFolderName(folderName);
         newFolder.setCreateTime(new Date());
         newFolder.setDirectory("-------");
-        newFolder.setFolderType(Constant.C);
+        newFolder.setFolderType(Constant.CUSTOMER);
         if (!Validity.isNullAndEmpty(FolderType)) {
             newFolder.setFolderType(FolderType);
         }
