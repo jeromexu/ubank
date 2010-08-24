@@ -63,4 +63,6 @@ public class ConfigKeys {
     public static final String FILE_PUBLISHDATE_3 = "file.publishDate.3";
     public static final String FILE_PUBLISHDATE_4 = "file.publishDate.4";
     public static final String FILE_PUBLISHDATE_5 = "file.publishDate.5";
+    // ubank app path
+    public static final String SERVER_PATH = "ubank.path";
 }
