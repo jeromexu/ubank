@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
@@ -42,6 +43,7 @@ import com.ufinity.marchant.ubank.common.FileOrFolderJsonEntity;
 import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
+import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.UBankException;
@@ -54,9 +56,21 @@ import com.ufinity.marchant.ubank.service.FolderService;
  * @version 2010-8-20
  */
 public class FolderServiceImpl implements FolderService {
+    private FileDao fileDao;
+    private FolderDao folderDao;
+    private UserDao userDao;
 
     // Logger for this class
     protected final Logger logger = Logger.getLogger(FolderServiceImpl.class);
+
+    /**
+     * Constructor for FolderServiceImpl
+     */
+    public FolderServiceImpl() {
+        folderDao = DaoFactory.createDao(FolderDao.class);
+        fileDao = DaoFactory.createDao(FileDao.class);
+        userDao = DaoFactory.createDao(UserDao.class);
+    }
 
     /**
      * create a new folder on disk and save to database
@@ -85,10 +99,8 @@ public class FolderServiceImpl implements FolderService {
                     "parentId can not be null and folderName can not be null or space String");
         }
 
-        UserDao userDao = DaoFactory.createDao(UserDao.class);
         User user = userDao.find(userId);
 
-        FolderDao folderDao = DaoFactory.createDao(FolderDao.class);
         Folder parentfolder = folderDao.find(parentId);
 
         // create new foler object and set value
@@ -135,7 +147,6 @@ public class FolderServiceImpl implements FolderService {
         if (userId == null || 0l == userId) {
             throw new UBankException("userId can not be empty");
         }
-        FolderDao folderDao = DaoFactory.createDao(FolderDao.class);
         List<Folder> folders = folderDao.findFolderListByUserId(userId);
         FolderNode rootNode = FolderNode.generateFolderTree(folders);
         return rootNode;
@@ -154,7 +165,6 @@ public class FolderServiceImpl implements FolderService {
         if (folderId == null || 0l == folderId) {
             return null;
         }
-        FolderDao folderDao = DaoFactory.createDao(FolderDao.class);
         Folder folder = folderDao.find(folderId);
         Set<FileBean> files = folder.getFiles();
         Set<Folder> chiFolders = folder.getChildren();
@@ -191,17 +201,17 @@ public class FolderServiceImpl implements FolderService {
     }
 
     /**
-     * 
      * this method is removed 'Folder' from the disk and database
-     * @param folderId  folder identification  
-     * @return  success return true else return false
+     * 
+     * @param folderId
+     *            folder identification
+     * @return success return true else return false
      * @author bxji
      */
     public boolean delFolder(Long folderId) {
         if (folderId == null || 0l == folderId) {
             return false;
         }
-        FolderDao folderDao = DaoFactory.createDao(FolderDao.class);
         Folder folder = folderDao.find(folderId);
         if (folder == null) {
             return false;
@@ -216,5 +226,79 @@ public class FolderServiceImpl implements FolderService {
             return false;
         }
         return true;
+    }
+
+    /**
+     * {method description}
+     * 
+     * @return ddd
+     */
+    public boolean copyTo(Long targetFolderId, Long sourceFolderId) {
+        if (targetFolderId == null || 0l == targetFolderId
+                || sourceFolderId == null || 0l == sourceFolderId) {
+            logger.debug("Folder replication fails, "
+                    + "'targetFolderId' and 'sourceFolderId' can not be null.");
+            return false;
+        }
+        Folder source = folderDao.find(sourceFolderId);
+        Folder target = folderDao.find(targetFolderId);
+
+        // DocumentUtil.copyFolder(oldPath, newPath);
+
+        return false;
+    }
+
+    /**
+     * {method description}
+     * 
+     * @return ddd
+     */
+    public boolean moveTo(Long targetFolderId, Long sourceFolderId) {
+        return false;
+    }
+
+    private Folder copyFolder(Long targetFolderId, Long sourceFolderId) {
+        if (targetFolderId == null || 0l == targetFolderId
+                || sourceFolderId == null || 0l == sourceFolderId) {
+            logger.debug("Folder replication fails, "
+                    + "'targetFolderId' and 'sourceFolderId' can not be null.");
+            return null;
+        }
+        Folder source = folderDao.find(sourceFolderId);
+        Folder target = folderDao.find(targetFolderId);
+        Set<FileBean> files = source.getFiles();
+        Set<Folder> folders = source.getChildren();
+
+        // If there are files in the directory,
+        // copy the documents and save to database
+        if (files.size() > 0) {
+            for (FileBean fileBean : files) {
+                try {
+                    FileBean copy = (FileBean) BeanUtils.cloneBean(fileBean);
+                    copy.setFolder(target);
+                    fileDao.add(copy);
+                }
+                catch (Exception e) {
+                }
+            }
+        }
+
+        if (folders.size() > 0) {
+            for (Folder folder : folders) {
+                Folder temp = new Folder();
+                
+                try {
+                    temp = (Folder) BeanUtils.cloneBean(folder);
+                }
+                catch (Exception e) {
+                }
+               
+                target.getChildren().add(temp);
+            }
+
+        }
+
+        return null;
+
     }
 }
