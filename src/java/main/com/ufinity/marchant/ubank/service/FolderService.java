@@ -4,7 +4,7 @@
 // This software is the confidential and proprietary information of
 // Ufinity
 //
-// Original author:bixiang Ji
+// Original author:
 //
 // -------------------------------------------------------------------------
 // UFINITY MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF
@@ -36,7 +36,7 @@ import com.ufinity.marchant.ubank.exception.UBankException;
 /**
  * {description of method or object}
  * 
- * @author Administrator
+ * @author bxji
  * @version 2010-8-20
  */
 public interface FolderService {
@@ -55,6 +55,7 @@ public interface FolderService {
      * @return return a folder object
      * @throws UBankException
      *             throw Possible exception
+     * @author bxji
      */
     public Folder addFolder(Long userId, Long parentId, String folderName,
             String FolderType) throws UBankException;
@@ -67,6 +68,7 @@ public interface FolderService {
      * @return return this user directory tree Struct
      * @throws UBankException
      *             throw Possible exception
+     * @author bxji
      */
     public FolderNode getTreeRoot(Long userId) throws UBankException;
 
@@ -116,5 +118,15 @@ public interface FolderService {
      * @author bxji
      */
     public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId);
+    
+    /**
+     * This method is used to rename a folder
+     * 
+     * @param folderId  target folder object id
+     * @param newName   new name
+     * @return  success return true else return false
+     * @author bxji
+     */
+    public boolean renameFolder(Long folderId, String newName);
 
 }

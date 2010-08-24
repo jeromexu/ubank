@@ -338,4 +338,35 @@ public class FolderServiceImpl implements FolderService {
         }
         return true;
     }
+
+    /**
+     * This method is used to rename a folder
+     * 
+     * @param folderId
+     *            target folder object id
+     * @param newName
+     *            new name
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean renameFolder(Long folderId, String newName) {
+        if (folderId == null || 0l == folderId
+                || Validity.isNullAndEmpty(newName)) {
+            logger.debug("rename folder fail,"
+                    + "target folder id can not be null"
+                    + " and new name can not be null or space string");
+            return false;
+        }
+        Folder folder = folderDao.find(folderId);
+        folder.setFolderName(newName);
+        try {
+            folderDao.modify(folder);
+            int result = DocumentUtil.renameFolder(folder, newName);
+            return result == 1 ? true : false;
+        }
+        catch (Exception e) {
+            logger.debug("folder rename throw exception", e);
+            return false;
+        }
+    }
 }
