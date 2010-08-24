@@ -294,12 +294,15 @@ public class FolderServiceImpl implements FolderService {
                     + "'targetFolder' and 'sourceFolder' can not be null.");
             return false;
         }
-
         Folder temp = new Folder();
         try {
             temp = (Folder) BeanUtils.cloneBean(sourceFolder);
         }
         catch (Exception e) {
+        }
+        // Copied to the current directory
+        if (sourceFolder.getParent().equals(targetFolder)) {
+            temp.setFolderName(sourceFolder.getFolderName() + "(1)");
         }
         temp.setParent(targetFolder);
         temp.setDirectory(temp.getParent().getDirectory()
@@ -307,6 +310,7 @@ public class FolderServiceImpl implements FolderService {
         temp.setFiles(new HashSet<FileBean>());
         temp.setChildren(new HashSet<Folder>());
         targetFolder.getChildren().add(temp);
+        // update database
         folderDao.add(temp);
         folderDao.modify(targetFolder);
 
@@ -325,7 +329,6 @@ public class FolderServiceImpl implements FolderService {
                     fileDao.add(copy);
                 }
                 catch (Exception e) {
-
                 }
             }
         }
