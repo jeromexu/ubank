@@ -54,9 +54,9 @@ public final class MessageResource {
     /**
      * Get message from properties file 
      * 
-     * @param key
+     * @param key key
      * @param params replace param like {0},{1}...
-     * @return
+     * @return message
      * @author liujun
      */
     public static String getMessage(String key, String[] params) {
