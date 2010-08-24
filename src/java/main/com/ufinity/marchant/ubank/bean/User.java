@@ -38,6 +38,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -49,6 +51,9 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "U_USER")
+@NamedQueries( {
+        @NamedQuery(name = "User.findUserByNameAndPass", query = "SELECT u FROM User AS u WHERE u.userName=:name AND u.password = :pass"),
+        @NamedQuery(name = "User.findUserByName", query = "SELECT u FROM User AS u WHERE u.userName=:name") })
 public class User implements Serializable {
 
     /**

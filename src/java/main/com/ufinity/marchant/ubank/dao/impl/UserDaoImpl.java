@@ -51,10 +51,9 @@ public class UserDaoImpl extends GenericDaoSupport<User, Long> implements
      */
     @SuppressWarnings("unchecked")
     public User findUser(String userName, String password) {
-        String jpaQuery = "SELECT u FROM User AS u WHERE u.userName=:name AND u.password = :pass";
-        List<User> list = entityManager.createQuery(jpaQuery).setParameter(
-                "name", userName).setParameter("pass", password)
-                .getResultList();
+        List<User> list = entityManager.createNamedQuery(
+                "User.findUserByNameAndPass").setParameter("name", userName)
+                .setParameter("pass", password).getResultList();
 
         if (null != list && list.size() > 0) {
             return list.get(0);
@@ -72,9 +71,8 @@ public class UserDaoImpl extends GenericDaoSupport<User, Long> implements
      */
     @SuppressWarnings("unchecked")
     public User findUserByName(String userName) {
-        String jpaQuery = "SELECT u FROM User AS u WHERE u.userName=:name";
-        List<User> list = entityManager.createQuery(jpaQuery).setParameter(
-                "name", userName).getResultList();
+        List<User> list = entityManager.createNamedQuery("User.findUserByName")
+                .setParameter("name", userName).getResultList();
 
         if (null != list && list.size() > 0) {
             return list.get(0);
