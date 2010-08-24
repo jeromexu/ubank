@@ -37,52 +37,63 @@ import com.ufinity.marchant.ubank.common.Pager;
  */
 public interface FileService {
 
-	/**
-	 * Search share files
-	 * 
-	 * @param fileName
-	 *            file name
-	 * @param fileSize
-	 *            file size flag
-	 * @param publishDate
-	 *            publish date flag
-	 * @param pageNum
-	 *            pageNum
-	 * @param pageSize
-	 *            pageSize
-	 * @return file pager obj
-	 * @author zdxue
-	 */
-	public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
-			String publishDate, int pageNum, int pageSize);
+    /**
+     * Search share files
+     * 
+     * @param fileName
+     *            file name
+     * @param fileSize
+     *            file size flag
+     * @param publishDate
+     *            publish date flag
+     * @param pageNum
+     *            pageNum
+     * @param pageSize
+     *            pageSize
+     * @return file pager obj
+     * @author zdxue
+     */
+    public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
+            String publishDate, int pageNum, int pageSize);
 
-	/**
-	 * get all files under specified directory
-	 * 
-	 * @param folderId
-	 *            folder directory ID
-	 * @return files list
-	 * @author bxji
-	 */
-	public List<FileBean> getFilesByFolder(Long folderId);
+    /**
+     * get all files under specified directory
+     * 
+     * @param folderId
+     *            folder directory ID
+     * @return files list
+     * @author bxji
+     */
+    public List<FileBean> getFilesByFolder(Long folderId);
 
-	/**
-	 * 
-	 * get the file path by the file id
-	 * 
-	 * @param fileId the id of the file
-	 * @return the fileBean object
-	 * @author jerome
-	 */
-	public FileBean getFileBean(Long fileId);
-	
-	/**
-	 * this method is return a copy of the source file
-	 * 
-	 * @param targetFolder  target folder
-	 * @param sourceFileId  source file identificateion
-	 * @return  Return a copy of the source file
-	 * @author bxji
-	 */
-	public FileBean copyFile(Folder targetFolder, Long sourceFileId);
+    /**
+     * get the file path by the file id
+     * 
+     * @param fileId
+     *            the id of the file
+     * @return the fileBean object
+     * @author jerome
+     */
+    public FileBean getFileBean(Long fileId);
+
+    /**
+     * Copy file to the specified directory
+     * 
+     * @param targetFolderId  target FolderId  
+     * @param sourceFileId source FileId
+     * @return success return 'true' else return 'false'
+     * @author bxji
+     */
+    public boolean copyFileToFolder(Long targetFolderId, Long sourceFileId);
+
+    /**
+     * Move file to specified directory
+     * 
+     * @param targetFolderId target FolderId
+     * @param sourceFileId sourceFileId
+     * @return success return 'true' else return 'false'
+     * @author bxji
+     */
+    public boolean moveFileToFloder(Long targetFolderId, Long sourceFileId);
+
 }
