@@ -82,9 +82,9 @@ public class DocumentUtil {
 		File sFile = createFile(FILE_DIRECTORY, FILENAME);
 		File dFile = createFile(FILE_DIRECTORY, newName);
 		boolean result = false;
-		if(sFile.exists()){
+		if (sFile.exists()) {
 			result = sFile.renameTo(dFile);
-		} else  {
+		} else {
 			return 0;
 		}
 
@@ -112,7 +112,7 @@ public class DocumentUtil {
 		File sFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
 		File dFile = createFile(FOLDER_DIRECTORY, newFolder);
 		boolean result = false;
-		if(sFile.exists()){
+		if (sFile.exists()) {
 			result = sFile.renameTo(dFile);
 		} else {
 			return 0;
@@ -196,19 +196,19 @@ public class DocumentUtil {
 			newPath = newFolderDirecotry + File.separator + newFolderName
 					+ File.separator + FOLDERNAME;
 		}
-		if(LOGGER.isDebugEnabled()){
+		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("olderPath=" + olderPath);
 			LOGGER.debug("newPath=" + newPath);
 		}
 		File oldFile = new File(olderPath);
 		boolean result = false;
-		if(oldFile.exists()){
+		if (oldFile.exists()) {
 			copyFolder(olderPath, newPath);
 			result = delFolder(olderPath);
 		} else {
 			return 0;
 		}
-		
+
 		return result ? 1 : 0;
 	}
 
@@ -268,6 +268,33 @@ public class DocumentUtil {
 	}
 
 	/**
+	 * 
+	 * copy the file to the dest folder
+	 * 
+	 * @param fileBean file object 
+	 * @param folder   folder object
+	 * @return			success:1 failure:0
+	 * @author jerome
+	 */
+	public static Integer copyFile(FileBean fileBean, Folder folder) {
+		if (fileBean != null) {
+			FILENAME = fileBean.getFileName();
+			FILE_DIRECTORY = fileBean.getDirectory();
+		} else {
+			return 0;
+		}
+		if (folder != null) {
+			FOLDERNAME = folder.getFolderName();
+			FOLDER_DIRECTORY = folder.getDirectory();
+		} else {
+			return 0;
+		}
+		File sFile = createFile(FILE_DIRECTORY, FILENAME);
+		File dFile = createFile(FOLDER_DIRECTORY,FOLDERNAME);
+		return 1;
+	}
+
+	/**
 	 * copy the whole folder's content
 	 * 
 	 * @param oldPath
@@ -317,7 +344,8 @@ public class DocumentUtil {
 			try {
 				output.close();
 				input.close();
-				// recover all the occupancy object so that all the resource release
+				// recover all the occupancy object so that all the resource
+				// release
 				System.gc();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -412,9 +440,10 @@ public class DocumentUtil {
 	}
 
 	/**
-	 * test method 
+	 * test method
 	 * 
-	 * @param args the param
+	 * @param args
+	 *            the param
 	 */
 	public static void main(String[] args) {
 		/*
