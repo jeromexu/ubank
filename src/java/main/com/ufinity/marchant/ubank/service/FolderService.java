@@ -90,6 +90,19 @@ public interface FolderService {
      * @author bxji
      */
     public boolean delFolder(Long folderId);
-    
+
+    /**
+     * {method description}
+     * 
+     * @return dd
+     */
+    public boolean moveTo(Long targetFolderId, Long sourceFolderId);
+
+    /**
+     * {method description}
+     * 
+     * @return ddd
+     */
+    public boolean copyTo(Long targetFolderId, Long sourceFolderId);
 
 }
