@@ -33,7 +33,7 @@ import java.util.Locale;
  */
 public final class MessageResource {
     
-    private static final UBankResourceBundle RB = new UBankResourceBundle("MessageResources", Locale.CHINA);
+    private static final UBankResourceBundle RB = new UBankResourceBundle("MessageResources", Locale.getDefault());
     
     /**
      * Private Constructor
