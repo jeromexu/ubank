@@ -60,8 +60,8 @@ public class FileUploadServlet extends AbstractServlet {
 
     private Logger logger = Logger.getLogger(FileUploadServlet.class);
     
-    private UploadService uploadService = ServiceFactory.createService(UploadService.class);
-
+    private UploadService uploadService = null;
+    
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
@@ -207,6 +207,7 @@ public class FileUploadServlet extends AbstractServlet {
                 currentFolder = new Folder();
                 currentFolder.setFolderId(1l);
                 currentFolder.setDirectory("E:/temp/folder/");
+                uploadService = ServiceFactory.createService(UploadService.class);
                 uploadService.uploadAndSaveDb(currentFolder, pi, fIter);
                 
                 pi.setCurrentTime(System.currentTimeMillis());

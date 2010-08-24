@@ -76,7 +76,11 @@ $(function() {
 			text : '上传文件',
 			iconCls : 'icon-undo',
 			handler : function() {
-				alert('cut');
+				var wHeight=350;
+				var wWidth=450;
+				var top = (window.screen.height-wHeight)/2;
+				var left =(window.screen.width-wWidth)/2;
+				window.open ('fileUpload.jsp', 'uploadwindow', 'top='+(window.screen.height-wHeight)/2+',left='+(window.screen.width-wWidth)/2+',width='+wWidth+',height='+wHeight+',location=no, scrollbars=yes');
 			}
 		}, {
 			text : '删除文件',

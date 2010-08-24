@@ -206,6 +206,8 @@ public class UploadServiceImpl implements UploadService {
         } catch (Exception e) {
             EntityManagerUtil.rollback();
             e.printStackTrace();
+        } finally {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 }
