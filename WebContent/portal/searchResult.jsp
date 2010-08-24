@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/taglib/taglibs.jinc" %>
 
-<table cellpadding="0" cellspacing="0" border="1">
+<table cellpadding="0" cellspacing="0" border="1" id="mainTable">
   <tr align="center">
     <td width="260">文件名称</td>
     <td width="100">大小</td>
@@ -42,3 +42,11 @@
     <jsp:param name="targetUrl" value="search.do" />
   </jsp:include>
 </c:if>
+
+<script type="text/javascript">
+  var sorter=new syj.Sort('mainTable');
+  sorter.bindCell(0,'STRING_GE');
+  sorter.bindCell(1,'STRING_GE');
+  sorter.bindCell(2,'STRING_GE');
+  sorter.bindCell(3,'STRING_GE');
+</script>

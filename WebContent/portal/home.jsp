@@ -6,7 +6,8 @@
 	<head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <script type="text/javascript" src="../js/jquery-1.2.6.js"></script>
-		<script type="text/javascript" src="../js/home.js"></script>
+        <script type="text/javascript" src="../js/alias-tablesorter.js"></script>
+        <script type="text/javascript" src="../js/home.js"></script>
 		<link href="../css/home.css" rel="stylesheet" type="text/css">
 		<title>UBank --- 首页</title>	
 	</head>
