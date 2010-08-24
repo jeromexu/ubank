@@ -12,7 +12,12 @@
 	
 </head>
 <body class="easyui-layout">
-<div region="north" border="false" style="height:60px;background:#78B4F0;"><h2 style="font-size:20px;font-weight:bolder;font-family:Arial;">&nbsp;&nbsp;UBank</h2></div>
+<div region="north" border="false" style="height:60px;background:#78B4F0;">
+  <h2 style="font-size:20px;font-weight:bolder;font-family:Arial;">&nbsp;&nbsp;UBank
+  <a href="logout.do">退出</a>
+  </h2>
+</div>
+
 <div region="west" split="true" title="网络硬盘" style="width:150px;padding:10px;">
   <h1>Tree</h1>
   <ul id="tt1" class="easyui-tree">
