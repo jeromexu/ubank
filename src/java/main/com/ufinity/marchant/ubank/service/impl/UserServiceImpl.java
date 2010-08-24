@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
 			folder.setCreateTime(new Date());
 			folder.setDirectory(Constant.USER_SPACE_DIR);
 			folder.setModifyTime(new Date());
-			folder.setFolderType(Constant.INIT);
+			folder.setFolderType(Constant.ROOT);
 			folder.setShare(false);
 
 			Folder parent = new Folder();
