@@ -4,7 +4,7 @@
 <table cellpadding="0" cellspacing="0" border="1" id="mainTable">
   <tr align="center">
     <td width="260">文件名称</td>
-    <td width="100">大小</td>
+    <td width="100">大小(KB)</td>
     <td width="150">所属人</td>
     <td width="200">修改日期</td>
     <td width="100">下载</td>             
@@ -15,7 +15,7 @@
       <c:forEach var="file" items="${filePager.pageRecords}">
           <tr align="center">
             <td><c:out value="${file.fileName}" escapeXml="true" /></td>
-            <td>${file.size }KB</td>
+            <td>${file.size }</td>
             <td><c:out value="${file.folder.user.userName}" escapeXml="true" /></td>
             <td><fmt:formatDate value="${file.modifyTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
             <td><a href="download.do?id=${file.fileId }">Download</a></td>
@@ -46,7 +46,7 @@
 <script type="text/javascript">
   var sorter=new syj.Sort('mainTable');
   sorter.bindCell(0,'STRING_GE');
-  sorter.bindCell(1,'STRING_GE');
+  sorter.bindCell(1,'NUMBER');
   sorter.bindCell(2,'STRING_GE');
-  sorter.bindCell(3,'STRING_GE');
+  sorter.bindCell(3,'DATE');
 </script>
