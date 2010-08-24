@@ -138,8 +138,11 @@ public class UserServiceImpl implements UserService {
 	 * 
 	 * @param userId  user id
 	 * @return		  true:success false：failure
+	 * @author jerome
 	 */
 	private boolean createUserDir(Long userId) {
+		
+		LOGGER.debug("createUserDir:param[userId]=" + userId);
 		String serverPath = getApplicationPath();
 		if (!Validity.isEmpty(serverPath)) {
 			File baseFile = new File(serverPath);
@@ -190,6 +193,7 @@ public class UserServiceImpl implements UserService {
 		} else {
 			return false;
 		}
+		LOGGER.debug("createUserDir:-----complete--------");
 		return true;
 	}
 
@@ -198,6 +202,7 @@ public class UserServiceImpl implements UserService {
 	 * get the server path
 	 * 
 	 * @return the server path
+	 * @author jerome
 	 */
 	private String getApplicationPath() {
 		return SystemGlobals.getString(ConfigKeys.SERVER_PATH);
@@ -217,10 +222,15 @@ public class UserServiceImpl implements UserService {
 	 *            user dir path
 	 * @param folderName
 	 *            user folder name
+	 * @author jerome
 	 */
 	private void makeEachUserDir(File baseFile, Folder parent, Long userId,
 			StringBuffer sb, String folderName) {
-
+		LOGGER.debug("makeEachUserDir:param[baseFile]=" + baseFile
+				+ ",param[parent]=" + parent
+				+ ",param[userId]=" + userId
+				+ ",param[sb]=" + sb.toString()
+				+ ",param[folderName]=" + folderName);
 		if (Constant.MY_File_NAME.equals(folderName)) {
 			baseFile = new File(sb.append(File.separator).append(
 					Constant.MY_File_NAME).toString());
@@ -250,6 +260,6 @@ public class UserServiceImpl implements UserService {
 		folder.setUser(user);
 
 		folderDao.add(folder);
-
+		LOGGER.debug("makeEachUserDir:-----complete--------");
 	}
 }
