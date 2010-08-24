@@ -81,13 +81,15 @@ public interface FolderService {
      */
     public List<FileOrFolderJsonEntity> getAllByFolder(Long folderId);
 
-/**
- * 
- * this method is removed 'Folder' from the disk and database
- * @param folderId  folder identification  
- * @return  success return true else return false
- * @author bxji
- */
-    public boolean removeFolder(Long folderId);
+    /**
+     * this method is removed 'Folder' from the disk and database
+     * 
+     * @param folderId
+     *            folder identification
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean delFolder(Long folderId);
+    
 
 }

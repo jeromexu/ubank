@@ -197,7 +197,7 @@ public class FolderServiceImpl implements FolderService {
      * @return  success return true else return false
      * @author bxji
      */
-    public boolean removeFolder(Long folderId) {
+    public boolean delFolder(Long folderId) {
         if (folderId == null || 0l == folderId) {
             return false;
         }
