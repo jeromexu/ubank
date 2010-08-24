@@ -4,7 +4,7 @@
 // This software is the confidential and proprietary information of
 // Ufinity
 //
-// Original author:bixiang Ji
+// Original author:
 //
 // -------------------------------------------------------------------------
 // UFINITY MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF
@@ -76,10 +76,10 @@ public class FolderServiceImpl implements FolderService {
      */
     public Folder addFolder(Long userId, Long parentId, String folderName,
             String FolderType) throws UBankException {
-        if (userId == null || new Long(0).equals(userId)) {
+        if (userId == null || 0l == userId) {
             throw new UBankException("userId can not be empty");
         }
-        if (parentId == null || new Long(0).equals(userId)
+        if (parentId == null || 0l == parentId
                 || Validity.isNullAndEmpty(folderName)) {
             throw new UBankException(
                     "parentId can not be null and folderName can not be null or space String");
@@ -103,12 +103,22 @@ public class FolderServiceImpl implements FolderService {
         }
         newFolder.setShare(false);
         newFolder.setUser(user);
-        // create disk file
-        DocumentUtil.addNewFolder(newFolder);
-        // save to database
-        folderDao.add(newFolder);
-
+        try {
+            // create disk file
+            DocumentUtil.addNewFolder(newFolder);
+            // save to database
+            folderDao.add(newFolder);
+            logger.debug("folder object save to database success");
+        }
+        catch (Exception e) {
+            logger.debug(
+                    "create disk file error or save to database table error ",
+                    e);
+            throw new UBankException(
+                    "create disk file error or save to database table error ");
+        }
         return newFolder;
+
     }
 
     /**
@@ -122,12 +132,12 @@ public class FolderServiceImpl implements FolderService {
      *             throw Possible exception
      */
     public FolderNode getTreeRoot(Long userId) throws UBankException {
-        if (userId == null || new Long(0).equals(userId)) {
+        if (userId == null || 0l == userId) {
             throw new UBankException("userId can not be empty");
         }
         FolderDao folderDao = DaoFactory.createDao(FolderDao.class);
-        List<Folder> floders = folderDao.findFolderListByUserId(userId);
-        FolderNode rootNode = FolderNode.generateFolderTree(floders);
+        List<Folder> folders = folderDao.findFolderListByUserId(userId);
+        FolderNode rootNode = FolderNode.generateFolderTree(folders);
         return rootNode;
     }
 
@@ -139,13 +149,10 @@ public class FolderServiceImpl implements FolderService {
      *            specified folder id
      * @return FileOrFolderJsonEntity list
      * @author bxji
-     * @throws UBankException
-     *             throw Possible exception
      */
-    public List<FileOrFolderJsonEntity> getAllByFolder(Long folderId)
-            throws UBankException {
-        if (folderId == null || new Long(0).equals(folderId)) {
-            throw new UBankException("folderId  can not be empty");
+    public List<FileOrFolderJsonEntity> getAllByFolder(Long folderId) {
+        if (folderId == null || 0l == folderId) {
+            return null;
         }
         FolderDao folderDao = DaoFactory.createDao(FolderDao.class);
         Folder folder = folderDao.find(folderId);
@@ -155,29 +162,59 @@ public class FolderServiceImpl implements FolderService {
         List<FileOrFolderJsonEntity> jsonEntieys = new ArrayList<FileOrFolderJsonEntity>();
 
         // convert the FileBean to FileOrFolderJsonEntity
-        for (FileBean file : files) {
-            FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
-            jsonEntity.setId(file.getFileId());
-            jsonEntity.setName(file.getFileName());
-            jsonEntity.setSize(file.getSize());
-            jsonEntity.setModifyTime(file.getModifyTime());
-            jsonEntity.setDirectory(file.getDirectory());
-            jsonEntity.setType(FileOrFolderJsonEntity.TYPE_FILE);
-            jsonEntieys.add(jsonEntity);
+        if (!Validity.isEmpty(files)) {
+            for (FileBean file : files) {
+                FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
+                jsonEntity.setId(file.getFileId());
+                jsonEntity.setName(file.getFileName());
+                jsonEntity.setSize(file.getSize());
+                jsonEntity.setModifyTime(file.getModifyTime());
+                jsonEntity.setDirectory(file.getDirectory());
+                jsonEntity.setType(FileOrFolderJsonEntity.TYPE_FILE);
+                jsonEntieys.add(jsonEntity);
+            }
         }
 
         // conver sub-folders Object to FileOrFolderJsonEntity
-        for (Folder child : chiFolders) {
-            FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
-            jsonEntity.setId(child.getFolderId());
-            jsonEntity.setName(child.getFolderName());
-            jsonEntity.setModifyTime(child.getModifyTime());
-            jsonEntity.setDirectory(child.getDirectory());
-            jsonEntity.setType(FileOrFolderJsonEntity.TYPE_FOLDER);
-            jsonEntieys.add(jsonEntity);
+        if (Validity.isEmpty(chiFolders)) {
+            for (Folder child : chiFolders) {
+                FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
+                jsonEntity.setId(child.getFolderId());
+                jsonEntity.setName(child.getFolderName());
+                jsonEntity.setModifyTime(child.getModifyTime());
+                jsonEntity.setDirectory(child.getDirectory());
+                jsonEntity.setType(FileOrFolderJsonEntity.TYPE_FOLDER);
+                jsonEntieys.add(jsonEntity);
+            }
         }
-
         return jsonEntieys;
     }
 
+    /**
+     * 
+     * this method is removed 'Folder' from the disk and database
+     * @param folderId  folder identification  
+     * @return  success return true else return false
+     * @author bxji
+     */
+    public boolean removeFolder(Long folderId) {
+        if (folderId == null || 0l == folderId) {
+            return false;
+        }
+        FolderDao folderDao = DaoFactory.createDao(FolderDao.class);
+        Folder folder = folderDao.find(folderId);
+        if (folder == null) {
+            return false;
+        }
+        try {
+            DocumentUtil.removeFolder(folder);
+            folderDao.deleteById(folderId);
+            logger.debug("delete folder operation success.");
+        }
+        catch (Exception e) {
+            logger.debug("delete folder failed ", e);
+            return false;
+        }
+        return true;
+    }
 }
