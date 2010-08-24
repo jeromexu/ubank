@@ -74,4 +74,14 @@ public interface FileService {
 	 * @author jerome
 	 */
 	public FileBean getFileBean(Long fileId);
+	
+	/**
+	 * this method is return a copy of the source file
+	 * 
+	 * @param targetFolderId  target folder identification
+	 * @param sourceFileId  source file identificateion
+	 * @return  Return a copy of the source file
+	 * @author bxji
+	 */
+	public FileBean copyFile(Long targetFolderId, Long sourceFileId);
 }
