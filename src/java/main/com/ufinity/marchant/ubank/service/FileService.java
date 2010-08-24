@@ -26,6 +26,7 @@ package com.ufinity.marchant.ubank.service;
 import java.util.List;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
+import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.Pager;
 
 /**
@@ -78,10 +79,10 @@ public interface FileService {
 	/**
 	 * this method is return a copy of the source file
 	 * 
-	 * @param targetFolderId  target folder identification
+	 * @param targetFolder  target folder
 	 * @param sourceFileId  source file identificateion
 	 * @return  Return a copy of the source file
 	 * @author bxji
 	 */
-	public FileBean copyFile(Long targetFolderId, Long sourceFileId);
+	public FileBean copyFile(Folder targetFolder, Long sourceFileId);
 }

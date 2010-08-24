@@ -22,12 +22,17 @@
 // HIGH RISK ACTIVITIES.
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service.impl;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
+
 import com.ufinity.marchant.ubank.bean.FileBean;
+import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DateUtil;
 import com.ufinity.marchant.ubank.common.Pager;
@@ -81,46 +86,54 @@ public class FileServiceImpl implements FileService {
 
         Calendar cal = Calendar.getInstance();
         String datePattern = DateUtil.YYYY_MM_DD_HH_MM_SS;
-        Date minDate = getMaxModifyDate(publishDate, (Calendar)cal.clone());
+        Date minDate = getMaxModifyDate(publishDate, (Calendar) cal.clone());
         Date maxDate = cal.getTime();
-        condition.put(Constant.MIN_MODIFY_TIME, DateUtil.parse(DateUtil.format(minDate, datePattern), datePattern));
-        condition.put(Constant.MAX_MODIFY_TIME, DateUtil.parse(DateUtil.format(maxDate, datePattern), datePattern));
+        condition.put(Constant.MIN_MODIFY_TIME, DateUtil.parse(DateUtil.format(
+                minDate, datePattern), datePattern));
+        condition.put(Constant.MAX_MODIFY_TIME, DateUtil.parse(DateUtil.format(
+                maxDate, datePattern), datePattern));
 
-        Pager<FileBean> pager = fileDao.searchPaginatedForFile(pageNum, pageSize, condition);
-        
+        Pager<FileBean> pager = fileDao.searchPaginatedForFile(pageNum,
+                pageSize, condition);
+
         return pager;
     }
-    
+
     /**
-	 * 
-	 * get the file path by the file id
-	 * 
-	 * @param fileId the id of the file
-	 * @return the fileBean object
-	 * @author jerome
-	 */
-	public FileBean getFileBean(Long fileId){
-		return fileDao.find(fileId);
-	}
+     * get the file path by the file id
+     * 
+     * @param fileId
+     *            the id of the file
+     * @return the fileBean object
+     * @author jerome
+     */
+    public FileBean getFileBean(Long fileId) {
+        return fileDao.find(fileId);
+    }
 
     /**
      * Get file size config condition
-     *
-     * @param fileSize fileSize level
+     * 
+     * @param fileSize
+     *            fileSize level
      * @return file size config
      * @author zdxue
      */
     private String getFileSizeConf(String fileSize) {
         String fileSizeConf = "";
-        if(Constant.FILE_SIZE_0.equals(fileSize)) {
+        if (Constant.FILE_SIZE_0.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_0);
-        }else if(Constant.FILE_SIZE_1.equals(fileSize)) {
+        }
+        else if (Constant.FILE_SIZE_1.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_1);
-        }else if(Constant.FILE_SIZE_2.equals(fileSize)) {
+        }
+        else if (Constant.FILE_SIZE_2.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_2);
-        }else if(Constant.FILE_SIZE_3.equals(fileSize)) {
+        }
+        else if (Constant.FILE_SIZE_3.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_3);
-        }else if(Constant.FILE_SIZE_4.equals(fileSize)) {
+        }
+        else if (Constant.FILE_SIZE_4.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_4);
         }
         return fileSizeConf;
@@ -128,51 +141,62 @@ public class FileServiceImpl implements FileService {
 
     /**
      * Get min file size
-     *
-     * @param fileSize file size level
+     * 
+     * @param fileSize
+     *            file size level
      * @return min file size
      * @author zdxue
      */
     private long getMinFileSize(String fileSize) {
-        return StringUtil.parseInt(getFileSizeConf(fileSize).split(Constant.FILE_SIZE_SEPARATOR)[0]);
+        return StringUtil.parseInt(getFileSizeConf(fileSize).split(
+                Constant.FILE_SIZE_SEPARATOR)[0]);
     }
 
     /**
-     * Get max file size 
-     *
-     * @param fileSize file size level
+     * Get max file size
+     * 
+     * @param fileSize
+     *            file size level
      * @return max file size
      * @author zdxue
      */
     private long getMaxFileSize(String fileSize) {
-        return StringUtil.parseInt(getFileSizeConf(fileSize).split(Constant.FILE_SIZE_SEPARATOR)[1]);
+        return StringUtil.parseInt(getFileSizeConf(fileSize).split(
+                Constant.FILE_SIZE_SEPARATOR)[1]);
     }
 
     /**
      * Get file modify date
-     *
-     * @param publishDate publish date level
-     * @param cal min modify date
+     * 
+     * @param publishDate
+     *            publish date level
+     * @param cal
+     *            min modify date
      * @return max modify date
      * @author zdxue
      */
     private Date getMaxModifyDate(String publishDate, Calendar cal) {
         int amount = 0;
-        if(Constant.FILE_PUBLISHDATE_0.equals(publishDate)) {
-            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_0);  
-        }else if(Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
-            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_1);  
-        }else if(Constant.FILE_PUBLISHDATE_2.equals(publishDate)) {
-            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_2);  
-        }else if(Constant.FILE_PUBLISHDATE_3.equals(publishDate)) {
-            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_3);  
-        }else if(Constant.FILE_PUBLISHDATE_4.equals(publishDate)) {
-            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_4);  
-        }else if(Constant.FILE_PUBLISHDATE_5.equals(publishDate)) {
-            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_5);  
+        if (Constant.FILE_PUBLISHDATE_0.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_0);
+        }
+        else if (Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_1);
+        }
+        else if (Constant.FILE_PUBLISHDATE_2.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_2);
+        }
+        else if (Constant.FILE_PUBLISHDATE_3.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_3);
+        }
+        else if (Constant.FILE_PUBLISHDATE_4.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_4);
+        }
+        else if (Constant.FILE_PUBLISHDATE_5.equals(publishDate)) {
+            amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_5);
         }
 
-        if(amount == 1) {
+        if (amount == 1) {
             return null;
         }
 
@@ -193,4 +217,29 @@ public class FileServiceImpl implements FileService {
         return null;
     }
 
+    /**
+     * this method is return a copy of the source file
+     * 
+     * @param targetFolder
+     *            target folder
+     * @param sourceFileId
+     *            source file identificateion
+     * @return Return a copy of the source file
+     * @author bxji
+     */
+    public FileBean copyFile(Folder targetFolder, Long sourceFileId) {
+        if (targetFolder == null || sourceFileId == null || 0l == sourceFileId) {
+            return null;
+        }
+        FileBean file = fileDao.find(sourceFileId);
+        FileBean copy = null;
+        try {
+            copy = (FileBean) BeanUtils.cloneBean(file);
+            copy.setFolder(targetFolder);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return copy;
+    }
 }
