@@ -55,9 +55,6 @@ public class UploadServiceImpl implements UploadService {
     
     private FileDao fileDao;
     
-    public UploadServiceImpl(){
-        fileDao = DaoFactory.createDao(FileDao.class);
-    }
     /**
      * upload file and save to db
      * 
@@ -198,6 +195,7 @@ public class UploadServiceImpl implements UploadService {
     private void saveFile(FileBean fb){
         try {
             EntityManagerUtil.begin();
+            fileDao = DaoFactory.createDao(FileDao.class);
             fileDao.add(fb);
             EntityManagerUtil.commit();
         } catch (Exception e) {
