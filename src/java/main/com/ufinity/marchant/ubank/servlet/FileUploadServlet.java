@@ -40,6 +40,9 @@ import org.apache.log4j.Logger;
 
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.JsonUtil;
+import com.ufinity.marchant.ubank.common.Validity;
+import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
+import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UploadService;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
@@ -189,7 +192,7 @@ public class FileUploadServlet extends AbstractServlet {
                     String errorMsg = "Error: Current files size is "
                             + filesSize / (1024 * 1024)
                             + "MB which has exceeded max " + UploadConstant.MAX_LENGTH/(1024*1024)+"M";
-                    pi.setCompleted(true);
+                    pi.setInProgress(false);
                     pi.setErrorMsg(errorMsg);
                     System.out.println("Current files size is to big");
                     throw new Exception(errorMsg);
@@ -216,7 +219,9 @@ public class FileUploadServlet extends AbstractServlet {
             }
         } catch (Exception e) {
             pi.setInProgress(false);
-            pi.setErrorMsg("Upload file has some Exception.");
+            if(Validity.isEmpty(pi.getErrorMsg())){
+                pi.setErrorMsg(MessageResource.getMessage(MessageKeys.UPLOAD_EXECEPTION));
+            }
             logger.warn("Upload cancelled or interrupted!"+ e.getMessage());
         } 
     }

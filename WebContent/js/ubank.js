@@ -1,3 +1,6 @@
+//upload window
+var newWindow;
+
 $(function() {
 	// $('#tt1').tree();
 	$('#tt2').tree( {
@@ -80,7 +83,11 @@ $(function() {
 				var wWidth=450;
 				var top = (window.screen.height-wHeight)/2;
 				var left =(window.screen.width-wWidth)/2;
-				window.open ('fileUpload.jsp', 'uploadwindow', 'top='+(window.screen.height-wHeight)/2+',left='+(window.screen.width-wWidth)/2+',width='+wWidth+',height='+wHeight+',location=no, scrollbars=yes');
+				if(newWindow == undefined || newWindow.closed){
+					newWindow = window.open ('fileUpload.jsp', 'uploadwindow', 'top='+(window.screen.height-wHeight)/2+',left='+(window.screen.width-wWidth)/2+',width='+wWidth+',height='+wHeight+',location=no, scrollbars=yes');
+				}else{
+					alert("Upload window is already open!");
+				}
 			}
 		}, {
 			text : '删除文件',

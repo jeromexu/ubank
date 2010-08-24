@@ -55,13 +55,9 @@ public class UploadServiceImpl implements UploadService {
     
     private FileDao fileDao;
     
-    /**
-     * construtor
-     */
-    public UploadServiceImpl() {
+    public UploadServiceImpl(){
         fileDao = DaoFactory.createDao(FileDao.class);
     }
-
     /**
      * upload file and save to db
      * 
@@ -133,7 +129,8 @@ public class UploadServiceImpl implements UploadService {
                     fb.setFileType(getFileType(fileFullName));
                     fb.setCreateTime(new Date());
                     fb.setDirectory(getFileDir(folderDir, fileFullName));
-                    fb.setSize(bStreamLen);
+                    //kb
+                    fb.setSize(bStreamLen/1024);
                     fb.setShare(false);
                     this.saveFile(fb);
                 }

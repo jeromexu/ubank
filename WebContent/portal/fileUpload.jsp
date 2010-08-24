@@ -13,17 +13,17 @@
 		<script type="text/javascript" src="../js/ubank.js"></script>
 	</head>
 
-	<body onload="">
+	<body>
 		<form id="uploadForm" name="uploadForm" method="post"
 			action="upload.do" ENCTYPE="multipart/form-data" target="upload_frame">
 			<div id="uploadedFiles"></div>
-			<input type="file" id="file1" name="file1" size="50" />
+			<input type="file" id="file1" name="file1" size="30" />
 			<br />
-			<input type="file" id="file2" name="file2" size="50" />
+			<input type="file" id="file2" name="file2" size="30" />
 			<br />
-			<input type="file" id="file3" name="file3" size="50" />
+			<input type="file" id="file3" name="file3" size="30" />
 			<br />
-			<input type="file" id="file4" name="file4" size="50" />
+			<input type="file" id="file4" name="file4" size="30" />
 			<br />
 
 			<div id="progressBar" style="display: none;">
@@ -83,6 +83,8 @@
 			    $("#progressBarBoxContent").attr("style","width:"+ parseInt(progressPercent * 3.5) + "px");
 			    
 			    if(uploadInfo.errorMsg){
+			    	$("#progressBarText").hide();
+				  	$("#progressBarBoxContent").hide();
 			    	$("#uploadedFiles").html('<font color="red"><b>' + uploadInfo.errorMsg + '</b></font><br/>');
 			    }else{
 			    	$("#uploadedFiles").html(uploadInfo.uploadedFiles + '<br/><b>Total size: ' + Math.ceil(uploadInfo.totalSize/1024) + 'KB</b>');
@@ -106,6 +108,8 @@
 				$("#uploadbutton").hide();
 				$("#controlbutton").show();
 				$("#uploadedFiles").html("");
+				$("#progressBarText").show();
+				$("#progressBarBoxContent").show();
 			}
 			
 			function controlUpload(){

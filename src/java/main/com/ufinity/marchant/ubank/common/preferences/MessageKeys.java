@@ -50,5 +50,8 @@ public class MessageKeys {
     
     // register success msg
     public static final String REGISTER_SUCCESS = "register.success";
+    
+    // upload exception msg
+    public static final String UPLOAD_EXECEPTION = "upload.exception";
 }
 
