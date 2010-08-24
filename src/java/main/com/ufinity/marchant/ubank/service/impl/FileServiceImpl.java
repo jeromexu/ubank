@@ -123,17 +123,13 @@ public class FileServiceImpl implements FileService {
         String fileSizeConf = "";
         if (Constant.FILE_SIZE_0.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_0);
-        }
-        else if (Constant.FILE_SIZE_1.equals(fileSize)) {
+        } else if (Constant.FILE_SIZE_1.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_1);
-        }
-        else if (Constant.FILE_SIZE_2.equals(fileSize)) {
+        } else if (Constant.FILE_SIZE_2.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_2);
-        }
-        else if (Constant.FILE_SIZE_3.equals(fileSize)) {
+        } else if (Constant.FILE_SIZE_3.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_3);
-        }
-        else if (Constant.FILE_SIZE_4.equals(fileSize)) {
+        } else if (Constant.FILE_SIZE_4.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_4);
         }
         return fileSizeConf;
@@ -179,20 +175,15 @@ public class FileServiceImpl implements FileService {
         int amount = 0;
         if (Constant.FILE_PUBLISHDATE_0.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_0);
-        }
-        else if (Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
+        } else if (Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_1);
-        }
-        else if (Constant.FILE_PUBLISHDATE_2.equals(publishDate)) {
+        } else if (Constant.FILE_PUBLISHDATE_2.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_2);
-        }
-        else if (Constant.FILE_PUBLISHDATE_3.equals(publishDate)) {
+        } else if (Constant.FILE_PUBLISHDATE_3.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_3);
-        }
-        else if (Constant.FILE_PUBLISHDATE_4.equals(publishDate)) {
+        } else if (Constant.FILE_PUBLISHDATE_4.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_4);
-        }
-        else if (Constant.FILE_PUBLISHDATE_5.equals(publishDate)) {
+        } else if (Constant.FILE_PUBLISHDATE_5.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_5);
         }
 
@@ -236,8 +227,7 @@ public class FileServiceImpl implements FileService {
         try {
             copy = (FileBean) BeanUtils.cloneBean(file);
             copy.setFolder(targetFolder);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return copy;

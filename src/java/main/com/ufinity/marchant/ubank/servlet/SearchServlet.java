@@ -29,6 +29,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Pager;
@@ -40,15 +43,17 @@ import com.ufinity.marchant.ubank.service.ServiceFactory;
 
 /**
  * Search Servlet
- *
+ * 
  * @version 1.0 - 2010-8-19
- * @author zdxue     
+ * @author zdxue
  */
 @SuppressWarnings("serial")
 public class SearchServlet extends AbstractServlet {
+    private final Logger LOG = LoggerFactory.getLogger(SearchServlet.class);
 
     /**
-     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
      */
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -56,25 +61,27 @@ public class SearchServlet extends AbstractServlet {
     }
 
     /**
-     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
         String method = parseActionName(req);
         String rslt = Constant.ERROR_PAGE;
-        
-        if(Constant.ACTION_SEARCH.equals(method)) {
+
+        if (Constant.ACTION_SEARCH.equals(method)) {
             rslt = search(req);
         }
-        
+
         forward(req, resp, rslt);
     }
 
     /**
-     * Process file search 
-     *
-     * @param req request
+     * Process file search
+     * 
+     * @param req
+     *            request
      * @return forward page
      * @author zdxue
      */
@@ -83,35 +90,38 @@ public class SearchServlet extends AbstractServlet {
         String fileSize = req.getParameter(Constant.REQ_PARAM_FILESIZE);
         String publishDate = req.getParameter(Constant.REQ_PARAM_PUBLISHDATE);
         String pageNumber = req.getParameter(Constant.REQ_PARAM_PAGENUM);
-        
-        if(fileName == null) {
-            fileName = "";
-        }
-        
-        if(fileSize == null) {
-            fileSize = "0";
-        }
-        
-        if(publishDate == null) {
-            publishDate = "0";
+        LOG.debug("fileName=" + fileName + " , fileSize=" + fileSize
+                + " , publishDate=" + publishDate + " , pageNumber="
+                + pageNumber);
+
+        if (fileName == null) {
+            fileName = Constant.FILENAME_EMPTY;
         }
 
-        int pageNum = StringUtil.parseInt(pageNumber, 1);
+        if (fileSize == null) {
+            fileSize = Constant.FILE_SIZE_0;
+        }
 
-        //TODO log 
-        System.out.println("fileName=" + fileName + " , fileSize=" + fileSize + " , publishDate=" + publishDate + " , pageNum=" + pageNum);
-        
-        FileService fileService = ServiceFactory.createService(FileService.class);
-        
+        if (publishDate == null) {
+            publishDate = Constant.FILE_PUBLISHDATE_0;
+        }
+
+        int pageNum = StringUtil.parseInt(pageNumber, Constant.PAGE_NUM_DEF);
+
+        LOG.debug("pageNum=" + pageNum);
+
+        FileService fileService = ServiceFactory
+                .createService(FileService.class);
+
         int pageSize = SystemGlobals.getInt(ConfigKeys.PAGE_SIZE);
-        Pager<FileBean> filePager = fileService.searchShareFiles(fileName, fileSize, publishDate, pageNum, pageSize);
+        Pager<FileBean> filePager = fileService.searchShareFiles(fileName,
+                fileSize, publishDate, pageNum, pageSize);
         req.setAttribute(Constant.ATTR_FILEPAGER, filePager);
         req.setAttribute(Constant.ATTR_FILENAME, fileName);
         req.setAttribute(Constant.ATTR_FILESIZE, fileSize);
         req.setAttribute(Constant.ATTR_PUBLISHDATE, publishDate);
-        
+
         return Constant.SEARCH_RESULT_PAGE;
     }
-    
-}
 
+}

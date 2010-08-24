@@ -48,6 +48,7 @@ public interface Constant {
     /** user login and logout action */
     String ACTION_LOGIN = "login";
     String ACTION_LOGOUT = "logout";
+    String ACTION_HOME = "home";
 
     /** file search action */
     String ACTION_SEARCH = "search";
@@ -101,6 +102,7 @@ public interface Constant {
 
     /** file search pagenum */
     String REQ_PARAM_PAGENUM = "pageNum";
+    int PAGE_NUM_DEF = 1;
     
     /** file search constant */
     String FILE_SIZE_SEPARATOR = ",";
@@ -115,6 +117,7 @@ public interface Constant {
     String FILE_PUBLISHDATE_3 = "3";
     String FILE_PUBLISHDATE_4 = "4";
     String FILE_PUBLISHDATE_5 = "5";
+    String FILENAME_EMPTY = "";
     String FILENAME = "fileName";
     String MIN_FILE_SIZE = "minFileSize";
     String MAX_FILE_SIZE = "maxFileSize";
