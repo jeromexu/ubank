@@ -189,9 +189,8 @@ public class FileUploadServlet extends AbstractServlet {
                 int filesSize = request.getContentLength()
                         - UploadConstant.HTTP_REDUNDANT_LENGTH;
                 if (filesSize >= UploadConstant.MAX_LENGTH) {
-                    String errorMsg = "Error: Current files size is "
-                            + filesSize / (1024 * 1024)
-                            + "MB which has exceeded max " + UploadConstant.MAX_LENGTH/(1024*1024)+"M";
+                    String[] params = {filesSize / (1024 * 1024)+"MB",UploadConstant.MAX_LENGTH/(1024*1024)+"MB"};
+                    String errorMsg = MessageResource.getMessage(MessageKeys.UPLOAD_SIZE_MAX, params);
                     pi.setInProgress(false);
                     pi.setErrorMsg(errorMsg);
                     System.out.println("Current files size is to big");

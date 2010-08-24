@@ -25,7 +25,6 @@ package com.ufinity.marchant.ubank.common.preferences;
 
 import java.util.Locale;
 
-
 /**
  * Message resources for ubank
  *
@@ -50,6 +49,22 @@ public final class MessageResource {
      */
     public static String getMessage(String key) {
         return RB.getValue(key);
+    }
+    
+    /**
+     * Get message from properties file 
+     * 
+     * @param key
+     * @param params replace param like {0},{1}...
+     * @return
+     * @author liujun
+     */
+    public static String getMessage(String key, String[] params) {
+        String value = getMessage(key);
+        for (int i = 0; i < params.length; i++) {
+            value = value.replace("{"+i+"}", params[i]);
+        }
+        return value;
     }
 }
 
