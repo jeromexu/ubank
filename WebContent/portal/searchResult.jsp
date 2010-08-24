@@ -24,7 +24,7 @@
     </c:when>
     <c:otherwise>
       <tr align="center">
-        <td colspan="5">${u:getMessage("message.sharefile.search.result.empty")}</td>
+        <td colspan="5"><font color="red" size="2">${u:getMessage("message.sharefile.search.result.empty")}</font></td>
       </tr>
     </c:otherwise>
   </c:choose>
