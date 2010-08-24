@@ -87,14 +87,14 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
             int pageSize, Map<String, Object> condition) {
         String jpaQuery = "SELECT f from FileBean f "
                 + getJPAQueryString(condition);
-        String fileName = (String) condition.get("fileName");
+
         if (null != condition) {
+            String fileName = (String) condition.get("fileName");
             if (null != fileName) {
                 fileName = "%" + fileName + "%";
                 condition.put("fileName", fileName);
             }
         }
-
         return findPager(jpaQuery, currentPage, pageSize, condition);
     }
 
@@ -109,26 +109,28 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
     private String getJPAQueryString(Map<String, Object> condition) {
         StringBuffer jpqQuery = new StringBuffer("WHERE 1=1 AND f.share=true ");
 
-        String fileName = (String) condition.get("fileName");
-        if (null != fileName && !"".equals(fileName)) {
-            jpqQuery.append("AND f.fileName LIKE :fileName ");
-        }
+        if (null != condition) {
+            String fileName = (String) condition.get("fileName");
+            if (null != fileName && !"".equals(fileName)) {
+                jpqQuery.append("AND f.fileName LIKE :fileName ");
+            }
 
-        Long minFileSize = (Long) condition.get("minFileSize");
-        Long maxFileSize = (Long) condition.get("maxFileSize");
-        if (null != minFileSize && null != maxFileSize) {
-            jpqQuery
-                    .append("AND f.size BETWEEN :minFileSize AND :maxFileSize ");
-        }
-
-        Date minModifyTime = (Date) condition.get("minModifyTime");
-        Date maxModifyTime = (Date) condition.get("maxModifyTime");
-        if (null != maxModifyTime) {
-            if (null != minModifyTime) {
+            Long minFileSize = (Long) condition.get("minFileSize");
+            Long maxFileSize = (Long) condition.get("maxFileSize");
+            if (null != minFileSize && null != maxFileSize) {
                 jpqQuery
-                        .append("AND f.modifyTime BETWEEN :minModifyTime AND :maxModifyTime ");
-            } else {
-                jpqQuery.append("AND f.modifyTime <= :maxModifyTime ");
+                        .append("AND f.size BETWEEN :minFileSize AND :maxFileSize ");
+            }
+
+            Date minModifyTime = (Date) condition.get("minModifyTime");
+            Date maxModifyTime = (Date) condition.get("maxModifyTime");
+            if (null != maxModifyTime) {
+                if (null != minModifyTime) {
+                    jpqQuery
+                            .append("AND f.modifyTime BETWEEN :minModifyTime AND :maxModifyTime ");
+                } else {
+                    jpqQuery.append("AND f.modifyTime <= :maxModifyTime ");
+                }
             }
         }
 
