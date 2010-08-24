@@ -44,7 +44,6 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
-import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.service.FileService;
 
 /**
