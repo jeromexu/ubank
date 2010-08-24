@@ -44,7 +44,7 @@
 				</div>
 				
 				<div class="resultset_div" id="searchResultDiv">
-				
+				  <jsp:include page="searchResult.jsp" />
 				</div>
 				
 			</div>

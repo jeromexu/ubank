@@ -27,6 +27,10 @@
   
   <servlet-mapping>
     <servlet-name>loginServlet</servlet-name>
+    <url-pattern>/portal/home.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>loginServlet</servlet-name>
     <url-pattern>/portal/login.do</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
