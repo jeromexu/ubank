@@ -109,7 +109,8 @@ public class FolderServiceImpl implements FolderService {
         newFolder.setParent(parentfolder);
         newFolder.setFolderName(folderName);
         newFolder.setCreateTime(new Date());
-        newFolder.setDirectory("-------");
+        newFolder.setDirectory(parentfolder.getDirectory()
+                + parentfolder.getFolderName());
         newFolder.setFolderType(Constant.CUSTOMER);
         if (!Validity.isNullAndEmpty(FolderType)) {
             newFolder.setFolderType(FolderType);
@@ -185,7 +186,6 @@ public class FolderServiceImpl implements FolderService {
                 jsonEntieys.add(jsonEntity);
             }
         }
-
         // conver sub-folders Object to FileOrFolderJsonEntity
         if (Validity.isEmpty(chiFolders)) {
             for (Folder child : chiFolders) {
@@ -211,28 +211,29 @@ public class FolderServiceImpl implements FolderService {
      */
     public boolean delFolder(Long folderId) {
         if (folderId == null || 0l == folderId) {
-            return false;
-        }
-        Folder folder = folderDao.find(folderId);
-        if (folder == null) {
+            logger.debug("delete fail ,target folder id can not is null.");
             return false;
         }
         try {
-            DocumentUtil.removeFolder(folder);
-            folderDao.deleteById(folderId);
-            logger.debug("delete folder operation success.");
+            Folder folder = folderDao.find(folderId);
+            return delFolder(folder);
         }
         catch (Exception e) {
             logger.debug("delete folder failed ", e);
             return false;
         }
-        return true;
     }
 
     /**
-     * {method description}
+     * Copy all the contents of the source directory to the destination folder,
+     * This method is the physical disk copy and database copy
      * 
-     * @return ddd
+     * @param targetFolderId
+     *            target Folder object identification
+     * @param sourceFolderId
+     *            source Folder object identification
+     * @return success return true else return false
+     * @author bxji
      */
     public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId) {
         if (targetFolderId == null || 0l == targetFolderId
@@ -243,14 +244,11 @@ public class FolderServiceImpl implements FolderService {
         }
         Folder source = folderDao.find(sourceFolderId);
         Folder target = folderDao.find(targetFolderId);
+        String sourcePath = source.getDirectory() + source.getFolderName();
+        String targetPath = target.getDirectory() + target.getFolderName();
+        DocumentUtil.copyFolder(sourcePath, targetPath);
         boolean result = copyFolder(target, source);
-        if (result) {
-            DocumentUtil.copyFolder(source.getDirectory()
-                    + source.getFolderName(), target.getDirectory()
-                    + target.getFolderName());
-            return true;
-        }
-        return false;
+        return result;
     }
 
     /**
@@ -322,13 +320,15 @@ public class FolderServiceImpl implements FolderService {
                 try {
                     FileBean copy = (FileBean) BeanUtils.cloneBean(file);
                     copy.setFolder(temp);
+                    copy.setDirectory(targetFolder.getDirectory()
+                            + targetFolder.getFolderName());
                     fileDao.add(copy);
                 }
                 catch (Exception e) {
+
                 }
             }
         }
-
         // If the directory has a subdirectory, copy the entire directory
         if (folders.size() > 0) {
             for (Folder folder : folders) {
@@ -368,5 +368,59 @@ public class FolderServiceImpl implements FolderService {
             logger.debug("folder rename throw exception", e);
             return false;
         }
+    }
+
+    /**
+     * Remove all the contents of the specified directory from the disk and the
+     * database
+     * 
+     * @param targetFolder
+     *            the specified directory
+     * @return success return true else return false
+     * @author bxji
+     */
+    private boolean delFolder(Folder targetFolder) {
+        if (targetFolder == null) {
+            return true;
+        }
+        Set<FileBean> files = targetFolder.getFiles();
+        Set<Folder> folders = targetFolder.getChildren();
+        // delete all files
+        for (FileBean file : files) {
+            try {
+                int result = DocumentUtil.removeFile(file);
+                // if disk file delete fail, return 'false'
+                if (result != 1) {
+                    logger.debug("delete disk file fail, file name:"
+                            + file.getDirectory() + file.getFileName());
+                    return false;
+                }
+                fileDao.delete(file);
+            }
+            catch (Exception e) {
+                logger.debug("delete disk file fail.", e);
+                return false;
+            }
+
+        }
+        // delete all folders
+        for (Folder folder : folders) {
+            try {
+                delFolder(folder);
+                int result = DocumentUtil.removeFolder(folder);
+                // if disk file delete fail, return 'false'
+                if (result != 1) {
+                    logger.debug("delete disk file fail, file name:"
+                            + folder.getDirectory() + folder.getFolderName());
+                    return false;
+                }
+                folderDao.delete(folder);
+            }
+            catch (Exception e) {
+                logger.debug("delete disk directory fail.", e);
+                return false;
+            }
+        }
+        return true;
     }
 }
