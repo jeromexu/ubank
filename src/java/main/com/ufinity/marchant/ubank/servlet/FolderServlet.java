@@ -160,12 +160,7 @@ public class FolderServlet extends AbstractServlet {
         FolderService folderService = ServiceFactory
                 .createService(FolderService.class);
         List<FileOrFolderJsonEntity> josnEntitys = null;
-        try {
-            josnEntitys = folderService.getAllByFolder(folderId);
-        }
-        catch (UBankException e) {
-            logger.debug("floder id can not be null", e);
-        }
+        josnEntitys = folderService.getAllByFolder(folderId);
         String jsonStr = "";
         if (josnEntitys != null) {
             jsonStr = JsonUtil.object2json(josnEntitys);
