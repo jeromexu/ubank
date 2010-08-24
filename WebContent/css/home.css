@@ -201,3 +201,16 @@ a:hover{
 	margin: 0 0 5px;
 	text-align: right;
 }
+
+.errorDiv {
+	margin-left:450px;
+	margin-top:200px;
+	background-color: #78B4F0;
+	width: 500px;
+	height: 96px;
+	border: 2px solid black;
+	text-align: center;
+	line-height: 98px;
+	color: red;
+	
+}
