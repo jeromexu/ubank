@@ -271,12 +271,15 @@ public class DocumentUtil {
 	 * 
 	 * copy the file to the dest folder
 	 * 
-	 * @param fileBean file object 
-	 * @param folder   folder object
-	 * @return			success:1 failure:0
+	 * @param fileBean
+	 *            file object
+	 * @param folder
+	 *            folder object
+	 * @return success:1 failure:0
 	 * @author jerome
 	 */
 	public static Integer copyFile(FileBean fileBean, Folder folder) {
+
 		if (fileBean != null) {
 			FILENAME = fileBean.getFileName();
 			FILE_DIRECTORY = fileBean.getDirectory();
@@ -290,8 +293,61 @@ public class DocumentUtil {
 			return 0;
 		}
 		File sFile = createFile(FILE_DIRECTORY, FILENAME);
-		File dFile = createFile(FOLDER_DIRECTORY,FOLDERNAME);
-		return 1;
+		File dFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
+		if (!dFile.exists()) {
+			dFile.mkdirs();
+		}
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		try {
+			int bytesum = 0;
+			int byteread = 0;
+			// file exists
+			if (sFile.exists()) {
+				// read source file
+				fis = new FileInputStream(sFile);
+				StringBuffer sb = new StringBuffer();
+				if (FOLDER_DIRECTORY.endsWith(File.separator)) {
+					sb.append(FOLDER_DIRECTORY).append(FOLDERNAME);
+				} else {
+					sb.append(FOLDER_DIRECTORY).append(File.separator).append(
+							FOLDERNAME);
+				}
+				fos = new FileOutputStream(sb.append(File.separator).append(
+						sFile.getName()).toString());
+				byte[] buffer = new byte[1024];
+				while ((byteread = fis.read(buffer)) != -1) {
+					bytesum += byteread;
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("file length=" + bytesum);
+					}
+					fos.write(buffer, 0, byteread);
+				}
+
+			} else {
+				return 0;
+			}
+		} catch (Exception e) {
+			LOGGER.error("copy a file exception!", e);
+			return 0;
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		// first copy file and second delete the file
+		return removeFile(fileBean);
 	}
 
 	/**
@@ -352,7 +408,6 @@ public class DocumentUtil {
 			}
 
 		}
-
 	}
 
 	/**
@@ -472,5 +527,16 @@ public class DocumentUtil {
 		 * folder.setFolderName("c"); Integer result
 		 * =renameFolder(folder,"ggggggg"); System.out.println(result);
 		 */
+
+		FileBean fileBean = new FileBean();
+		fileBean.setDirectory("D:\\test\\a");
+		fileBean.setFileName("haha.txt");
+
+		Folder folder = new Folder();
+		folder.setDirectory("D:\\test\\b");
+		folder.setFolderName("c");
+
+		Integer result = copyFile(fileBean, folder);
+		System.out.println(result);
 	}
 }
