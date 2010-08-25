@@ -112,11 +112,13 @@ public class FileServiceImpl implements FileService {
             pager = fileDao
                     .searchPaginatedForFile(pageNum, pageSize, condition);
             EntityManagerUtil.commit();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // not need rollback
             LOG.error("search share file exception", e);
             throw new UBankException("search share file exception");
-        } finally {
+        }
+        finally {
             EntityManagerUtil.closeEntityManager();
         }
 
@@ -147,13 +149,17 @@ public class FileServiceImpl implements FileService {
         String fileSizeConf = "";
         if (Constant.FILE_SIZE_0.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_0);
-        } else if (Constant.FILE_SIZE_1.equals(fileSize)) {
+        }
+        else if (Constant.FILE_SIZE_1.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_1);
-        } else if (Constant.FILE_SIZE_2.equals(fileSize)) {
+        }
+        else if (Constant.FILE_SIZE_2.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_2);
-        } else if (Constant.FILE_SIZE_3.equals(fileSize)) {
+        }
+        else if (Constant.FILE_SIZE_3.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_3);
-        } else if (Constant.FILE_SIZE_4.equals(fileSize)) {
+        }
+        else if (Constant.FILE_SIZE_4.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_4);
         }
         return fileSizeConf;
@@ -199,15 +205,20 @@ public class FileServiceImpl implements FileService {
         int amount = 0;
         if (Constant.FILE_PUBLISHDATE_0.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_0);
-        } else if (Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
+        }
+        else if (Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_1);
-        } else if (Constant.FILE_PUBLISHDATE_2.equals(publishDate)) {
+        }
+        else if (Constant.FILE_PUBLISHDATE_2.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_2);
-        } else if (Constant.FILE_PUBLISHDATE_3.equals(publishDate)) {
+        }
+        else if (Constant.FILE_PUBLISHDATE_3.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_3);
-        } else if (Constant.FILE_PUBLISHDATE_4.equals(publishDate)) {
+        }
+        else if (Constant.FILE_PUBLISHDATE_4.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_4);
-        } else if (Constant.FILE_PUBLISHDATE_5.equals(publishDate)) {
+        }
+        else if (Constant.FILE_PUBLISHDATE_5.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_5);
         }
 
@@ -245,12 +256,14 @@ public class FileServiceImpl implements FileService {
             return null;
         }
         FileBean copy = null;
-        FileBean file = fileDao.find(FileId);
-        if (file != null) {
-            try {
+        try {
+            FileBean file = fileDao.find(FileId);
+            if (file != null) {
                 copy = (FileBean) BeanUtils.cloneBean(file);
-            } catch (Exception e) {
             }
+        }
+        catch (Exception e) {
+            LOG.debug(" copy file throw exception", e);
         }
         return copy;
     }
@@ -271,24 +284,33 @@ public class FileServiceImpl implements FileService {
             return false;
         }
         FileBean temp = copyFile(sourceFileId);
-        Folder folder = folderDao.find(targetFolderId);
-        FileBean file = fileDao.find(sourceFileId);
-        // If the target directory is the source directory
-        if (file.getFolder().equals(folder)) {
-            String name = temp.getFileName();
-            int index = name.indexOf('.');
-            temp.setFileName(name.substring(0, index) + "(1)");
+        if (temp != null) {
+            try {
+                Folder folder = folderDao.find(targetFolderId);
+                FileBean file = fileDao.find(sourceFileId);
+                // If the target directory is the source directory
+                if (file.getFolder().equals(folder)) {
+                    String name = temp.getFileName();
+                    int index = name.indexOf('.');
+                    temp.setFileName(name.substring(0, index) + "(1)");
+                }
+                temp.setDirectory(folder.getDirectory() + folder.getFolderId());
+                temp.setFolder(folder);
+                // copy disk file
+                int result = DocumentUtil.copyFile(temp, folder);
+                if (result != 1) {
+                    LOG.debug("copy disk file IO exception");
+                    return false;
+                }
+                fileDao.modify(temp);
+                return true;
+            }
+            catch (Exception e) {
+                LOG.debug("Update the file information database exception ", e);
+                return false;
+            }
         }
-        temp.setDirectory(folder.getDirectory() + folder.getFolderName());
-        temp.setFolder(folder);
-        try {
-            fileDao.modify(temp);
-            int result = DocumentUtil.copyFile(temp, folder);
-            return result == 1 ? true : false;
-        } catch (Exception e) {
-            LOG.debug("Update the file information database exception ", e);
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -306,20 +328,26 @@ public class FileServiceImpl implements FileService {
                 || sourceFileId == null || 0l == sourceFileId) {
             return false;
         }
-        Folder folder = folderDao.find(targetFolderId);
-        FileBean file = fileDao.find(sourceFileId);
-        // if target directory is current directory
-        if (file.getFolder().equals(folder)) {
+        try {
+            Folder folder = folderDao.find(targetFolderId);
+            FileBean file = fileDao.find(sourceFileId);
+            // if target directory is current directory
+            if (file.getFolder().equals(folder)) {
+                return true;
+            }
+            file.setFolder(folder);
+            file.setDirectory(folder.getDirectory() + folder.getFolderId());
+            int result = DocumentUtil.moveFileTo(file, folder);
+            if (result != 1) {
+                LOG.debug("Move disk file IO exception");
+                return false;
+            }
+            // update database table
+            fileDao.modify(file);
             return true;
         }
-        file.setFolder(folder);
-        file.setDirectory(folder.getDirectory() + folder.getFolderName());
-        try {
-            fileDao.modify(file);
-            int result = DocumentUtil.moveFileTo(file, folder);
-            return result == 1 ? true : false;
-        } catch (Exception e) {
-            LOG.debug("Update the file information database exception ", e);
+        catch (Exception e) {
+            LOG.debug("Database operation exception when moving a file. ", e);
             return false;
         }
     }
