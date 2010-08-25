@@ -134,7 +134,7 @@ public class UploadServiceImpl implements UploadService {
 
                     FileBean fb = new FileBean();
                     fb.setFolder(folder);
-                    fb.setFileName(getFileName(fileFullName));
+                    fb.setFileName(fileFullName);
                     fb.setFileType(getFileType(fileFullName));
                     fb.setCreateTime(new Date());
                     fb.setDirectory(folderDir);
