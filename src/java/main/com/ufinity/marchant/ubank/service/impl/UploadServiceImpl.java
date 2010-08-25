@@ -40,26 +40,29 @@ import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
+import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.service.UploadService;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
 
 /**
  * UploadService implements
- *
+ * 
  * @version 1.0 - 2010-8-23
- * @author liujun     
+ * @author liujun
  */
 public class UploadServiceImpl implements UploadService {
-    
+
     private final Logger logger = Logger.getLogger(UploadServiceImpl.class);
-    
+
     private FileDao fileDao;
-    
+
+    private FolderDao folderDao;
+
     /**
      * upload file and save to db
      * 
-     * @param folder
-     *            current folder
+     * @param folderId
+     *            current folder id
      * @param pi
      *            info of upload
      * @param fIter
@@ -67,34 +70,39 @@ public class UploadServiceImpl implements UploadService {
      * @throws Exception
      *             if have exception
      */
-    public void uploadAndSaveDb(Folder folder, ProgressInfo pi, FileItemIterator fIter) throws Exception {
-        if(folder == null || folder.getFolderId() == 0){
+    public void uploadAndSaveDb(Long folderId, ProgressInfo pi,
+            FileItemIterator fIter) throws Exception {
+        // TODO remove
+        folderId = 1l;
+
+        if (folderId == null || folderId == 0) {
             logger.warn("current folder or folder is null.");
             return;
         }
-        if(fIter == null){
+        if (fIter == null) {
             logger.warn("FileItemIterator is null. will return");
             return;
         }
-        
+
         String fldName = "";
         FileItemStream item = null;
         BufferedInputStream stream = null;
         OutputStream out = null;
         ByteArrayOutputStream bStream = null;
-        String folderDir = folder.getDirectory();
-        
+        String folderDir = null;
+
         try {
+            folderDir = getFolderDir(folderId);
+
             while (fIter.hasNext()) {
                 item = fIter.next();
                 if (!item.isFormField()) {
                     fldName = item.getFieldName();
                     String fileFullName = item.getName();
-                    if (fileFullName == null
-                            || "".equals(fileFullName.trim())) {
+                    if (fileFullName == null || "".equals(fileFullName.trim())) {
                         continue;
                     }
-                    
+
                     pi.setCurFileName(fileFullName);
                     pi.setUploadedFiles(pi.getUploadedFiles() + "<b>"
                             + fileFullName + "</b><br/>");
@@ -103,29 +111,35 @@ public class UploadServiceImpl implements UploadService {
                     bStream = new ByteArrayOutputStream();
                     long bStreamLen = Streams.copy(stream, bStream, true);
 
-                     logger.debug("Upload path is :" + this.getFileDir(folderDir,fileFullName));
-                    //System.out.println("Upload path is :"
-                    //        + this.getFileDir(folderDir,fileFullName));
+                    logger.debug("Upload path is :"
+                            + this.getFileDir(folderDir, fileFullName));
+                    // System.out.println("Upload path is :"
+                    // + this.getFileDir(folderDir,fileFullName));
 
-                    File file = new File(this.getFileDir(folderDir,fileFullName));
+                    File file = new File(this.getFileDir(folderDir,
+                            fileFullName));
                     if (file.exists()) {
                         file.delete();
                     }
                     out = new FileOutputStream(file);
                     bStream.writeTo(out);
 
-                     logger.debug("Upload fldName :" + fldName + ",just was uploaded len:" + bStreamLen);
-                    //System.out.println("Upload fldName :" + fldName
-                    //        + ",just was uploaded len:" + bStreamLen);
-                    
+                    logger.debug("Upload fldName :" + fldName
+                            + ",just was uploaded len:" + bStreamLen);
+                    // System.out.println("Upload fldName :" + fldName
+                    // + ",just was uploaded len:" + bStreamLen);
+
+                    Folder folder = new Folder();
+                    folder.setFolderId(folderId);
+
                     FileBean fb = new FileBean();
                     fb.setFolder(folder);
                     fb.setFileName(getFileName(fileFullName));
                     fb.setFileType(getFileType(fileFullName));
                     fb.setCreateTime(new Date());
                     fb.setDirectory(getFileDir(folderDir, fileFullName));
-                    //kb
-                    fb.setSize(bStreamLen/1024);
+                    // kb
+                    fb.setSize(bStreamLen / 1024);
                     fb.setShare(false);
                     this.saveFile(fb);
                 }
@@ -142,66 +156,97 @@ public class UploadServiceImpl implements UploadService {
             }
         }
     }
-    
+
     /**
      * 
      * get file dir
      * 
-     * @param String
-     *            fileName
+     * @param currentDir
+     *            current dir
+     * @param fileName
+     *            file name
+     * @return file dir    
      */
     private String getFileDir(String currentDir, String fileName) {
         String name = fileName.substring(fileName.lastIndexOf("\\") + 1);
         return currentDir + name;
     }
-    
+
     /**
      * 
      * get file name
      * 
-     * @param String
-     *            fileName
+     * @param fileName
+     *            full file name.
+     * @return file name     
      */
     private String getFileName(String fileName) {
         int i = fileName.lastIndexOf(".");
-        if(i == -1){
+        if (i == -1) {
             return fileName;
         }
-        return fileName.substring(0,i);
+        return fileName.substring(0, i);
     }
 
     /**
      * 
      * get file type
      * 
-     * @param String
-     *            fileName
+     * @param fileName
+     *            file name
+     * @return file type           
      */
     private String getFileType(String fileName) {
         int i = fileName.lastIndexOf(".");
-        if(i == -1){
+        if (i == -1) {
             return "";
         }
         return fileName.substring(i + 1);
     }
-    
+
+    /**
+     * get folder dir
+     * 
+     * @param folderId
+     *            folder id
+     * @throws RuntimeException
+     *             if has RuntimeException
+     * @return folder dir
+     */
+    private String getFolderDir(Long folderId) throws RuntimeException {
+        try {
+            EntityManagerUtil.begin();
+            folderDao = DaoFactory.createDao(FolderDao.class);
+            Folder folder = folderDao.find(folderId);
+            EntityManagerUtil.commit();
+
+            return folder.getDirectory();
+        } catch (RuntimeException e) {
+            throw e;
+        } finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+    }
+
     /**
      * save file to db
      * 
      * @param fb
+     *            file bean
+     * @throws RuntimeException
+     *             if has RuntimeException
      */
-    private void saveFile(FileBean fb){
+    private void saveFile(FileBean fb) throws RuntimeException {
         try {
             EntityManagerUtil.begin();
             fileDao = DaoFactory.createDao(FileDao.class);
             fileDao.add(fb);
             EntityManagerUtil.commit();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             EntityManagerUtil.rollback();
-            e.printStackTrace();
+            throw e;
         } finally {
             EntityManagerUtil.closeEntityManager();
         }
     }
 }
-

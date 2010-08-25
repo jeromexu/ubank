@@ -38,7 +38,6 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 
-import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.JsonUtil;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
@@ -89,6 +88,8 @@ public class FileUploadServlet extends AbstractServlet {
             pause(request);
         } else if (UploadConstant.CONTINUE_UOLOAD_METHOD.equals(method)) {
             continueUpload(request);
+        } else if (UploadConstant.SET_CURRENT_FOLDER_METHOD.equals(method)) {
+            setCurrentFolderId(request);
         }
     }
 
@@ -170,6 +171,20 @@ public class FileUploadServlet extends AbstractServlet {
             request.getSession().setAttribute(UploadConstant.PROGRESS_INFO, pi);
         }
     }
+    
+    /**
+     * set current folder id
+     * 
+     * @param req
+     *            request
+     * @author liujun
+     */
+    private void setCurrentFolderId(HttpServletRequest req) {
+        String id = req.getParameter(UploadConstant.FOLDER_ID);
+        if (Validity.isNumber(id)) {
+            req.getSession().setAttribute(UploadConstant.CURRENT_FOLDER_ID,  Long.parseLong(id));
+        }
+    }
 
     /**
      * 
@@ -179,7 +194,7 @@ public class FileUploadServlet extends AbstractServlet {
      *            request
      */
     private void doUpload(HttpServletRequest request) {
-        Folder currentFolder = (Folder)request.getSession().getAttribute(UploadConstant.CURRENT_FOLDER);
+        Long currentFolderId = (Long)request.getSession().getAttribute(UploadConstant.CURRENT_FOLDER_ID);
         ProgressInfo pi = new ProgressInfo();
         request.getSession().setAttribute(UploadConstant.PROGRESS_INFO, pi);
 
@@ -206,12 +221,8 @@ public class FileUploadServlet extends AbstractServlet {
                 // Parse the request
                 FileItemIterator fIter = upload.getItemIterator(request);
                 
-                //TODO
-                currentFolder = new Folder();
-                currentFolder.setFolderId(1l);
-                currentFolder.setDirectory("E:/temp/folder/");
                 uploadService = ServiceFactory.createService(UploadService.class);
-                uploadService.uploadAndSaveDb(currentFolder, pi, fIter);
+                uploadService.uploadAndSaveDb(currentFolderId, pi, fIter);
                 
                 pi.setCurrentTime(System.currentTimeMillis());
                 pi.setBytesRead(filesSize);
@@ -222,7 +233,9 @@ public class FileUploadServlet extends AbstractServlet {
             if(Validity.isEmpty(pi.getErrorMsg())){
                 pi.setErrorMsg(MessageResource.getMessage(MessageKeys.UPLOAD_EXECEPTION));
             }
-            logger.warn("Upload cancelled or interrupted!" ,e);
+            logger.error("Upload interrupted or exception!" ,e);
+            //will remove
+            e.printStackTrace();
         } 
     }
 

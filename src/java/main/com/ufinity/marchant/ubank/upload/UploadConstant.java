@@ -35,7 +35,8 @@ public interface UploadConstant {
     String UPLOAD_METHOD = "upload";
     String CONTINUE_UOLOAD_METHOD = "continueUpload";
     String GET_INFO_METHOD = "getInfo";
-    String PAUSE_METHOD="pause";
+    String PAUSE_METHOD= "pause";
+    String SET_CURRENT_FOLDER_METHOD = "setCurrentFolder";
     
     //upload max size 10M
     long MAX_LENGTH = 10 * 1024 * 1024L;
@@ -47,7 +48,8 @@ public interface UploadConstant {
     //param
     String PROGRESS_INFO = "progressInfo";
     String HEADER_ENCODE ="UTF-8";
-    String CURRENT_FOLDER = "currentFolder";
+    String FOLDER_ID ="folderId";
+    String CURRENT_FOLDER_ID = "currentFolderId";
     
     //updates info every 10kb
     long UPDATE_THRESHOLD = 10 * 1024L;

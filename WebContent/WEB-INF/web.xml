@@ -89,6 +89,11 @@
     <servlet-name>fileUploadServlet</servlet-name>
     <url-pattern>/portal/pause.do</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>fileUploadServlet</servlet-name>
+    <url-pattern>/portal/setCurrentFolder.do</url-pattern>
+  </servlet-mapping>
+  
   
   <filter>
     <filter-name>charsetFilter</filter-name>
