@@ -268,8 +268,7 @@ public class UserServiceImpl implements UserService {
         folderDao.add(folder);
         
         if (Constant.MY_File_NAME.equals(folderName)) {
-            baseFile = new File(sb.append(File.separator).append(
-                    Constant.MY_File_NAME).toString());
+            baseFile = new File(sb.append(File.separator).append(String.valueOf(folder.getFolderId())).toString());
         } else {
             sb.replace(sb.lastIndexOf(File.separator) + 1, sb.length(), String.valueOf(folder.getFolderId()));
             baseFile = new File(sb.toString());
