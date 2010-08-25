@@ -28,7 +28,6 @@ package com.ufinity.marchant.ubank.service.impl;
 
 import java.io.File;
 import java.util.Date;
-
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
@@ -249,18 +248,7 @@ public class UserServiceImpl implements UserService {
                 + ",param[parent]=" + parent + ",param[userId]=" + userId
                 + ",param[sb]=" + sb.toString() + ",param[folderName]="
                 + folderName);
-        if (Constant.MY_File_NAME.equals(folderName)) {
-            baseFile = new File(sb.append(File.separator).append(
-                    Constant.MY_File_NAME).toString());
-        } else {
-            sb.replace(sb.lastIndexOf(File.separator) + 1, sb.length(),
-                    folderName);
-            baseFile = new File(sb.toString());
-        }
-
-        if (!baseFile.exists()) {
-            baseFile.mkdir();
-        }
+       
         Folder folder = new Folder();
         folder.setFolderName(folderName);
         folder.setCreateTime(new Date());
@@ -278,6 +266,18 @@ public class UserServiceImpl implements UserService {
         folder.setUser(user);
 
         folderDao.add(folder);
+        
+        if (Constant.MY_File_NAME.equals(folderName)) {
+            baseFile = new File(sb.append(File.separator).append(
+                    Constant.MY_File_NAME).toString());
+        } else {
+            sb.replace(sb.lastIndexOf(File.separator) + 1, sb.length(), String.valueOf(folder.getFolderId()));
+            baseFile = new File(sb.toString());
+        }
+
+        if (!baseFile.exists()) {
+            baseFile.mkdir();
+        }
         LOG.debug("makeEachUserDir:-----complete--------");
     }
 }
