@@ -270,12 +270,27 @@ public class FolderServiceImpl implements FolderService {
                     + "'targetFolderId' and 'sourceFolderId' can not be null.");
             return false;
         }
-        Folder source = folderDao.find(sourceFolderId);
-        Folder target = folderDao.find(targetFolderId);
-        target.getChildren().add(source);
-        source.setParent(target);
-        DocumentUtil.moveFolderTo(source, target);
-        folderDao.modify(source);
+        try {
+            Folder source = folderDao.find(sourceFolderId);
+            Folder target = folderDao.find(targetFolderId);
+            target.getChildren().add(source);
+            source.setParent(target);
+            DocumentUtil.moveFolderTo(source, target);
+            folderDao.modify(target);
+            folderDao.modify(source);
+            // set all files Shared state
+            if (target.getShare()) {
+                shareOrCanceAllFiles(source, true);
+            }
+            else {
+                shareOrCanceAllFiles(source, false);
+            }
+        }
+        catch (Exception e) {
+            logger.debug("When moving folder to specified directory ,"
+                    + " the database throw an exception.", e);
+            return false;
+        }
         return true;
     }
 
@@ -302,9 +317,10 @@ public class FolderServiceImpl implements FolderService {
         catch (Exception e) {
             logger.debug("An exception when copying a 'Folder' bean object", e);
         }
-        // Copied to the current directory
+        // if Copy to the current directory
         if (sourceFolder.getParent().equals(targetFolder)) {
-            temp.setFolderName(sourceFolder.getFolderName() + "(1)");
+            temp.setFolderName(sourceFolder.getFolderName()
+                    + Constant.FOLDER_COPY);
         }
         temp.setParent(targetFolder);
         temp.setDirectory(temp.getParent().getDirectory()
@@ -335,6 +351,13 @@ public class FolderServiceImpl implements FolderService {
                     copy.setFolder(temp);
                     copy.setDirectory(targetFolder.getDirectory()
                             + targetFolder.getFolderId());
+                    // is target floder is shared directory
+                    if (targetFolder.getShare()) {
+                        copy.setShare(true);
+                    }
+                    else {
+                        copy.setShare(false);
+                    }
                     fileDao.add(copy);
                 }
                 catch (Exception e) {
@@ -462,8 +485,20 @@ public class FolderServiceImpl implements FolderService {
      * @author bxji
      */
     public boolean shareFolder(Long folderId) {
-        // TODO Auto-generated method stub
-        return false;
+        if (folderId == null || 0l == folderId) {
+            return false;
+        }
+        try {
+            Folder folder = folderDao.find(folderId);
+            folder.setShare(true);
+            folderDao.modify(folder);
+            return shareOrCanceAllFiles(folder, true);
+        }
+        catch (Exception e) {
+            logger.debug("When sharing a folder,database"
+                    + " throw an exception .", e);
+            return false;
+        }
     }
 
     /**
@@ -474,7 +509,72 @@ public class FolderServiceImpl implements FolderService {
      * @return success return true else return false
      * @author bxji
      */
-    public boolean unshareFolder(Long folderId) {
-        return false;
+    public boolean cancelShareFolder(Long folderId) {
+        if (folderId == null || 0l == folderId) {
+            return false;
+        }
+        try {
+            Folder folder = folderDao.find(folderId);
+            return cancelShareFolder(folder);
+        }
+        catch (Exception e) {
+            logger.debug("When cancel share a folder "
+                    + ",database throw an exception", e);
+            return false;
+        }
     };
+
+    /**
+     * This method share all files under the target directory, including the
+     * subdirectories of all files
+     * 
+     * @param folder
+     *            target directory
+     * @param share
+     *            Shared state
+     * @return success return true else return false
+     * @author bxji
+     */
+    private boolean shareOrCanceAllFiles(Folder folder, boolean share) {
+        if (folder == null) {
+            return false;
+        }
+        Set<Folder> children = folder.getChildren();
+        Set<FileBean> files = folder.getFiles();
+        for (FileBean file : files) {
+            file.setShare(share);
+            fileDao.modify(file);
+        }
+        for (Folder child : children) {
+            shareOrCanceAllFiles(child, share);
+        }
+        return true;
+    }
+
+    /**
+     * this method is set all files share status is 'false' under specified
+     * directory
+     * 
+     * @param folder
+     *            target folder
+     * @return success return true else return false
+     * @author bxji
+     */
+    private boolean cancelShareFolder(Folder folder) {
+        if (folder == null) {
+            return false;
+        }
+        folder.setShare(false);
+        folderDao.modify(folder);
+        Set<Folder> children = folder.getChildren();
+        Set<FileBean> files = folder.getFiles();
+        for (FileBean file : files) {
+            file.setShare(false);
+            fileDao.modify(file);
+        }
+        for (Folder child : children) {
+            cancelShareFolder(child);
+        }
+        return false;
+    }
 }

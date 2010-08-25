@@ -149,6 +149,6 @@ public interface FolderService {
      * @return success return true else return false
      * @author bxji
      */
-    public boolean unshareFolder(Long folderId);
+    public boolean cancelShareFolder(Long folderId);
 
 }
