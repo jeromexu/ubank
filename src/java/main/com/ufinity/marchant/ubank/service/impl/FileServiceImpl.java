@@ -69,6 +69,10 @@ public class FileServiceImpl implements FileService {
         fileDao = DaoFactory.createDao(FileDao.class);
         folderDao = DaoFactory.createDao(FolderDao.class);
     }
+    
+    public void setFileDao(FileDao fileDao) {
+        this.fileDao = fileDao;
+    }
 
     /**
      * Search share files

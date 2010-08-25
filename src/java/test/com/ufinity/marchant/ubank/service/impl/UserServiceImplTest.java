@@ -1,12 +1,13 @@
 package com.ufinity.marchant.ubank.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.ufinity.marchant.ubank.bean.User;
@@ -27,18 +28,6 @@ public class UserServiceImplTest {
     private UserService userService;
 
     /**
-     * setUpBeforeClass
-     * 
-     * @throws Exception
-     *             occur exception throw it
-     * @author zdxue
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-        // TODO
-    }
-
-    /**
      * SetUp
      * 
      * @throws Exception
@@ -51,6 +40,18 @@ public class UserServiceImplTest {
         UserServiceImpl userServiceImpl = new UserServiceImpl();
         userServiceImpl.setUserDao(userDao);
         userService = userServiceImpl;
+    }
+
+    /**
+     * TearDown
+     * 
+     * @throws Exception
+     *             occur exception throw it
+     * @author zdxue
+     */
+    @After
+    public void tearDown() throws Exception {
+        // TODO
     }
 
     /**
@@ -81,7 +82,7 @@ public class UserServiceImplTest {
         });
 
         try {
-            assertEquals(null, userService.getUser(userName, password));
+            assertNull(userService.getUser(userName, password));
         } catch (UBankException e) {
             fail("get user error");
         }
