@@ -193,7 +193,8 @@ public class FileUploadServlet extends AbstractServlet {
                     String errorMsg = MessageResource.getMessage(MessageKeys.UPLOAD_SIZE_MAX, params);
                     pi.setInProgress(false);
                     pi.setErrorMsg(errorMsg);
-                    System.out.println("Current files size is to big");
+                    logger.debug("Upload files size is to big");
+                    //System.out.println("Upload files size is to big");
                     throw new Exception(errorMsg);
                 }
                 ServletFileUpload upload = new ServletFileUpload();

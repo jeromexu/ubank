@@ -103,10 +103,9 @@ public class UploadServiceImpl implements UploadService {
                     bStream = new ByteArrayOutputStream();
                     long bStreamLen = Streams.copy(stream, bStream, true);
 
-                    // logger.debug("Upload path is :" +
-                    // this.getFileDir(folderDir,fileFullName));
-                    System.out.println("Upload path is :"
-                            + this.getFileDir(folderDir,fileFullName));
+                     logger.debug("Upload path is :" + this.getFileDir(folderDir,fileFullName));
+                    //System.out.println("Upload path is :"
+                    //        + this.getFileDir(folderDir,fileFullName));
 
                     File file = new File(this.getFileDir(folderDir,fileFullName));
                     if (file.exists()) {
@@ -115,10 +114,9 @@ public class UploadServiceImpl implements UploadService {
                     out = new FileOutputStream(file);
                     bStream.writeTo(out);
 
-                    // logger.debug("Upload fldName :" + fldName
-                    // + ",just was uploaded len:" + bStreamLen);
-                    System.out.println("Upload fldName :" + fldName
-                            + ",just was uploaded len:" + bStreamLen);
+                     logger.debug("Upload fldName :" + fldName + ",just was uploaded len:" + bStreamLen);
+                    //System.out.println("Upload fldName :" + fldName
+                    //        + ",just was uploaded len:" + bStreamLen);
                     
                     FileBean fb = new FileBean();
                     fb.setFolder(folder);
