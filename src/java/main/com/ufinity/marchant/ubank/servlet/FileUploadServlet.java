@@ -221,7 +221,7 @@ public class FileUploadServlet extends AbstractServlet {
             if(Validity.isEmpty(pi.getErrorMsg())){
                 pi.setErrorMsg(MessageResource.getMessage(MessageKeys.UPLOAD_EXECEPTION));
             }
-            logger.warn("Upload cancelled or interrupted!"+ e.getMessage());
+            logger.warn("Upload cancelled or interrupted!" ,e);
         } 
     }
 
