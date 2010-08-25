@@ -214,3 +214,16 @@ a:hover{
 	color: red;
 	
 }
+
+.th_title{
+background-color:#44cc88;color:#fff;
+font-weight:bold;
+height:30px;
+line-height:30px;
+
+}
+
+.pointer{
+cursor: pointer;
+
+}

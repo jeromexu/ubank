@@ -3,11 +3,11 @@
 
 <table cellpadding="0" cellspacing="0" border="1" id="mainTable">
   <tr align="center">
-    <td width="260">${u:getMessage('ubank.home.thead.filename')}</td>
-    <td width="100">${u:getMessage('ubank.home.thead.filesize')}</td>
-    <td width="150">${u:getMessage('ubank.home.thead.owner')}</td>
-    <td width="200">${u:getMessage('ubank.home.thead.modifydate')}</td>
-    <td width="100">${u:getMessage('ubank.home.thead.download')}</td>             
+    <td width="260" class="th_title pointer">${u:getMessage('ubank.home.thead.filename')}</td>
+    <td width="100" class="th_title pointer">${u:getMessage('ubank.home.thead.filesize')}</td>
+    <td width="150" class="th_title pointer">${u:getMessage('ubank.home.thead.owner')}</td>
+    <td width="200" class="th_title pointer">${u:getMessage('ubank.home.thead.modifydate')}</td>
+    <td width="100" class="th_title">${u:getMessage('ubank.home.thead.download')}</td>             
   </tr>
   
   <c:choose>
