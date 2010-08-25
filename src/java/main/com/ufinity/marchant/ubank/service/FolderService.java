@@ -118,15 +118,37 @@ public interface FolderService {
      * @author bxji
      */
     public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId);
-    
+
     /**
      * This method is used to rename a folder
      * 
-     * @param folderId  target folder object id
-     * @param newName   new name
-     * @return  success return true else return false
+     * @param folderId
+     *            target folder object id
+     * @param newName
+     *            new name
+     * @return success return true else return false
      * @author bxji
      */
     public boolean renameFolder(Long folderId, String newName);
+
+    /**
+     * this method can Sharing a directory
+     * 
+     * @param folderId
+     *            target folder object id
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean shareFolder(Long folderId);
+
+    /**
+     * this method is cancel share a directory operation
+     * 
+     * @param folderId
+     *            target folder object id
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean unshareFolder(Long folderId);
 
 }

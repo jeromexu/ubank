@@ -244,6 +244,7 @@ public class FolderServiceImpl implements FolderService {
         }
         Folder source = folderDao.find(sourceFolderId);
         Folder target = folderDao.find(targetFolderId);
+
         String sourcePath = source.getDirectory() + source.getFolderName();
         String targetPath = target.getDirectory() + target.getFolderName();
         DocumentUtil.copyFolder(sourcePath, targetPath);
@@ -294,11 +295,12 @@ public class FolderServiceImpl implements FolderService {
                     + "'targetFolder' and 'sourceFolder' can not be null.");
             return false;
         }
-        Folder temp = new Folder();
+        Folder temp = null;
         try {
             temp = (Folder) BeanUtils.cloneBean(sourceFolder);
         }
         catch (Exception e) {
+            logger.debug("An exception when copying a 'Folder' bean object", e);
         }
         // Copied to the current directory
         if (sourceFolder.getParent().equals(targetFolder)) {
@@ -306,13 +308,20 @@ public class FolderServiceImpl implements FolderService {
         }
         temp.setParent(targetFolder);
         temp.setDirectory(temp.getParent().getDirectory()
-                + temp.getFolderName());
+                + temp.getParent().getFolderId());
         temp.setFiles(new HashSet<FileBean>());
         temp.setChildren(new HashSet<Folder>());
         targetFolder.getChildren().add(temp);
         // update database
-        folderDao.add(temp);
-        folderDao.modify(targetFolder);
+        try {
+            folderDao.add(temp);
+            folderDao.modify(targetFolder);
+        }
+        catch (Exception e) {
+            logger.debug("An exception when copying a directory "
+                    + "to update the database. ", e);
+            return false;
+        }
 
         Set<FileBean> files = sourceFolder.getFiles();
         Set<Folder> folders = sourceFolder.getChildren();
@@ -325,10 +334,12 @@ public class FolderServiceImpl implements FolderService {
                     FileBean copy = (FileBean) BeanUtils.cloneBean(file);
                     copy.setFolder(temp);
                     copy.setDirectory(targetFolder.getDirectory()
-                            + targetFolder.getFolderName());
+                            + targetFolder.getFolderId());
                     fileDao.add(copy);
                 }
                 catch (Exception e) {
+                    logger.debug("An exception when copying a file"
+                            + " add to the database", e);
                 }
             }
         }
@@ -360,15 +371,30 @@ public class FolderServiceImpl implements FolderService {
                     + " and new name can not be null or space string");
             return false;
         }
-        Folder folder = folderDao.find(folderId);
-        folder.setFolderName(newName);
         try {
-            folderDao.modify(folder);
+            Folder folder = folderDao.find(folderId);
+            // if old name equals new name
+            if (newName.equals(folder.getFolderName())) {
+                return true;
+            }
+            Set<Folder> brothers = folder.getParent().getChildren();
+            // If there is a the same name folder
+            for (Folder brother : brothers) {
+                if (newName.equals(brother.getFolderName())) {
+                    newName = newName + Constant.FOLDER_COPY;
+                }
+            }
+            folder.setFolderName(newName);
             int result = DocumentUtil.renameFolder(folder, newName);
-            return result == 1 ? true : false;
+            if (result != 1) {
+                logger.debug("disk folder rename fail");
+                return false;
+            }
+            folderDao.modify(folder);
+            return true;
         }
         catch (Exception e) {
-            logger.debug("folder rename throw exception", e);
+            logger.debug("database exception ,when folder rename .", e);
             return false;
         }
     }
@@ -401,10 +427,10 @@ public class FolderServiceImpl implements FolderService {
                 fileDao.delete(file);
             }
             catch (Exception e) {
-                logger.debug("delete disk file fail.", e);
+                logger.debug("update the database exception "
+                        + "when delete a disk file .", e);
                 return false;
             }
-
         }
         // delete all folders
         for (Folder folder : folders) {
@@ -413,8 +439,8 @@ public class FolderServiceImpl implements FolderService {
                 int result = DocumentUtil.removeFolder(folder);
                 // if disk file delete fail, return 'false'
                 if (result != 1) {
-                    logger.debug("delete disk file fail, file name:"
-                            + folder.getDirectory() + folder.getFolderName());
+                    logger.debug("delete disk folder fail, file name:"
+                            + folder.getDirectory() + folder.getFolderId());
                     return false;
                 }
                 folderDao.delete(folder);
@@ -426,4 +452,29 @@ public class FolderServiceImpl implements FolderService {
         }
         return true;
     }
+
+    /**
+     * this method can Sharing a directory
+     * 
+     * @param folderId
+     *            target folder object id
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean shareFolder(Long folderId) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /**
+     * this method is cancel share a directory operation
+     * 
+     * @param folderId
+     *            target folder object id
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean unshareFolder(Long folderId) {
+        return false;
+    };
 }
