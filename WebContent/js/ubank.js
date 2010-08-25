@@ -129,3 +129,7 @@ function getSelections() {
 function myformatter(value, rec) {
 	return 'a:' + value + '>' + rec.name;
 }
+
+function setFolderId(folderId){
+	$.get("setCurrentFolder.do?currentFolderId="+folderId); 
+}

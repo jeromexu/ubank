@@ -48,7 +48,6 @@ public interface UploadConstant {
     //param
     String PROGRESS_INFO = "progressInfo";
     String HEADER_ENCODE ="UTF-8";
-    String FOLDER_ID ="folderId";
     String CURRENT_FOLDER_ID = "currentFolderId";
     
     //updates info every 10kb

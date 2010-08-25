@@ -180,7 +180,7 @@ public class FileUploadServlet extends AbstractServlet {
      * @author liujun
      */
     private void setCurrentFolderId(HttpServletRequest req) {
-        String id = req.getParameter(UploadConstant.FOLDER_ID);
+        String id = req.getParameter(UploadConstant.CURRENT_FOLDER_ID);
         if (Validity.isNumber(id)) {
             req.getSession().setAttribute(UploadConstant.CURRENT_FOLDER_ID,  Long.parseLong(id));
         }
