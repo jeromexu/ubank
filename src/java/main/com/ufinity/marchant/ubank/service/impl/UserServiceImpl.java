@@ -80,27 +80,32 @@ public class UserServiceImpl implements UserService {
 	 * @author jerome
 	 */
 	public String doRegister(User user) {
-
-		LOGGER.debug("doRegister:param[user]=" + user);
-		EntityManagerUtil.begin();
-		String userName = null;
-		if (user != null) {
-			userName = user.getUserName();
-		} else {
-			return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
+		try {
+			LOGGER.debug("doRegister:param[user]=" + user);
+			EntityManagerUtil.begin();
+			String userName = null;
+			if (user != null) {
+				userName = user.getUserName();
+			} else {
+				return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
+			}
+			// query current user exist or not
+			User queryUser = userDao.findUserByName(userName);
+			if (queryUser == null) {
+				userDao.add(user);
+				// init user dir space
+				createUserDir(user.getUserId());
+			} else {
+				// user exist,do not register
+				return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
+			}
+			EntityManagerUtil.commit();
+			LOGGER.debug("doRegister:-----complete--------");
+		} catch (Exception e) {
+			LOGGER.error("user register exception!", e);
+		} finally {
+			EntityManagerUtil.closeEntityManager();
 		}
-		// query current user exist or not
-		User queryUser = userDao.findUserByName(userName);
-		if (queryUser == null) {
-			userDao.add(user);
-			// init user dir space
-			createUserDir(user.getUserId());
-		} else {
-			// user exist,do not register
-			return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
-		}
-		EntityManagerUtil.commit();
-		LOGGER.debug("doRegister:-----complete--------");
 		// register success
 		return MessageResource.getMessage(MessageKeys.REGISTER_SUCCESS);
 
@@ -136,12 +141,13 @@ public class UserServiceImpl implements UserService {
 	 * 
 	 * create the user space by the user id
 	 * 
-	 * @param userId  user id
-	 * @return		  true:success false：failure
+	 * @param userId
+	 *            user id
+	 * @return true:success false：failure
 	 * @author jerome
 	 */
 	private boolean createUserDir(Long userId) {
-		
+
 		LOGGER.debug("createUserDir:param[userId]=" + userId);
 		String serverPath = getApplicationPath();
 		if (!Validity.isEmpty(serverPath)) {
@@ -227,10 +233,9 @@ public class UserServiceImpl implements UserService {
 	private void makeEachUserDir(File baseFile, Folder parent, Long userId,
 			StringBuffer sb, String folderName) {
 		LOGGER.debug("makeEachUserDir:param[baseFile]=" + baseFile
-				+ ",param[parent]=" + parent
-				+ ",param[userId]=" + userId
-				+ ",param[sb]=" + sb.toString()
-				+ ",param[folderName]=" + folderName);
+				+ ",param[parent]=" + parent + ",param[userId]=" + userId
+				+ ",param[sb]=" + sb.toString() + ",param[folderName]="
+				+ folderName);
 		if (Constant.MY_File_NAME.equals(folderName)) {
 			baseFile = new File(sb.append(File.separator).append(
 					Constant.MY_File_NAME).toString());
