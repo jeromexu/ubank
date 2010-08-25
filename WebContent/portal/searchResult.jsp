@@ -3,11 +3,11 @@
 
 <table cellpadding="0" cellspacing="0" border="1" id="mainTable">
   <tr align="center">
-    <td width="260">文件名称</td>
-    <td width="100">大小(KB)</td>
-    <td width="150">所属人</td>
-    <td width="200">修改日期</td>
-    <td width="100">下载</td>             
+    <td width="260">${u:getMessage('ubank.home.thead.filename')}</td>
+    <td width="100">${u:getMessage('ubank.home.thead.filesize')}</td>
+    <td width="150">${u:getMessage('ubank.home.thead.owner')}</td>
+    <td width="200">${u:getMessage('ubank.home.thead.modifydate')}</td>
+    <td width="100">${u:getMessage('ubank.home.thead.download')}</td>             
   </tr>
   
   <c:choose>
@@ -18,7 +18,7 @@
             <td>${file.size }</td>
             <td><c:out value="${file.folder.user.userName}" escapeXml="true" /></td>
             <td><fmt:formatDate value="${file.modifyTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-            <td><a href="download.do?id=${file.fileId }">Download</a></td>
+            <td><a href="download.do?id=${file.fileId }">${u:getMessage('ubank.home.thead.download') }</a></td>
           </tr>
       </c:forEach>
     </c:when>

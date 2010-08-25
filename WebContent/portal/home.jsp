@@ -9,7 +9,7 @@
         <script type="text/javascript" src="../js/alias-tablesorter.js"></script>
         <script type="text/javascript" src="../js/home.js"></script>
 		<link href="../css/home.css" rel="stylesheet" type="text/css">
-		<title>UBank --- 首页</title>	
+		<title>${u:getMessage('ubank.home.message.title') }</title>	
 	</head>
 
 	<body>
@@ -22,25 +22,25 @@
 				
 				<div class="search_div">
 						<select class="file_size_select" name="fileSize" id="fileSize">
-							<option value="0">请选择文件大小</option>
-							<option value="1">1KB - 1MB</option>
-							<option value="2">1MB - 5MB</option>
-							<option value="3">5MB - 10MB</option>
-							<option value="4">10MB - 50MB</option>
+							<option value="0">${u:getMessage('ubank.home.search.filesize.0') }</option>
+							<option value="1">${u:getMessage('ubank.home.search.filesize.1') }</option>
+							<option value="2">${u:getMessage('ubank.home.search.filesize.2') }</option>
+							<option value="3">${u:getMessage('ubank.home.search.filesize.3') }</option>
+							<option value="4">${u:getMessage('ubank.home.search.filesize.4') }</option>
 						</select>
 						
 						<select class="file_range_select" name="publishDate" id="publishDate">
-							<option value="0">请选择发布日期</option>
-							<option value="1">近一天</option>
-							<option value="2">近三天</option>
-							<option value="3">近一周</option>
-							<option value="4">近一月</option>
-							<option value="5">更早的</option>
+							<option value="0">${u:getMessage('ubank.home.search.pubdate.0') }</option>
+							<option value="1">${u:getMessage('ubank.home.search.pubdate.1') }</option>
+							<option value="2">${u:getMessage('ubank.home.search.pubdate.2') }</option>
+							<option value="3">${u:getMessage('ubank.home.search.pubdate.3') }</option>
+							<option value="4">${u:getMessage('ubank.home.search.pubdate.4') }</option>
+							<option value="5">${u:getMessage('ubank.home.search.pubdate.5') }</option>
 						</select>
 						
-						<input class="file_name_ipt" id="fileNameId" type="text" name="fileName" maxlength="50" value="请输入文件名" onfocus="clearInput(this.id, '请输入文件名')" onblur="resetInput(this.id, '请输入文件名')">
+						<input class="file_name_ipt" id="fileNameId" type="text" name="fileName" maxlength="50" value="${u:getMessage('ubank.home.search.input')}" onfocus="clearInput(this.id, '${u:getMessage('ubank.home.search.input')}')" onblur="resetInput(this.id, '${u:getMessage('ubank.home.search.input')}')">
 						
-						<input class="search_btn" type="button" value="搜索" onclick="search()" id="searchBtn">
+						<input class="search_btn" type="button" value="${u:getMessage('ubank.home.search.button')}" onclick="search()" id="searchBtn">
 				</div>
 				
 				<div class="resultset_div" id="searchResultDiv">
@@ -59,10 +59,10 @@
                     </c:if>
         
 					<form action="login.do" method="post" id="loginForm">
-						账号:<input class="username_clz" type="text" name="userName" maxlength="50" id="userName"><br>
-						密码:<input class="password_clz" type="password" name="password" maxlength="50" id="password"><br>
-						<input class="login_btn" type="button" value="登录" onclick="return login()" id="loginBtn" >
-                        <input class="register_btn" type="button" value="注册" onclick="goPage('register.jsp')">
+						${u:getMessage('ubank.home.login.username.ipt')}:<input class="username_clz" type="text" name="userName" maxlength="50" id="userName"><br>
+						${u:getMessage('ubank.home.login.password.ipt')}:<input class="password_clz" type="password" name="password" maxlength="50" id="password"><br>
+						<input class="login_btn" type="button" onclick="return login()"  id="loginBtn" value="${u:getMessage('ubank.home.login.login.btn')}" />
+                        <input class="register_btn" type="button" onclick="goPage('register.jsp')" value="${u:getMessage('ubank.home.login.register.btn')}" />
 					</form>
 				</div>
         
