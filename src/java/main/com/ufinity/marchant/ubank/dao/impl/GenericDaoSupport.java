@@ -401,11 +401,15 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     }
 
     /**
+     * this method is query entity by criteria with pager
      * 
      * @param currentPage
+     *            current page number
      * @param pageSize
+     *            page size number
      * @param criterion
-     * @return Pager<T>
+     *            hibernate condition
+     * @return Pager<T> pager object
      * @author skyqiang
      */
     @SuppressWarnings("unchecked")
@@ -415,22 +419,22 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         Criteria criteria = ((Session) EntityManagerUtil.getEntityManager()
                 .getDelegate()).createCriteria(this.type);
 
-        //add query's condition
+        // add query's condition
         if (null != criterion) {
             for (Criterion c : criterion) {
                 criteria.add(c);
             }
         }
 
-        //query total records according search's condition
+        // query total records according search's condition
         int totalRecords = (Integer) criteria.setProjection(
                 Projections.rowCount()).uniqueResult();
 
-        //query result
+        // query result
         list = criteria.setProjection(null).setFirstResult(
                 (currentPage - 1) * pageSize).setMaxResults(pageSize).list();
 
-        //encapsulation Pager object
+        // encapsulation Pager object
         Pager<T> page = new Pager<T>();
         page.setTotalRecords(totalRecords);
         page.setPageSize(pageSize);

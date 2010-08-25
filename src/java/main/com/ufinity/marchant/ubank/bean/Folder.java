@@ -227,7 +227,7 @@ public class Folder implements Serializable {
     /**
      * @return the user
      */
-    @ManyToOne(cascade = { CascadeType.REFRESH }, optional = true, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = { CascadeType.REFRESH }, optional = true)
     @JoinColumn(name = "USER_ID", nullable = false)
     public User getUser() {
         return user;

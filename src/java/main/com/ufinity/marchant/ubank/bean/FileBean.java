@@ -199,7 +199,7 @@ public class FileBean implements Serializable {
     /**
      * @return the folder
      */
-    @ManyToOne(cascade = { CascadeType.REFRESH }, optional = true, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = { CascadeType.REFRESH }, optional = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "FOLDER_ID", nullable = false)
     public Folder getFolder() {
         return folder;
