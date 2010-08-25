@@ -160,7 +160,7 @@ public class Folder implements Serializable {
     /**
      * @return the share
      */
-    @Column(name = "SHARE")
+    @Column(name = "SHARE", nullable = false, columnDefinition = "bool default false")
     public Boolean getShare() {
         return share;
     }
