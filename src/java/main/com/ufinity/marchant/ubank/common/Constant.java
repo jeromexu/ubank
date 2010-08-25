@@ -99,6 +99,9 @@ public interface Constant {
     public final String ROOT = "R";
     public final String INIT = "I";
     public final String CUSTOMER = "C";
+    public final String FILE_COPY = "_copy";
+    public final String FOLDER_COPY = "_copy";
+    
 
     /** file search pagenum */
     String REQ_PARAM_PAGENUM = "pageNum";
