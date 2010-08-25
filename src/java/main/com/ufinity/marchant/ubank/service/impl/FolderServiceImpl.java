@@ -99,40 +99,51 @@ public class FolderServiceImpl implements FolderService {
             throw new UBankException(
                     "parentId can not be null and folderName can not be null or space String");
         }
-
-        User user = userDao.find(userId);
-
-        Folder parentfolder = folderDao.find(parentId);
-
-        // create new foler object and set value
-        Folder newFolder = new Folder();
-        newFolder.setParent(parentfolder);
-        newFolder.setFolderName(folderName);
-        newFolder.setCreateTime(new Date());
-        newFolder.setDirectory(parentfolder.getDirectory()
-                + parentfolder.getFolderName());
-        newFolder.setFolderType(Constant.CUSTOMER);
-        if (!Validity.isNullAndEmpty(FolderType)) {
-            newFolder.setFolderType(FolderType);
-        }
-        newFolder.setShare(false);
-        newFolder.setUser(user);
         try {
+            User user = userDao.find(userId);
+            Folder parentfolder = folderDao.find(parentId);
+
+            // create new foler object and set value
+            Folder newFolder = new Folder();
+            newFolder.setParent(parentfolder);
+            newFolder.setCreateTime(new Date());
+            newFolder.setFolderName(folderName);
+
+            // If there is a the same name folder in current directory
+            Set<Folder> children = parentfolder.getChildren();
+            for (Folder child : children) {
+                if (folderName.equals(child.getFolderName())) {
+                    newFolder.setFolderName(folderName + Constant.FOLDER_COPY);
+                }
+            }
+            newFolder.setDirectory(getDiskPath(parentfolder));
+
+            // set Folder type ,default is user directory
+            newFolder.setFolderType(Constant.CUSTOMER);
+            if (!Validity.isNullAndEmpty(FolderType)) {
+                newFolder.setFolderType(FolderType);
+            }
+            newFolder.setShare(false);
+            newFolder.setUser(user);
+
             // create disk file
-            DocumentUtil.addNewFolder(newFolder);
+            int result = DocumentUtil.addNewFolder(newFolder);
+            if (result != 1) {
+                logger.debug("Create disk directory fail.");
+                return null;
+            }
+
             // save to database
             folderDao.add(newFolder);
             logger.debug("folder object save to database success");
+            return newFolder;
         }
         catch (Exception e) {
             logger.debug(
-                    "create disk file error or save to database table error ",
+                    "When create a folder, the database throw an  exception. ",
                     e);
-            throw new UBankException(
-                    "create disk file error or save to database table error ");
+            return null;
         }
-        return newFolder;
-
     }
 
     /**
@@ -149,8 +160,15 @@ public class FolderServiceImpl implements FolderService {
         if (userId == null || 0l == userId) {
             throw new UBankException("userId can not be empty");
         }
-        List<Folder> folders = folderDao.findFolderListByUserId(userId);
-        FolderNode rootNode = FolderNode.generateFolderTree(folders);
+        FolderNode rootNode = null;
+        try {
+            List<Folder> folders = folderDao.findFolderListByUserId(userId);
+            rootNode = FolderNode.generateFolderTree(folders);
+        }
+        catch (Exception e) {
+            logger.debug("When try get user directory tree "
+                    + "happened to thd database an exception", e);
+        }
         return rootNode;
     }
 
@@ -167,35 +185,43 @@ public class FolderServiceImpl implements FolderService {
         if (folderId == null || 0l == folderId) {
             return null;
         }
-        Folder folder = folderDao.find(folderId);
-        Set<FileBean> files = folder.getFiles();
-        Set<Folder> chiFolders = folder.getChildren();
-
-        List<FileOrFolderJsonEntity> jsonEntieys = new ArrayList<FileOrFolderJsonEntity>();
-
-        // convert the FileBean to FileOrFolderJsonEntity
-        if (!Validity.isEmpty(files)) {
-            for (FileBean file : files) {
-                FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
-                jsonEntity.setId(file.getFileId());
-                jsonEntity.setName(file.getFileName());
-                jsonEntity.setSize(file.getSize());
-                jsonEntity.setModifyTime(file.getModifyTime());
-                jsonEntity.setDirectory(file.getDirectory());
-                jsonEntity.setType(FileOrFolderJsonEntity.TYPE_FILE);
-                jsonEntieys.add(jsonEntity);
-            }
+        Folder folder = null;
+        try {
+            folder = folderDao.find(folderId);
         }
-        // conver sub-folders Object to FileOrFolderJsonEntity
-        if (Validity.isEmpty(chiFolders)) {
-            for (Folder child : chiFolders) {
-                FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
-                jsonEntity.setId(child.getFolderId());
-                jsonEntity.setName(child.getFolderName());
-                jsonEntity.setModifyTime(child.getModifyTime());
-                jsonEntity.setDirectory(child.getDirectory());
-                jsonEntity.setType(FileOrFolderJsonEntity.TYPE_FOLDER);
-                jsonEntieys.add(jsonEntity);
+        catch (Exception e) {
+            logger.debug("happened to thd database an exception", e);
+            return null;
+        }
+        List<FileOrFolderJsonEntity> jsonEntieys = new ArrayList<FileOrFolderJsonEntity>();
+        if (folder != null) {
+            Set<FileBean> files = folder.getFiles();
+            Set<Folder> chiFolders = folder.getChildren();
+
+            // convert the FileBean to FileOrFolderJsonEntity
+            if (!Validity.isEmpty(files)) {
+                for (FileBean file : files) {
+                    FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
+                    jsonEntity.setId(file.getFileId());
+                    jsonEntity.setName(file.getFileName());
+                    jsonEntity.setSize(file.getSize());
+                    jsonEntity.setModifyTime(file.getModifyTime());
+                    jsonEntity.setDirectory(file.getDirectory());
+                    jsonEntity.setType(FileOrFolderJsonEntity.TYPE_FILE);
+                    jsonEntieys.add(jsonEntity);
+                }
+            }
+            // conver sub-folders Object to FileOrFolderJsonEntity
+            if (Validity.isEmpty(chiFolders)) {
+                for (Folder child : chiFolders) {
+                    FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
+                    jsonEntity.setId(child.getFolderId());
+                    jsonEntity.setName(child.getFolderName());
+                    jsonEntity.setModifyTime(child.getModifyTime());
+                    jsonEntity.setDirectory(child.getDirectory());
+                    jsonEntity.setType(FileOrFolderJsonEntity.TYPE_FOLDER);
+                    jsonEntieys.add(jsonEntity);
+                }
             }
         }
         return jsonEntieys;
@@ -248,8 +274,7 @@ public class FolderServiceImpl implements FolderService {
         String sourcePath = source.getDirectory() + source.getFolderName();
         String targetPath = target.getDirectory() + target.getFolderName();
         DocumentUtil.copyFolder(sourcePath, targetPath);
-        boolean result = copyFolder(target, source);
-        return result;
+        return copyFolder(target, source);
     }
 
     /**
@@ -278,6 +303,7 @@ public class FolderServiceImpl implements FolderService {
             DocumentUtil.moveFolderTo(source, target);
             folderDao.modify(target);
             folderDao.modify(source);
+            
             // set all files Shared state
             if (target.getShare()) {
                 shareOrCanceAllFiles(source, true);
@@ -576,5 +602,30 @@ public class FolderServiceImpl implements FolderService {
             cancelShareFolder(child);
         }
         return false;
+    }
+
+    /**
+     * {method description}
+     * 
+     * @param parentFolder
+     * @return
+     */
+    private String getDiskPath(Folder parentFolder) {
+        String currentPath = "";
+        if (parentFolder == null) {
+            return currentPath;
+        }
+        String parentPath = parentFolder.getDirectory();
+        if (parentPath.length() > 0) {
+            char c = parentPath.charAt(parentPath.length() - 1);
+            if ('\\' == c) {
+                currentPath = parentPath + parentFolder.getFolderId() + "\\";
+            }
+            else {
+                currentPath = parentPath + "\\" + parentFolder.getFolderId()
+                        + "\\";
+            }
+        }
+        return currentPath;
     }
 }

@@ -64,19 +64,6 @@ public class FolderNode {
     }
 
     /**
-     * {method description}
-     * 
-     * @return String
-     */
-    public String convertJsonString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("{");
-
-        return "";
-
-    }
-
-    /**
      * Generate a directory Tree
      * 
      * @param folders
