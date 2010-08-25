@@ -28,7 +28,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -41,6 +43,7 @@ import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
+import com.ufinity.marchant.ubank.exception.DbException;
 import com.ufinity.marchant.ubank.service.UploadService;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
 
@@ -90,6 +93,7 @@ public class UploadServiceImpl implements UploadService {
         OutputStream out = null;
         ByteArrayOutputStream bStream = null;
         String folderDir = null;
+        List<File> createFiles = new ArrayList<File>();
 
         try {
             folderDir = getFolderDir(folderId);
@@ -123,6 +127,7 @@ public class UploadServiceImpl implements UploadService {
                     }
                     out = new FileOutputStream(file);
                     bStream.writeTo(out);
+                    createFiles.add(file);
 
                     logger.debug("Upload fldName :" + fldName
                             + ",just was uploaded len:" + bStreamLen);
@@ -144,6 +149,14 @@ public class UploadServiceImpl implements UploadService {
                     this.saveFile(fb);
                 }
             }
+        } catch (DbException e) {
+            //remove files
+            for(File file : createFiles){
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
+            throw e;
         } finally {
             try {
                 if (bStream != null) {
@@ -174,22 +187,6 @@ public class UploadServiceImpl implements UploadService {
 
     /**
      * 
-     * get file name
-     * 
-     * @param fileName
-     *            full file name.
-     * @return file name     
-     */
-    private String getFileName(String fileName) {
-        int i = fileName.lastIndexOf(".");
-        if (i == -1) {
-            return fileName;
-        }
-        return fileName.substring(0, i);
-    }
-
-    /**
-     * 
      * get file type
      * 
      * @param fileName
@@ -213,7 +210,7 @@ public class UploadServiceImpl implements UploadService {
      *             if has RuntimeException
      * @return folder dir
      */
-    private String getFolderDir(Long folderId) throws RuntimeException {
+    private String getFolderDir(Long folderId) throws DbException {
         try {
             EntityManagerUtil.begin();
             folderDao = DaoFactory.createDao(FolderDao.class);
@@ -222,7 +219,7 @@ public class UploadServiceImpl implements UploadService {
 
             return folder.getDirectory();
         } catch (RuntimeException e) {
-            throw e;
+            throw new DbException(e);
         } finally {
             EntityManagerUtil.closeEntityManager();
         }
@@ -236,7 +233,7 @@ public class UploadServiceImpl implements UploadService {
      * @throws RuntimeException
      *             if has RuntimeException
      */
-    private void saveFile(FileBean fb) throws RuntimeException {
+    private void saveFile(FileBean fb) throws DbException {
         try {
             EntityManagerUtil.begin();
             fileDao = DaoFactory.createDao(FileDao.class);
@@ -244,7 +241,7 @@ public class UploadServiceImpl implements UploadService {
             EntityManagerUtil.commit();
         } catch (RuntimeException e) {
             EntityManagerUtil.rollback();
-            throw e;
+            throw new DbException(e);
         } finally {
             EntityManagerUtil.closeEntityManager();
         }
