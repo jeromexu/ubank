@@ -61,8 +61,8 @@
 					<form action="login.do" method="post" id="loginForm">
 						${u:getMessage('ubank.home.login.username.ipt')}:<input class="username_clz" type="text" name="userName" maxlength="50" id="userName"><br>
 						${u:getMessage('ubank.home.login.password.ipt')}:<input class="password_clz" type="password" name="password" maxlength="50" id="password"><br>
-						<input class="login_btn" type="button" onclick="return login()"  id="loginBtn" value="${u:getMessage('ubank.home.login.login.btn')}" />
-                        <input class="register_btn" type="button" onclick="goPage('register.jsp')" value="${u:getMessage('ubank.home.login.register.btn')}" />
+						<input class="login_btn" type="button" onclick="return login()"  id="loginBtn" value=${u:getMessage('ubank.home.login.login.btn')} />
+                        <input class="register_btn" type="button" onclick="goPage('register.jsp')" value=${u:getMessage('ubank.home.login.register.btn')} />
 					</form>
 				</div>
         
