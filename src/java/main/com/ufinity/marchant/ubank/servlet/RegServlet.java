@@ -78,6 +78,11 @@ public class RegServlet extends AbstractServlet {
 			if (logger.isDebugEnabled()) {
 				logger.debug("captchaCode = " + captchaCode);
 			}
+			if (Validity.isEmpty(captchaCode)) {
+				request.setAttribute(Constant.CAPTCHA_ERR, MessageResource
+						.getMessage(MessageKeys.CAPTCHA_ERR_MSG));
+				return Constant.REGISTER_PAGE; 
+			}
 			HttpSession session = request.getSession();   
 			boolean isValidateCode = false;   
 			// retrieve the response   
