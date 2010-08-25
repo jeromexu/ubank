@@ -23,6 +23,8 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common.preferences;
 
+import com.ufinity.marchant.ubank.common.Logger;
+
 
 /**
  * ObjectRetrieve
@@ -35,6 +37,7 @@ package com.ufinity.marchant.ubank.common.preferences;
  * @author zdxue     
  */
 public final class ObjectRetrieve {
+    private static final Logger LOG = Logger.getInstance(ObjectRetrieve.class);
 
     private ObjectRetrieve(){}
 
@@ -52,6 +55,7 @@ public final class ObjectRetrieve {
             Object obj = Class.forName(SystemGlobals.getString(objectKey)).newInstance();
             return objectClz.cast(obj);
         } catch (Exception e) {
+            LOG.error("retrieve object exception. objectClz=" + objectClz + " , objectKey=" + objectKey, e);
             throw new RuntimeException("retrieve object exception. objectClz=" + objectClz + " , objectKey=" + objectKey);
         }
     }

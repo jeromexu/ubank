@@ -29,15 +29,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.common.StringUtil;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
+import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 
@@ -49,7 +48,7 @@ import com.ufinity.marchant.ubank.service.ServiceFactory;
  */
 @SuppressWarnings("serial")
 public class SearchServlet extends AbstractServlet {
-    private final Logger LOG = LoggerFactory.getLogger(SearchServlet.class);
+    private final Logger LOG = Logger.getInstance(SearchServlet.class);
 
     /**
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
@@ -114,8 +113,13 @@ public class SearchServlet extends AbstractServlet {
                 .createService(FileService.class);
 
         int pageSize = SystemGlobals.getInt(ConfigKeys.PAGE_SIZE);
-        Pager<FileBean> filePager = fileService.searchShareFiles(fileName,
-                fileSize, publishDate, pageNum, pageSize);
+        Pager<FileBean> filePager = null;
+        try {
+            filePager = fileService.searchShareFiles(fileName, fileSize,
+                    publishDate, pageNum, pageSize);
+        } catch (UBankException e) {
+            LOG.error("search error", e);
+        }
         req.setAttribute(Constant.ATTR_FILEPAGER, filePager);
         req.setAttribute(Constant.ATTR_FILENAME, fileName);
         req.setAttribute(Constant.ATTR_FILESIZE, fileSize);

@@ -29,12 +29,11 @@ package com.ufinity.marchant.ubank.service.impl;
 import java.io.File;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
-
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
+import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
@@ -43,6 +42,7 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
+import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.UserService;
 
 /**
@@ -55,216 +55,229 @@ import com.ufinity.marchant.ubank.service.UserService;
  */
 public class UserServiceImpl implements UserService {
 
-	// Logger for this class
-	protected static final Logger LOGGER = Logger
-			.getLogger(UserServiceImpl.class);
-	private UserDao userDao;
-	private FolderDao folderDao;
+    // Logger for this class
+    protected static final Logger LOG = Logger.getInstance(UserServiceImpl.class);
+    private UserDao userDao;
+    private FolderDao folderDao;
 
-	/**
-	 * 
-	 * Constructor for UserServiceImpl
-	 */
-	public UserServiceImpl() {
-		userDao = DaoFactory.createDao(UserDao.class);
-		folderDao = DaoFactory.createDao(FolderDao.class);
-	}
+    /**
+     * 
+     * Constructor for UserServiceImpl
+     */
+    public UserServiceImpl() {
+        userDao = DaoFactory.createDao(UserDao.class);
+        folderDao = DaoFactory.createDao(FolderDao.class);
+    }
 
-	/**
-	 * 
-	 * do user register
-	 * 
-	 * @param user
-	 *            a person who do register
-	 * @return the number which register a user
-	 * @author jerome
-	 */
-	public String doRegister(User user) {
-		try {
-			LOGGER.debug("doRegister:param[user]=" + user);
-			EntityManagerUtil.begin();
-			String userName = null;
-			if (user != null) {
-				userName = user.getUserName();
-			} else {
-				return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
-			}
-			// query current user exist or not
-			User queryUser = userDao.findUserByName(userName);
-			if (queryUser == null) {
-				userDao.add(user);
-				// init user dir space
-				createUserDir(user.getUserId());
-			} else {
-				// user exist,do not register
-				return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
-			}
-			EntityManagerUtil.commit();
-			LOGGER.debug("doRegister:-----complete--------");
-		} catch (Exception e) {
-			LOGGER.error("user register exception!", e);
-		} finally {
-			EntityManagerUtil.closeEntityManager();
-		}
-		// register success
-		return MessageResource.getMessage(MessageKeys.REGISTER_SUCCESS);
+    /**
+     * 
+     * do user register
+     * 
+     * @param user
+     *            a person who do register
+     * @return the number which register a user
+     * @author jerome
+     */
+    public String doRegister(User user) {
+        try {
+            LOG.debug("doRegister:param[user]=" + user);
+            EntityManagerUtil.begin();
+            String userName = null;
+            if (user != null) {
+                userName = user.getUserName();
+            } else {
+                return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
+            }
+            // query current user exist or not
+            User queryUser = userDao.findUserByName(userName);
+            if (queryUser == null) {
+                userDao.add(user);
+                // init user dir space
+                createUserDir(user.getUserId());
+            } else {
+                // user exist,do not register
+                return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
+            }
+            EntityManagerUtil.commit();
+            LOG.debug("doRegister:-----complete--------");
+        } catch (Exception e) {
+            LOG.error("user register exception!", e);
+        } finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+        // register success
+        return MessageResource.getMessage(MessageKeys.REGISTER_SUCCESS);
 
-	}
+    }
 
-	/**
-	 * Get User by username and password
-	 * 
-	 * @param username
-	 *            user's name
-	 * @param password
-	 *            user's password
-	 * @return User obj
-	 * @author zdxue
-	 */
-	public User getUser(String username, String password) {
-		return userDao.findUser(username, password);
-	}
+    /**
+     * Get User by username and password
+     * 
+     * @param username
+     *            user's name
+     * @param password
+     *            user's password
+     * @return User obj
+     * @throws UBankException
+     *             if occur exception, then throw it
+     * @author zdxue
+     */
+    public User getUser(String username, String password) throws UBankException {
+        User user = null;
+        try {
+            EntityManagerUtil.begin();
+            user = userDao.findUser(username, password);
+            EntityManagerUtil.commit();
+        } catch (Exception e) {
+            //not need rollback
+            LOG.error("get user error", e);
+        } finally {
+            EntityManagerUtil.closeEntityManager();
+        }
 
-	/**
-	 * 
-	 * get user by userName
-	 * 
-	 * @param userName
-	 *            user's name
-	 * @return user object
-	 */
-	public User getUserByUserName(String userName) {
-		return userDao.findUserByName(userName);
-	}
+        return user;
+    }
 
-	/**
-	 * 
-	 * create the user space by the user id
-	 * 
-	 * @param userId
-	 *            user id
-	 * @return true:success false：failure
-	 * @author jerome
-	 */
-	private boolean createUserDir(Long userId) {
+    /**
+     * 
+     * get user by userName
+     * 
+     * @param userName
+     *            user's name
+     * @return user object
+     */
+    public User getUserByUserName(String userName) {
+        return userDao.findUserByName(userName);
+    }
 
-		LOGGER.debug("createUserDir:param[userId]=" + userId);
-		String serverPath = getApplicationPath();
-		if (!Validity.isEmpty(serverPath)) {
-			File baseFile = new File(serverPath);
-			if (!baseFile.exists()) {
-				baseFile.mkdir();
-			}
-			StringBuffer sb = new StringBuffer(serverPath);
-			baseFile = new File(sb.append(Constant.USER_SPACE_DIR).toString());
-			if (!baseFile.exists()) {
-				baseFile.mkdir();
-			}
-			// root folder for each user
-			baseFile = new File(sb.append(File.separator).append(userId)
-					.toString());
-			if (!baseFile.exists()) {
-				baseFile.mkdir();
-			}
-			Folder folder = new Folder();
-			folder.setFolderName(String.valueOf(userId));
-			folder.setCreateTime(new Date());
-			folder.setDirectory(Constant.USER_SPACE_DIR);
-			folder.setModifyTime(new Date());
-			folder.setFolderType(Constant.ROOT);
-			folder.setShare(false);
+    /**
+     * 
+     * create the user space by the user id
+     * 
+     * @param userId
+     *            user id
+     * @return true:success false：failure
+     * @author jerome
+     */
+    private boolean createUserDir(Long userId) {
 
-			Folder parent = new Folder();
-			parent.setFolderId(1l);
-			folder.setParent(parent);
+        LOG.debug("createUserDir:param[userId]=" + userId);
+        String serverPath = getApplicationPath();
+        if (!Validity.isEmpty(serverPath)) {
+            File baseFile = new File(serverPath);
+            if (!baseFile.exists()) {
+                baseFile.mkdir();
+            }
+            StringBuffer sb = new StringBuffer(serverPath);
+            baseFile = new File(sb.append(Constant.USER_SPACE_DIR).toString());
+            if (!baseFile.exists()) {
+                baseFile.mkdir();
+            }
+            // root folder for each user
+            baseFile = new File(sb.append(File.separator).append(userId)
+                    .toString());
+            if (!baseFile.exists()) {
+                baseFile.mkdir();
+            }
+            Folder folder = new Folder();
+            folder.setFolderName(String.valueOf(userId));
+            folder.setCreateTime(new Date());
+            folder.setDirectory(Constant.USER_SPACE_DIR);
+            folder.setModifyTime(new Date());
+            folder.setFolderType(Constant.ROOT);
+            folder.setShare(false);
 
-			User user = new User();
-			user.setUserId(userId);
-			folder.setUser(user);
+            Folder parent = new Folder();
+            parent.setFolderId(1l);
+            folder.setParent(parent);
 
-			folderDao.add(folder);
+            User user = new User();
+            user.setUserId(userId);
+            folder.setUser(user);
 
-			// my file folder for each user
-			makeEachUserDir(baseFile, folder, userId, sb, Constant.MY_File_NAME);
-			// software folder for each user
-			makeEachUserDir(baseFile, folder, userId, sb,
-					Constant.SOFTWARE_NAME);
+            folderDao.add(folder);
 
-			// document folder for each user
-			makeEachUserDir(baseFile, folder, userId, sb,
-					Constant.DOCUMENT_NAME);
+            // my file folder for each user
+            makeEachUserDir(baseFile, folder, userId, sb, Constant.MY_File_NAME);
+            // software folder for each user
+            makeEachUserDir(baseFile, folder, userId, sb,
+                    Constant.SOFTWARE_NAME);
 
-			// photo folder for each user
-			makeEachUserDir(baseFile, folder, userId, sb, Constant.PHOTO_NAME);
-		} else {
-			return false;
-		}
-		LOGGER.debug("createUserDir:-----complete--------");
-		return true;
-	}
+            // document folder for each user
+            makeEachUserDir(baseFile, folder, userId, sb,
+                    Constant.DOCUMENT_NAME);
 
-	/**
-	 * 
-	 * get the server path
-	 * 
-	 * @return the server path
-	 * @author jerome
-	 */
-	private String getApplicationPath() {
-		return SystemGlobals.getString(ConfigKeys.SERVER_PATH);
-	}
+            // photo folder for each user
+            makeEachUserDir(baseFile, folder, userId, sb, Constant.PHOTO_NAME);
+        } else {
+            return false;
+        }
+        LOG.debug("createUserDir:-----complete--------");
+        return true;
+    }
 
-	/**
-	 * 
-	 * make user's dir for each user
-	 * 
-	 * @param baseFile
-	 *            file dir
-	 * @param parent
-	 *            folder parent object
-	 * @param userId
-	 *            user id
-	 * @param sb
-	 *            user dir path
-	 * @param folderName
-	 *            user folder name
-	 * @author jerome
-	 */
-	private void makeEachUserDir(File baseFile, Folder parent, Long userId,
-			StringBuffer sb, String folderName) {
-		LOGGER.debug("makeEachUserDir:param[baseFile]=" + baseFile
-				+ ",param[parent]=" + parent + ",param[userId]=" + userId
-				+ ",param[sb]=" + sb.toString() + ",param[folderName]="
-				+ folderName);
-		if (Constant.MY_File_NAME.equals(folderName)) {
-			baseFile = new File(sb.append(File.separator).append(
-					Constant.MY_File_NAME).toString());
-		} else {
-			sb.replace(sb.lastIndexOf(File.separator) + 1, sb.length(),
-					folderName);
-			baseFile = new File(sb.toString());
-		}
+    /**
+     * 
+     * get the server path
+     * 
+     * @return the server path
+     * @author jerome
+     */
+    private String getApplicationPath() {
+        return SystemGlobals.getString(ConfigKeys.SERVER_PATH);
+    }
 
-		if (!baseFile.exists()) {
-			baseFile.mkdir();
-		}
-		Folder folder = new Folder();
-		folder.setFolderName(folderName);
-		folder.setCreateTime(new Date());
-		folder.setModifyTime(new Date());
-		folder.setFolderType(Constant.INIT);
-		folder.setShare(false);
-		folder.setDirectory(Constant.USER_SPACE_DIR + "/" + userId);
+    /**
+     * 
+     * make user's dir for each user
+     * 
+     * @param baseFile
+     *            file dir
+     * @param parent
+     *            folder parent object
+     * @param userId
+     *            user id
+     * @param sb
+     *            user dir path
+     * @param folderName
+     *            user folder name
+     * @author jerome
+     */
+    private void makeEachUserDir(File baseFile, Folder parent, Long userId,
+            StringBuffer sb, String folderName) {
+        LOG.debug("makeEachUserDir:param[baseFile]=" + baseFile
+                + ",param[parent]=" + parent + ",param[userId]=" + userId
+                + ",param[sb]=" + sb.toString() + ",param[folderName]="
+                + folderName);
+        if (Constant.MY_File_NAME.equals(folderName)) {
+            baseFile = new File(sb.append(File.separator).append(
+                    Constant.MY_File_NAME).toString());
+        } else {
+            sb.replace(sb.lastIndexOf(File.separator) + 1, sb.length(),
+                    folderName);
+            baseFile = new File(sb.toString());
+        }
 
-		Folder parentFolder = new Folder();
-		parentFolder.setFolderId(parent.getFolderId());
-		folder.setParent(parentFolder);
+        if (!baseFile.exists()) {
+            baseFile.mkdir();
+        }
+        Folder folder = new Folder();
+        folder.setFolderName(folderName);
+        folder.setCreateTime(new Date());
+        folder.setModifyTime(new Date());
+        folder.setFolderType(Constant.INIT);
+        folder.setShare(false);
+        folder.setDirectory(Constant.USER_SPACE_DIR + "/" + userId);
 
-		User user = new User();
-		user.setUserId(userId);
-		folder.setUser(user);
+        Folder parentFolder = new Folder();
+        parentFolder.setFolderId(parent.getFolderId());
+        folder.setParent(parentFolder);
 
-		folderDao.add(folder);
-		LOGGER.debug("makeEachUserDir:-----complete--------");
-	}
+        User user = new User();
+        user.setUserId(userId);
+        folder.setUser(user);
+
+        folderDao.add(folder);
+        LOG.debug("makeEachUserDir:-----complete--------");
+    }
 }

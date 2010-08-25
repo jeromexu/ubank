@@ -24,8 +24,10 @@
 package com.ufinity.marchant.ubank.service;
 
 import java.util.List;
+
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Pager;
+import com.ufinity.marchant.ubank.exception.UBankException;
 
 /**
  * File Service
@@ -49,10 +51,11 @@ public interface FileService {
      * @param pageSize
      *            pageSize
      * @return file pager obj
+     * @throws UBankException if occur exception, throw it
      * @author zdxue
      */
     public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
-            String publishDate, int pageNum, int pageSize);
+            String publishDate, int pageNum, int pageSize) throws UBankException ;
 
     /**
      * get all files under specified directory

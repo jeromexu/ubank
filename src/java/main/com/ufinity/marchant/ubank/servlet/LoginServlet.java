@@ -29,18 +29,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
+import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UserService;
@@ -54,7 +53,7 @@ import com.ufinity.marchant.ubank.service.UserService;
 @SuppressWarnings("serial")
 public class LoginServlet extends AbstractServlet {
 
-    private final Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
+    private final Logger LOG = Logger.getInstance(LoginServlet.class);
 
     /**
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
@@ -104,9 +103,16 @@ public class LoginServlet extends AbstractServlet {
         FileService fileService = ServiceFactory
                 .createService(FileService.class);
         int pageSize = SystemGlobals.getInt(ConfigKeys.PAGE_SIZE);
-        Pager<FileBean> filePager = fileService.searchShareFiles(
-                Constant.FILENAME_EMPTY, Constant.FILE_SIZE_0,
-                Constant.FILE_PUBLISHDATE_0, Constant.PAGE_NUM_DEF, pageSize);
+
+        Pager<FileBean> filePager = null;
+        try {
+            filePager = fileService.searchShareFiles(Constant.FILENAME_EMPTY,
+                    Constant.FILE_SIZE_0, Constant.FILE_PUBLISHDATE_0,
+                    Constant.PAGE_NUM_DEF, pageSize);
+        } catch (UBankException e) {
+            LOG.error("search exception", e);
+        }
+
         req.setAttribute(Constant.ATTR_FILEPAGER, filePager);
         req.setAttribute(Constant.ATTR_FILENAME, Constant.FILENAME_EMPTY);
         req.setAttribute(Constant.ATTR_FILESIZE, Constant.FILE_SIZE_0);
@@ -146,14 +152,19 @@ public class LoginServlet extends AbstractServlet {
 
         UserService userService = ServiceFactory
                 .createService(UserService.class);
-        User user = userService.getUser(username, password);
+        User user = null;
+        try {
+            user = userService.getUser(username, password);
+        } catch (UBankException e) {
+            LOG.error("get user error", e);
+        }
 
         if (user == null) {
             LOG.debug("user not exists, login failure");
             req.setAttribute(Constant.ATTR_ERROR_MSG, MessageResource
                     .getMessage(MessageKeys.MSG_LOGIN_FAILURE));
             home(req, resp);
-            
+
             return Constant.HOME_PAGE;
         } else {
             LOG.debug("login success");

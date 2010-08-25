@@ -30,13 +30,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DateUtil;
 import com.ufinity.marchant.ubank.common.DocumentUtil;
+import com.ufinity.marchant.ubank.common.EntityManagerUtil;
+import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.common.StringUtil;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
@@ -44,6 +45,7 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
+import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FileService;
 
 /**
@@ -58,7 +60,7 @@ public class FileServiceImpl implements FileService {
     private FolderDao folderDao;
 
     // Logger for this class
-    protected final Logger logger = Logger.getLogger(FileServiceImpl.class);
+    protected final Logger LOG = Logger.getInstance(FileServiceImpl.class);
 
     /**
      * Constructor
@@ -74,18 +76,21 @@ public class FileServiceImpl implements FileService {
      * @param fileName
      *            file name
      * @param fileSize
-     *            file size level
+     *            file size flag
      * @param publishDate
-     *            publish date level
+     *            publish date flag
      * @param pageNum
      *            pageNum
      * @param pageSize
      *            pageSize
      * @return file pager obj
+     * @throws UBankException
+     *             if occur exception, throw it
      * @author zdxue
      */
     public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
-            String publishDate, int pageNum, int pageSize) {
+            String publishDate, int pageNum, int pageSize)
+            throws UBankException {
 
         Map<String, Object> condition = new HashMap<String, Object>();
         condition.put(Constant.FILENAME, fileName);
@@ -101,8 +106,19 @@ public class FileServiceImpl implements FileService {
         condition.put(Constant.MAX_MODIFY_TIME, DateUtil.parse(DateUtil.format(
                 maxDate, datePattern), datePattern));
 
-        Pager<FileBean> pager = fileDao.searchPaginatedForFile(pageNum,
-                pageSize, condition);
+        Pager<FileBean> pager = null;
+        try {
+            EntityManagerUtil.begin();
+            pager = fileDao
+                    .searchPaginatedForFile(pageNum, pageSize, condition);
+            EntityManagerUtil.commit();
+        } catch (Exception e) {
+            // not need rollback
+            LOG.error("search share file exception", e);
+            throw new UBankException("search share file exception");
+        } finally {
+            EntityManagerUtil.closeEntityManager();
+        }
 
         return pager;
     }
@@ -131,17 +147,13 @@ public class FileServiceImpl implements FileService {
         String fileSizeConf = "";
         if (Constant.FILE_SIZE_0.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_0);
-        }
-        else if (Constant.FILE_SIZE_1.equals(fileSize)) {
+        } else if (Constant.FILE_SIZE_1.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_1);
-        }
-        else if (Constant.FILE_SIZE_2.equals(fileSize)) {
+        } else if (Constant.FILE_SIZE_2.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_2);
-        }
-        else if (Constant.FILE_SIZE_3.equals(fileSize)) {
+        } else if (Constant.FILE_SIZE_3.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_3);
-        }
-        else if (Constant.FILE_SIZE_4.equals(fileSize)) {
+        } else if (Constant.FILE_SIZE_4.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_4);
         }
         return fileSizeConf;
@@ -187,20 +199,15 @@ public class FileServiceImpl implements FileService {
         int amount = 0;
         if (Constant.FILE_PUBLISHDATE_0.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_0);
-        }
-        else if (Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
+        } else if (Constant.FILE_PUBLISHDATE_1.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_1);
-        }
-        else if (Constant.FILE_PUBLISHDATE_2.equals(publishDate)) {
+        } else if (Constant.FILE_PUBLISHDATE_2.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_2);
-        }
-        else if (Constant.FILE_PUBLISHDATE_3.equals(publishDate)) {
+        } else if (Constant.FILE_PUBLISHDATE_3.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_3);
-        }
-        else if (Constant.FILE_PUBLISHDATE_4.equals(publishDate)) {
+        } else if (Constant.FILE_PUBLISHDATE_4.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_4);
-        }
-        else if (Constant.FILE_PUBLISHDATE_5.equals(publishDate)) {
+        } else if (Constant.FILE_PUBLISHDATE_5.equals(publishDate)) {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_5);
         }
 
@@ -242,8 +249,7 @@ public class FileServiceImpl implements FileService {
         if (file != null) {
             try {
                 copy = (FileBean) BeanUtils.cloneBean(file);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
             }
         }
         return copy;
@@ -279,9 +285,8 @@ public class FileServiceImpl implements FileService {
             fileDao.modify(temp);
             int result = DocumentUtil.copyFile(temp, folder);
             return result == 1 ? true : false;
-        }
-        catch (Exception e) {
-            logger.debug("Update the file information database exception ", e);
+        } catch (Exception e) {
+            LOG.debug("Update the file information database exception ", e);
             return false;
         }
     }
@@ -313,9 +318,8 @@ public class FileServiceImpl implements FileService {
             fileDao.modify(file);
             int result = DocumentUtil.moveFileTo(file, folder);
             return result == 1 ? true : false;
-        }
-        catch (Exception e) {
-            logger.debug("Update the file information database exception ", e);
+        } catch (Exception e) {
+            LOG.debug("Update the file information database exception ", e);
             return false;
         }
     }

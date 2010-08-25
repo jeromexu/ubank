@@ -27,6 +27,7 @@
 package com.ufinity.marchant.ubank.service;
 
 import com.ufinity.marchant.ubank.bean.User;
+import com.ufinity.marchant.ubank.exception.UBankException;
 
 /**
  * 
@@ -57,9 +58,10 @@ public interface UserService {
 	 * @param password
 	 *            user's password
 	 * @return User obj
+	 * @throws UBankException if occur exception, then throw it
 	 * @author zdxue
 	 */
-	public User getUser(String username, String password);
+	public User getUser(String username, String password) throws UBankException ;
 
 	/**
 	 * 
