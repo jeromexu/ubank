@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Validity;
+import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 
@@ -80,7 +81,12 @@ public class DownLoadServlet extends AbstractServlet {
 			return Constant.ERROR_PAGE;
 		}
 		fileService = ServiceFactory.createService(FileService.class);
-		FileBean fileBean = fileService.getFileBean(fileId);
+		FileBean fileBean = null;
+		try {
+			fileBean = fileService.getFileBean(fileId);
+		} catch (UBankException e1) {
+			LOGGER.error("get the file exception!", e1);
+		}
 		File file =  null;
 		if (fileBean != null) {
 			// create file object
