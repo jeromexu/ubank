@@ -189,5 +189,6 @@ public class UserServiceImplTest {
 		});
 		String message = userService.doRegister(user);
 		assertEquals(MessageResource.getMessage(MessageKeys.REGISTER_SUCCESS), message);
+		context.assertIsSatisfied();
 	}
 }

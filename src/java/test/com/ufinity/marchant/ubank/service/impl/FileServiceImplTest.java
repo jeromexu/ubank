@@ -27,103 +27,146 @@ import com.ufinity.marchant.ubank.service.FileService;
  */
 public class FileServiceImplTest {
 
-    private Mockery context = new Mockery();
-    private FileDao fileDao;
-    private FileService fileService;
+	private Mockery context = new Mockery();
+	private FileDao fileDao;
+	private FileService fileService;
 
-    /**
-     * SetUp
-     * 
-     * @throws Exception
-     *             occur exception throw it
-     * @author zdxue
-     */
-    @Before
-    public void setUp() throws Exception {
-        fileDao = context.mock(FileDao.class);
-        FileServiceImpl fileServiceImpl = new FileServiceImpl();
-        fileServiceImpl.setFileDao(fileDao);
-        fileService = fileServiceImpl;
-    }
+	/**
+	 * SetUp
+	 * 
+	 * @throws Exception
+	 *             occur exception throw it
+	 * @author zdxue
+	 */
+	@Before
+	public void setUp() throws Exception {
+		fileDao = context.mock(FileDao.class);
+		FileServiceImpl fileServiceImpl = new FileServiceImpl();
+		fileServiceImpl.setFileDao(fileDao);
+		fileService = fileServiceImpl;
+	}
 
-    /**
-     * TearDown
-     * 
-     * @throws Exception
-     *             occur exception throw it
-     * @author zdxue
-     */
-    @After
-    public void tearDown() throws Exception {
-        // TODO
-    }
+	/**
+	 * TearDown
+	 * 
+	 * @throws Exception
+	 *             occur exception throw it
+	 * @author zdxue
+	 */
+	@After
+	public void tearDown() throws Exception {
+		// TODO
+	}
 
-    /**
-     * Test saerch
-     * 
-     * @author zdxue
-     */
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testSearchShareFile() {
-        // 预设自定义测试数据
-        String fileName = "";
-        String fileSize = "0";
-        String publishDate = "0";
-        int pageNum = 1;
-        int pageSize = 10;
+	/**
+	 * Test saerch
+	 * 
+	 * @author zdxue
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testSearchShareFile() {
+		// 预设自定义测试数据
+		String fileName = "";
+		String fileSize = "0";
+		String publishDate = "0";
+		int pageNum = 1;
+		int pageSize = 10;
 
-        final Pager<FileBean> pager1 = new Pager<FileBean>();
-        final Pager<FileBean> pager2 = new Pager<FileBean>();
-        List<FileBean> pageRecords = new ArrayList<FileBean>();
-        FileBean fb = new FileBean();
-        fb.setFileId(1L);
-        fb.setShare(true);
-        fb.setFileName("file");
-        pageRecords.add(fb);
-        pager2.setCurrentPage(1);
-        pager2.setPageRecords(pageRecords);
-        pager2.setPageSize(10);
-        pager2.setTotalRecords(1);
+		final Pager<FileBean> pager1 = new Pager<FileBean>();
+		final Pager<FileBean> pager2 = new Pager<FileBean>();
+		List<FileBean> pageRecords = new ArrayList<FileBean>();
+		FileBean fb = new FileBean();
+		fb.setFileId(1L);
+		fb.setShare(true);
+		fb.setFileName("file");
+		pageRecords.add(fb);
+		pager2.setCurrentPage(1);
+		pager2.setPageRecords(pageRecords);
+		pager2.setPageSize(10);
+		pager2.setTotalRecords(1);
 
-        // Case1:测试没有满足搜索条件的情况
-        // 输入参数： 预设搜索条件
-        // 预期值： 空Pager<FileBean>
-        context.checking(new Expectations() {
-            {
-                exactly(1).of(fileDao).searchPaginatedForFile(
-                        with(any(int.class)), with(any(int.class)),
-                        with(any(Map.class)));
-                will(returnValue(pager1));
-            }
-        });
+		// Case1:测试没有满足搜索条件的情况
+		// 输入参数： 预设搜索条件
+		// 预期值： 空Pager<FileBean>
+		context.checking(new Expectations() {
+			{
+				exactly(1).of(fileDao).searchPaginatedForFile(
+						with(any(int.class)), with(any(int.class)),
+						with(any(Map.class)));
+				will(returnValue(pager1));
+			}
+		});
 
-        try {
-            assertEquals(0, fileService.searchShareFiles(fileName, fileSize,
-                    publishDate, pageNum, pageSize).getTotalRecords());
-        } catch (UBankException e) {
-            fail("search file error");
-        }
+		try {
+			assertEquals(0, fileService.searchShareFiles(fileName, fileSize,
+					publishDate, pageNum, pageSize).getTotalRecords());
+		} catch (UBankException e) {
+			fail("search file error");
+		}
 
-        // Case2:测试有满足搜索条件的记录
-        // 输入参数： 预设搜索条件
-        // 预期值： 非空Pager<FileBean>
-        context.checking(new Expectations() {
-            {
-                exactly(1).of(fileDao).searchPaginatedForFile(
-                        with(any(int.class)), with(any(int.class)),
-                        with(any(Map.class)));
-                will(returnValue(pager2));
-            }
-        });
+		// Case2:测试有满足搜索条件的记录
+		// 输入参数： 预设搜索条件
+		// 预期值： 非空Pager<FileBean>
+		context.checking(new Expectations() {
+			{
+				exactly(1).of(fileDao).searchPaginatedForFile(
+						with(any(int.class)), with(any(int.class)),
+						with(any(Map.class)));
+				will(returnValue(pager2));
+			}
+		});
 
-        try {
-            assertEquals(1, fileService.searchShareFiles(fileName, fileSize,
-                    publishDate, pageNum, pageSize).getTotalRecords());
-        } catch (UBankException e) {
-            fail("search file error");
-        }
+		try {
+			assertEquals(1, fileService.searchShareFiles(fileName, fileSize,
+					publishDate, pageNum, pageSize).getTotalRecords());
+		} catch (UBankException e) {
+			fail("search file error");
+		}
 
-        context.assertIsSatisfied();
-    }
+		context.assertIsSatisfied();
+	}
+
+	/**
+	 * test get file
+	 * @author jerome
+	 */
+	@Test
+	public void testGetFileBean() {
+		
+		final Long fileId = 1L;
+		
+		// Case 1 : query file by file id and the file id does not exist
+		// parameter value： the file id
+		// expectation value： the fileBean which is null
+		context.checking(new Expectations() {
+			{
+				oneOf(fileDao).find(fileId);
+				will(returnValue(null));
+			}
+		});
+		try {
+			assertEquals(null,fileService.getFileBean(fileId));
+		} catch (UBankException e) {
+			fail("get file error");
+		}
+		
+		final Long fileid = 3L;
+		final FileBean filebean = new FileBean();
+		filebean.setFileId(3L);
+		// Case 1 : query file by file id and the file id exist
+		// parameter value： the file id
+		// expectation value： the fileBean which is not null
+		context.checking(new Expectations() {
+			{
+				oneOf(fileDao).find(fileId);
+				will(returnValue(filebean));
+			}
+		});
+		try {
+			assertEquals(filebean.getFileId(),fileService.getFileBean(fileId).getFileId());
+		} catch (UBankException e) {
+			fail("get file error");
+		}
+	}
 }
