@@ -280,4 +280,38 @@ public class UserServiceImpl implements UserService {
         }
         LOG.debug("makeEachUserDir:-----complete--------");
     }
+
+	/**
+	 * the getter method of userDao
+	 * @return the userDao
+	 */
+	public UserDao getUserDao() {
+		return userDao;
+	}
+
+	/**
+	 * the setter method of the userDao
+	 * @param userDao the userDao to set
+	 */
+	public void setUserDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
+
+	/**
+	 * the getter method of folderDao
+	 * @return the folderDao
+	 */
+	public FolderDao getFolderDao() {
+		return folderDao;
+	}
+
+	/**
+	 * the setter method of the folderDao
+	 * @param folderDao the folderDao to set
+	 */
+	public void setFolderDao(FolderDao folderDao) {
+		this.folderDao = folderDao;
+	}
+    
+    
 }
