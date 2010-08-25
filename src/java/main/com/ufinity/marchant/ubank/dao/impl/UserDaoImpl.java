@@ -29,6 +29,7 @@ package com.ufinity.marchant.ubank.dao.impl;
 import java.util.List;
 
 import com.ufinity.marchant.ubank.bean.User;
+import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.UserDao;
 
 /**
@@ -51,9 +52,10 @@ public class UserDaoImpl extends GenericDaoSupport<User, Long> implements
      */
     @SuppressWarnings("unchecked")
     public User findUser(String userName, String password) {
-        List<User> list = entityManager.createNamedQuery(
-                "User.findUserByNameAndPass").setParameter("name", userName)
-                .setParameter("pass", password).getResultList();
+        List<User> list = EntityManagerUtil.getEntityManager()
+                .createNamedQuery("User.findUserByNameAndPass").setParameter(
+                        "name", userName).setParameter("pass", password)
+                .getResultList();
 
         if (null != list && list.size() > 0) {
             return list.get(0);
@@ -71,8 +73,9 @@ public class UserDaoImpl extends GenericDaoSupport<User, Long> implements
      */
     @SuppressWarnings("unchecked")
     public User findUserByName(String userName) {
-        List<User> list = entityManager.createNamedQuery("User.findUserByName")
-                .setParameter("name", userName).getResultList();
+        List<User> list = EntityManagerUtil.getEntityManager()
+                .createNamedQuery("User.findUserByName").setParameter("name",
+                        userName).getResultList();
 
         if (null != list && list.size() > 0) {
             return list.get(0);

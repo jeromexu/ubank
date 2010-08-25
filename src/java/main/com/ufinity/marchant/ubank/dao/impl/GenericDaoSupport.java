@@ -31,8 +31,6 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -59,9 +57,6 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         GenericDao<T, PK> {
     // get logger method
     protected Logger log = LoggerFactory.getLogger(GenericDaoSupport.class);
-
-    protected EntityManager entityManager = EntityManagerUtil
-            .getEntityManager();
 
     // save parameter class type
     private Class<T> type;
@@ -94,8 +89,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
             log.error(method, "", "Parameter value is invalidate!");
             return;
         }
-        // this.getHibernateTemplate().save(entity);
-        entityManager.persist(entity);
+        EntityManagerUtil.getEntityManager().persist(entity);
         log.debug(method, "", "Execute persist method is successful!");
 
     }
@@ -115,7 +109,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
             log.error(method, "", "Parameter value is invalidate!");
             return;
         }
-        entityManager.remove(entity);
+        EntityManagerUtil.getEntityManager().remove(entity);
         log.debug(method, "", "Execute remove method is successful!");
 
     }
@@ -136,7 +130,9 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
             log.error(method, "", "Parameter value is invalidate!");
             return;
         }
-        entityManager.remove(entityManager.getReference(this.type, id));
+        EntityManagerUtil.getEntityManager().remove(
+                EntityManagerUtil.getEntityManager()
+                        .getReference(this.type, id));
         log.debug(method, "", "Execute deleteById method is successful!");
 
     }
@@ -158,7 +154,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
             log.error(method, "", "Parameter value is invalidate!");
             return null;
         }
-        T entity = (T) entityManager.find(this.type, id);
+        T entity = (T) EntityManagerUtil.getEntityManager().find(this.type, id);
         log.debug(method, "", "Execute find method is successful!");
 
         return entity;
@@ -177,7 +173,8 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         String jpal = "SELECT COUNT(*) FROM " + this.type.getName();
         Long count = null;
 
-        count = ((Long) entityManager.createQuery(jpal).getSingleResult());
+        count = ((Long) EntityManagerUtil.getEntityManager().createQuery(jpal)
+                .getSingleResult());
         log.debug(method, "", "Execute getRecordCount method is successful!");
 
         return (PK) count;
@@ -197,7 +194,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
             log.error(method, "", "Parameter value is invalidate!");
             return;
         }
-        entityManager.merge(entity);
+        EntityManagerUtil.getEntityManager().merge(entity);
         log.debug(method, "", "Execute entity method is successful!");
 
     }
@@ -228,9 +225,10 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
             return null;
         }
 
-        lists = (List<T>) entityManager.createQuery(jpal).setFirstResult(
-                ((Long) startRecord).intValue()).setMaxResults(
-                ((Long) pageSize).intValue()).getResultList();
+        lists = (List<T>) EntityManagerUtil.getEntityManager()
+                .createQuery(jpal).setFirstResult(
+                        ((Long) startRecord).intValue()).setMaxResults(
+                        ((Long) pageSize).intValue()).getResultList();
         log.debug(method, "", "Execute queryList method is successful!");
         return lists;
     }
@@ -318,8 +316,8 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
             hql = "FROM " + clazz.getName();
         }
         String queryHql = hql;
-        Query query = ((Session) entityManager.getDelegate())
-                .createQuery(queryHql);
+        Query query = ((Session) EntityManagerUtil.getEntityManager()
+                .getDelegate()).createQuery(queryHql);
 
         if (!Validity.isEmpty(properties)) {
             query.setProperties(properties);
@@ -341,8 +339,8 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         String jpaQuery = "SELECT COUNT(*) FROM " + clazz.getName();
         Integer count = null;
 
-        count = ((Integer) entityManager.createQuery(jpaQuery)
-                .getSingleResult());
+        count = ((Integer) EntityManagerUtil.getEntityManager().createQuery(
+                jpaQuery).getSingleResult());
         log.debug("Execute getRecordCount method is successful!");
         return count;
     }
@@ -392,7 +390,8 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      * @return Object which find
      */
     public Object getUniqueBeanResult(String hql, Map<String, Object> properties) {
-        Query query = ((Session) entityManager.getDelegate()).createQuery(hql);
+        Query query = ((Session) EntityManagerUtil.getEntityManager()
+                .getDelegate()).createQuery(hql);
 
         if (!Validity.isEmpty(properties)) {
             query.setProperties(properties);
@@ -413,8 +412,8 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     public Pager<T> queryEntitiesByCriteriaWithPager(int currentPage,
             int pageSize, Criterion... criterion) {
         List<T> list = null;
-        Criteria criteria = ((Session) this.entityManager.getDelegate())
-                .createCriteria(this.type);
+        Criteria criteria = ((Session) EntityManagerUtil.getEntityManager()
+                .getDelegate()).createCriteria(this.type);
 
         //add query's condition
         if (null != criterion) {

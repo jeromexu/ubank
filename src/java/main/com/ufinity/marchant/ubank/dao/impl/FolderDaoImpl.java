@@ -29,6 +29,7 @@ package com.ufinity.marchant.ubank.dao.impl;
 import java.util.List;
 
 import com.ufinity.marchant.ubank.bean.Folder;
+import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 
 /**
@@ -55,7 +56,7 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
                 + "LEFT JOIN U_FOLDER b on a.PARENT_ID = b.PARENT_ID WHERE a.USER_ID = :userId"
                 + " ORDER BY a.PARENT_ID , a.CREATE_TIME DESC";
 
-        return entityManager.createNativeQuery(sqlQuery, Folder.class)
-                .setParameter("userId", userId).getResultList();
+        return EntityManagerUtil.getEntityManager().createNativeQuery(sqlQuery,
+                Folder.class).setParameter("userId", userId).getResultList();
     }
 }
