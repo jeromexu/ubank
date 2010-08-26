@@ -152,9 +152,11 @@ public class UserServiceImplTest {
 		
 		
 		final User member = new User();
-		user.setUserId(2L);
-		user.setUserName("hello");
-		user.setPassword("111111");
+		member.setUserId(2L);
+		member.setUserName("hello");
+		member.setPassword("111111");
+		member.setCreateTime(new Date());
+		member.setOverSize(1);
 		// Case 2 : query user by userName that the user does not exist
 		// parameter value： the userName
 		// expectation value： register success msg
@@ -163,14 +165,13 @@ public class UserServiceImplTest {
 				oneOf(userDao).findUserByName(with(any(String.class)));
 				will(returnValue(null));
 				
-				oneOf(userDao).add(member);
+				oneOf(userDao).add(with(any(User.class)));
 				
-				
-				oneOf(folderDao).add(folder);
+				exactly(5).of(folderDao).add(with(any(Folder.class)));
 				
 			}
 		});
-		String message = userService.doRegister(user);
+		String message = userService.doRegister(member);
 		assertEquals(MessageResource.getMessage(MessageKeys.REGISTER_SUCCESS), message);
 		context.assertIsSatisfied();
 	}
