@@ -75,7 +75,7 @@ public class Context {
 	private static final ThreadLocal<Context> CONTEXT_THREADLOCAL = new ThreadLocal<Context>();
 	
 	/**
-	 * Bundle thread context to threadlocal
+	 * Bundle context to current-thread
 	 *
 	 * @param context
 	 * @author zdxue
