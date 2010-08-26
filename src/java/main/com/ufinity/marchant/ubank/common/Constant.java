@@ -127,16 +127,4 @@ public interface Constant {
     String MIN_MODIFY_TIME = "minModifyTime";
     String MAX_MODIFY_TIME = "maxModifyTime";
     
-    // all user's directory space
-    public static final String USER_SPACE_DIR = "/user";
-    
-    public static final String MY_File_NAME = "我的文件";
-    
-    public static final String SOFTWARE_NAME = "软件";
-    
-    public static final String DOCUMENT_NAME = "文档";
-    
-    public static final String PHOTO_NAME = "照片";
-   
-    
 }

@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
             if (user != null) {
                 userName = user.getUserName();
             } else {
-                return MessageResource.getText(MessageKeys.REGISTER_FAILURE);
+                return MessageKeys.REGISTER_FAILURE;
             }
             // query current user exist or not
             User queryUser = userDao.findUserByName(userName);
@@ -96,13 +96,13 @@ public class UserServiceImpl implements UserService {
                 boolean initFlag = createUserDir(user.getUserId());
                 EntityManagerUtil.commit();
                 if (initFlag) {
-                	return MessageResource.getText(MessageKeys.REGISTER_SUCCESS);
+                	return MessageKeys.REGISTER_SUCCESS;
                 } else {
-                	return MessageResource.getText(MessageKeys.REGISTER_FAILURE);
+                	return MessageKeys.REGISTER_FAILURE;
                 }
             } else {
                 // user exist,do not register
-                return MessageResource.getText(MessageKeys.REGISTER_FAILURE);
+                return MessageKeys.REGISTER_FAILURE;
             }
             
         } catch (Exception e) {
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
         }
         LOG.debug("doRegister:-----complete--------");
         // register success
-        return MessageResource.getText(MessageKeys.REGISTER_SUCCESS);
+        return MessageKeys.REGISTER_SUCCESS;
     }
 
     /**
@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService {
                     baseFile.mkdir();
                 }
                 StringBuffer sb = new StringBuffer(serverPath);
-                baseFile = new File(sb.append(Constant.USER_SPACE_DIR).toString());
+                baseFile = new File(sb.append(SystemGlobals.getString(ConfigKeys.USER_SPACE_ROOT_DIR)).toString());
                 if (!baseFile.exists()) {
                     baseFile.mkdir();
                 }
@@ -188,7 +188,7 @@ public class UserServiceImpl implements UserService {
                 Folder folder = new Folder();
                 folder.setFolderName(String.valueOf(userId));
                 folder.setCreateTime(new Date());
-                folder.setDirectory(Constant.USER_SPACE_DIR);
+                folder.setDirectory(SystemGlobals.getString(ConfigKeys.USER_SPACE_ROOT_DIR));
                 folder.setModifyTime(new Date());
                 folder.setFolderType(Constant.ROOT);
                 folder.setShare(false);
@@ -204,17 +204,17 @@ public class UserServiceImpl implements UserService {
                 folderDao.add(folder);
 
                 // my file folder for each user
-                makeEachUserDir(baseFile, folder, userId, sb, Constant.MY_File_NAME);
+                makeEachUserDir(baseFile, folder, userId, sb, SystemGlobals.getString(ConfigKeys.MY_File_NAME));
                 // software folder for each user
                 makeEachUserDir(baseFile, folder, userId, sb,
-                        Constant.SOFTWARE_NAME);
+                		SystemGlobals.getString(ConfigKeys.SOFTWARE_NAME));
 
                 // document folder for each user
                 makeEachUserDir(baseFile, folder, userId, sb,
-                        Constant.DOCUMENT_NAME);
+                		SystemGlobals.getString(ConfigKeys.DOCUMENT_NAME));
 
                 // photo folder for each user
-                makeEachUserDir(baseFile, folder, userId, sb, Constant.PHOTO_NAME);
+                makeEachUserDir(baseFile, folder, userId, sb, SystemGlobals.getString(ConfigKeys.PHOTO_NAME));
             } else {
                 return false;
             }
@@ -267,7 +267,7 @@ public class UserServiceImpl implements UserService {
         folder.setModifyTime(new Date());
         folder.setFolderType(Constant.INIT);
         folder.setShare(false);
-        folder.setDirectory(Constant.USER_SPACE_DIR + "/" + userId);
+        folder.setDirectory(SystemGlobals.getString(ConfigKeys.USER_SPACE_ROOT_DIR) + "/" + userId);
 
         Folder parentFolder = new Folder();
         parentFolder.setFolderId(parent.getFolderId());
@@ -279,7 +279,7 @@ public class UserServiceImpl implements UserService {
 
         folderDao.add(folder);
         
-        if (Constant.MY_File_NAME.equals(folderName)) {
+        if (SystemGlobals.getString(ConfigKeys.MY_File_NAME).equals(folderName)) {
             baseFile = new File(sb.append(File.separator).append(String.valueOf(folder.getFolderId())).toString());
         } else {
             sb.replace(sb.lastIndexOf(File.separator) + 1, sb.length(), String.valueOf(folder.getFolderId()));

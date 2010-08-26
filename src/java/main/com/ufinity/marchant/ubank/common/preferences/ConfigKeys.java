@@ -68,4 +68,12 @@ public class ConfigKeys {
     
     // ubank app path
     public static final String SERVER_PATH = "ubank.path";
+    
+    // user space root dir
+    public static final String USER_SPACE_ROOT_DIR = "user.space.root.dir";
+    // each user's dir
+    public static final String MY_File_NAME = "my.file.name";
+    public static final String SOFTWARE_NAME = "software.name";
+    public static final String DOCUMENT_NAME = "document.name";
+    public static final String PHOTO_NAME = "photo.name";
 }
