@@ -55,6 +55,30 @@ public class UserDaoImplTest {
     private List<User> users = null;
 
     /**
+     * 
+     * @throws Exception
+     *             exception
+     * @author skyqiang
+     */
+    @Before
+    public void setUp() throws Exception {
+        userDao = DaoFactory.createDao(UserDao.class);
+    }
+
+    /**
+     * 
+     * @throws Exception
+     *             exception
+     * @author skyqiang
+     */
+    @After
+    public void tearDown() throws Exception {
+        userDao = null;
+        userDatas = null;
+        users = null;
+    }
+
+    /**
      * this method is init right data for user object, user object attribute
      * name's : userName,password eg. userName,password,date attribute values
      * aren't null.
@@ -104,30 +128,6 @@ public class UserDaoImplTest {
             user.setOverSize((Integer) userDatas[i][3]);
             users.add(user);
         }
-    }
-
-    /**
-     * 
-     * @throws Exception
-     *             exception
-     * @author skyqiang
-     */
-    @Before
-    public void setUp() throws Exception {
-        userDao = DaoFactory.createDao(UserDao.class);
-    }
-
-    /**
-     * 
-     * @throws Exception
-     *             exception
-     * @author skyqiang
-     */
-    @After
-    public void tearDown() throws Exception {
-        userDao = null;
-        userDatas = null;
-        users = null;
     }
 
     /**

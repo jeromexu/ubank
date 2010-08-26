@@ -29,32 +29,43 @@ package com.ufinity.marchant.ubank.dao.impl;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
+import com.ufinity.marchant.ubank.common.DateUtil;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
+import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
+import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
 
 /**
  * @author WenQiang Wu
- * @version Aug 25, 2010
+ * @version Aug 26, 2010
  */
-public class FolderDaoImplTest {
+public class FileDaoImplTest {
+    private FileDao fileDao = null;
     private FolderDao folderDao = null;
     private UserDao userDao = null;
 
-    private Object[][] folderDatas = null;
-    private List<Folder> folders = null;
+    private List<FileBean> files = null;
+    private Folder folder = null;
     private User user = null;
+
+    private Object[][] fileDatas = null;
+    private Map<String, Object> condition = null;
 
     /**
      * @throws Exception
@@ -65,6 +76,7 @@ public class FolderDaoImplTest {
     public void setUp() throws Exception {
         userDao = DaoFactory.createDao(UserDao.class);
         folderDao = DaoFactory.createDao(FolderDao.class);
+        fileDao = DaoFactory.createDao(FileDao.class);
     }
 
     /**
@@ -75,10 +87,12 @@ public class FolderDaoImplTest {
     @After
     public void tearDown() throws Exception {
         folderDao = null;
-        folderDatas = null;
-        folders = null;
-        userDao = null;
+        fileDao = null;
+        files = null;
+        folder = null;
+        fileDatas = null;
         user = null;
+        userDao = null;
     }
 
     /**
@@ -89,19 +103,43 @@ public class FolderDaoImplTest {
     private void initRightData() {
         // init user object
         user = new User();
-        user.setUserName("testFolderName");
-        user.setPassword("testFolderPass");
+        user.setUserName("testFileName");
+        user.setPassword("testFilePass");
         user.setCreateTime(new Date());
         user.setOverSize(1);
 
-        // folder rigth datas
-        folderDatas = new Object[][] {
-                { "folder1", new Date(), new Date(), "E:", true, "I", user },
-                { "folder2", new Date(), new Date(), "F:", false, "I", user },
-                { "folder3", new Date(), new Date(), "D:", false, "I", user },
-                { "folder4", new Date(), new Date(), "C:", true, "I", user },
-                { "folder5", new Date(), new Date(), "E:", true, "I", user } };
+        // init folder object
+        folder = new Folder();
+        folder.setFolderName("testFileFolder");
+        folder.setCreateTime(new Date());
+        folder.setModifyTime(new Date());
+        folder.setDirectory("E:");
+        folder.setShare(true);
+        folder.setFolderType("I");
+        folder.setUser(user);
 
+        // file rigth datas
+        fileDatas = new Object[][] {
+                { "file1", new Date(), new Date(), "E:", true, "I", 10, folder },
+                { "file2", new Date(), new Date(), "F:", false, "I", 20, folder },
+                { "file3", new Date(), new Date(), "D:", false, "I", 5, folder },
+                { "file4", new Date(), new Date(), "C:", true, "I", 9, folder },
+                { "file5", new Date(), new Date(), "E:", true, "I", 12, folder } };
+
+        // init search condition data
+        condition = new HashMap<String, Object>();
+        condition.put("fileName", "file");
+        condition.put("minFileSize", 1L);
+        condition.put("maxFileSize", 100L);
+
+        Calendar cal = Calendar.getInstance();
+        String datePattern = DateUtil.YYYY_MM_DD_HH_MM_SS;
+        cal.add(Calendar.DATE, -1);
+        Date minDate = cal.getTime();
+        condition.put("minModifyTime", DateUtil.parse(DateUtil.format(minDate,
+                datePattern), datePattern));
+        condition.put("maxModifyTime", DateUtil.parse(DateUtil.format(
+                new Date(), datePattern), datePattern));
     }
 
     /**
@@ -113,19 +151,43 @@ public class FolderDaoImplTest {
     private void initErrorData() {
         // init user object
         user = new User();
-        user.setUserName("testFolderName");
-        user.setPassword("testFolderPass");
+        user.setUserName("testFileName");
+        user.setPassword("testFilePass");
         user.setCreateTime(new Date());
         user.setOverSize(1);
 
-        // folder error datas
-        folderDatas = new Object[][] {
-                { "folder1", null, new Date(), null, true, "I", user },
-                { "folder2", new Date(), new Date(), "F:", false, "I", null },
-                { "folder3", null, new Date(), "D:", false, "I", user },
-                { "folder4", new Date(), new Date(), null, null, "I", null },
-                { "folder5", new Date(), new Date(), "E:", null, null, null } };
+        // init user object
+        folder = new Folder();
+        folder.setFolderName("testFileFolder");
+        folder.setCreateTime(new Date());
+        folder.setModifyTime(new Date());
+        folder.setDirectory("E:");
+        folder.setShare(true);
+        folder.setFolderType("I");
+        folder.setUser(user);
 
+        // file rigth datas
+        fileDatas = new Object[][] {
+                { null, new Date(), null, "E:", true, "I", 10, folder },
+                { "file2", new Date(), new Date(), "F:", false, "I", 20, folder },
+                { "file3", new Date(), new Date(), "D:", null, "I", 5, null },
+                { "file4", null, new Date(), "C:", true, "I", 9, folder },
+                { null, new Date(), new Date(), "E:", true, null, 12, folder } };
+
+        // init search condition data
+        condition = new HashMap<String, Object>();
+        condition.put("fileName", "ddd");
+        condition.put("minFileSize", 1000L);
+        condition.put("maxFileSize", 2000L);
+
+        Calendar cal = Calendar.getInstance();
+        String datePattern = DateUtil.YYYY_MM_DD_HH_MM_SS;
+        cal.add(Calendar.DATE, -1);
+        Date minDate = cal.getTime();
+        condition.put("minModifyTime", DateUtil.parse(DateUtil.format(minDate,
+                datePattern), datePattern));
+        condition.put("maxModifyTime", DateUtil.parse(DateUtil.format(
+                new Date(), datePattern), datePattern));
     }
 
     /**
@@ -141,19 +203,20 @@ public class FolderDaoImplTest {
         }
 
         // pageage user data
-        folders = new LinkedList<Folder>();
-        for (int i = 0; i < folderDatas.length; i++) {
-            Folder folder = new Folder();
+        files = new LinkedList<FileBean>();
+        for (int i = 0; i < fileDatas.length; i++) {
+            FileBean file = new FileBean();
 
-            folder.setFolderName((String) folderDatas[i][0]);
-            folder.setCreateTime((Date) folderDatas[i][1]);
-            folder.setModifyTime((Date) folderDatas[i][2]);
-            folder.setDirectory((String) folderDatas[i][3]);
-            folder.setShare((Boolean) folderDatas[i][4]);
-            folder.setFolderType((String) folderDatas[i][5]);
+            file.setFileName((String) fileDatas[i][0]);
+            file.setCreateTime((Date) fileDatas[i][1]);
+            file.setModifyTime((Date) fileDatas[i][2]);
+            file.setDirectory((String) fileDatas[i][3]);
+            file.setShare((Boolean) fileDatas[i][4]);
+            file.setFileType((String) fileDatas[i][5]);
+            file.setSize(((Integer) fileDatas[i][6]).longValue());
 
-            folder.setUser(user);
-            folders.add(folder);
+            file.setFolder(folder);
+            files.add(file);
         }
     }
 
@@ -169,9 +232,10 @@ public class FolderDaoImplTest {
         EntityManagerUtil.begin();
         // add user
         this.userDao.add(user);
-
-        for (int i = 0; i < folders.size(); i++) {
-            this.folderDao.add(folders.get(i));
+        // add folder
+        this.folderDao.add(folder);
+        for (int i = 0; i < files.size(); i++) {
+            this.fileDao.add(files.get(i));
         }
         // commit transaction
         EntityManagerUtil.commit();
@@ -189,9 +253,13 @@ public class FolderDaoImplTest {
         try {
             // start transaction
             EntityManagerUtil.begin();
+            // add user
+            this.userDao.add(user);
+            // add folder
+            this.folderDao.add(folder);
 
-            for (int i = 0; i < folders.size(); i++) {
-                this.folderDao.add(folders.get(i));
+            for (int i = 0; i < files.size(); i++) {
+                this.fileDao.add(files.get(i));
             }
             // commit transaction
             EntityManagerUtil.commit();
@@ -206,20 +274,35 @@ public class FolderDaoImplTest {
 
     /**
      * Test method for
+     * {@link com.ufinity.marchant.ubank.dao.impl.FileDaoImpl#searchPaginatedForFile(int, int, java.util.Map)}.
+     */
+    @Test
+    public void testSearchPaginatedForFile() {
+        // init rigth data
+        packageData(true);
+
+        Pager<FileBean> pager = this.fileDao.searchPaginatedForFile(1, 20,
+                condition);
+        System.out.println("total-----------" + pager.getTotalRecords());
+        assertTrue(pager.getTotalRecords() > 0);
+    }
+
+    /**
+     * Test method for
      * {@link com.ufinity.marchant.ubank.dao.impl.GenericDaoSupport#find(java.io.Serializable)}.
      */
     @Test
     public void testFind() {
         // init rigth data
         packageData(true);
-        List<Folder> list = this.folderDao.queryList(0L,
-                (long) folderDatas.length);
+        List<FileBean> list = this.fileDao.queryList(0L,
+                (long) fileDatas.length);
 
         // execute find object method operation
-        for (Folder folder : list) {
-            Folder folderTemp = this.folderDao.find(folder.getFolderId());
-            System.err.println(folderTemp.getFolderName());
-            assertNotNull(folderTemp.getFolderName());
+        for (FileBean fileBean : list) {
+            FileBean fileTemp = this.fileDao.find(fileBean.getFileId());
+            System.err.println(fileTemp.getFileName());
+            assertNotNull(fileTemp.getFileName());
         }
     }
 
@@ -231,9 +314,9 @@ public class FolderDaoImplTest {
     public void testQueryListPKPK() {
         packageData(true);
 
-        List<Folder> folderList = this.folderDao.queryList(0L,
-                (long) folderDatas.length);
-        assertTrue(folderList.size() > 0);
+        List<FileBean> list = this.fileDao.queryList(0L,
+                (long) fileDatas.length);
+        assertTrue(list.size() > 0);
     }
 
     /**
@@ -243,43 +326,13 @@ public class FolderDaoImplTest {
     @Test(expected = Exception.class)
     public void testQueryListPKPKException() {
         try {
-            List<Folder> folderList = this.folderDao.queryList(0L,
-                    (long) folderDatas.length);
-            assertTrue(folderList.size() > 0);
+            List<FileBean> list = this.fileDao.queryList(0L,
+                    (long) fileDatas.length);
+            assertTrue(list.size() > 0);
         } catch (RuntimeException e) {
             e.printStackTrace();
             throw e;
         }
-    }
-
-    /**
-     * Test method for
-     * {@link com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl#findFolderListByUserId(java.lang.Long)}.
-     */
-    @Test
-    public void testFindFolderListByUserId() {
-        packageData(true);
-
-        User userTemp = this.userDao.findUserByName(user.getUserName());
-        List<Folder> folderList = this.folderDao
-                .findFolderListByUserId(userTemp.getUserId());
-        assertTrue(folderList.size() > 0);
-        assertTrue(folderList.size() == folderDatas.length);
-    }
-
-    /**
-     * Test method for
-     * {@link com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl#findFolderListByUserId(java.lang.Long)}.
-     */
-    @Test(expected = Exception.class)
-    public void testFindFolderListByUserIdException() {
-        packageData(true);
-
-        User userTemp = this.userDao.findUserByName("Folder_Error_Modify");
-        List<Folder> folderList = this.folderDao
-                .findFolderListByUserId(userTemp.getUserId());
-        assertTrue(folderList.size() > 0);
-        assertTrue(folderList.size() == folderDatas.length);
     }
 
     /**
@@ -291,13 +344,13 @@ public class FolderDaoImplTest {
         packageData(true);
 
         EntityManagerUtil.begin();
-        List<Folder> folderList = this.folderDao.queryList(0L,
-                (long) folderDatas.length);
+        List<FileBean> list = this.fileDao.queryList(0L,
+                (long) fileDatas.length);
 
-        for (Folder folder : folderList) {
-            Folder folderTemp = this.folderDao.find(folder.getFolderId());
-            folderTemp.setDirectory("F:");
-            this.folderDao.modify(folderTemp);
+        for (FileBean file : list) {
+            FileBean fileTemp = this.fileDao.find(file.getFileId());
+            fileTemp.setDirectory("F:");
+            this.fileDao.modify(fileTemp);
         }
         EntityManagerUtil.commit();
         EntityManagerUtil.closeEntityManager();
@@ -312,10 +365,10 @@ public class FolderDaoImplTest {
         try {
             EntityManagerUtil.begin();
 
-            Folder f = new Folder();
-            f.setFolderId(1000L);
+            FileBean file = new FileBean();
+            file.setFileId(10000L);
 
-            this.folderDao.modify(f);
+            this.fileDao.modify(file);
             EntityManagerUtil.commit();
 
         } catch (RuntimeException e) {
@@ -336,13 +389,26 @@ public class FolderDaoImplTest {
         packageData(true);
 
         EntityManagerUtil.begin();
-        List<Folder> folderList = this.folderDao.queryList(0L,
-                (long) folderDatas.length);
 
-        for (Folder f : folderList) {
-            this.folderDao.delete(f);
+        //delete file bean
+        List<FileBean> list = this.fileDao.queryList(0L,
+                (long) fileDatas.length);
+
+        for (FileBean f : list) {
+            this.fileDao.delete(f);
         }
 
+        //delete folder
+        List<Folder> folderList = this.folderDao.queryList(0L, 20L);
+        if (null != folderList && folderList.size() > 0) {
+            for (Folder folderTemp : folderList) {
+                if (folderTemp.getFolderName().equals(folder.getFolderName())) {
+                    this.folderDao.delete(folderTemp);
+                }
+            }
+        }
+
+        //delete user
         User findUser = this.userDao.findUserByName(user.getUserName());
         if (null != findUser) {
             this.userDao.delete(findUser);
