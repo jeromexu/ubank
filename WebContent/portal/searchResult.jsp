@@ -3,11 +3,11 @@
 
 <table cellpadding="0" cellspacing="0" border="1" id="mainTable">
   <tr align="center">
-    <td width="260" class="th_title pointer">${u:getMessage('ubank.home.thead.filename')}</td>
-    <td width="100" class="th_title pointer">${u:getMessage('ubank.home.thead.filesize')}</td>
-    <td width="150" class="th_title pointer">${u:getMessage('ubank.home.thead.owner')}</td>
-    <td width="200" class="th_title pointer">${u:getMessage('ubank.home.thead.modifydate')}</td>
-    <td width="100" class="th_title">${u:getMessage('ubank.home.thead.download')}</td>             
+    <td width="260" class="th_title pointer">${u:getText('ubank.home.thead.filename')}</td>
+    <td width="100" class="th_title pointer">${u:getText('ubank.home.thead.filesize')}</td>
+    <td width="150" class="th_title pointer">${u:getText('ubank.home.thead.owner')}</td>
+    <td width="200" class="th_title pointer">${u:getText('ubank.home.thead.modifydate')}</td>
+    <td width="100" class="th_title">${u:getText('ubank.home.thead.download')}</td>             
   </tr>
   
   <c:choose>
@@ -18,13 +18,13 @@
             <td>${file.size }</td>
             <td><c:out value="${file.folder.user.userName}" escapeXml="true" /></td>
             <td><fmt:formatDate value="${file.modifyTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-            <td><a href="download.do?id=${file.fileId }"><font size="2">${u:getMessage('ubank.home.thead.download') }</font></a></td>
+            <td><a href="download.do?id=${file.fileId }"><font size="2">${u:getText('ubank.home.thead.download') }</font></a></td>
           </tr>
       </c:forEach>
     </c:when>
     <c:otherwise>
       <tr align="center">
-        <td colspan="5"><font color="red" size="2">${u:getMessage("message.sharefile.search.result.empty")}</font></td>
+        <td colspan="5"><font color="red" size="2">${u:getText("message.sharefile.search.result.empty")}</font></td>
       </tr>
     </c:otherwise>
   </c:choose>
