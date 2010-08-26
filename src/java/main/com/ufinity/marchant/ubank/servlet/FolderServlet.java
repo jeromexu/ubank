@@ -62,14 +62,18 @@ public class FolderServlet extends AbstractServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String method = req.getParameter("method");
+        String method = parseActionName(req);
         String rslt = Constant.ERROR_PAGE;
 
         if (SHOW_MAIN.equals(method)) {
             rslt = showMain(req, resp);
         }
-        else if (SHOW_TREE.equals(method)) {
+        else if (Constant.SHOW_TREE.equals(method)) {
             showTree(req, resp);
+            return;
+        }
+        else if (Constant.SHOW_FOLDER_CONTENT.equals(method)) {
+            showFolderContent(req, resp);
             return;
         }
 
@@ -151,10 +155,10 @@ public class FolderServlet extends AbstractServlet {
     private void showFolderContent(HttpServletRequest req,
             HttpServletResponse resp) {
         String id = req.getParameter("folderId");
-        Long folderId = null;
-        if (!Validity.isNullAndEmpty(id)) {
-            folderId = Long.parseLong(id);
+        if (Validity.isNullAndEmpty(id)) {
+            return;
         }
+        Long folderId = Long.parseLong(id);
         List<FileOrFolderJsonEntity> josnEntitys = null;
         josnEntitys = folderService.getAllByFolder(folderId);
         String jsonStr = "";

@@ -209,7 +209,7 @@ public class FolderServiceImpl implements FolderService {
             }
             // conver sub-folders Object to FileOrFolderJsonEntity
             Set<Folder> chiFolders = folder.getChildren();
-            if (Validity.isEmpty(chiFolders)) {
+            if (!Validity.isEmpty(chiFolders)) {
                 for (Folder child : chiFolders) {
                     FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
                     jsonEntity.setId(child.getFolderId());
