@@ -22,7 +22,7 @@
 </div>
 <hr width="380px" align="center" />
 <div align="center"><c:if test="${not empty register_msg }">
-				${register_msg}
+				${u:getText(register_msg) }
 </c:if> <c:if test="${not empty userName_error_msg }">
 				${userName_error_msg}
 </c:if> <c:if test="${not empty pass_error_msg }">
@@ -32,6 +32,7 @@
 </c:if> <c:if test="${not empty captcha_error_msg }">
 				${captcha_error_msg}
 </c:if>
+<c:if test="${register_msg eq 'user.exist' || register_msg eq '' || register_msg eq null}">
 <form action="${contextPath}/portal/register.do" method="post"
 	id="userFomr" name="userFomr" onsubmit="return checkUserForm();">
 <table width="380px" height="220px">
@@ -71,6 +72,7 @@
 	</tbody>
 </table>
 </form>
+</c:if>
 </div>
 
 <script type="text/javascript">
@@ -110,6 +112,6 @@
 </script></div>
 </div>
 <div class="footDiv"></div>
-</div>
+
 </body>
 </html>
