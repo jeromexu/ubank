@@ -59,4 +59,17 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
         return EntityManagerUtil.getEntityManager().createNativeQuery(sqlQuery,
                 Folder.class).setParameter("userId", userId).getResultList();
     }
+
+    /**
+     * 
+     * @param userId
+     * @return Folder
+     * @author skyqiang
+     */
+    public Folder findRootRolderByUserId(Long userId) {
+        String jpaQuery = "SELECT f FROM Folder AS f WHERE f.parent is null AND f.user.userId=:userId";
+
+        return (Folder) EntityManagerUtil.getEntityManager().createQuery(
+                jpaQuery).setParameter("userId", userId).getSingleResult();
+    }
 }

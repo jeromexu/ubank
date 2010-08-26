@@ -46,4 +46,14 @@ public interface FolderDao extends GenericDao<Folder, Long> {
      * @author skyqiang
      */
     public List<Folder> findFolderListByUserId(Long userId);
+
+    /**
+     * this method is find root folder collection according user id
+     * 
+     * @param userId
+     *            user's id
+     * @return Folder root folder
+     * @author skyqiang
+     */
+    public Folder findRootRolderByUserId(Long userId);
 }
