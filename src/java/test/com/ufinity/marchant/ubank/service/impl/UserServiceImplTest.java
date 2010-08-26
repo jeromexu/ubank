@@ -35,18 +35,6 @@ public class UserServiceImplTest {
 	private FolderDao folderDao;
 
 	/**
-	 * setUpBeforeClass
-	 * 
-	 * @throws Exception
-	 *             occur exception throw it
-	 * @author zdxue
-	 */
-	@Before
-	public static void setUpBeforeClass() throws Exception {
-		// TODO
-	}
-
-	/**
 	 * SetUp
 	 * 
 	 * @throws Exception
@@ -101,11 +89,6 @@ public class UserServiceImplTest {
 			}
 		});
 
-		try {
-			assertEquals(null, userService.getUser(userName, password));
-		} catch (UBankException e) {
-			fail("get user error");
-		}
         try {
             assertNull(userService.getUser(userName, password));
         } catch (UBankException e) {
