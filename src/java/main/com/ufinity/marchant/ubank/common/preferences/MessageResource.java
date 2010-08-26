@@ -37,7 +37,7 @@ import com.ufinity.marchant.ubank.Context;
  * @author zdxue     
  */
 public final class MessageResource {
-    private static final String BASE_NAME = "MessageResources";
+    private static final String BASE_NAME = SystemGlobals.getString(ConfigKeys.I18N_BASE_NAME);
     private static final Map<Locale, ResourceBundleWrapper> BUNDLES = new Hashtable<Locale, ResourceBundleWrapper>();
 
     /**
