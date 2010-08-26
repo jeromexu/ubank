@@ -35,7 +35,7 @@ import com.ufinity.marchant.ubank.common.StringUtil;
  */
 public final class SystemGlobals {
 
-    private static final UBankResourceBundle RB = new UBankResourceBundle("SystemGlobals", Locale.US); 
+    private static final ResourceBundleWrapper RB = new ResourceBundleWrapper("SystemGlobals", Locale.US); 
 
     /**
      * Private Constructor

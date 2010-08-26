@@ -38,7 +38,7 @@ import com.ufinity.marchant.ubank.Context;
  */
 public final class MessageResource {
     private static final String BASE_NAME = "MessageResources";
-    private static final Map<Locale, UBankResourceBundle> BUNDLES = new Hashtable<Locale, UBankResourceBundle>();
+    private static final Map<Locale, ResourceBundleWrapper> BUNDLES = new Hashtable<Locale, ResourceBundleWrapper>();
 
     /**
      * Private Constructor
@@ -59,7 +59,7 @@ public final class MessageResource {
         }
 
         if(!BUNDLES.containsKey(locale)){
-            BUNDLES.put(locale, new UBankResourceBundle(BASE_NAME, locale));
+            BUNDLES.put(locale, new ResourceBundleWrapper(BASE_NAME, locale));
         }
 
         return BUNDLES.get(locale).getValue(key);
@@ -80,7 +80,7 @@ public final class MessageResource {
             locale = (Locale)ac.get(Context.GLOBAL_LOCALE);
 
         if(!BUNDLES.containsKey(locale)){
-            BUNDLES.put(locale, new UBankResourceBundle(BASE_NAME, locale));
+            BUNDLES.put(locale, new ResourceBundleWrapper(BASE_NAME, locale));
         }
 
         return BUNDLES.get(locale).getValue(key);

@@ -27,12 +27,12 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Description of the class
+ * ResourceBundleWrapper
  * 
  * @version 1.0 - 2010-8-19
  * @author zdxue
  */
-public class UBankResourceBundle {
+public class ResourceBundleWrapper {
     private ResourceBundle rb;
 
     /**
@@ -42,7 +42,7 @@ public class UBankResourceBundle {
      * @param locale locale
      * @author zdxue
      */
-    public UBankResourceBundle(String baseName, Locale locale) {
+    public ResourceBundleWrapper(String baseName, Locale locale) {
         try{
             rb = ResourceBundle.getBundle(baseName, locale);
         }catch(Exception e) {
