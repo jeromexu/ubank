@@ -734,4 +734,26 @@ public class FolderServiceImpl implements FolderService {
         }
         return SystemGlobals.getString(ConfigKeys.DOCUMENT_TYPE_UNKNOWN);
     }
+
+    /**
+     * get user root directory
+     * 
+     * @param userId
+     *            user id
+     * @return return user root directory
+     * @author bxji
+     */
+    public Folder getRootFolder(Long userId) {
+        if (userId == null || 0l == userId) {
+            return null;
+        }
+        Folder folder = null;
+        try {
+            folder = folderDao.findRootRolderByUserId(userId);
+        }
+        catch (Exception e) {
+            logger.debug("get user root folder the database exception ", e);
+        }
+        return folder;
+    }
 }

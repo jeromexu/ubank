@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
@@ -158,10 +159,22 @@ public class FolderServlet extends AbstractServlet {
     private void showFolderContent(HttpServletRequest req,
             HttpServletResponse resp) {
         String id = req.getParameter("folderId");
-        if (Validity.isNullAndEmpty(id)) {
-            return;
+        Long folderId = null;
+        if (!Validity.isNullAndEmpty(id)) {
+            folderId = Long.parseLong(id);
         }
-        Long folderId = Long.parseLong(id);
+        else {
+            // if request parameter folderid is null
+            User user = (User) req.getSession().getAttribute(
+                    Constant.SESSION_USER);
+            if (user != null) {
+                Folder folder = folderService.getRootFolder(user.getUserId());
+                folderId = folder.getFolderId();
+            }
+            else {
+                return;
+            }
+        }
         List<FileOrFolderJsonEntity> josnEntitys = null;
         josnEntitys = folderService.getAllByFolder(folderId);
 
@@ -184,5 +197,4 @@ public class FolderServlet extends AbstractServlet {
         }
 
     }
-
 }

@@ -151,4 +151,14 @@ public interface FolderService {
      */
     public boolean cancelShareFolder(Long folderId);
 
+    /**
+     * get user root directory
+     * 
+     * @param userId
+     *            user id
+     * @return return user root directory
+     * @author bxji
+     */
+    public Folder getRootFolder(Long userId);
+
 }
