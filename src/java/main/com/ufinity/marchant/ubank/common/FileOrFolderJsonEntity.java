@@ -26,8 +26,6 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common;
 
-import java.util.Date;
-
 /**
  * {description of method or object}
  * 
@@ -40,96 +38,123 @@ public class FileOrFolderJsonEntity {
 
     private Long id;
     private String name;
-    private Date modifyTime;
+    private String modTime;
     private String type;
-    private String directory;
+    private String dir;
     private Long size;
-    
+
     /**
      * the getter method of id
+     * 
      * @return the id
      */
     public Long getId() {
         return id;
     }
+
     /**
      * the setter method of the id
-     * @param id the id to set
+     * 
+     * @param id
+     *            the id to set
      */
     public void setId(Long id) {
         this.id = id;
     }
+
     /**
      * the getter method of name
+     * 
      * @return the name
      */
     public String getName() {
         return name;
     }
+
     /**
      * the setter method of the name
-     * @param name the name to set
+     * 
+     * @param name
+     *            the name to set
      */
     public void setName(String name) {
         this.name = name;
     }
-    /**
-     * the getter method of modifyTime
-     * @return the modifyTime
-     */
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-    /**
-     * the setter method of the modifyTime
-     * @param modifyTime the modifyTime to set
-     */
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
+
     /**
      * the getter method of type
+     * 
      * @return the type
      */
     public String getType() {
         return type;
     }
+
     /**
      * the setter method of the type
-     * @param type the type to set
+     * 
+     * @param type
+     *            the type to set
      */
     public void setType(String type) {
         this.type = type;
     }
-    /**
-     * the getter method of directory
-     * @return the directory
-     */
-    public String getDirectory() {
-        return directory;
-    }
-    /**
-     * the setter method of the directory
-     * @param directory the directory to set
-     */
-    public void setDirectory(String directory) {
-        this.directory = directory;
-    }
+
     /**
      * the getter method of size
+     * 
      * @return the size
      */
     public Long getSize() {
         return size;
     }
+
+    /**
+     * the getter method of modTime
+     * 
+     * @return the modTime
+     */
+    public String getModTime() {
+        return modTime;
+    }
+
+    /**
+     * the setter method of the modTime
+     * 
+     * @param modTime
+     *            the modTime to set
+     */
+    public void setModTime(String modTime) {
+        this.modTime = modTime;
+    }
+
+    /**
+     * the getter method of dir
+     * 
+     * @return the dir
+     */
+    public String getDir() {
+        return dir;
+    }
+
+    /**
+     * the setter method of the dir
+     * 
+     * @param dir
+     *            the dir to set
+     */
+    public void setDir(String dir) {
+        this.dir = dir;
+    }
+
     /**
      * the setter method of the size
-     * @param size the size to set
+     * 
+     * @param size
+     *            the size to set
      */
     public void setSize(Long size) {
         this.size = size;
     }
-    
-    
 
 }

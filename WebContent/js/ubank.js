@@ -1,4 +1,4 @@
-//upload window
+// upload window
 var newWindow;
 
 $(function() {
@@ -7,7 +7,7 @@ $(function() {
 						url : '/ubank/portal/showTree.do',
 						onClick : function(node) {
 
-							alert('you click ' + node.text);
+							alert('you click ' + node.id);
 						}
 
 					});
@@ -19,6 +19,9 @@ function reload() {
 
 $(function() {
 			$('#test').datagrid({
+				// title : 'My Title',
+				//iconCls : 'icon-save',
+				// width : 600,
 				height : 570,
 				nowrap : false,
 				striped : true,
@@ -27,33 +30,42 @@ $(function() {
 				sortOrder : 'desc',
 				idField : 'code',
 				frozenColumns : [[{
-							field : 'ck',
-							checkbox : true
-						}, {
-							title : '文件名',
-							field : 'code',
-							width : 80,
+							title : '名称',
+							field : 'name',
+							width : 380,
 							sortable : true
 						}]],
 				columns : [[{
-							field : 'name',
-							title : '名称',
-							width : 120
-						}, {
-							field : 'addr',
-							title : '地址',
+							field : 'size',
+							title : '大小',
 							width : 120,
-							rowspan : 2,
+							align : 'right'
+						}, {
+							field : 'type',
+							title : '类型',
+							width : 120,
+							align : 'right',
 							sortable : true
 						}, {
-							field : 'col4',
-							title : 'Col41',
-							width : 150,
-							rowspan : 2
-						}]],
-				pagination : false,
+							field : 'modTime',
+							title : '修改时间',
+							width : 200,
+							align : 'right'
+						}, {
+							field : 'opt',
+							title : '操作',
+							width : 100,
+							align : 'center',
+							rowspan : 2,
+							formatter : function(value, rec) {
+								return '<span style="color:red">Edit Delete</span>';
+							}
+						}
+
+				]],
+				pagination : true,
 				rownumbers : true,
-				singleSelect : false,
+				singleSelect : true,
 
 				toolbar : [{
 							text : '新建目录',

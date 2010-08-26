@@ -77,4 +77,10 @@ public class ConfigKeys {
     public static final String DOCUMENT_NAME = "document.name";
     public static final String PHOTO_NAME = "photo.name";
     public static final String ROOT_NAME = "root.name";
+    
+    // Document type
+    public static final String DOCUMENT_TYPE_FOLDER = "document.type.folder";
+    public static final String DOCUMENT_TYPE_UNKNOWN = "document.type.unknown";
+    
+    
 }

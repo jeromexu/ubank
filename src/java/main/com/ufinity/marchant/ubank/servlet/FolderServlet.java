@@ -2,7 +2,9 @@ package com.ufinity.marchant.ubank.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,8 @@ import com.ufinity.marchant.ubank.common.JsonUtil;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.NodeUtil;
 import com.ufinity.marchant.ubank.common.Validity;
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
+import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
@@ -36,8 +40,6 @@ public class FolderServlet extends AbstractServlet {
     FolderService folderService = null;
 
     private static final String SHOW_MAIN = "showMain";
-    private static final String SHOW_TREE = "showTree";
-    private static final String USERNAME = "username";
 
     /**
      * Constructor for FolderServlet
@@ -127,9 +129,10 @@ public class FolderServlet extends AbstractServlet {
         }
 
         String treeJson = "";
-        JsonNode jsonNode = NodeUtil.copyFolderNodeToJsonNode(treeRootNode);
-
         if (treeRootNode != null) {
+            treeRootNode.setFolderName(SystemGlobals
+                    .getString(ConfigKeys.ROOT_NAME));
+            JsonNode jsonNode = NodeUtil.copyFolderNodeToJsonNode(treeRootNode);
             treeJson = JsonUtil.bean2json(jsonNode);
         }
         resp.setContentType("application/json;charset=UTF-8");
@@ -161,9 +164,13 @@ public class FolderServlet extends AbstractServlet {
         Long folderId = Long.parseLong(id);
         List<FileOrFolderJsonEntity> josnEntitys = null;
         josnEntitys = folderService.getAllByFolder(folderId);
+
         String jsonStr = "";
         if (josnEntitys != null) {
-            jsonStr = JsonUtil.object2json(josnEntitys);
+            Map<String, Object> result = new HashMap<String, Object>();
+            result.put("total", josnEntitys.size());
+            result.put("rows", josnEntitys);
+            jsonStr = JsonUtil.object2json(result);
         }
         resp.setContentType("application/json;charset=UTF-8");
         System.out.println(jsonStr);

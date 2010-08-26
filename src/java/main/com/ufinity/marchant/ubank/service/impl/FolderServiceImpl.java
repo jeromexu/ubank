@@ -26,6 +26,7 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -43,6 +44,8 @@ import com.ufinity.marchant.ubank.common.DocumentUtil;
 import com.ufinity.marchant.ubank.common.FileOrFolderJsonEntity;
 import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.common.Validity;
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
+import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
@@ -191,6 +194,7 @@ public class FolderServiceImpl implements FolderService {
             logger.debug("happened to thd database an exception", e);
             return null;
         }
+        SimpleDateFormat df = new SimpleDateFormat(Constant.YYYY_MM_DD_HH_MM_SS);
         List<FileOrFolderJsonEntity> jsonEntieys = new ArrayList<FileOrFolderJsonEntity>();
         if (folder != null) {
             // convert the FileBean to FileOrFolderJsonEntity
@@ -201,9 +205,9 @@ public class FolderServiceImpl implements FolderService {
                     jsonEntity.setId(file.getFileId());
                     jsonEntity.setName(file.getFileName());
                     jsonEntity.setSize(file.getSize());
-                    jsonEntity.setModifyTime(file.getModifyTime());
-                    jsonEntity.setDirectory(file.getDirectory());
-                    jsonEntity.setType(FileOrFolderJsonEntity.TYPE_FILE);
+                    jsonEntity.setModTime(df.format(file.getModifyTime()));
+                    jsonEntity.setDir(file.getDirectory());
+                    jsonEntity.setType(getDocType(file));
                     jsonEntieys.add(jsonEntity);
                 }
             }
@@ -214,9 +218,10 @@ public class FolderServiceImpl implements FolderService {
                     FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
                     jsonEntity.setId(child.getFolderId());
                     jsonEntity.setName(child.getFolderName());
-                    jsonEntity.setModifyTime(child.getModifyTime());
-                    jsonEntity.setDirectory(child.getDirectory());
-                    jsonEntity.setType(FileOrFolderJsonEntity.TYPE_FOLDER);
+                    jsonEntity.setModTime(df.format(child.getModifyTime()));
+                    jsonEntity.setDir(child.getDirectory());
+                    jsonEntity.setType(SystemGlobals
+                            .getString(ConfigKeys.DOCUMENT_TYPE_FOLDER));
                     jsonEntieys.add(jsonEntity);
                 }
             }
@@ -705,5 +710,28 @@ public class FolderServiceImpl implements FolderService {
             }
         }
         return false;
+    }
+
+    /**
+     * get file type by the file suffix
+     * 
+     * @param file
+     *            fileBean object
+     * @return file type string
+     * @author bxji
+     */
+    private String getDocType(FileBean file) {
+        if (file == null) {
+            return "";
+        }
+        String name = file.getFileName();
+        int index = name.lastIndexOf('.');
+        if (index != -1) {
+            String typeName = name.substring(index);
+            if (Validity.isNullAndEmpty(typeName)) {
+                return typeName.trim().toUpperCase();
+            }
+        }
+        return SystemGlobals.getString(ConfigKeys.DOCUMENT_TYPE_UNKNOWN);
     }
 }

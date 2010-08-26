@@ -102,7 +102,6 @@ public interface Constant {
     public final String FILE_COPY = "_copy";
     public final String FOLDER_COPY = "_copy";
     
-
     /** file search pagenum */
     String REQ_PARAM_PAGENUM = "pageNum";
     int PAGE_NUM_DEF = 1;
@@ -130,5 +129,9 @@ public interface Constant {
     // file and folder operations action names
     public static final String SHOW_TREE = "showTree";
     public static final String SHOW_FOLDER_CONTENT = "showFolderContent";
+    
+    // data Format String
+    public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";    
+    
     
 }
