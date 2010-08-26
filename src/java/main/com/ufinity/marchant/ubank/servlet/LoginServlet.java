@@ -37,7 +37,6 @@ import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
-import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FileService;
@@ -145,8 +144,7 @@ public class LoginServlet extends AbstractServlet {
                 || password.length() > Constant.PASSWORD_LENGTH) {
             LOG.debug("login validation failure!");
 
-            req.setAttribute(Constant.ATTR_ERROR_MSG, MessageResource
-                    .getMessage(MessageKeys.MSG_LOGIN_FAILURE));
+            req.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.MSG_LOGIN_FAILURE));
             return Constant.HOME_PAGE;
         }
 
@@ -161,8 +159,7 @@ public class LoginServlet extends AbstractServlet {
 
         if (user == null) {
             LOG.debug("user not exists, login failure");
-            req.setAttribute(Constant.ATTR_ERROR_MSG, MessageResource
-                    .getMessage(MessageKeys.MSG_LOGIN_FAILURE));
+            req.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.MSG_LOGIN_FAILURE));
             home(req, resp);
 
             return Constant.HOME_PAGE;

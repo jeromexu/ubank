@@ -23,48 +23,84 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common.preferences;
 
+import java.text.MessageFormat;
+import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Map;
+
+import com.ufinity.marchant.ubank.Context;
 
 /**
- * Message resources for ubank
+ * Message resources
  *
  * @version 1.0 - 2010-8-19
  * @author zdxue     
  */
 public final class MessageResource {
-    
-    private static final UBankResourceBundle RB = new UBankResourceBundle("MessageResources", Locale.getDefault());
-    
+    private static final String BASE_NAME = "MessageResources";
+    private static final Map<Locale, UBankResourceBundle> BUNDLES = new Hashtable<Locale, UBankResourceBundle>();
+
     /**
      * Private Constructor
      */
     private MessageResource(){}
-    
+
     /**
-     * Get message from properties file 
+     * Get text by key and locale 
      *
-     * @param key key
-     * @return message
+     * @param key key 
+     * @param locale locale
+     * @return value
      * @author zdxue
      */
-    public static String getMessage(String key) {
-        return RB.getValue(key);
+    public static String getText(String key, Locale locale) {
+        if(locale == null) {
+            locale = Locale.getDefault();
+        }
+
+        if(!BUNDLES.containsKey(locale)){
+            BUNDLES.put(locale, new UBankResourceBundle(BASE_NAME, locale));
+        }
+
+        return BUNDLES.get(locale).getValue(key);
+    }
+
+    /**
+     * Get text by key and Context's GLOBAL_LOCALE 
+     *
+     * @param key key
+     * @return value
+     * @author zdxue
+     */
+    public static String getText(String key) {
+        Context ac = Context.getContext();
+        Locale locale = Locale.getDefault();
+
+        if(ac != null)
+            locale = (Locale)ac.get(Context.GLOBAL_LOCALE);
+
+        if(!BUNDLES.containsKey(locale)){
+            BUNDLES.put(locale, new UBankResourceBundle(BASE_NAME, locale));
+        }
+
+        return BUNDLES.get(locale).getValue(key);
+    }
+
+    /**
+     * Get text with dynamic params 
+     *
+     * @param key key
+     * @param params params
+     * @return text
+     * @author zdxue
+     */
+    public static String getText(String key, Object...params) {
+        try{
+            return MessageFormat.format(getText(key), params);
+        }catch(Exception e) {
+            return getText(key);
+        }
     }
     
-    /**
-     * Get message from properties file 
-     * 
-     * @param key key
-     * @param params replace param like {0},{1}...
-     * @return message
-     * @author liujun
-     */
-    public static String getMessage(String key, String[] params) {
-        String value = getMessage(key);
-        for (int i = 0; i < params.length; i++) {
-            value = value.replace("{"+i+"}", params[i]);
-        }
-        return value;
-    }
 }
 

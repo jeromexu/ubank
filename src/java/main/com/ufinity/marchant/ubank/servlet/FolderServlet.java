@@ -24,7 +24,6 @@ import com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
-import com.ufinity.marchant.ubank.service.impl.FolderServiceImpl;
 
 /**
  * Folder Servlet used to operation folder

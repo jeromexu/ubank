@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
             if (user != null) {
                 userName = user.getUserName();
             } else {
-                return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
+                return MessageResource.getText(MessageKeys.REGISTER_FAILURE);
             }
             // query current user exist or not
             User queryUser = userDao.findUserByName(userName);
@@ -96,24 +96,23 @@ public class UserServiceImpl implements UserService {
                 boolean initFlag = createUserDir(user.getUserId());
                 EntityManagerUtil.commit();
                 if (initFlag) {
-                	return MessageResource.getMessage(MessageKeys.REGISTER_SUCCESS);
+                	return MessageResource.getText(MessageKeys.REGISTER_SUCCESS);
                 } else {
-                	return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
+                	return MessageResource.getText(MessageKeys.REGISTER_FAILURE);
                 }
             } else {
                 // user exist,do not register
-                return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
+                return MessageResource.getText(MessageKeys.REGISTER_FAILURE);
             }
             
         } catch (Exception e) {
-        	e.printStackTrace();
             LOG.error("user register exception!", e);
         } finally {
             EntityManagerUtil.closeEntityManager();
         }
         LOG.debug("doRegister:-----complete--------");
         // register success
-        return MessageResource.getMessage(MessageKeys.REGISTER_SUCCESS);
+        return MessageResource.getText(MessageKeys.REGISTER_SUCCESS);
     }
 
     /**

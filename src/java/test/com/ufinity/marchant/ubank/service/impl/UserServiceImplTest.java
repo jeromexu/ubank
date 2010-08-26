@@ -148,15 +148,16 @@ public class UserServiceImplTest {
 			}
 		});
 		String msg = userService.doRegister(user);
-		assertEquals(MessageResource.getMessage(MessageKeys.REGISTER_FAILURE), msg);
+		assertEquals(MessageResource.getText(MessageKeys.REGISTER_FAILURE), msg);
 		
 		
 		final User member = new User();
-		member.setUserId(2L);
+		member.setUserId(100L);
 		member.setUserName("hello");
 		member.setPassword("111111");
 		member.setCreateTime(new Date());
 		member.setOverSize(1);
+
 		// Case 2 : query user by userName that the user does not exist
 		// parameter value： the userName
 		// expectation value： register success msg
@@ -172,7 +173,7 @@ public class UserServiceImplTest {
 			}
 		});
 		String message = userService.doRegister(member);
-		assertEquals(MessageResource.getMessage(MessageKeys.REGISTER_SUCCESS), message);
+		assertEquals(MessageResource.getText(MessageKeys.REGISTER_SUCCESS), message);
 		context.assertIsSatisfied();
 	}
 }

@@ -24,11 +24,15 @@
 package com.ufinity.marchant.ubank.servlet;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ufinity.marchant.ubank.Context;
+import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 
 /**
  * Abstract Servlet
@@ -68,5 +72,43 @@ public class AbstractServlet extends HttpServlet {
         if(path != null) {
             req.getRequestDispatcher(path).forward(req, resp);            
         }
+    }
+    
+    /**
+     * Get locale 
+     *
+     * @return Locale
+     * @author zdxue
+     */
+    protected Locale getLocale() {
+        Context ac = Context.getContext();
+        if(ac == null){
+            return Locale.getDefault();
+        }
+        
+        return (Locale)ac.get(Context.GLOBAL_LOCALE);
+    }
+    
+    /**
+     * Get text 
+     *
+     * @param key key
+     * @return value
+     * @author zdxue
+     */
+    protected String getText(String key) {
+        return MessageResource.getText(key, getLocale());
+    }
+    
+    /**
+     * Get text with dynamic params
+     *
+     * @param key key 
+     * @param objects params
+     * @return value
+     * @author zdxue
+     */
+    protected String getText(String key, String...objects) {
+        return MessageResource.getText(key, objects);
     }
 }

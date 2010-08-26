@@ -16,7 +16,6 @@ import com.ufinity.marchant.ubank.captcha.MyCaptchaService;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
-import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UserService;
 
@@ -79,8 +78,7 @@ public class RegServlet extends AbstractServlet {
 				logger.debug("captchaCode = " + captchaCode);
 			}
 			if (Validity.isEmpty(captchaCode)) {
-				request.setAttribute(Constant.CAPTCHA_ERR, MessageResource
-						.getMessage(MessageKeys.CAPTCHA_ERR_MSG));
+				request.setAttribute(Constant.CAPTCHA_ERR, getText(MessageKeys.CAPTCHA_ERR_MSG));
 				return Constant.REGISTER_PAGE; 
 			}
 			HttpSession session = request.getSession();   
@@ -90,8 +88,7 @@ public class RegServlet extends AbstractServlet {
 			isValidateCode = MyCaptchaService.getInstance().validateCaptchaResponse(validateCode, session);   
 			if (!isValidateCode) {
 				// captcha code is not right
-				request.setAttribute(Constant.CAPTCHA_ERR, MessageResource
-						.getMessage(MessageKeys.CAPTCHA_ERR_MSG));
+				request.setAttribute(Constant.CAPTCHA_ERR, getText(MessageKeys.CAPTCHA_ERR_MSG));
 			} else {
 				String userName = request.getParameter(Constant.REQ_PARAM_USERNAME);
 				String pass = request.getParameter(Constant.REQ_PARAM_PASSWORD);
@@ -102,17 +99,14 @@ public class RegServlet extends AbstractServlet {
 					logger.debug("repass = " + repass);
 				}
 				if (Validity.isEmpty(userName.trim())) {
-					request.setAttribute(Constant.USERNAME_ERR, MessageResource
-							.getMessage(MessageKeys.USERNAME_ERR_MSG));
+					request.setAttribute(Constant.USERNAME_ERR, getText(MessageKeys.USERNAME_ERR_MSG));
 					return Constant.REGISTER_PAGE; 
 				}
 				if (Validity.isEmpty(pass.trim())) {
-					request.setAttribute(Constant.PASS_ERR, MessageResource
-							.getMessage(MessageKeys.PASS_ERR_MSG));
+					request.setAttribute(Constant.PASS_ERR, getText(MessageKeys.PASS_ERR_MSG));
 					return Constant.REGISTER_PAGE; 
 				} else if (!pass.equals(repass)) {
-					request.setAttribute(Constant.REPASS_ERR, MessageResource
-							.getMessage(MessageKeys.REPASS_ERR_MSG));
+					request.setAttribute(Constant.REPASS_ERR, getText(MessageKeys.REPASS_ERR_MSG));
 					return Constant.REGISTER_PAGE; 
 				}
 				User user = new User();
