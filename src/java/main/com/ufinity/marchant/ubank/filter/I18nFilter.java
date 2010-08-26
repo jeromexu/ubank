@@ -45,7 +45,7 @@ import com.ufinity.marchant.ubank.Context;
 public class I18nFilter implements Filter {
 
     /**
-     * Constructor
+     * Destroy
      */
 	public void destroy() {
 	}
