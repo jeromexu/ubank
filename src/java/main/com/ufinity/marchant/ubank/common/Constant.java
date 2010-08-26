@@ -127,4 +127,8 @@ public interface Constant {
     String MIN_MODIFY_TIME = "minModifyTime";
     String MAX_MODIFY_TIME = "maxModifyTime";
     
+    // file and folder operations action names
+    public static final String SHOW_TREE = "showTree";
+    public static final String SHOW_FOLDER_CONTENT = "showFolderContent";
+    
 }
