@@ -36,10 +36,9 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
+import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.dao.GenericDao;
@@ -56,7 +55,7 @@ import com.ufinity.marchant.ubank.dao.GenericDao;
 public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         GenericDao<T, PK> {
     // get logger method
-    protected Logger log = LoggerFactory.getLogger(GenericDaoSupport.class);
+    protected Logger log = Logger.getInstance(GenericDaoSupport.class);
 
     // save parameter class type
     private Class<T> type;
@@ -82,16 +81,14 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      * 
      */
     public void add(T entity) {
-        String method = "add";
-
+        log.debug("Method: Add, Param:{Entity: " + entity + "}");
         // check this parameter is invalidate or not,if invalidate
         if (null == entity) {
-            log.error(method, "", "Parameter value is invalidate!");
+            log.error("Parameter value is invalidate!");
             return;
         }
         EntityManagerUtil.getEntityManager().persist(entity);
-        log.debug(method, "", "Execute persist method is successful!");
-
+        log.debug("Execute persist method is successful!");
     }
 
     /**
@@ -102,15 +99,13 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      * 
      */
     public void delete(T entity) {
-        String method = "delete";
-
-        // check this parameter is invalidate or not,if invalidate
+        log.debug("Method: delete, Param:{Entity: " + entity + "}");
         if (null == entity) {
-            log.error(method, "", "Parameter value is invalidate!");
+            log.error("Parameter value is invalidate!");
             return;
         }
         EntityManagerUtil.getEntityManager().remove(entity);
-        log.debug(method, "", "Execute remove method is successful!");
+        log.debug("Execute remove method is successful!");
 
     }
 
@@ -123,18 +118,15 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      * 
      */
     public void deleteById(PK id) {
-        String method = "deleteById";
-
-        // check this parameter is invalidate or not,if invalidate
+        log.debug("Method: deleteById, Param:{PK: " + id + "}");
         if (null == id) {
-            log.error(method, "", "Parameter value is invalidate!");
+            log.error("Parameter value is invalidate!");
             return;
         }
         EntityManagerUtil.getEntityManager().remove(
                 EntityManagerUtil.getEntityManager()
                         .getReference(this.type, id));
-        log.debug(method, "", "Execute deleteById method is successful!");
-
+        log.debug("Execute deleteById method is successful!");
     }
 
     /**
@@ -147,16 +139,13 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      *         happen exception.
      */
     public T find(PK id) {
-        String method = "find";
-
-        // check this parameter is invalidate or not,if invalidate
+        log.debug("Method: find, Param:{PK: " + id + "}");
         if (null == id) {
-            log.error(method, "", "Parameter value is invalidate!");
+            log.error("Parameter value is invalidate!");
             return null;
         }
         T entity = (T) EntityManagerUtil.getEntityManager().find(this.type, id);
-        log.debug(method, "", "Execute find method is successful!");
-
+        log.debug("Execute find method is successful!");
         return entity;
     }
 
@@ -168,14 +157,12 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      */
     @SuppressWarnings("unchecked")
     public PK getRecordCount() {
-        String method = "getRecordCount";
-
         String jpal = "SELECT COUNT(*) FROM " + this.type.getName();
         Long count = null;
 
         count = ((Long) EntityManagerUtil.getEntityManager().createQuery(jpal)
                 .getSingleResult());
-        log.debug(method, "", "Execute getRecordCount method is successful!");
+        log.debug("Execute getRecordCount method is successful!");
 
         return (PK) count;
     }
@@ -187,15 +174,14 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      *            if you want to update entity.
      */
     public void modify(T entity) {
-        String method = "modifty";
-
+        log.debug("Method: modify, Param:{Entity: " + entity + "}");
         // check this parameter is invalidate or not,if invalidate
         if (null == entity) {
-            log.error(method, "", "Parameter value is invalidate!");
+            log.error("Parameter value is invalidate!");
             return;
         }
         EntityManagerUtil.getEntityManager().merge(entity);
-        log.debug(method, "", "Execute entity method is successful!");
+        log.debug("Execute entity method is successful!");
 
     }
 
@@ -216,12 +202,12 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      */
     @SuppressWarnings("unchecked")
     public List<T> queryList(PK startRecord, PK pageSize) {
-        String method = "queryList";
-
+        log.debug("Method: queryList, Param:{startRecord: " + startRecord
+                + " , pageSize: " + pageSize + "}");
         String jpal = "SELECT A FROM " + this.getType().getName() + " AS A";
         List<T> lists = null;
         if (null == startRecord || null == pageSize) {
-            log.error(method, "", "Parameter value is invalidate!");
+            log.error("Parameter value is invalidate!");
             return null;
         }
 
@@ -229,7 +215,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
                 .createQuery(jpal).setFirstResult(
                         ((Long) startRecord).intValue()).setMaxResults(
                         ((Long) pageSize).intValue()).getResultList();
-        log.debug(method, "", "Execute queryList method is successful!");
+        log.debug("Execute queryList method is successful!");
         return lists;
     }
 
@@ -269,14 +255,20 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     @SuppressWarnings("unused")
     private Pager<T> findPager(String hql, int currentPage, int pageSize,
             Class<T> clazz, Map<String, Object> properties) {
+        log.debug("Method: findPager, Param:{currentPage : " + currentPage
+                + " ,pageSize : " + pageSize + " ,properties:" + properties
+                + "}");
         if (currentPage <= 0) {
+            log.error("current page's value isn't less than zero!");
             return null;
         }
         int totalRecords = 0;
         if (clazz != null) {
             totalRecords = (int) this.getRecordCount(clazz);
+            log.debug("Param:{clazz : " + clazz + "}");
         } else {
             totalRecords = this.getRecordCount(hql, properties);
+            log.debug("Param:{clazz : " + clazz + "}");
         }
         Pager<T> page = new Pager<T>();
         List<T> list = null;
@@ -309,7 +301,12 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     @SuppressWarnings("unchecked")
     public List<T> queryList(String hql, int startRecord, int pageSize,
             Class<T> clazz, Map<String, Object> properties) {
+        log.debug("Method: queryList, Param:{startRecord : " + startRecord
+                + " ,pageSize : " + pageSize + " ,properties:" + properties
+                + "}");
         if (hql == null && clazz == null) {
+            log.error("Parameter is invalidate!Param Value{hql :" + hql
+                    + " ,clazz: " + clazz + "}");
             return null;
         }
         if (clazz != null) {
@@ -415,6 +412,10 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     @SuppressWarnings("unchecked")
     public Pager<T> queryEntitiesByCriteriaWithPager(int currentPage,
             int pageSize, Criterion... criterion) {
+        log
+                .debug("Method: queryEntitiesByCriteriaWithPager, Param:{currentPage : "
+                        + currentPage + " ,pageSize : " + pageSize + "}");
+
         List<T> list = null;
         Criteria criteria = ((Session) EntityManagerUtil.getEntityManager()
                 .getDelegate()).createCriteria(this.type);

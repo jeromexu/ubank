@@ -52,10 +52,15 @@ public class UserDaoImpl extends GenericDaoSupport<User, Long> implements
      */
     @SuppressWarnings("unchecked")
     public User findUser(String userName, String password) {
+        log.debug("Method: findUser, Param:{userName: " + userName
+                + " , password: " + password + "}");
+
         List<User> list = EntityManagerUtil.getEntityManager()
                 .createNamedQuery("User.findUserByNameAndPass").setParameter(
                         "name", userName).setParameter("pass", password)
                 .getResultList();
+        log
+                .debug("Execute find user according user name and password method is success!");
 
         if (null != list && list.size() > 0) {
             return list.get(0);
@@ -73,9 +78,12 @@ public class UserDaoImpl extends GenericDaoSupport<User, Long> implements
      */
     @SuppressWarnings("unchecked")
     public User findUserByName(String userName) {
+        log.debug("Method: findUserByName, Param:{userName: " + userName + "}");
+
         List<User> list = EntityManagerUtil.getEntityManager()
                 .createNamedQuery("User.findUserByName").setParameter("name",
                         userName).getResultList();
+        log.debug("Execute find user according user name method is success!");
 
         if (null != list && list.size() > 0) {
             return list.get(0);

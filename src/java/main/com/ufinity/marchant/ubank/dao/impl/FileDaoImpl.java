@@ -33,6 +33,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
+import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.FileDao;
 
@@ -60,12 +61,14 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
             int pageSize, Map<String, Object> condition) {
         Criterion[] criterion = new Criterion[] {
                 Restrictions.eq("share", condition.get("share")),
-                Restrictions.like("fileName", "%" + condition.get("fileName")
-                        + "%"),
-                Restrictions.between("size", condition.get("minFileSize"),
-                        condition.get("maxFileSize")),
+                Restrictions.like("fileName", "%"
+                        + condition.get(Constant.FILENAME) + "%"),
+                Restrictions.between("size", condition
+                        .get(Constant.MIN_FILE_SIZE), condition
+                        .get(Constant.MAX_FILE_SIZE)),
                 Restrictions.between("modifyTime", condition
-                        .get("minModifyTime"), condition.get("maxModifyTime")) };
+                        .get(Constant.MIN_MODIFY_TIME), condition
+                        .get(Constant.MAX_MODIFY_TIME)) };
 
         return queryEntitiesByCriteriaWithPager(currentPage, pageSize,
                 criterion);
@@ -89,10 +92,10 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
                 + getJPAQueryString(condition);
 
         if (null != condition) {
-            String fileName = (String) condition.get("fileName");
+            String fileName = (String) condition.get(Constant.FILENAME);
             if (null != fileName) {
                 fileName = "%" + fileName + "%";
-                condition.put("fileName", fileName);
+                condition.put(Constant.FILENAME, fileName);
             }
         }
         return findPager(jpaQuery, currentPage, pageSize, condition);
@@ -110,20 +113,20 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
         StringBuffer jpqQuery = new StringBuffer("WHERE 1=1 AND f.share=true ");
 
         if (null != condition) {
-            String fileName = (String) condition.get("fileName");
+            String fileName = (String) condition.get(Constant.FILENAME);
             if (null != fileName && !"".equals(fileName)) {
                 jpqQuery.append("AND f.fileName LIKE :fileName ");
             }
 
-            Long minFileSize = (Long) condition.get("minFileSize");
-            Long maxFileSize = (Long) condition.get("maxFileSize");
+            Long minFileSize = (Long) condition.get(Constant.MIN_FILE_SIZE);
+            Long maxFileSize = (Long) condition.get(Constant.MAX_FILE_SIZE);
             if (null != minFileSize && null != maxFileSize) {
                 jpqQuery
                         .append("AND f.size BETWEEN :minFileSize AND :maxFileSize ");
             }
 
-            Date minModifyTime = (Date) condition.get("minModifyTime");
-            Date maxModifyTime = (Date) condition.get("maxModifyTime");
+            Date minModifyTime = (Date) condition.get(Constant.MIN_MODIFY_TIME);
+            Date maxModifyTime = (Date) condition.get(Constant.MAX_MODIFY_TIME);
             if (null != maxModifyTime) {
                 if (null != minModifyTime) {
                     jpqQuery
@@ -132,6 +135,11 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
                     jpqQuery.append("AND f.modifyTime <= :maxModifyTime ");
                 }
             }
+
+            log.debug("Method: getJPAQueryString, Param:{fileName: " + fileName
+                    + " , minFileSize: " + minFileSize + " , maxFileSize: "
+                    + maxFileSize + " , minModifyTime: " + minModifyTime
+                    + " , maxModifyTime: " + maxModifyTime + "}");
         }
 
         StringBuffer order = new StringBuffer("ORDER BY f.modifyTime DESC");
