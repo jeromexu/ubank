@@ -30,11 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.print.Doc;
-
 import org.apache.commons.beanutils.BeanUtils;
 
-import com.mysql.jdbc.log.Log;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.Constant;
@@ -498,12 +495,15 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
+     * Whether the same name with the current directory files
      * 
-     * {method description}
      * @param folder
+     *            current directory
      * @param name
-     * @return success return 'true' else return 'false'
-     * @throws DbException 
+     *            name
+     * @return have same name return 'true' else return 'false'
+     * @throws DbException
+     *             if folder is null or name is nul throw exception
      * @author bxji
      */
     private boolean isSameName(Folder folder, String name) throws DbException {
@@ -520,6 +520,13 @@ public class FileServiceImpl implements FileService {
         return false;
     }
 
+    /**
+     * If the same name file in the directory , automatically add default suffix
+     * 
+     * @param file
+     *            file object
+     * @author bxji
+     */
     private void autoRename(FileBean file) {
         if (file == null) {
             return;
