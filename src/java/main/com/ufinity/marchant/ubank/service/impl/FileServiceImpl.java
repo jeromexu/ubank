@@ -28,9 +28,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.print.Doc;
 
 import org.apache.commons.beanutils.BeanUtils;
 
+import com.mysql.jdbc.log.Log;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.Constant;
@@ -46,6 +50,7 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
+import com.ufinity.marchant.ubank.exception.DbException;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FileService;
 
@@ -282,34 +287,33 @@ public class FileServiceImpl implements FileService {
                 || sourceFileId == null || 0l == sourceFileId) {
             return false;
         }
-        FileBean temp = copyFile(sourceFileId);
-        if (temp != null) {
+        FileBean fileCopy = copyFile(sourceFileId);
+        if (fileCopy != null) {
             try {
                 Folder folder = folderDao.find(targetFolderId);
-                FileBean file = fileDao.find(sourceFileId);
-                // If the target directory is the source directory
-                if (file.getFolder().equals(folder)) {
-                    String name = temp.getFileName();
-                    int index = name.indexOf('.');
-                    temp.setFileName(name.substring(0, index)
-                            + Constant.FILE_COPY);
+
+                // If there is a same name file in the target directory
+                if (isSameName(folder, fileCopy.getFileName())) {
+                    autoRename(fileCopy);
                 }
+
                 // if target folder is shared directory
                 if (folder.getShare()) {
-                    temp.setShare(true);
+                    fileCopy.setShare(true);
                 }
                 else {
-                    temp.setShare(false);
+                    fileCopy.setShare(false);
                 }
-                temp.setDirectory(folder.getDirectory() + folder.getFolderId());
-                temp.setFolder(folder);
+                fileCopy.setDirectory(getDiskPath(folder));
+                fileCopy.setFolder(folder);
+                fileCopy.setModifyTime(new Date());
                 // copy disk file
-                int result = DocumentUtil.copyFile(temp, folder);
+                int result = DocumentUtil.copyFile(fileCopy, folder);
                 if (result != 1) {
                     LOG.debug("copy disk file IO exception");
                     return false;
                 }
-                fileDao.modify(temp);
+                fileDao.modify(fileCopy);
                 return true;
             }
             catch (Exception e) {
@@ -363,11 +367,17 @@ public class FileServiceImpl implements FileService {
         try {
             Folder folder = folderDao.find(targetFolderId);
             FileBean file = fileDao.find(sourceFileId);
+
             // if target directory is current directory
             if (file.getFolder().equals(folder)) {
                 return true;
             }
-            file.setFolder(folder);
+
+            // If there is a same name file in the target directory
+            if (isSameName(folder, file.getFileName())) {
+                autoRename(file);
+            }
+
             // if target folder is shared directory
             if (folder.getShare()) {
                 file.setShare(true);
@@ -375,7 +385,10 @@ public class FileServiceImpl implements FileService {
             else {
                 file.setShare(false);
             }
-            file.setDirectory(folder.getDirectory() + folder.getFolderId());
+            file.setFolder(folder);
+            file.setDirectory(getDiskPath(folder));
+            file.setModifyTime(new Date());
+            // move disk file
             int result = DocumentUtil.moveFileTo(file, folder);
             if (result != 1) {
                 LOG.debug("Move disk file IO exception");
@@ -391,4 +404,130 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+    /**
+     * delete a file from database and disk
+     * 
+     * @param fileId
+     *            file id
+     * @return success return 'true' else return 'false'
+     * @author bxji
+     */
+    public boolean removeFile(Long fileId) {
+        if (fileId == null || 0l == fileId) {
+            return false;
+        }
+        try {
+            FileBean file = fileDao.find(fileId);
+            if (file != null) {
+                int result = DocumentUtil.removeFile(file);
+                if (result != 1) {
+                    LOG.debug("delete disk file fail.");
+                    return false;
+                }
+                fileDao.deleteById(fileId);
+            }
+        }
+        catch (Exception e) {
+            LOG.debug("Database exception where tried to remove a file.", e);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Rename files
+     * 
+     * @param fileId
+     *            file id
+     * @param newName
+     *            new name
+     * @return success return 'true' else return 'false'
+     * @author bxji
+     */
+    public boolean renameFile(Long fileId, String newName) {
+        if (fileId == null || 0l == fileId || Validity.isNullAndEmpty(newName)) {
+            return false;
+        }
+        try {
+            FileBean file = fileDao.find(fileId);
+            if (file != null) {
+                file.setFileName(newName);
+                if (isSameName(file.getFolder(), newName)) {
+                    autoRename(file);
+                }
+                int result = DocumentUtil.renameFile(file, newName);
+                if (result != 1) {
+                    LOG.debug("rename disk file fail.");
+                    return false;
+                }
+                fileDao.modify(file);
+                return true;
+            }
+        }
+        catch (Exception e) {
+            LOG.debug("update the database exception when rename a file", e);
+        }
+        return false;
+    }
+
+    /**
+     * get current directory disk path
+     * 
+     * @param parentFolder
+     *            parent directory of current directory
+     * @return disk path String
+     * @author bxji
+     */
+    private String getDiskPath(Folder parentFolder) {
+        String currentPath = "";
+        if (parentFolder == null) {
+            return currentPath;
+        }
+        String parentPath = parentFolder.getDirectory();
+        if (parentPath.length() > 0) {
+            char c = parentPath.charAt(parentPath.length() - 1);
+            if ('\\' == c) {
+                currentPath = parentPath + parentFolder.getFolderId() + "\\";
+            }
+            else {
+                currentPath = parentPath + "\\" + parentFolder.getFolderId()
+                        + "\\";
+            }
+        }
+        return currentPath;
+    }
+
+    /**
+     * 
+     * {method description}
+     * @param folder
+     * @param name
+     * @return success return 'true' else return 'false'
+     * @throws DbException 
+     * @author bxji
+     */
+    private boolean isSameName(Folder folder, String name) throws DbException {
+        if (folder == null || Validity.isNullAndEmpty(name)) {
+            LOG.debug("target folder can not be null");
+            throw new DbException("target folder and name can not be null.");
+        }
+        Set<FileBean> files = folder.getFiles();
+        for (FileBean file : files) {
+            if (name.equals(file.getFileName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void autoRename(FileBean file) {
+        if (file == null) {
+            return;
+        }
+        String name = file.getFileName();
+        int index = name.indexOf('.');
+        String newName = name.substring(0, index) + Constant.FILE_COPY
+                + name.substring(index, name.length());
+        file.setFileName(newName);
+    }
 }

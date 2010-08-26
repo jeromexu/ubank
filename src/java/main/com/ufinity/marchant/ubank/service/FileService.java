@@ -37,72 +37,94 @@ import com.ufinity.marchant.ubank.exception.UBankException;
  */
 public interface FileService {
 
-	/**
-	 * Search share files
-	 * 
-	 * @param fileName
-	 *            file name
-	 * @param fileSize
-	 *            file size flag
-	 * @param publishDate
-	 *            publish date flag
-	 * @param pageNum
-	 *            pageNum
-	 * @param pageSize
-	 *            pageSize
-	 * @return file pager obj
-	 * @throws UBankException
-	 *             if occur exception, throw it
-	 * @author zdxue
-	 */
-	public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
-			String publishDate, int pageNum, int pageSize)
-			throws UBankException;
+    /**
+     * Search share files
+     * 
+     * @param fileName
+     *            file name
+     * @param fileSize
+     *            file size flag
+     * @param publishDate
+     *            publish date flag
+     * @param pageNum
+     *            pageNum
+     * @param pageSize
+     *            pageSize
+     * @return file pager obj
+     * @throws UBankException
+     *             if occur exception, throw it
+     * @author zdxue
+     */
+    public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
+            String publishDate, int pageNum, int pageSize)
+            throws UBankException;
 
-	/**
-	 * get all files under specified directory
-	 * 
-	 * @param folderId
-	 *            folder directory ID
-	 * @return files list
-	 * @author bxji
-	 */
-	public List<FileBean> getFilesByFolder(Long folderId);
+    /**
+     * get all files under specified directory
+     * 
+     * @param folderId
+     *            folder directory ID
+     * @return files list
+     * @author bxji
+     */
+    public List<FileBean> getFilesByFolder(Long folderId);
 
-	/**
-	 * get the file path by the file id
-	 * 
-	 * @param fileId
-	 *            the id of the file
-	 * @return the fileBean object
-	 * @throws UBankException
-	 *             the exception which do not get the file
-	 * @author jerome
-	 */
-	public FileBean getFileBean(Long fileId) throws UBankException;
+    /**
+     * get the file path by the file id
+     * 
+     * @param fileId
+     *            the id of the file
+     * @return the fileBean object
+     * @throws UBankException
+     *             the exception which do not get the file
+     * @author jerome
+     */
+    public FileBean getFileBean(Long fileId) throws UBankException;
 
-	/**
-	 * Copy file to the specified directory
-	 * 
-	 * @param targetFolderId
-	 *            target FolderId
-	 * @param sourceFileId
-	 *            source FileId
-	 * @return success return 'true' else return 'false'
-	 * @author bxji
-	 */
-	public boolean copyFileToFolder(Long targetFolderId, Long sourceFileId);
+    /**
+     * Copy file to the specified directory
+     * 
+     * @param targetFolderId
+     *            target FolderId
+     * @param sourceFileId
+     *            source FileId
+     * @return success return 'true' else return 'false'
+     * @author bxji
+     */
+    public boolean copyFileToFolder(Long targetFolderId, Long sourceFileId);
 
-	/**
-	 * Move file to specified directory
-	 * 
-	 * @param targetFolderId
-	 *            target FolderId
-	 * @param sourceFileId
-	 *            sourceFileId
-	 * @return success return 'true' else return 'false'
-	 * @author bxji
-	 */
-	public boolean moveFileToFloder(Long targetFolderId, Long sourceFileId);
+    /**
+     * Move file to specified directory
+     * 
+     * @param targetFolderId
+     *            target FolderId
+     * @param sourceFileId
+     *            sourceFileId
+     * @return success return 'true' else return 'false'
+     * @author bxji
+     */
+    public boolean moveFileToFloder(Long targetFolderId, Long sourceFileId);
+
+    /**
+     * delete a file from database and disk
+     * 
+     * @param fileId
+     *            file id
+     * @return success return 'true' else return 'false'
+     * @author bxji
+     */
+    public boolean removeFile(Long fileId);
+
+    /**
+     * Rename files
+     * 
+     * @param fileId
+     *            file id
+     * @param newName
+     *            new name
+     * @return success return 'true' else return 'false'
+     * @author bxji
+     */
+    public boolean renameFile(Long fileId, String newName);
 
 }
