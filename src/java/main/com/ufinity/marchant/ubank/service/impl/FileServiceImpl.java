@@ -99,6 +99,18 @@ public class FileServiceImpl implements FileService {
             String publishDate, int pageNum, int pageSize)
             throws UBankException {
 
+        if (fileName == null) {
+            fileName = Constant.FILENAME_EMPTY;
+        }
+
+        if (fileSize == null) {
+            fileSize = Constant.FILE_SIZE_0;
+        }
+
+        if (publishDate == null) {
+            publishDate = Constant.FILE_PUBLISHDATE_0;
+        }
+        
         Map<String, Object> condition = new HashMap<String, Object>();
         condition.put(Constant.FILENAME, fileName);
         condition.put(Constant.MIN_FILE_SIZE, getMinFileSize(fileSize));

@@ -28,6 +28,7 @@ package com.ufinity.marchant.ubank.service.impl;
 
 import java.io.File;
 import java.util.Date;
+
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
@@ -36,7 +37,6 @@ import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
-import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FolderDao;
