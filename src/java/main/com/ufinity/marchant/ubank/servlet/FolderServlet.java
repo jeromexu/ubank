@@ -8,8 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
@@ -17,10 +15,9 @@ import com.ufinity.marchant.ubank.common.FileOrFolderJsonEntity;
 import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.common.JsonNode;
 import com.ufinity.marchant.ubank.common.JsonUtil;
+import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.NodeUtil;
 import com.ufinity.marchant.ubank.common.Validity;
-import com.ufinity.marchant.ubank.dao.FolderDao;
-import com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
@@ -32,17 +29,22 @@ import com.ufinity.marchant.ubank.service.ServiceFactory;
  * @author liujun
  */
 public class FolderServlet extends AbstractServlet {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -8297805269743197486L;
     // Logger for this class
-    protected final Logger logger = Logger.getLogger(FolderServlet.class);
+    protected final Logger LOG = Logger.getInstance(FolderServlet.class);
+
+    FolderService folderService = null;
 
     private static final String SHOW_MAIN = "showMain";
     private static final String SHOW_TREE = "showTree";
     private static final String USERNAME = "username";
+
+    /**
+     * Constructor for FolderServlet
+     */
+    public FolderServlet() {
+        folderService = ServiceFactory.createService(FolderService.class);
+    }
 
     /**
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
@@ -86,7 +88,6 @@ public class FolderServlet extends AbstractServlet {
     private String showMain(HttpServletRequest req, HttpServletResponse resp) {
         // String username = req.getParameter(USERNAME);
 
-        FolderDao folderDao = new FolderDaoImpl();
         EntityManagerUtil.begin();
         // List<Folder> floders = folderDao.findAndProcessByUserName(username);
 
@@ -110,14 +111,12 @@ public class FolderServlet extends AbstractServlet {
         FolderNode treeRootNode = null;
 
         if (user != null) {
-            FolderService folderService = ServiceFactory
-                    .createService(FolderService.class);
             EntityManagerUtil.begin();
             try {
                 treeRootNode = folderService.getTreeRoot(user.getUserId());
             }
             catch (UBankException e) {
-                logger.debug("when try get user root directory, "
+                LOG.debug("when try get user root directory, "
                         + "throw an exception:user id can not be null", e);
             }
             EntityManagerUtil.commit();
@@ -156,8 +155,6 @@ public class FolderServlet extends AbstractServlet {
         if (!Validity.isNullAndEmpty(id)) {
             folderId = Long.parseLong(id);
         }
-        FolderService folderService = ServiceFactory
-                .createService(FolderService.class);
         List<FileOrFolderJsonEntity> josnEntitys = null;
         josnEntitys = folderService.getAllByFolder(folderId);
         String jsonStr = "";
@@ -165,12 +162,14 @@ public class FolderServlet extends AbstractServlet {
             jsonStr = JsonUtil.object2json(josnEntitys);
         }
         resp.setContentType("application/json;charset=UTF-8");
+        System.out.println(jsonStr);
         try {
             PrintWriter pw = resp.getWriter();
             resp.getWriter().write(jsonStr);
             pw.flush();
         }
         catch (IOException e) {
+            LOG.debug("return json string exception", e);
         }
 
     }

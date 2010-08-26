@@ -20,47 +20,7 @@
 
 <div region="west" split="true" title="网络硬盘" style="width:150px;padding:10px;">
   <h1>Tree</h1>
-  <ul id="tt1" class="easyui-tree">
-  
-    <li> <span>我的网盘</span>
-      <ul>
-        <li> <span>文件</span>
-          <ul>
-            <li> <span>Sub Folder 1</span>
-              <ul>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li> <span>软件</span>
-          <ul>
-            <li> <span><a href="#">File 11</a></span>
-              <ul>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li> <span>照片</span>
-          <ul>
-            <li> <span><a href="#">File 11</a></span>
-              <ul>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ul>
-  <!-- 这是一个文件夹 
-                <li>
-                    <span>Sub Folder 1</span>
-                    <ul>
-                        <li>
-                            <span><a href="#">File 11</a></span>
-                        </li>
-                    </ul>
-                </li>
-                 -->
+
 
  <ul id="tt2"></ul>
 </div>

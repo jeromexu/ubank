@@ -193,10 +193,8 @@ public class FolderServiceImpl implements FolderService {
         }
         List<FileOrFolderJsonEntity> jsonEntieys = new ArrayList<FileOrFolderJsonEntity>();
         if (folder != null) {
-            Set<FileBean> files = folder.getFiles();
-            Set<Folder> chiFolders = folder.getChildren();
-
             // convert the FileBean to FileOrFolderJsonEntity
+            Set<FileBean> files = folder.getFiles();
             if (!Validity.isEmpty(files)) {
                 for (FileBean file : files) {
                     FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
@@ -210,6 +208,7 @@ public class FolderServiceImpl implements FolderService {
                 }
             }
             // conver sub-folders Object to FileOrFolderJsonEntity
+            Set<Folder> chiFolders = folder.getChildren();
             if (Validity.isEmpty(chiFolders)) {
                 for (Folder child : chiFolders) {
                     FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();

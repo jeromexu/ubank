@@ -4,7 +4,7 @@ var newWindow;
 $(function() {
 	// $('#tt1').tree();
 	$('#tt2').tree( {
-		url : '/ubank/portal/show.do?method=showTree',
+		url : '/ubank/portal/showTree.do',
 		onClick : function(node) {
 			
 			alert('you click ' + node.text);
