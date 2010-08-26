@@ -78,9 +78,9 @@ public class UserServiceImpl implements UserService {
      * @author jerome
      */
     public String doRegister(User user) {
+    	 LOG.debug("doRegister:param[user]=" + user);
         try {
-            LOG.debug("doRegister:param[user]=" + user);
-            EntityManagerUtil.begin();
+           
             String userName = null;
             if (user != null) {
                 userName = user.getUserName();
@@ -90,23 +90,30 @@ public class UserServiceImpl implements UserService {
             // query current user exist or not
             User queryUser = userDao.findUserByName(userName);
             if (queryUser == null) {
+            	EntityManagerUtil.begin();
                 userDao.add(user);
                 // init user dir space
-                createUserDir(user.getUserId());
+                boolean initFlag = createUserDir(user.getUserId());
+                EntityManagerUtil.commit();
+                if (initFlag) {
+                	return MessageResource.getMessage(MessageKeys.REGISTER_SUCCESS);
+                } else {
+                	return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
+                }
             } else {
                 // user exist,do not register
                 return MessageResource.getMessage(MessageKeys.REGISTER_FAILURE);
             }
-            EntityManagerUtil.commit();
-            LOG.debug("doRegister:-----complete--------");
+            
         } catch (Exception e) {
+        	e.printStackTrace();
             LOG.error("user register exception!", e);
         } finally {
             EntityManagerUtil.closeEntityManager();
         }
+        LOG.debug("doRegister:-----complete--------");
         // register success
         return MessageResource.getMessage(MessageKeys.REGISTER_SUCCESS);
-
     }
 
     /**
@@ -161,56 +168,62 @@ public class UserServiceImpl implements UserService {
     private boolean createUserDir(Long userId) {
 
         LOG.debug("createUserDir:param[userId]=" + userId);
-        String serverPath = getApplicationPath();
-        if (!Validity.isEmpty(serverPath)) {
-            File baseFile = new File(serverPath);
-            if (!baseFile.exists()) {
-                baseFile.mkdir();
+        try{
+        	String serverPath = getApplicationPath();
+            if (!Validity.isEmpty(serverPath)) {
+                File baseFile = new File(serverPath);
+                if (!baseFile.exists()) {
+                    baseFile.mkdir();
+                }
+                StringBuffer sb = new StringBuffer(serverPath);
+                baseFile = new File(sb.append(Constant.USER_SPACE_DIR).toString());
+                if (!baseFile.exists()) {
+                    baseFile.mkdir();
+                }
+                // root folder for each user
+                baseFile = new File(sb.append(File.separator).append(userId)
+                        .toString());
+                if (!baseFile.exists()) {
+                    baseFile.mkdir();
+                }
+                Folder folder = new Folder();
+                folder.setFolderName(String.valueOf(userId));
+                folder.setCreateTime(new Date());
+                folder.setDirectory(Constant.USER_SPACE_DIR);
+                folder.setModifyTime(new Date());
+                folder.setFolderType(Constant.ROOT);
+                folder.setShare(false);
+
+               /* Folder parent = new Folder();
+                parent.setFolderId(0l);*/
+                folder.setParent(null);
+
+                User user = new User();
+                user.setUserId(userId);
+                folder.setUser(user);
+
+                folderDao.add(folder);
+
+                // my file folder for each user
+                makeEachUserDir(baseFile, folder, userId, sb, Constant.MY_File_NAME);
+                // software folder for each user
+                makeEachUserDir(baseFile, folder, userId, sb,
+                        Constant.SOFTWARE_NAME);
+
+                // document folder for each user
+                makeEachUserDir(baseFile, folder, userId, sb,
+                        Constant.DOCUMENT_NAME);
+
+                // photo folder for each user
+                makeEachUserDir(baseFile, folder, userId, sb, Constant.PHOTO_NAME);
+            } else {
+                return false;
             }
-            StringBuffer sb = new StringBuffer(serverPath);
-            baseFile = new File(sb.append(Constant.USER_SPACE_DIR).toString());
-            if (!baseFile.exists()) {
-                baseFile.mkdir();
-            }
-            // root folder for each user
-            baseFile = new File(sb.append(File.separator).append(userId)
-                    .toString());
-            if (!baseFile.exists()) {
-                baseFile.mkdir();
-            }
-            Folder folder = new Folder();
-            folder.setFolderName(String.valueOf(userId));
-            folder.setCreateTime(new Date());
-            folder.setDirectory(Constant.USER_SPACE_DIR);
-            folder.setModifyTime(new Date());
-            folder.setFolderType(Constant.ROOT);
-            folder.setShare(false);
-
-            Folder parent = new Folder();
-            parent.setFolderId(1l);
-            folder.setParent(parent);
-
-            User user = new User();
-            user.setUserId(userId);
-            folder.setUser(user);
-
-            folderDao.add(folder);
-
-            // my file folder for each user
-            makeEachUserDir(baseFile, folder, userId, sb, Constant.MY_File_NAME);
-            // software folder for each user
-            makeEachUserDir(baseFile, folder, userId, sb,
-                    Constant.SOFTWARE_NAME);
-
-            // document folder for each user
-            makeEachUserDir(baseFile, folder, userId, sb,
-                    Constant.DOCUMENT_NAME);
-
-            // photo folder for each user
-            makeEachUserDir(baseFile, folder, userId, sb, Constant.PHOTO_NAME);
-        } else {
-            return false;
-        }
+        } catch(Exception e) {
+        	LOG.error("create user space excepiton!", e);
+        	return false;
+        } 
+        
         LOG.debug("createUserDir:-----complete--------");
         return true;
     }
