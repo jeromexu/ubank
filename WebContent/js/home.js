@@ -123,6 +123,6 @@ function callback(text){
 }
 
 function requestTimeout(){
-	var text = "<div class='errorTimeout'>request timeout</div>"
+	var text = "<script>location.href='../common/500.jsp';</script>";
 	$('#searchResultDiv').empty().append(text);
 }
