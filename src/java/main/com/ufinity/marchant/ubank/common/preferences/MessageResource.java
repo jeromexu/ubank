@@ -23,7 +23,6 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common.preferences;
 
-import java.text.MessageFormat;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
@@ -66,13 +65,14 @@ public final class MessageResource {
     }
 
     /**
-     * Get text by key and Context's GLOBAL_LOCALE 
+     * Get text by key and Context's GLOBAL_LOCALE with params
      *
      * @param key key
+     * @param params params
      * @return value
      * @author zdxue
      */
-    public static String getText(String key) {
+    public static String getText(String key, String...params) {
         Context ac = Context.getContext();
         Locale locale = Locale.getDefault();
 
@@ -83,23 +83,18 @@ public final class MessageResource {
             BUNDLES.put(locale, new ResourceBundleWrapper(BASE_NAME, locale));
         }
 
-        return BUNDLES.get(locale).getValue(key);
+        return BUNDLES.get(locale).getValue(key, params);
     }
 
     /**
-     * Get text with dynamic params 
+     * Get text
      *
      * @param key key
-     * @param params params
      * @return text
      * @author zdxue
      */
-    public static String getText(String key, Object...params) {
-        try{
-            return MessageFormat.format(getText(key), params);
-        }catch(Exception e) {
-            return getText(key);
-        }
+    public static String getText(String key) {
+        return getText(key, new String[]{});
     }
     
 }

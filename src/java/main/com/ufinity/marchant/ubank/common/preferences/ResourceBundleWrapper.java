@@ -74,7 +74,7 @@ public class ResourceBundleWrapper {
      * @return value
      * @author zdxue
      */
-    public String getValue(String key, Object...arguments) {
+    public String getValue(String key, Object[] arguments) {
         try{
             return MessageFormat.format(rb.getString(key), arguments);
         }catch(Exception e) {
