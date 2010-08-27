@@ -284,6 +284,27 @@ public class FolderDaoImplTest {
 
     /**
      * Test method for
+     * {@link com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl#findRootRolderByUserId(java.lang.Long)}.
+     */
+    @Test(expected = Exception.class)
+    public void testFindRootRolderByUserIdException() {
+        packageData(true);
+
+        try {
+            User userTemp = this.userDao.findUserByName(user.getUserName());
+            Folder folder = this.folderDao.findRootRolderByUserId(userTemp
+                    .getUserId());
+            System.err.println(folder);
+            assertNotNull(folder);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+    }
+
+    /**
+     * Test method for
      * {@link com.ufinity.marchant.ubank.dao.impl.GenericDaoSupport#modify(java.lang.Object)}.
      */
     @Test

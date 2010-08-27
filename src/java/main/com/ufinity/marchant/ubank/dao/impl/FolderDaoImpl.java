@@ -50,6 +50,8 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
      */
     @SuppressWarnings("unchecked")
     public List<Folder> findFolderListByUserId(Long userId) {
+        log.debug("Method: findFolderListByUserId, Param:{userId: " + userId
+                + "}");
 
         String sqlQuery = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,"
                 + "a.FOLDER_TYPE,a.MODIFIED_TIME,a.SHARE,a.USER_ID,a.PARENT_ID FROM U_FOLDER a "
@@ -67,9 +69,11 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
      * @author skyqiang
      */
     public Folder findRootRolderByUserId(Long userId) {
-        String jpaQuery = "SELECT f FROM Folder AS f WHERE f.parent is null AND f.user.userId=:userId";
+        log.debug("Method: findRootRolderByUserId, Param:{userId: " + userId
+                + "}");
 
-        return (Folder) EntityManagerUtil.getEntityManager().createQuery(
-                jpaQuery).setParameter("userId", userId).getSingleResult();
+        return (Folder) EntityManagerUtil.getEntityManager().createNamedQuery(
+                "Folder.findRootRolderByUserId").setParameter("userId", userId)
+                .getSingleResult();
     }
 }
