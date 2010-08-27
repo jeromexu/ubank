@@ -13,8 +13,8 @@
 <body bgcolor="#D0DEE9">
 
   <div class="errorDiv">
-             抱歉，系统发生异常！
-     <a href="${contextPath}/index.html">去首页</a>
+     <span>${u:getText('errorpage.message.500')}</span>
+     <a href="${contextPath}/index.html">${u:getText('errorpage.message.homepage')}</a>
   </div>
 
 </body>
