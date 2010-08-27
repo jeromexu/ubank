@@ -127,7 +127,7 @@ public class FolderServlet extends AbstractServlet {
                 treeRootNode = folderService.getTreeRoot(user.getUserId());
             }
             catch (UBankException e) {
-                LOG.debug("when try get user root directory, "
+                LOG.error("when try get user root directory, "
                         + "throw an exception:user id can not be null", e);
             }
             EntityManagerUtil.commit();
@@ -217,14 +217,17 @@ public class FolderServlet extends AbstractServlet {
                 && !Validity.isEmpty(user)) {
             Long pid = Long.parseLong(folderId);
             try {
+                EntityManagerUtil.begin();
                 Folder folder = folderService.addFolder(user.getUserId(), pid,
                         folderName, null);
+                EntityManagerUtil.commit();
                 if (folder != null) {
                     result = Constant.SUCCESS;
                 }
             }
             catch (UBankException e) {
-                LOG.debug("create folder fail", e);
+                EntityManagerUtil.rollback();
+                LOG.error("create folder fail", e);
             }
         }
         String jsonStr = JsonUtil.string2json(result);
@@ -248,7 +251,7 @@ public class FolderServlet extends AbstractServlet {
             pw.flush();
         }
         catch (IOException e) {
-            LOG.debug("return json string exception", e);
+            LOG.error("return json string exception", e);
         }
     }
 

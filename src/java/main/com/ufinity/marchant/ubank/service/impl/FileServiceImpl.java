@@ -326,7 +326,7 @@ public class FileServiceImpl implements FileService {
                 return true;
             }
             catch (Exception e) {
-                LOG.debug("Update the file information database exception ", e);
+                LOG.error("Update the file information database exception ", e);
                 return false;
             }
         }
@@ -336,24 +336,24 @@ public class FileServiceImpl implements FileService {
     /**
      * this method is return a copy of the source file
      * 
-     * @param FileId
+     * @param fileId
      *            source file identificateion
      * @return Return a copy of the source file
      * @author bxji
      */
-    private FileBean copyFile(Long FileId) {
-        if (FileId == null || 0l == FileId) {
+    private FileBean copyFile(Long fileId) {
+        if (fileId == null || 0l == fileId) {
             return null;
         }
         FileBean copy = null;
         try {
-            FileBean file = fileDao.find(FileId);
+            FileBean file = fileDao.find(fileId);
             if (file != null) {
                 copy = (FileBean) BeanUtils.cloneBean(file);
             }
         }
         catch (Exception e) {
-            LOG.debug(" copy file throw exception", e);
+            LOG.error(" copy file throw exception", e);
         }
         return copy;
     }
@@ -408,7 +408,7 @@ public class FileServiceImpl implements FileService {
             return true;
         }
         catch (Exception e) {
-            LOG.debug("Database operation exception when moving a file. ", e);
+            LOG.error("Database operation exception when moving a file. ", e);
             return false;
         }
     }
@@ -437,7 +437,7 @@ public class FileServiceImpl implements FileService {
             }
         }
         catch (Exception e) {
-            LOG.debug("Database exception where tried to remove a file.", e);
+            LOG.error("Database exception where tried to remove a file.", e);
             return false;
         }
         return true;
@@ -474,7 +474,7 @@ public class FileServiceImpl implements FileService {
             }
         }
         catch (Exception e) {
-            LOG.debug("update the database exception when rename a file", e);
+            LOG.error("update the database exception when rename a file", e);
         }
         return false;
     }
