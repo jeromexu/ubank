@@ -51,9 +51,13 @@
     <servlet-name>folderServlet</servlet-name>
     <url-pattern>/portal/showTree.do</url-pattern>
   </servlet-mapping>
-    <servlet-mapping>
+  <servlet-mapping>
     <servlet-name>folderServlet</servlet-name>
     <url-pattern>/portal/showFolderContent.do</url-pattern>
+  </servlet-mapping>
+    <servlet-mapping>
+  <servlet-name>folderServlet</servlet-name>
+    <url-pattern>/portal/addFolder.do</url-pattern>
   </servlet-mapping>
   
   <servlet>
