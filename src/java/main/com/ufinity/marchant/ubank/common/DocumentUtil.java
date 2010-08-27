@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import org.apache.log4j.Logger;
+import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
 
@@ -25,7 +25,7 @@ public class DocumentUtil {
 	public static String FILENAME = null;
 
 	// Logger for this class
-	protected static final Logger LOGGER = Logger.getLogger(DocumentUtil.class);
+	protected  final static Logger LOGGER = Logger.getInstance(DocumentUtil.class);
 
 	/**
 	 * add the real file in disk by the FILE object
@@ -196,10 +196,7 @@ public class DocumentUtil {
 			newPath = newFolderDirecotry + File.separator + newFolderName
 					+ File.separator + FOLDERNAME;
 		}
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("olderPath=" + olderPath);
-			LOGGER.debug("newPath=" + newPath);
-		}
+		LOGGER.debug("olderPath=" + olderPath+", newPath=" + newPath);
 		File oldFile = new File(olderPath);
 		boolean result = false;
 		if (oldFile.exists()) {
@@ -318,18 +315,13 @@ public class DocumentUtil {
 				byte[] buffer = new byte[1024];
 				while ((byteread = fis.read(buffer)) != -1) {
 					bytesum += byteread;
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("file length=" + bytesum);
-					}
+					LOGGER.debug("file length=" + bytesum);
 					fos.write(buffer, 0, byteread);
 				}
-
-			} else {
-				return 0;
-			}
+				return 1;
+			} 
 		} catch (Exception e) {
 			LOGGER.error("copy a file exception!", e);
-			return 0;
 		} finally {
 			if (fis != null) {
 				try {
@@ -346,7 +338,7 @@ public class DocumentUtil {
 				}
 			}
 		}
-		return 1;
+		return 0;
 	}
 
 	/**
@@ -394,18 +386,22 @@ public class DocumentUtil {
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.debug("copy file exception", e);
+			LOGGER.debug("copy folder exception", e);
 		} finally {
-			try {
-				output.close();
-				input.close();
-				// recover all the occupancy object so that all the resource
-				// release
-				System.gc();
-			} catch (IOException e) {
-				e.printStackTrace();
+			if(input != null){
+				try {
+					input.close();
+				} catch (IOException e) {
+					LOGGER.error("input stream close exception!", e);
+				}
 			}
-
+			if(output != null){
+				try {
+					output.close();
+				} catch (IOException e) {
+					LOGGER.error("output stream close exception!", e);
+				}
+			}
 		}
 	}
 
@@ -418,19 +414,16 @@ public class DocumentUtil {
 	 * @author jerome
 	 */
 	public static boolean delFolder(String folderPath) {
-		boolean result = false;
 		try {
 			// delete all files of the folder
 			delAllFile(folderPath);
 			File myFilePath = new File(folderPath);
 			// delete the empty folder
-			result = myFilePath.delete();
-
+			return myFilePath.delete();
 		} catch (Exception e) {
 			LOGGER.debug("delete file exception", e);
 			return false;
 		}
-		return result;
 	}
 
 	/**

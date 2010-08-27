@@ -35,7 +35,6 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.apache.log4j.Logger;
 import com.octo.captcha.component.image.backgroundgenerator.BackgroundGenerator;
 import com.octo.captcha.component.image.backgroundgenerator.GradientBackgroundGenerator;
 import com.octo.captcha.component.image.fontgenerator.FontGenerator;
@@ -53,6 +52,7 @@ import com.octo.captcha.image.ImageCaptchaFactory;
 import com.octo.captcha.image.gimpy.GimpyFactory;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 
@@ -66,7 +66,7 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
  */
 public class MyCaptchaService extends ListImageCaptchaEngine {
 
-	private static Logger LOGGER = Logger.getLogger(MyCaptchaService.class);
+	private final Logger logger = Logger.getInstance(MyCaptchaService.class);
 	// Singleton instance of this class
 	private static MyCaptchaService INSTANCE = new MyCaptchaService();
 	private ArrayList textPasterList;
@@ -154,7 +154,7 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 				}
 			}
 		} catch (Exception ex) {
-			LOGGER.error("gernate the captcha code expcetion ", ex);
+			logger.error("gernate the captcha code expcetion ", ex);
 		}
 	}
 
@@ -186,7 +186,7 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 			encoder.encode(image);
 			outputStream.flush();
 		} catch (IOException ex) {
-			LOGGER.error("gernate the picture exception:", ex);
+			logger.error("gernate the picture exception:", ex);
 		} finally {
 			if (outputStream != null) {
 				try {
@@ -220,7 +220,7 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 			session.removeAttribute("imageCaptcha");
 			return flag;
 		} catch (Exception ex) {
-			LOGGER.error("check the captcha code expcetion: ", ex);
+			logger.error("check the captcha code expcetion: ", ex);
 			return false;
 		}
 	}

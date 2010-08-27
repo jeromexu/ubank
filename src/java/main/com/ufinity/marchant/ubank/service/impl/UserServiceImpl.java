@@ -95,18 +95,18 @@ public class UserServiceImpl implements UserService {
 				logger.debug("add user success!" + user);
 				// init user dir space
 				boolean initFlag = initUserDir(user.getUserId());
-				logger.debug("init user space success!initFlag=" + initFlag);
+				logger.debug("init user space "+(initFlag?"success":"failue")+"!");
 				EntityManagerUtil.commit();
 
 				return initFlag ? MessageKeys.REGISTER_SUCCESS
 						: MessageKeys.REGISTER_FAILURE;
 			}
+			logger.debug("doRegister complete!");
 		} catch (Exception e) {
 			logger.error("user register exception!", e);
 		} finally {
 			EntityManagerUtil.closeEntityManager();
 		}
-		logger.debug("doRegister complete!");
 		// user exist,do not register
 		return MessageKeys.REGISTER_FAILURE;
 
