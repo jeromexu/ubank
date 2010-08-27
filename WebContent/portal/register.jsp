@@ -23,15 +23,9 @@
 <hr width="380px" align="center" />
 <div align="center"><c:if test="${not empty register_msg }">
 				${u:getText(register_msg) }
-</c:if> <c:if test="${not empty userName_error_msg }">
-				${userName_error_msg}
-</c:if> <c:if test="${not empty pass_error_msg }">
-				${pass_error_msg}
-</c:if> <c:if test="${not empty repass_error_msg }">
-				${repass_error_msg}
-</c:if> <c:if test="${not empty captcha_error_msg }">
-				${captcha_error_msg}
-</c:if>
+</c:if> <c:if test="${not empty error_msg }">
+				${error_msg}
+</c:if> 
 <c:if test="${register_msg eq 'user.exist' || register_msg eq '' || register_msg eq null}">
 <form action="${contextPath}/portal/register.do" method="post"
 	id="userFomr" name="userFomr" onsubmit="return checkUserForm();">
