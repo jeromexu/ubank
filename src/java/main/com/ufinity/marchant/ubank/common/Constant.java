@@ -23,7 +23,6 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common;
 
-
 /**
  * Constants for ubank system
  * 
@@ -77,23 +76,22 @@ public interface Constant {
     public final String REGISTER_PAGE = "register.jsp";
 
     // user register error message
-    public  final String  USERNAME_ERR = "userName_error_msg";
-	public  final String  PASS_ERR = "pass_error_msg";
-	public  final String  REPASS_ERR = "repass_error_msg";
-	public  final String  CAPTCHA_ERR = "captcha_error_msg";
-	public  final String  REGISTER_MSG = "register_msg";
-	
-	// user download action
-	public final String ACTION_DOWNLOAD = "download";
-	// user register action
-	public final String ACTION_REGISTER = "register";
-    
-	short USERNAME_LENGTH = 30;
-	short PASSWORD_LENGTH = 50;
+    public final String USERNAME_ERR = "userName_error_msg";
+    public final String PASS_ERR = "pass_error_msg";
+    public final String REPASS_ERR = "repass_error_msg";
+    public final String CAPTCHA_ERR = "captcha_error_msg";
+    public final String REGISTER_MSG = "register_msg";
+
+    // user download action
+    public final String ACTION_DOWNLOAD = "download";
+    // user register action
+    public final String ACTION_REGISTER = "register";
+
+    short USERNAME_LENGTH = 30;
+    short PASSWORD_LENGTH = 50;
 
     /*
-     * Folder type: root--root directory; 
-     * init--Initialization directoy;
+     * Folder type: root--root directory; init--Initialization directoy;
      * customer--user directory
      */
     public final String ROOT = "R";
@@ -101,11 +99,11 @@ public interface Constant {
     public final String CUSTOMER = "C";
     public final String FILE_COPY = "_copy";
     public final String FOLDER_COPY = "_copy";
-    
+
     /** file search pagenum */
     String REQ_PARAM_PAGENUM = "pageNum";
     int PAGE_NUM_DEF = 1;
-    
+
     /** file search constant */
     String FILE_SIZE_SEPARATOR = ",";
     String FILE_SIZE_0 = "0";
@@ -125,13 +123,17 @@ public interface Constant {
     String MAX_FILE_SIZE = "maxFileSize";
     String MIN_MODIFY_TIME = "minModifyTime";
     String MAX_MODIFY_TIME = "maxModifyTime";
-    
+
     // file and folder operations action names
     public static final String SHOW_TREE = "showTree";
     public static final String SHOW_FOLDER_CONTENT = "showFolderContent";
+    public static final String ADD_FOLDER = "addFolder";
     
+    // rquest result  String
+    public static final String SUCCESS = "success";
+    public static final String FAIL = "fail";
+
     // data Format String
-    public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";    
-    
-    
+    public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+
 }

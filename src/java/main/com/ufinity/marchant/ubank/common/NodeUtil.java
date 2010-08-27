@@ -50,6 +50,7 @@ public class NodeUtil {
         List<JsonNode> children = null;
         jsonNode.setId(folderNode.getFolderId());
         jsonNode.setState("close");
+        jsonNode.setUid(folderNode.getUserId());
         if (folderNode.getParentId() == null || 0l == folderNode.getParentId()) {
             jsonNode.setState("open");
         }

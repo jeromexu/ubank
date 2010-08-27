@@ -1,34 +1,44 @@
 // upload window
 var newWindow;
+var currTreeNode;
+
 
 $(function() {
-			var contentRequst = '/ubank/portal/showFolderContent.do?folderId=';
+			//初始化对话框
+			dialog(true);
+			//初始用户目录树
+			dirTtree();
+			
+		});
+
+function dirTtree() {
 			$('#tt2').tree({
 						url : '/ubank/portal/showTree.do',
 						onClick : function(node) {
-							showContent(contentRequst + node.id);
+							currTreeNode = node;
+							showContent(node.id);
 						}
-
 					});
-			showContent(contentRequst);
-		});
+			showContent();
+		};
 
 function reload() {
 	$('#tt2').tree('reload');
 }
 
-function showContent(reqUrl) {
+function showContent(param) {
+	reqUrl = '/ubank/portal/showFolderContent.do?folderId=';
+	if(param!=null){
+		reqUrl = reqUrl+param;
+	}
 	$('#test').datagrid({
-		// title : 'My Title',
-		// iconCls : 'icon-save',
-		// width : 600,
 		height : 570,
 		nowrap : false,
 		striped : true,
 		url : reqUrl,
-		sortName : 'code',
+		sortName : 'name',
 		sortOrder : 'desc',
-		idField : 'code',
+		idField : 'id',
 		frozenColumns : [[{
 					title : '名称',
 					field : 'name',
@@ -60,9 +70,7 @@ function showContent(reqUrl) {
 					formatter : function(value, rec) {
 						return '<span style="color:red">Edit Delete</span>';
 					}
-				}
-
-		]],
+				}]],
 		pagination : true,
 		rownumbers : true,
 		singleSelect : true,
@@ -71,8 +79,11 @@ function showContent(reqUrl) {
 					text : '新建目录',
 					iconCls : 'icon-add',
 					handler : function() {
-						resize();
-						alert('add');
+						if (!currTreeNode || currTreeNode.text == '我的网盘') {
+							alert("不能在根目录下创建新目录！");
+						} else {
+							dialog(false);
+						}
 					}
 				}, {
 					text : '删除目录',
@@ -128,6 +139,49 @@ function resize() {
 					name : 'sjx'
 				}
 			});
+}
+
+function closeDia() {
+	$('#dlg1').dialog({
+				closed : true
+			});
+}
+function dialog(show) {
+	var dlg = $('#dlg1').dialog({
+				iconCls : 'icon-save',
+				width : 400,
+				modal : true,
+				closed : show,
+				buttons : {
+					'Save' : function() {
+						var parentId = currTreeNode.id;
+						var url = '/ubank/portal/addFolder.do';
+						var name = $('#newFolder').attr('value');
+						$.get(url, {
+									'parentId' : parentId,
+									'folderName' : name
+								}, function(data) {
+									if (data.vale = 'success') {
+										closeDia()
+										alert("操作成功");
+										dirTtree();
+										//reload();
+										showContent(parentId);
+									} else {
+										alert("操作失败");
+									}
+
+								});
+
+					},
+					'Cancel' : function() {
+						$('#dlg1').dialog({
+									closed : true
+								});
+					}
+				}
+			});
+
 }
 
 function getSelected() {

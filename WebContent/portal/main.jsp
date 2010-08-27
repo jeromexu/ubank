@@ -6,6 +6,7 @@
 <title>Insert title here</title>
 <link rel="stylesheet" type="text/css" href="../css/themes/default/easyui.css">
 <link rel="stylesheet" type="text/css" href="../css/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/main.css">
 <script type="text/javascript" src="../js/jquery-1.2.6.js"></script>
 <script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="../js/ubank.js"></script>
@@ -26,7 +27,15 @@
 </div>
 <div region="center" title="网络硬盘 > 
 	<a href='#'>我的网盘</a>">
-	<div style=""><table id="test"></table></div>
+	<div style="">
+		<table id="test"></table>
+	</div>
+	<table id="test"></table>
+	<div id="dlg1"  title="Save Info" style="width:320px;">
+		<div style="padding:20px;">
+			<div>新建文件夹名称 ：<input id="newFolder" type="text" style="width:250px;"></div>
+		</div>
+	</div>
 	<div id="information" style="height:6px;background:#D0D8D8;padding:10px;position:relative;width:100%;"></div>
 </div>
 

@@ -40,6 +40,23 @@ public class JsonNode {
     private Long id;
     private String text;
     private String state;
+    private Long uid;
+    /**
+     * the getter method of uid
+     * @return the uid
+     */
+    public Long getUid() {
+        return uid;
+    }
+
+    /**
+     * the setter method of the uid
+     * @param uid the uid to set
+     */
+    public void setUid(Long uid) {
+        this.uid = uid;
+    }
+
     private List<JsonNode> children;
     
     /**

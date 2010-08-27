@@ -79,6 +79,10 @@ public class FolderServlet extends AbstractServlet {
             showFolderContent(req, resp);
             return;
         }
+        else if (Constant.ADD_FOLDER.equals(method)) {
+            addFolder(req, resp);
+            return;
+        }
 
         forward(req, resp, rslt);
     }
@@ -137,6 +141,7 @@ public class FolderServlet extends AbstractServlet {
             treeJson = JsonUtil.bean2json(jsonNode);
         }
         resp.setContentType("application/json;charset=UTF-8");
+
         try {
             PrintWriter pw = resp.getWriter();
             resp.getWriter().write("[" + treeJson + "]");
@@ -187,6 +192,56 @@ public class FolderServlet extends AbstractServlet {
         }
         resp.setContentType("application/json;charset=UTF-8");
         System.out.println(jsonStr);
+        returnResp(jsonStr, resp);
+
+    }
+
+    /**
+     * create a new folder
+     * 
+     * @param req
+     *            request
+     * @param resp
+     *            response
+     * @return forward page
+     * @author bxji
+     */
+    private void addFolder(HttpServletRequest req, HttpServletResponse resp) {
+        String folderId = req.getParameter("parentId");
+        String folderName = req.getParameter("folderName");
+        User user = (User) req.getSession().getAttribute(Constant.SESSION_USER);
+        String result = Constant.FAIL;
+
+        if (!Validity.isNullAndEmpty(folderName)
+                && !Validity.isNullAndEmpty(folderId)
+                && !Validity.isEmpty(user)) {
+            Long pid = Long.parseLong(folderId);
+            try {
+                Folder folder = folderService.addFolder(user.getUserId(), pid,
+                        folderName, null);
+                if (folder != null) {
+                    result = Constant.SUCCESS;
+                }
+            }
+            catch (UBankException e) {
+                LOG.debug("create folder fail", e);
+            }
+        }
+        String jsonStr = JsonUtil.string2json(result);
+        returnResp(jsonStr, resp);
+
+    }
+
+    /**
+     * return ajax request result
+     * 
+     * @param jsonStr
+     *            json data String
+     * @param resp
+     *            HttpServletResponse
+     * @author bxji
+     */
+    private void returnResp(String jsonStr, HttpServletResponse resp) {
         try {
             PrintWriter pw = resp.getWriter();
             resp.getWriter().write(jsonStr);
@@ -195,6 +250,6 @@ public class FolderServlet extends AbstractServlet {
         catch (IOException e) {
             LOG.debug("return json string exception", e);
         }
-
     }
+
 }
