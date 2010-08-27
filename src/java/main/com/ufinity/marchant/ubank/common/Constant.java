@@ -72,11 +72,7 @@ public interface Constant {
     String ERROR_PAGE = "/common/404.html";
     public final String REGISTER_PAGE = "register.jsp";
 
-    // user register error message
-    public final String USERNAME_ERR = "userName_error_msg";
-    public final String PASS_ERR = "pass_error_msg";
-    public final String REPASS_ERR = "repass_error_msg";
-    public final String CAPTCHA_ERR = "captcha_error_msg";
+    // user register message
     public final String REGISTER_MSG = "register_msg";
 
     // user download action

@@ -74,9 +74,9 @@ public class RegServlet extends AbstractServlet {
 		try {
 			String captchaCode = request
 					.getParameter(Constant.REQ_PARAM_CAPTCHACODE);
-			logger.debug("captchaCode = " + captchaCode);
-			if (Validity.isEmpty(captchaCode)) {
-				request.setAttribute(Constant.CAPTCHA_ERR,
+			logger.debug(" request captchaCode = " + captchaCode);
+			if (Validity.isNullAndEmpty(captchaCode)) {
+				request.setAttribute(Constant.ATTR_ERROR_MSG,
 						getText(MessageKeys.CAPTCHA_ERR_MSG));
 				return Constant.REGISTER_PAGE;
 			}
@@ -88,7 +88,7 @@ public class RegServlet extends AbstractServlet {
 					.validateCaptchaResponse(validateCode, session);
 			if (!isValidateCode) {
 				// captcha code is not right
-				request.setAttribute(Constant.CAPTCHA_ERR,
+				request.setAttribute(Constant.ATTR_ERROR_MSG,
 						getText(MessageKeys.CAPTCHA_ERR_MSG));
 			} else {
 				String userName = request
@@ -99,16 +99,16 @@ public class RegServlet extends AbstractServlet {
 				logger.debug("userName = " + userName + ",pass = " + pass
 						+ ",repass = " + repass);
 				if (Validity.isNullAndEmpty(userName)) {
-					request.setAttribute(Constant.USERNAME_ERR,
+					request.setAttribute(Constant.ATTR_ERROR_MSG,
 							getText(MessageKeys.USERNAME_ERR_MSG));
 					return Constant.REGISTER_PAGE;
 				}
 				if (Validity.isNullAndEmpty(pass)) {
-					request.setAttribute(Constant.PASS_ERR,
+					request.setAttribute(Constant.ATTR_ERROR_MSG,
 							getText(MessageKeys.PASS_ERR_MSG));
 					return Constant.REGISTER_PAGE;
 				} else if (!pass.equals(repass)) {
-					request.setAttribute(Constant.REPASS_ERR,
+					request.setAttribute(Constant.ATTR_ERROR_MSG,
 							getText(MessageKeys.REPASS_ERR_MSG));
 					return Constant.REGISTER_PAGE;
 				}
