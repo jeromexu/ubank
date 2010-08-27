@@ -8,6 +8,7 @@ $(function() {
 			dialog(true);
 			//初始用户目录树
 			dirTtree();
+			showContent();
 			
 		});
 
@@ -19,7 +20,7 @@ function dirTtree() {
 							showContent(node.id);
 						}
 					});
-			showContent();
+//			showContent();
 		};
 
 function reload() {
@@ -165,7 +166,7 @@ function dialog(show) {
 										closeDia()
 										alert("操作成功");
 										dirTtree();
-										//reload();
+										reload();
 										showContent(parentId);
 									} else {
 										alert("操作失败");

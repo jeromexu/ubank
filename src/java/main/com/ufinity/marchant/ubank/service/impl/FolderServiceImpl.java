@@ -115,6 +115,7 @@ public class FolderServiceImpl implements FolderService {
             newFolder.setDirectory(getDiskPath(parentfolder));
             newFolder.setShare(false);
             newFolder.setUser(user);
+            parentfolder.getChildren().add(newFolder);
 
             // If there is a same name folder in the target directory
             if (isSameName(parentfolder, folderName)) {
