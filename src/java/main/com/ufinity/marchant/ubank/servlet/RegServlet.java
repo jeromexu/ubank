@@ -12,7 +12,9 @@ import com.ufinity.marchant.ubank.captcha.MyCaptchaService;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
+import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UserService;
 
@@ -29,7 +31,7 @@ public class RegServlet extends AbstractServlet {
 	private static final long serialVersionUID = 1L;
 	// Logger for this class
 	protected final Logger logger = Logger.getInstance(RegServlet.class);
-	
+
 	// user service business logic instance
 	private UserService userService = null;
 
@@ -48,13 +50,13 @@ public class RegServlet extends AbstractServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		
-		 String method = parseActionName(request);
-	     String rslt = Constant.ERROR_PAGE;
-	     if(Constant.ACTION_REGISTER.equals(method)) {
-	          rslt = register(request);
-	     }
-	     forward(request, response, rslt);
+
+		String method = parseActionName(request);
+		String rslt = Constant.ERROR_PAGE;
+		if (Constant.ACTION_REGISTER.equals(method)) {
+			rslt = register(request);
+		}
+		forward(request, response, rslt);
 	}
 
 	/**
@@ -70,51 +72,59 @@ public class RegServlet extends AbstractServlet {
 	private String register(HttpServletRequest request) {
 
 		try {
-			String captchaCode = request.getParameter(Constant.REQ_PARAM_CAPTCHACODE);
+			String captchaCode = request
+					.getParameter(Constant.REQ_PARAM_CAPTCHACODE);
 			logger.debug("captchaCode = " + captchaCode);
 			if (Validity.isEmpty(captchaCode)) {
-				request.setAttribute(Constant.CAPTCHA_ERR, getText(MessageKeys.CAPTCHA_ERR_MSG));
-				return Constant.REGISTER_PAGE; 
+				request.setAttribute(Constant.CAPTCHA_ERR,
+						getText(MessageKeys.CAPTCHA_ERR_MSG));
+				return Constant.REGISTER_PAGE;
 			}
-			HttpSession session = request.getSession();   
-			boolean isValidateCode = false;   
-			// retrieve the response   
-			String validateCode = captchaCode.trim();   
-			isValidateCode = MyCaptchaService.getInstance().validateCaptchaResponse(validateCode, session);   
+			HttpSession session = request.getSession();
+			boolean isValidateCode = false;
+			// retrieve the response
+			String validateCode = captchaCode.trim();
+			isValidateCode = MyCaptchaService.getInstance()
+					.validateCaptchaResponse(validateCode, session);
 			if (!isValidateCode) {
 				// captcha code is not right
-				request.setAttribute(Constant.CAPTCHA_ERR, getText(MessageKeys.CAPTCHA_ERR_MSG));
+				request.setAttribute(Constant.CAPTCHA_ERR,
+						getText(MessageKeys.CAPTCHA_ERR_MSG));
 			} else {
-				String userName = request.getParameter(Constant.REQ_PARAM_USERNAME);
+				String userName = request
+						.getParameter(Constant.REQ_PARAM_USERNAME);
 				String pass = request.getParameter(Constant.REQ_PARAM_PASSWORD);
-				String repass = request.getParameter(Constant.REQ_PARAM_REPASSWORD);
-				logger.debug("userName = " + userName);
-				logger.debug("pass = " + pass);
-				logger.debug("repass = " + repass);
-				if (Validity.isEmpty(userName.trim())) {
-					request.setAttribute(Constant.USERNAME_ERR, getText(MessageKeys.USERNAME_ERR_MSG));
-					return Constant.REGISTER_PAGE; 
+				String repass = request
+						.getParameter(Constant.REQ_PARAM_REPASSWORD);
+				logger.debug("userName = " + userName + ",pass = " + pass
+						+ ",repass = " + repass);
+				if (Validity.isNullAndEmpty(userName)) {
+					request.setAttribute(Constant.USERNAME_ERR,
+							getText(MessageKeys.USERNAME_ERR_MSG));
+					return Constant.REGISTER_PAGE;
 				}
-				if (Validity.isEmpty(pass.trim())) {
-					request.setAttribute(Constant.PASS_ERR, getText(MessageKeys.PASS_ERR_MSG));
-					return Constant.REGISTER_PAGE; 
+				if (Validity.isNullAndEmpty(pass)) {
+					request.setAttribute(Constant.PASS_ERR,
+							getText(MessageKeys.PASS_ERR_MSG));
+					return Constant.REGISTER_PAGE;
 				} else if (!pass.equals(repass)) {
-					request.setAttribute(Constant.REPASS_ERR, getText(MessageKeys.REPASS_ERR_MSG));
-					return Constant.REGISTER_PAGE; 
+					request.setAttribute(Constant.REPASS_ERR,
+							getText(MessageKeys.REPASS_ERR_MSG));
+					return Constant.REGISTER_PAGE;
 				}
 				User user = new User();
 				user.setUserName(userName);
 				user.setPassword(pass);
 				user.setCreateTime(new Date());
-				user.setOverSize(Constant.ONE_G_SPACE);
+				user.setOverSize(SystemGlobals
+						.getInt(ConfigKeys.DEFAULT_USER_SPACE_SIZE));
 				userService = ServiceFactory.createService(UserService.class);
 				String registerMsg = userService.doRegister(user);
+				logger.debug(userName + " register success!");
 				request.setAttribute(Constant.REGISTER_MSG, registerMsg);
 			}
-				
 		} catch (Exception e) {
-			logger.error("error message :",e);
-			return	Constant.REGISTER_PAGE;
+			logger.error("register exception message!", e);
 		}
 		return Constant.REGISTER_PAGE;
 	}

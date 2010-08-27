@@ -66,9 +66,6 @@ public interface Constant {
     /** the key for set session attribute */
     String SESSION_USER = "session_user";
 
-    // default 1G space for each user
-    public static final Integer ONE_G_SPACE = 1;
-
     String HOME_PAGE = "home.jsp";
     String MAIN_PAGE = "main.jsp";
     String SEARCH_RESULT_PAGE = "searchResult.jsp";

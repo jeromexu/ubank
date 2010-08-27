@@ -53,6 +53,8 @@ import com.octo.captcha.image.ImageCaptchaFactory;
 import com.octo.captcha.image.gimpy.GimpyFactory;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
+import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 
 /**
  * 
@@ -65,39 +67,19 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
 public class MyCaptchaService extends ListImageCaptchaEngine {
 
 	private static Logger LOGGER = Logger.getLogger(MyCaptchaService.class);
-
-	private static final Integer MIN_WORD_LENGTH = new Integer(4);
-
-	private static final Integer MAX_WORD_LENGTH = new Integer(6);
-
-	private static final Integer IMAGE_WIDTH = new Integer(70);
-
-	private static final Integer IMAGE_HEIGHT = new Integer(25);
-
-	private static final Integer MIN_FONT_SIZE = new Integer(12);
-
-	private static final Integer MAX_FONT_SIZE = new Integer(14);
-
-	private static final String NUMERIC_CHARS = "23456789";
-
-	private static final String UPPER_ASCII_CHARS = "ABCDEFGHJKLMNPQRSTXYZ";
-
-	@SuppressWarnings("unused")
-	private static final String LOWER_ASCII_CHARS = "abcdefghjkmnpqrstxyz";
 	// Singleton instance of this class
 	private static MyCaptchaService INSTANCE = new MyCaptchaService();
-
-	@SuppressWarnings("unchecked")
 	private ArrayList textPasterList;
-
-	@SuppressWarnings("unchecked")
 	private ArrayList backgroundGeneratorList;
-
-	@SuppressWarnings("unchecked")
 	private ArrayList fontGeneratorList;
+	private ImageCaptcha imageCaptcha = null;
 
-	ImageCaptcha imageCaptcha = null;
-
+	/**
+	 * 
+	 * get the instant of the MyCaptchaService
+	 * 
+	 * @return the instance
+	 */
 	public static MyCaptchaService getInstance() {
 		return INSTANCE;
 	}
@@ -111,40 +93,47 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 			textPasterList = new ArrayList();
 			backgroundGeneratorList = new ArrayList();
 			fontGeneratorList = new ArrayList();
+			Integer minWordLength = SystemGlobals
+					.getInt(ConfigKeys.MIN_WORD_LENGTH);
+			Integer maxWordLength = SystemGlobals
+					.getInt(ConfigKeys.MAX_WORD_LENGTH);
+			textPasterList.add(new SimpleTextPaster(minWordLength,
+					maxWordLength, Color.black));
+			textPasterList.add(new RandomTextPaster(minWordLength,
+					maxWordLength, Color.black));
+			textPasterList.add(new SimpleTextPaster(minWordLength,
+					maxWordLength, Color.black));
+			textPasterList.add(new RandomTextPaster(minWordLength,
+					maxWordLength, Color.black));
+			textPasterList.add(new SimpleTextPaster(minWordLength,
+					maxWordLength, Color.blue));
+			textPasterList.add(new RandomTextPaster(minWordLength,
+					maxWordLength, Color.blue));
 
-			textPasterList.add(new SimpleTextPaster(MIN_WORD_LENGTH,
-					MAX_WORD_LENGTH, Color.black));
-			textPasterList.add(new RandomTextPaster(MIN_WORD_LENGTH,
-					MAX_WORD_LENGTH, Color.black));
-			textPasterList.add(new SimpleTextPaster(MIN_WORD_LENGTH,
-					MAX_WORD_LENGTH, Color.black));
-			textPasterList.add(new RandomTextPaster(MIN_WORD_LENGTH,
-					MAX_WORD_LENGTH, Color.black));
-			textPasterList.add(new SimpleTextPaster(MIN_WORD_LENGTH,
-					MAX_WORD_LENGTH, Color.blue));
-			textPasterList.add(new RandomTextPaster(MIN_WORD_LENGTH,
-					MAX_WORD_LENGTH, Color.blue));
+			Integer imageWidth = SystemGlobals.getInt(ConfigKeys.IMAGE_HEIGHT);
+			Integer imageHeight = SystemGlobals.getInt(ConfigKeys.IMAGE_HEIGHT);
+			backgroundGeneratorList.add(new GradientBackgroundGenerator(
+					imageWidth, imageHeight, Color.orange, Color.white));
+			backgroundGeneratorList.add(new GradientBackgroundGenerator(
+					imageWidth, imageHeight, Color.white, Color.green));
+			backgroundGeneratorList.add(new GradientBackgroundGenerator(
+					imageWidth, imageHeight, Color.gray, Color.white));
+			backgroundGeneratorList.add(new GradientBackgroundGenerator(
+					imageWidth, imageHeight, Color.white, Color.orange));
+			backgroundGeneratorList.add(new GradientBackgroundGenerator(
+					imageWidth, imageHeight, Color.green, Color.white));
+			backgroundGeneratorList.add(new GradientBackgroundGenerator(
+					imageWidth, imageHeight, Color.yellow, Color.white));
+			backgroundGeneratorList.add(new GradientBackgroundGenerator(
+					imageWidth, imageHeight, Color.white, Color.magenta));
 
-			backgroundGeneratorList.add(new GradientBackgroundGenerator(
-					IMAGE_WIDTH, IMAGE_HEIGHT, Color.orange, Color.white));
-			backgroundGeneratorList.add(new GradientBackgroundGenerator(
-					IMAGE_WIDTH, IMAGE_HEIGHT, Color.white, Color.green));
-			backgroundGeneratorList.add(new GradientBackgroundGenerator(
-					IMAGE_WIDTH, IMAGE_HEIGHT, Color.gray, Color.white));
-			backgroundGeneratorList.add(new GradientBackgroundGenerator(
-					IMAGE_WIDTH, IMAGE_HEIGHT, Color.white, Color.orange));
-			backgroundGeneratorList.add(new GradientBackgroundGenerator(
-					IMAGE_WIDTH, IMAGE_HEIGHT, Color.green, Color.white));
-			backgroundGeneratorList.add(new GradientBackgroundGenerator(
-					IMAGE_WIDTH, IMAGE_HEIGHT, Color.yellow, Color.white));
-			backgroundGeneratorList.add(new GradientBackgroundGenerator(
-					IMAGE_WIDTH, IMAGE_HEIGHT, Color.white, Color.magenta));
-
-			fontGeneratorList.add(new RandomFontGenerator(MIN_FONT_SIZE,
-					MAX_FONT_SIZE));
+			fontGeneratorList.add(new RandomFontGenerator(SystemGlobals
+					.getInt(ConfigKeys.MIN_FONT_SIZE), SystemGlobals
+					.getInt(ConfigKeys.MAX_FONT_SIZE)));
 			// use the number and upper letter to generate the captcha code
-			WordGenerator words = new RandomWordGenerator(NUMERIC_CHARS
-					+ UPPER_ASCII_CHARS);
+			WordGenerator words = new RandomWordGenerator(SystemGlobals
+					.getString(ConfigKeys.NUMBERIC_CHARS)
+					+ SystemGlobals.getString(ConfigKeys.UPPER_ASCII_CHARS));
 
 			for (Iterator fontIter = fontGeneratorList.iterator(); fontIter
 					.hasNext();) {
@@ -231,7 +220,6 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 			session.removeAttribute("imageCaptcha");
 			return flag;
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			LOGGER.error("check the captcha code expcetion: ", ex);
 			return false;
 		}

@@ -55,8 +55,7 @@ import com.ufinity.marchant.ubank.service.UserService;
 public class UserServiceImpl implements UserService {
 
 	// Logger for this class
-	protected static final Logger LOG = Logger
-			.getInstance(UserServiceImpl.class);
+	protected final Logger logger = Logger.getInstance(UserServiceImpl.class);
 	private UserDao userDao;
 	private FolderDao folderDao;
 
@@ -79,7 +78,7 @@ public class UserServiceImpl implements UserService {
 	 * @author jerome
 	 */
 	public String doRegister(User user) {
-		LOG.debug("doRegister:param[user]=" + user);
+		logger.debug("doRegister:param[user]=" + user);
 		try {
 
 			String userName = null;
@@ -93,27 +92,24 @@ public class UserServiceImpl implements UserService {
 			if (queryUser == null) {
 				EntityManagerUtil.begin();
 				userDao.add(user);
+				logger.debug("add user success!" + user);
 				// init user dir space
-				boolean initFlag = createUserDir(user.getUserId());
+				boolean initFlag = initUserDir(user.getUserId());
+				logger.debug("init user space success!initFlag=" + initFlag);
 				EntityManagerUtil.commit();
-				if (initFlag) {
-					return MessageKeys.REGISTER_SUCCESS;
-				} else {
-					return MessageKeys.REGISTER_FAILURE;
-				}
-			} else {
-				// user exist,do not register
-				return MessageKeys.REGISTER_FAILURE;
-			}
 
+				return initFlag ? MessageKeys.REGISTER_SUCCESS
+						: MessageKeys.REGISTER_FAILURE;
+			}
 		} catch (Exception e) {
-			LOG.error("user register exception!", e);
+			logger.error("user register exception!", e);
 		} finally {
 			EntityManagerUtil.closeEntityManager();
 		}
-		LOG.debug("doRegister:-----complete--------");
-		// register success
-		return MessageKeys.REGISTER_SUCCESS;
+		logger.debug("doRegister complete!");
+		// user exist,do not register
+		return MessageKeys.REGISTER_FAILURE;
+
 	}
 
 	/**
@@ -136,7 +132,7 @@ public class UserServiceImpl implements UserService {
 			EntityManagerUtil.commit();
 		} catch (Exception e) {
 			// not need rollback
-			LOG.error("get user error", e);
+			logger.error("get user error", e);
 		} finally {
 			EntityManagerUtil.closeEntityManager();
 		}
@@ -158,19 +154,19 @@ public class UserServiceImpl implements UserService {
 
 	/**
 	 * 
-	 * create the user space by the user id
+	 * init the user space by the user id
 	 * 
 	 * @param userId
 	 *            user id
 	 * @return true:success false：failure
 	 * @author jerome
 	 */
-	private boolean createUserDir(Long userId) {
+	private boolean initUserDir(Long userId) {
 
-		LOG.debug("createUserDir:param[userId]=" + userId);
+		logger.debug("initUserDir:param[userId]=" + userId);
 		try {
 			String serverPath = getApplicationPath();
-
+			logger.debug("get the server path: " + serverPath);
 			if (!Validity.isEmpty(serverPath)) {
 				File baseFile = new File(serverPath);
 				if (!baseFile.exists()) {
@@ -200,21 +196,16 @@ public class UserServiceImpl implements UserService {
 				folder.setModifyTime(new Date());
 				folder.setFolderType(Constant.ROOT);
 				folder.setShare(false);
-
-				/*
-				 * Folder parent = new Folder(); parent.setFolderId(0l);
-				 */
 				folder.setParent(null);
 
 				User user = new User();
 				user.setUserId(userId);
 				folder.setUser(user);
-
 				folderDao.add(folder);
-
+				logger.debug("add root folder success during initialization!");
 				// my file folder for each user
 				boolean myfileFlag = makeEachUserDir(baseFile, folder, userId,
-						sb, SystemGlobals.getString(ConfigKeys.MY_File_NAME));
+						sb, SystemGlobals.getString(ConfigKeys.MY_FILE_NAME));
 				// software folder for each user
 				boolean softFlag = makeEachUserDir(baseFile, folder, userId,
 						sb, SystemGlobals.getString(ConfigKeys.SOFTWARE_NAME));
@@ -225,16 +216,16 @@ public class UserServiceImpl implements UserService {
 				// photo folder for each user
 				boolean photoFlag = makeEachUserDir(baseFile, folder, userId,
 						sb, SystemGlobals.getString(ConfigKeys.PHOTO_NAME));
-				
+
+				logger.debug("initUserDir method success complete!");
 				return (myfileFlag && softFlag && ducumentFlag && photoFlag) ? true
 						: false;
 			}
 
 		} catch (Exception e) {
-			LOG.error("create user space excepiton!", e);
-			return false;
+			logger.error("init user space excepiton!", e);
 		}
-		LOG.debug("createUserDir:-----complete--------");
+
 		return false;
 	}
 
@@ -275,48 +266,52 @@ public class UserServiceImpl implements UserService {
 	 */
 	private boolean makeEachUserDir(File baseFile, Folder parent, Long userId,
 			StringBuffer sb, String folderName) {
-		LOG.debug("makeEachUserDir:param[baseFile]=" + baseFile
+		logger.debug("makeEachUserDir:param[baseFile]=" + baseFile
 				+ ",param[parent]=" + parent + ",param[userId]=" + userId
 				+ ",param[sb]=" + sb.toString() + ",param[folderName]="
 				+ folderName);
-
-		Folder folder = new Folder();
-		folder.setFolderName(folderName);
-		folder.setCreateTime(new Date());
-		folder.setModifyTime(new Date());
-		folder.setFolderType(Constant.INIT);
-		folder.setShare(false);
-		folder.setDirectory(SystemGlobals
-				.getString(ConfigKeys.USER_SPACE_ROOT_DIR)
-				+ "/" + userId);
-
-		Folder parentFolder = new Folder();
-		parentFolder.setFolderId(parent.getFolderId());
-		folder.setParent(parentFolder);
-
-		User user = new User();
-		user.setUserId(userId);
-		folder.setUser(user);
-
-		folderDao.add(folder);
-
-		if (SystemGlobals.getString(ConfigKeys.MY_File_NAME).equals(folderName)) {
-			baseFile = new File(sb.append(File.separator).append(
-					String.valueOf(folder.getFolderId())).toString());
-		} else {
-			sb.replace(sb.lastIndexOf(File.separator) + 1, sb.length(), String
-					.valueOf(folder.getFolderId()));
-			baseFile = new File(sb.toString());
-		}
 		boolean result = false;
-		if (!baseFile.exists()) {
-			result = baseFile.mkdir();
-		} else {
-			return true;
+		try {
+			Folder folder = new Folder();
+			folder.setFolderName(folderName);
+			folder.setCreateTime(new Date());
+			folder.setModifyTime(new Date());
+			folder.setFolderType(Constant.INIT);
+			folder.setShare(false);
+			folder.setDirectory(SystemGlobals
+					.getString(ConfigKeys.USER_SPACE_ROOT_DIR)
+					+ "/" + userId);
+
+			Folder parentFolder = new Folder();
+			parentFolder.setFolderId(parent.getFolderId());
+			folder.setParent(parentFolder);
+
+			User user = new User();
+			user.setUserId(userId);
+			folder.setUser(user);
+
+			folderDao.add(folder);
+			logger.debug("add " + folderName
+					+ " folder success during initialization!");
+
+			if (SystemGlobals.getString(ConfigKeys.MY_FILE_NAME).equals(
+					folderName)) {
+				baseFile = new File(sb.append(File.separator).append(
+						String.valueOf(folder.getFolderId())).toString());
+			} else {
+				sb.replace(sb.lastIndexOf(File.separator) + 1, sb.length(),
+						String.valueOf(folder.getFolderId()));
+				baseFile = new File(sb.toString());
+			}
+			if (!baseFile.exists()) {
+				result = baseFile.mkdir();
+			} else {
+				return true;
+			}
+			logger.debug("makeEachUserDir success complete!");
+		} catch (Exception e) {
+			logger.error("make each user dir expcetion!", e);
 		}
-		System.out.println("create dir:" + result);
-		System.out.println(baseFile);
-		LOG.debug("makeEachUserDir:-----complete--------");
 
 		return result;
 	}

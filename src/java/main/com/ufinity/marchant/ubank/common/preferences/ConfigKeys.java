@@ -51,6 +51,9 @@ public class ConfigKeys {
     /** ubank pagination config : for per page count */
     public static final String PAGE_SIZE = "page.size";
     
+    // default 1G space for each user
+    public static final String DEFAULT_USER_SPACE_SIZE = "default.user.space.size";
+    
     /** file search config keys */
     public static final String FILE_SIZE_0 = "file.size.0";
     public static final String FILE_SIZE_1 = "file.size.1";
@@ -72,7 +75,7 @@ public class ConfigKeys {
     // user space root dir
     public static final String USER_SPACE_ROOT_DIR = "user.space.root.dir";
     // each user's dir
-    public static final String MY_File_NAME = "my.file.name";
+    public static final String MY_FILE_NAME = "my.file.name";
     public static final String SOFTWARE_NAME = "software.name";
     public static final String DOCUMENT_NAME = "document.name";
     public static final String PHOTO_NAME = "photo.name";
@@ -82,5 +85,14 @@ public class ConfigKeys {
     public static final String DOCUMENT_TYPE_FOLDER = "document.type.folder";
     public static final String DOCUMENT_TYPE_UNKNOWN = "document.type.unknown";
     
-    
+    // captcha code
+    public static final String MIN_WORD_LENGTH = "min.word.length";
+    public static final String MAX_WORD_LENGTH = "max.word.length";
+    public static final String IMAGE_WIDTH = "image.width";
+    public static final String IMAGE_HEIGHT = "image.height";
+    public static final String MIN_FONT_SIZE = "min.font.size";
+	public static final String MAX_FONT_SIZE = "max.font.size";
+	public static final String NUMBERIC_CHARS = "numberic.chars";
+	public static final String UPPER_ASCII_CHARS = "upper.ascii.chars";
+	public static final String LOWER_ASCII_CHARS = "lower.ascii.chars";
 }
