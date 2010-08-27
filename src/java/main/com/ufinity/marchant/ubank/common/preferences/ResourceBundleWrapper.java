@@ -23,6 +23,7 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common.preferences;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -65,4 +66,19 @@ public class ResourceBundleWrapper {
         }
     }
 
+    /**
+     * Get value with dynamic params
+     * 
+     * @param key key
+     * @param arguments arguments
+     * @return value
+     * @author zdxue
+     */
+    public String getValue(String key, Object...arguments) {
+        try{
+            return MessageFormat.format(rb.getString(key), arguments);
+        }catch(Exception e) {
+            return "";
+        }
+    }
 }

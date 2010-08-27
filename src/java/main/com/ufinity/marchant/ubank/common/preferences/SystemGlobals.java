@@ -52,6 +52,18 @@ public final class SystemGlobals {
     public static String getString(String key) {
         return RB.getValue(key);
     }
+    
+    /**
+     * Get value with params
+     * 
+     * @param key key
+     * @param params params
+     * @return value
+     * @author zdxue
+     */
+    public static String getString(String key, String... params) {
+        return RB.getValue(key, params);
+    }
 
     /**
      * Get int value by key, if the value is not a number, then return 0.
