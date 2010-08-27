@@ -75,6 +75,21 @@ public class AbstractServlet extends HttpServlet {
     }
     
     /**
+     * Redirect 
+     *
+     * @param resp response
+     * @param path path
+     * @throws IOException 
+     * @author zdxue
+     */
+    protected void redirect(HttpServletResponse resp, String path) throws IOException {
+        if(path == null)
+            path = "";
+        
+        resp.sendRedirect(path);
+    }
+    
+    /**
      * Get locale 
      *
      * @return Locale

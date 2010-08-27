@@ -85,6 +85,11 @@ public class LoginServlet extends AbstractServlet {
 
         LOG.debug("go page=" + rslt);
 
+        if(Constant.MAIN_PAGE.equals(rslt)) {
+            redirect(resp, rslt);
+            return;
+        }
+        
         forward(req, resp, rslt);
     }
 
