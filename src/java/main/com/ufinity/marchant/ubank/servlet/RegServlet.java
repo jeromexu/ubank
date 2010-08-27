@@ -2,18 +2,15 @@ package com.ufinity.marchant.ubank.servlet;
 
 import java.io.IOException;
 import java.util.Date;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.captcha.MyCaptchaService;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
@@ -31,7 +28,7 @@ public class RegServlet extends AbstractServlet {
 
 	private static final long serialVersionUID = 1L;
 	// Logger for this class
-	protected final Logger logger = Logger.getLogger(RegServlet.class);
+	protected final Logger logger = Logger.getInstance(RegServlet.class);
 	
 	// user service business logic instance
 	private UserService userService = null;
@@ -74,9 +71,7 @@ public class RegServlet extends AbstractServlet {
 
 		try {
 			String captchaCode = request.getParameter(Constant.REQ_PARAM_CAPTCHACODE);
-			if (logger.isDebugEnabled()) {
-				logger.debug("captchaCode = " + captchaCode);
-			}
+			logger.debug("captchaCode = " + captchaCode);
 			if (Validity.isEmpty(captchaCode)) {
 				request.setAttribute(Constant.CAPTCHA_ERR, getText(MessageKeys.CAPTCHA_ERR_MSG));
 				return Constant.REGISTER_PAGE; 
@@ -93,11 +88,9 @@ public class RegServlet extends AbstractServlet {
 				String userName = request.getParameter(Constant.REQ_PARAM_USERNAME);
 				String pass = request.getParameter(Constant.REQ_PARAM_PASSWORD);
 				String repass = request.getParameter(Constant.REQ_PARAM_REPASSWORD);
-				if (logger.isDebugEnabled()) {
-					logger.debug("userName = " + userName);
-					logger.debug("pass = " + pass);
-					logger.debug("repass = " + repass);
-				}
+				logger.debug("userName = " + userName);
+				logger.debug("pass = " + pass);
+				logger.debug("repass = " + repass);
 				if (Validity.isEmpty(userName.trim())) {
 					request.setAttribute(Constant.USERNAME_ERR, getText(MessageKeys.USERNAME_ERR_MSG));
 					return Constant.REGISTER_PAGE; 

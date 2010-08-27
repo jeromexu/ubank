@@ -5,19 +5,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
+
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
-import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 
@@ -33,8 +30,7 @@ public class DownLoadServlet extends AbstractServlet {
 
 	private static final long serialVersionUID = 1L;
 	// Logger for this class
-	protected static final Logger LOGGER = Logger
-			.getLogger(DownLoadServlet.class);
+	protected final Logger logger = Logger.getInstance(RegServlet.class);
 
 	// file service business logic instance
 	private FileService fileService = null;
@@ -82,6 +78,7 @@ public class DownLoadServlet extends AbstractServlet {
 		try {
 			response.setContentType("text/html; charset=UTF-8");
 			String id = request.getParameter("id");
+			logger.debug("file id = " + id);
 			Long fileId = 0l;
 			if (!Validity.isEmpty(id)) {
 				fileId = Long.valueOf(id);
@@ -108,6 +105,7 @@ public class DownLoadServlet extends AbstractServlet {
 						"attachment;filename="
 								+ new String(fileBean.getFileName().getBytes(
 										"gb2312"), "iso-8859-1"));
+				logger.debug("filename = " + fileBean.getFileName());
 				// response.setHeader("Content-Disposition","attachment;filename="+
 				// URLEncoder.encode(fileBean.getFileName(),"UTF-8"));
 			} else {
@@ -123,13 +121,14 @@ public class DownLoadServlet extends AbstractServlet {
 			while (k < file.length()) {
 				int j = buff.read(b, 0, 1024);
 				k += j;
+				logger.debug("file has downloaded " + k);
 				// write the data into the client memory
 				outPut.write(b, 0, j);
 			}
 			// refresh the file content into the disk
 			outPut.flush();
 		} catch (Exception e) {
-			LOGGER.error("download file exception!", e);
+			logger.error("download file exception!", e);
 		} finally {
 			if (buff != null) {
 				try {
