@@ -135,15 +135,15 @@ public class FolderServiceImpl implements FolderService {
             if (!Validity.isNullAndEmpty(folderType)) {
                 newFolder.setFolderType(folderType);
             }
-
+            // save to database
+            folderDao.add(newFolder);
+            
             // create disk file
             int result = DocumentUtil.addNewFolder(newFolder);
             if (result != 1) {
                 LOG.debug("Create disk directory fail.");
                 return null;
             }
-            // save to database
-            folderDao.add(newFolder);
             return newFolder;
         }
         catch (Exception e) {
@@ -189,8 +189,9 @@ public class FolderServiceImpl implements FolderService {
      * @return FileOrFolderJsonEntity list
      * @author bxji
      */
-    public List<FileOrFolderJsonEntity> getAllByFolder(Long folderId) {
-        if (folderId == null || 0l == folderId) {
+    public List<FileOrFolderJsonEntity> getAllFromFolder(Long folderId,
+            Long layer) {
+        if (folderId == null || 0l == folderId || layer == null || 0l == layer) {
             return null;
         }
         Folder folder = null;
@@ -205,44 +206,40 @@ public class FolderServiceImpl implements FolderService {
         if (folder != null) {
             // convert the FileBean to FileOrFolderJsonEntity
             Set<FileBean> files = folder.getFiles();
-            if (!Validity.isEmpty(files)) {
-                for (FileBean file : files) {
-                    FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
-                    jsonEntity.setId(file.getFileId());
-                    jsonEntity.setPid(folder.getFolderId());
-                    jsonEntity.setName(file.getFileName());
-                    jsonEntity.setSize(file.getSize());
-                    jsonEntity.setModTime(DateUtil.format(file.getModifyTime(),
-                            DateUtil.YYYY_MM_DD_HH_MM_SS));
-                    jsonEntity.setDir(file.getDirectory());
-                    jsonEntity.setType(getDocType(file));
-                    jsonEntity.setInit(false);
-                    jsonEntitys.add(jsonEntity);
-                }
+            for (FileBean file : files) {
+                FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
+                jsonEntity.setId(file.getFileId());
+                jsonEntity.setPid(folder.getFolderId());
+                jsonEntity.setName(file.getFileName());
+                jsonEntity.setSize(file.getSize());
+                jsonEntity.setModTime(DateUtil.format(file.getModifyTime(),
+                        DateUtil.YYYY_MM_DD_HH_MM_SS));
+                jsonEntity.setDir(file.getDirectory());
+                jsonEntity.setType(getDocType(file));
+                jsonEntity.setInit(false);
+                jsonEntitys.add(jsonEntity);
+                jsonEntity.setLayer(layer);
             }
             // conver sub-folders Object to FileOrFolderJsonEntity
             Set<Folder> chiFolders = folder.getChildren();
-            if (!Validity.isEmpty(chiFolders)) {
-                for (Folder child : chiFolders) {
-                    FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
-                    jsonEntity.setId(child.getFolderId());
-                    jsonEntity.setPid(folder.getFolderId());
-                    jsonEntity.setName(child.getFolderName());
-                    jsonEntity.setModTime(DateUtil
-                            .format(child.getModifyTime(),
-                                    DateUtil.YYYY_MM_DD_HH_MM_SS));
-                    jsonEntity.setDir(child.getDirectory());
-                    jsonEntity.setType(SystemGlobals
-                            .getString(ConfigKeys.DOCUMENT_TYPE_FOLDER));
-                    if (Constant.FOLDER_TYPE_CUSTOMER.equals(child
-                            .getFolderType())) {
-                        jsonEntity.setInit(false);
-                    }
-                    else {
-                        jsonEntity.setInit(true);
-                    }
-                    jsonEntitys.add(jsonEntity);
+            for (Folder child : chiFolders) {
+                FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
+                jsonEntity.setId(child.getFolderId());
+                jsonEntity.setPid(folder.getFolderId());
+                jsonEntity.setName(child.getFolderName());
+                jsonEntity.setLayer(layer);
+                jsonEntity.setModTime(DateUtil.format(child.getModifyTime(),
+                        DateUtil.YYYY_MM_DD_HH_MM_SS));
+                jsonEntity.setDir(child.getDirectory());
+                jsonEntity.setType(SystemGlobals
+                        .getString(ConfigKeys.DOCUMENT_TYPE_FOLDER));
+                if (Constant.FOLDER_TYPE_CUSTOMER.equals(child.getFolderType())) {
+                    jsonEntity.setInit(false);
                 }
+                else {
+                    jsonEntity.setInit(true);
+                }
+                jsonEntitys.add(jsonEntity);
             }
         }
         return jsonEntitys;
