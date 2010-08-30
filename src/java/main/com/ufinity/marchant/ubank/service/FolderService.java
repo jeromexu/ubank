@@ -78,10 +78,11 @@ public interface FolderService {
      * 
      * @param folderId
      *            specified folder id
+     * @param layer current directory layer number
      * @return FileOrFolderJsonEntity list
      * @author bxji
      */
-    public List<FileOrFolderJsonEntity> getAllByFolder(Long folderId);
+    public List<FileOrFolderJsonEntity> getAllFromFolder(Long folderId, Long layer);
 
     /**
      * this method is removed 'Folder' from the disk and database

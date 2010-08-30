@@ -184,7 +184,14 @@ public class FolderServlet extends AbstractServlet {
     private void showFolderContent(HttpServletRequest req,
             HttpServletResponse resp) {
         String fid = req.getParameter(Constant.FOLDER_ID);
+        String layer = req.getParameter(Constant.FOLDER_LAYER);
         Long folderId = null;
+        Long layerNumber = null;
+        if (Validity.isNullAndEmpty(layer)) {
+            layerNumber = 1l;
+        }else {
+            layerNumber = Long.parseLong(layer)+1l;
+        }
         if (Validity.isNullAndEmpty(fid)) {
             // if request parameter folderid is null
             User user = (User) req.getSession().getAttribute(
@@ -199,7 +206,7 @@ public class FolderServlet extends AbstractServlet {
             folderId = Long.parseLong(fid);
         }
         List<FileOrFolderJsonEntity> josnEntitys = null;
-        josnEntitys = folderService.getAllByFolder(folderId);
+        josnEntitys = folderService.getAllFromFolder(folderId, layerNumber);
 
         if (josnEntitys != null) {
             Map<String, Object> result = new HashMap<String, Object>();
@@ -425,7 +432,6 @@ public class FolderServlet extends AbstractServlet {
         }
         returnResp(result, resp);
     }
-
 
     /**
      * return ajax request result

@@ -42,37 +42,58 @@ public class FileOrFolderJsonEntity {
     private String dir;
     private Long size;
     private boolean init;
-    
+    private Long layer;
 
     /**
-	 * @return the init
-	 */
-	public boolean isInit() {
-		return init;
-	}
+     * the getter method of layer
+     * 
+     * @return the layer
+     */
+    public Long getLayer() {
+        return layer;
+    }
 
-	/**
-	 * @param init the init to set
-	 */
-	public void setInit(boolean init) {
-		this.init = init;
-	}
+    /**
+     * the setter method of the layer
+     * 
+     * @param layer
+     *            the layer to set
+     */
+    public void setLayer(Long layer) {
+        this.layer = layer;
+    }
 
-	/**
-	 * @return the pid
-	 */
-	public Long getPid() {
-		return pid;
-	}
+    /**
+     * @return the init
+     */
+    public boolean isInit() {
+        return init;
+    }
 
-	/**
-	 * @param pid the pid to set
-	 */
-	public void setPid(Long pid) {
-		this.pid = pid;
-	}
+    /**
+     * @param init
+     *            the init to set
+     */
+    public void setInit(boolean init) {
+        this.init = init;
+    }
 
-	/**
+    /**
+     * @return the pid
+     */
+    public Long getPid() {
+        return pid;
+    }
+
+    /**
+     * @param pid
+     *            the pid to set
+     */
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
+    /**
      * the getter method of id
      * 
      * @return the id

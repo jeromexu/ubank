@@ -139,6 +139,7 @@ public interface Constant {
     public static final String DOCUMENT_TYPE_FOLDER = "folder";
     public static final String FOLDER_OR_FILE_ID = "id";
     public static final String FOLDER_OR_FILE_NAME = "name";
+    public static final String FOLDER_LAYER = "layer";
 
     // rquest result String
     public static final String REQUEST_RESULT_SUCCESS = "success";

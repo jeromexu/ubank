@@ -55,6 +55,7 @@ public class FolderNode {
     private String folderType;
     private Long userId;
     private String state;
+    private Long layer;
     private List<FolderNode> subNodes;
 
     /**
@@ -76,9 +77,11 @@ public class FolderNode {
         if (folder == null) {
             return null;
         }
+        Long layer = NodeUtil.getLayer(folder);
         FolderNode node = new FolderNode();
         FolderNode temp = new FolderNode();
         copyProperties(node, folder);
+        node.setLayer(layer);
         Set<Folder> children = folder.getChildren();
         for (Folder child : children) {
             temp = generateFolderTree(child);
@@ -106,6 +109,7 @@ public class FolderNode {
         Folder lastFolder = folders.get(folders.size() - 1);
         if (lastFolder.getParent() == null) {
             rootNode = new FolderNode();
+            rootNode.setLayer(0l);
             copyProperties(rootNode, lastFolder);
             addToTree(nodes, rootNode);
 
@@ -383,6 +387,25 @@ public class FolderNode {
      */
     public void setState(String state) {
         this.state = state;
+    }
+
+    /**
+     * the getter method of layer
+     * 
+     * @return the layer
+     */
+    public Long getLayer() {
+        return layer;
+    }
+
+    /**
+     * the setter method of the layer
+     * 
+     * @param layer
+     *            the layer to set
+     */
+    public void setLayer(Long layer) {
+        this.layer = layer;
     }
 
 }
