@@ -195,8 +195,6 @@ function showContent(param) {
 											var userId = currTreeNode.attributes.uid;
 											var parentId = currTreeNode.id;
 											var url = '/ubank/portal/addFolder.do';
-											var name = $('#folderName')
-													.attr('value');
 											$.get(url, {
 														'parentId' : parentId,
 														'folderName' : name,

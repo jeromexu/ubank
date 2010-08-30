@@ -780,4 +780,9 @@ public class FolderServiceImpl implements FolderService {
         }
         return folder;
     }
+    @Override
+    public List<Folder> getShareFolders(Long userId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
