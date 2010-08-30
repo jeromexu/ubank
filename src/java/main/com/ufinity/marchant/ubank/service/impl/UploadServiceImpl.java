@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.log4j.Logger;
@@ -66,92 +65,81 @@ public class UploadServiceImpl implements UploadService {
      * 
      * @param folderId
      *            current folder id
+     * @param folderDir
+     *            current folder dir   
      * @param pi
      *            info of upload
-     * @param fIter
-     *            the FileItemIterator
+     * @param item
+     *            the FileItemStream
      * @throws Exception
      *             if have exception
      */
-    public void uploadAndSaveDb(Long folderId, ProgressInfo pi,
-            FileItemIterator fIter) throws Exception {
-        // TODO remove
-        folderId = 1l;
-
+    public void uploadAndSaveDb(Long folderId, String folderDir, ProgressInfo pi, FileItemStream item)
+            throws Exception {
         if (folderId == null || folderId == 0) {
             logger.warn("current folder or folder is null.");
             return;
         }
-        if (fIter == null) {
-            logger.warn("FileItemIterator is null. will return");
+        if (item == null) {
+            logger.warn("FileItem is null. will return");
             return;
         }
 
         String fldName = "";
-        FileItemStream item = null;
         BufferedInputStream stream = null;
         OutputStream out = null;
         ByteArrayOutputStream bStream = null;
-        String folderDir = null;
         List<File> createFiles = new ArrayList<File>();
 
         try {
-            folderDir = getFolderDir(folderId);
-
-            while (fIter.hasNext()) {
-                item = fIter.next();
-                if (!item.isFormField()) {
-                    fldName = item.getFieldName();
-                    String fileFullName = item.getName();
-                    if (fileFullName == null || "".equals(fileFullName.trim())) {
-                        continue;
-                    }
-
-                    pi.setCurFileName(fileFullName);
-                    pi.setUploadedFiles(pi.getUploadedFiles() + "<b>"
-                            + fileFullName + "</b><br/>");
-
-                    stream = new BufferedInputStream(item.openStream());
-                    bStream = new ByteArrayOutputStream();
-                    long bStreamLen = Streams.copy(stream, bStream, true);
-
-                    logger.debug("Upload path is :"
-                            + this.getFileDir(folderDir, fileFullName));
-                    // System.out.println("Upload path is :"
-                    // + this.getFileDir(folderDir,fileFullName));
-
-                    File file = new File(this.getFileDir(folderDir,
-                            fileFullName));
-                    if (file.exists()) {
-                        file.delete();
-                    }
-                    out = new FileOutputStream(file);
-                    bStream.writeTo(out);
-                    createFiles.add(file);
-
-                    logger.debug("Upload fldName :" + fldName
-                            + ",just was uploaded len:" + bStreamLen);
-                    // System.out.println("Upload fldName :" + fldName
-                    // + ",just was uploaded len:" + bStreamLen);
-
-                    Folder folder = new Folder();
-                    folder.setFolderId(folderId);
-
-                    FileBean fb = new FileBean();
-                    fb.setFolder(folder);
-                    fb.setFileName(fileFullName);
-                    fb.setFileType(getFileType(fileFullName));
-                    fb.setCreateTime(new Date());
-                    fb.setDirectory(folderDir);
-                    // kb
-                    fb.setSize(bStreamLen / 1024);
-                    fb.setShare(false);
-                    this.saveFile(fb);
-                }
+            fldName = item.getFieldName();
+            String fileFullName = item.getName();
+            if (fileFullName == null || "".equals(fileFullName.trim())) {
+                return;
             }
+
+            pi.setCurFileName(fileFullName);
+            pi.setUploadedFiles(pi.getUploadedFiles() + "<b>" + fileFullName
+                    + "</b><br/>");
+
+            stream = new BufferedInputStream(item.openStream());
+            bStream = new ByteArrayOutputStream();
+            long bStreamLen = Streams.copy(stream, bStream, true);
+
+            logger.debug("Upload path is :"
+                    + this.getFileDir(folderDir, fileFullName));
+            System.out.println("Upload path is :"
+                    + this.getFileDir(folderDir, fileFullName));
+
+            File file = new File(this.getFileDir(folderDir, fileFullName));
+            if (file.exists()) {
+                file.delete();
+            }
+            out = new FileOutputStream(file);
+            bStream.writeTo(out);
+            createFiles.add(file);
+
+            logger.debug("Upload fldName :" + fldName
+                    + ",just was uploaded len:" + bStreamLen);
+            System.out.println("Upload fldName :" + fldName
+                    + ",just was uploaded len:" + bStreamLen);
+
+            Folder folder = new Folder();
+            folder.setFolderId(folderId);
+
+            FileBean fb = new FileBean();
+            fb.setFolder(folder);
+            fb.setFileName(fileFullName);
+            fb.setFileType(getFileType(fileFullName));
+            fb.setCreateTime(new Date());
+            fb.setDirectory(folderDir);
+            // kb
+            fb.setSize(bStreamLen / 1024);
+            fb.setShare(false);
+            this.saveFile(fb);
         } catch (DbException e) {
-            //remove files
-            for(File file : createFiles){
+            // remove files
+            for (File file : createFiles) {
                 if (file.exists()) {
                     file.delete();
                 }
@@ -178,7 +166,7 @@ public class UploadServiceImpl implements UploadService {
      *            current dir
      * @param fileName
      *            file name
-     * @return file dir    
+     * @return file dir
      */
     private String getFileDir(String currentDir, String fileName) {
         String name = fileName.substring(fileName.lastIndexOf("\\") + 1);
@@ -191,7 +179,7 @@ public class UploadServiceImpl implements UploadService {
      * 
      * @param fileName
      *            file name
-     * @return file type           
+     * @return file type
      */
     private String getFileType(String fileName) {
         int i = fileName.lastIndexOf(".");
@@ -210,11 +198,14 @@ public class UploadServiceImpl implements UploadService {
      *             if has RuntimeException
      * @return folder dir
      */
-    private String getFolderDir(Long folderId) throws DbException {
+    public String getFolderDir(Long folderId) throws DbException {
         try {
             EntityManagerUtil.begin();
             folderDao = DaoFactory.createDao(FolderDao.class);
             Folder folder = folderDao.find(folderId);
+            if(folder == null){
+                throw new DbException("Upload folder is null.");
+            }
             EntityManagerUtil.commit();
 
             return folder.getDirectory();

@@ -23,8 +23,9 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service;
 
-import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
 
+import com.ufinity.marchant.ubank.exception.DbException;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
 
 /**
@@ -42,12 +43,12 @@ public interface UploadService {
      *            current folder id
      * @param pi
      *            info of upload
-     * @param fIter
-     *            the FileItemIterator
+     * @param item
+     *            the FileItemStream
      * @throws Exception
      *             if have exception
      */
-    public void uploadAndSaveDb(Long folderId, ProgressInfo pi,
-            FileItemIterator fIter) throws Exception;
+    public void uploadAndSaveDb(Long folderId, String folderDir, ProgressInfo pi, FileItemStream item) throws Exception;
 
+    public String getFolderDir(Long folderId) throws DbException;
 }

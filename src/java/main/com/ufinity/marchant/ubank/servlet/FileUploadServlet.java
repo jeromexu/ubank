@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 
@@ -59,7 +60,7 @@ public class FileUploadServlet extends AbstractServlet {
 
     private static final long serialVersionUID = 6092584996678971635L;
 
-    private Logger logger = Logger.getLogger(FileUploadServlet.class);
+    private final Logger logger = Logger.getLogger(FileUploadServlet.class);
     
     private UploadService uploadService = null;
     
@@ -80,7 +81,7 @@ public class FileUploadServlet extends AbstractServlet {
             HttpServletResponse response) throws ServletException, IOException {
         String method = parseActionName(request);
         if (UploadConstant.UPLOAD_METHOD.equals(method)) {
-            doUpload(request);
+            doUpload(request,response);
         } else if (UploadConstant.GET_INFO_METHOD.equals(method)) {
             getUploadInfo(request, response);
         } else if (UploadConstant.PAUSE_METHOD.equals(method)) {
@@ -116,6 +117,31 @@ public class FileUploadServlet extends AbstractServlet {
             }
         }
     }
+    
+    /**
+     * 
+     * response string date to client
+     * 
+     * @param request
+     *            response
+     * @param String
+     *            msg
+     */
+    private void responseClientMsg(HttpServletResponse response, String msg) {
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+            out.write("<div id='uploadError'>"+msg+"</div>");
+            out.flush();
+        } catch (Exception e) {
+            logger.error("response client error:", e);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+    }
 
     /**
      * 
@@ -129,8 +155,9 @@ public class FileUploadServlet extends AbstractServlet {
     private void getUploadInfo(HttpServletRequest request,
             HttpServletResponse response) {
         // System.out.println("getUploadInfo.........");
+        String filedName = request.getParameter(UploadConstant.FILED_NAME);
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
-                UploadConstant.PROGRESS_INFO);
+                UploadConstant.PROGRESS_INFO + filedName);
         if (pi != null) {
             String json = JsonUtil.bean2json(pi);
             responseClient(response, json);
@@ -146,11 +173,12 @@ public class FileUploadServlet extends AbstractServlet {
      */
     private void pause(HttpServletRequest request) {
         // System.out.println("pause~~~~~~~~~~~~~~~~~");
+        String filedName = request.getParameter(UploadConstant.FILED_NAME);
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
-                UploadConstant.PROGRESS_INFO);
+                UploadConstant.PROGRESS_INFO + filedName);
         if (pi != null) {
             pi.setPause(true);
-            request.getSession().setAttribute(UploadConstant.PROGRESS_INFO, pi);
+            request.getSession().setAttribute(UploadConstant.PROGRESS_INFO + filedName, pi);
         }
     }
 
@@ -163,11 +191,12 @@ public class FileUploadServlet extends AbstractServlet {
      */
     private void continueUpload(HttpServletRequest request) {
         // System.out.println("continue upload~~~~~~~~~~~~~~~~~");
+        String filedName = request.getParameter(UploadConstant.FILED_NAME);
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
-                UploadConstant.PROGRESS_INFO);
+                UploadConstant.PROGRESS_INFO + filedName);
         if (pi != null) {
             pi.setPause(false);
-            request.getSession().setAttribute(UploadConstant.PROGRESS_INFO, pi);
+            request.getSession().setAttribute(UploadConstant.PROGRESS_INFO + filedName, pi);
         }
     }
     
@@ -191,12 +220,12 @@ public class FileUploadServlet extends AbstractServlet {
      * 
      * @param request
      *            request
+     *  @param response
+     *            response
      */
-    private void doUpload(HttpServletRequest request) {
-        Long currentFolderId = (Long)request.getSession().getAttribute(UploadConstant.CURRENT_FOLDER_ID);
+    @SuppressWarnings("unchecked")
+    private void doUpload(HttpServletRequest request, HttpServletResponse response) {
         ProgressInfo pi = new ProgressInfo();
-        request.getSession().setAttribute(UploadConstant.PROGRESS_INFO, pi);
-
         try {
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
             if (isMultipart) {
@@ -205,12 +234,11 @@ public class FileUploadServlet extends AbstractServlet {
                 if (filesSize >= UploadConstant.MAX_LENGTH) {
                     String[] params = {filesSize / (1024 * 1024)+"MB",UploadConstant.MAX_LENGTH/(1024*1024)+"MB"};
                     String errorMsg = getText(MessageKeys.UPLOAD_SIZE_MAX, params);
-                    pi.setInProgress(false);
-                    pi.setErrorMsg(errorMsg);
-                    logger.debug("Upload files size is to big");
-                    //System.out.println("Upload files size is to big");
-                    throw new Exception(errorMsg);
+                    logger.warn("Upload files size is to big");
+                    responseClientMsg(response,errorMsg);
+                    return;
                 }
+                
                 ServletFileUpload upload = new ServletFileUpload();
                 upload.setHeaderEncoding(UploadConstant.HEADER_ENCODE);
                 upload.setFileSizeMax(UploadConstant.MAX_LENGTH);
@@ -218,10 +246,21 @@ public class FileUploadServlet extends AbstractServlet {
                 UploadListener uploadListener = new UploadListener(pi);
                 upload.setProgressListener(uploadListener);
                 // Parse the request
-                FileItemIterator fIter = upload.getItemIterator(request);
+                FileItemIterator items = upload.getItemIterator(request);
                 
+                //get folder
                 uploadService = ServiceFactory.createService(UploadService.class);
-                uploadService.uploadAndSaveDb(currentFolderId, pi, fIter);
+                Long currentFolderId = (Long)request.getSession().getAttribute(UploadConstant.CURRENT_FOLDER_ID);
+                //TODO remove
+                currentFolderId = 1l;
+                String currentFolderDir = uploadService.getFolderDir(currentFolderId);
+                
+                while (items.hasNext()) {
+                    FileItemStream item = items.next();
+                    String fieldName = item.getFieldName();
+                        request.getSession().setAttribute(UploadConstant.PROGRESS_INFO + fieldName, pi);
+                        uploadService.uploadAndSaveDb(currentFolderId, currentFolderDir, pi, item);
+                }
                 
                 pi.setCurrentTime(System.currentTimeMillis());
                 pi.setBytesRead(filesSize);
