@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -59,8 +60,31 @@ public class FolderNode {
     /**
      * Constructor for FolderNode
      */
-    private FolderNode() {
+    public FolderNode() {
         this.subNodes = new ArrayList<FolderNode>();
+    }
+
+    /**
+     * Generate the specified folder as the root of the subtree. return this
+     * root
+     * 
+     * @param folder
+     *            root folder
+     * @return return root Folder Node
+     */
+    public static FolderNode generateFolderTree(Folder folder) {
+        if (folder == null) {
+            return null;
+        }
+        FolderNode node = new FolderNode();
+        FolderNode temp = new FolderNode();
+        copyProperties(node, folder);
+        Set<Folder> children = folder.getChildren();
+        for (Folder child : children) {
+            temp = generateFolderTree(child);
+        }
+        node.getSubNodes().add(temp);
+        return node;
     }
 
     /**
@@ -114,7 +138,10 @@ public class FolderNode {
      * @param folder
      *            folder object
      */
-    private static void copyProperties(FolderNode node, Folder folder) {
+    public static void copyProperties(FolderNode node, Folder folder) {
+        if (node == null || folder == null) {
+            return;
+        }
         try {
             BeanUtils.copyProperties(node, folder);
         }

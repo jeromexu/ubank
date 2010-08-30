@@ -146,29 +146,29 @@ public class FolderServlet extends AbstractServlet {
             return;
         }
         FolderNode treeRootNode = null;
+        FolderNode shareRootNode = null;
+
         try {
             treeRootNode = folderService.getTreeRoot(user.getUserId());
+            shareRootNode = folderService.getShareTree(user.getUserId());
+
+            treeRootNode.setFolderName(SystemGlobals
+                    .getString(ConfigKeys.ROOT_NAME));
+            shareRootNode.setFolderName(SystemGlobals
+                    .getString(ConfigKeys.SHARE_ROOT_NAME));
+
+            JsonNode jsonTree = NodeUtil.copyFolderNodeToJsonNode(treeRootNode);
+            JsonNode jsonShare = NodeUtil
+                    .copyFolderNodeToJsonNode(shareRootNode);
+            JsonNode[] nodes = { jsonTree, jsonShare };
+
+            String treeJson = JsonUtil.object2json(nodes);
+            System.out.println(treeJson);
+            returnResp(treeJson, resp);
         }
         catch (UBankException e) {
             LOG.error("when try get user root directory, "
                     + "throw an exception:user id can not be null", e);
-        }
-        if (treeRootNode == null) {
-            return;
-        }
-
-        treeRootNode.setFolderName(SystemGlobals
-                .getString(ConfigKeys.ROOT_NAME));
-        JsonNode jsonNode = NodeUtil.copyFolderNodeToJsonNode(treeRootNode);
-        String treeJson = JsonUtil.bean2json(jsonNode);
-        resp.setContentType("application/json;charset=UTF-8");
-        System.out.println(treeJson);
-        try {
-            PrintWriter pw = resp.getWriter();
-            resp.getWriter().write("[" + treeJson + "]");
-            pw.flush();
-        }
-        catch (IOException e) {
         }
     }
 
@@ -425,6 +425,7 @@ public class FolderServlet extends AbstractServlet {
         }
         returnResp(result, resp);
     }
+
 
     /**
      * return ajax request result

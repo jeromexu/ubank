@@ -151,7 +151,6 @@ public class FileServiceImplTest {
 			fail("get file error");
 		}
 		
-		final Long fileid = 3L;
 		final FileBean filebean = new FileBean();
 		filebean.setFileId(3L);
 		// Case 1 : query file by file id and the file id exist

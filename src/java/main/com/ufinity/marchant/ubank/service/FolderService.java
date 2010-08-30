@@ -160,13 +160,15 @@ public interface FolderService {
      * @author bxji
      */
     public Folder getRootFolder(Long userId);
-    
+
     /**
+     * get user's share directory root node
      * 
-     * {method description}
      * @param userId
-     * @return ff
+     *            user id
+     * @return root Folder node
+     * @author bxji
      */
-    public List<Folder> getShareFolders(Long userId);
+    public FolderNode getShareTree(Long userId);
 
 }

@@ -21,7 +21,7 @@
 <div region="west" split="true" title="网络硬盘"
 	style="width: 150px; padding: 10px;">
 
-<ul id="tt2"></ul>
+<ul id="dirTree"></ul>
 </div>
 <div region="center" title="网络硬盘 > 
 			<a href='#'>我的网盘</a>">

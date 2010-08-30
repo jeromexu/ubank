@@ -147,7 +147,7 @@ public class FolderServiceImpl implements FolderService {
             return newFolder;
         }
         catch (Exception e) {
-            LOG.debug("The database throw an  exception "
+            LOG.error("The database throw an  exception "
                     + "when create a folder. ", e);
             return null;
         }
@@ -169,11 +169,12 @@ public class FolderServiceImpl implements FolderService {
         }
         FolderNode rootNode = null;
         try {
-            List<Folder> folders = folderDao.findFolderListByUserId(userId);
+            List<Folder> folders = folderDao.findFolderListByUserId(userId,
+                    false);
             rootNode = FolderNode.generateFolderTree(folders);
         }
         catch (Exception e) {
-            LOG.debug("When try get user directory tree "
+            LOG.error("When try get user directory tree "
                     + "happened to thd database an exception", e);
         }
         return rootNode;
@@ -197,7 +198,7 @@ public class FolderServiceImpl implements FolderService {
             folder = folderDao.find(folderId);
         }
         catch (Exception e) {
-            LOG.debug("happened to thd database an exception", e);
+            LOG.error("happened to thd database an exception", e);
             return null;
         }
         List<FileOrFolderJsonEntity> jsonEntitys = new ArrayList<FileOrFolderJsonEntity>();
@@ -270,7 +271,7 @@ public class FolderServiceImpl implements FolderService {
             return delFolder(folder);
         }
         catch (Exception e) {
-            LOG.debug("delete folder failed ", e);
+            LOG.error("delete folder failed ", e);
             return false;
         }
     }
@@ -347,7 +348,7 @@ public class FolderServiceImpl implements FolderService {
             }
         }
         catch (Exception e) {
-            LOG.debug("When moving folder to specified directory ,"
+            LOG.error("When moving folder to specified directory ,"
                     + " the database throw an exception.", e);
             return false;
         }
@@ -380,7 +381,7 @@ public class FolderServiceImpl implements FolderService {
             }
         }
         catch (Exception e) {
-            LOG.debug("An exception when copying a 'Folder' bean object", e);
+            LOG.error("An exception when copying a 'Folder' bean object", e);
             return false;
         }
         temp.setParent(targetFolder);
@@ -396,7 +397,7 @@ public class FolderServiceImpl implements FolderService {
             folderDao.modify(targetFolder);
         }
         catch (Exception e) {
-            LOG.debug("An exception when copying a directory "
+            LOG.error("An exception when copying a directory "
                     + "to update the database. ", e);
             return false;
         }
@@ -415,7 +416,7 @@ public class FolderServiceImpl implements FolderService {
                     fileDao.add(copy);
                 }
                 catch (Exception e) {
-                    LOG.debug("An exception when copying a file"
+                    LOG.error("An exception when copying a file"
                             + " add to the database", e);
                     return false;
                 }
@@ -473,7 +474,7 @@ public class FolderServiceImpl implements FolderService {
             return true;
         }
         catch (Exception e) {
-            LOG.debug("database exception ,when folder rename .", e);
+            LOG.error("database exception ,when folder rename .", e);
             return false;
         }
     }
@@ -506,7 +507,7 @@ public class FolderServiceImpl implements FolderService {
                 fileDao.delete(file);
             }
             catch (Exception e) {
-                LOG.debug("update the database exception "
+                LOG.error("update the database exception "
                         + "when delete a disk file .", e);
                 return false;
             }
@@ -527,7 +528,7 @@ public class FolderServiceImpl implements FolderService {
             folderDao.delete(targetFolder);
         }
         catch (Exception e) {
-            LOG.debug("delete disk directory fail.", e);
+            LOG.error("delete disk directory fail.", e);
             return false;
         }
         return true;
@@ -552,7 +553,7 @@ public class FolderServiceImpl implements FolderService {
             return shareOrCanceAllFiles(folder, true);
         }
         catch (Exception e) {
-            LOG.debug("When sharing a folder,database"
+            LOG.error("When sharing a folder,database"
                     + " throw an exception .", e);
             return false;
         }
@@ -575,7 +576,7 @@ public class FolderServiceImpl implements FolderService {
             return cancelShareFolder(folder);
         }
         catch (Exception e) {
-            LOG.debug("When cancel share a folder "
+            LOG.error("When cancel share a folder "
                     + ",database throw an exception", e);
             return false;
         }
@@ -636,7 +637,7 @@ public class FolderServiceImpl implements FolderService {
             }
         }
         catch (Exception e) {
-            LOG.debug("update database exception", e);
+            LOG.error("update database exception", e);
             return false;
         }
 
@@ -704,7 +705,7 @@ public class FolderServiceImpl implements FolderService {
             }
         }
         catch (Exception e) {
-            LOG.debug("update database exception", e);
+            LOG.error("update database exception", e);
             return false;
         }
         return true;
@@ -776,14 +777,41 @@ public class FolderServiceImpl implements FolderService {
             folder = folderDao.findRootRolderByUserId(userId);
         }
         catch (Exception e) {
-            LOG.debug("get user root folder the database exception ", e);
+            LOG.error("get user root folder the database exception ", e);
         }
         return folder;
     }
 
-    @Override
-    public List<Folder> getShareFolders(Long userId) {
-        // TODO Auto-generated method stub
-        return null;
+    /**
+     * get user's share directory root node
+     * 
+     * @param userId
+     *            user id
+     * @return root Folder node
+     * @author bxji
+     */
+    public FolderNode getShareTree(Long userId) {
+        if (userId == null || 0l == userId) {
+            return null;
+        }
+        List<Folder> shares = null;
+        Folder root = null;
+        FolderNode shareRoot = new FolderNode();
+        try {
+            shares = folderDao.findFolderListByUserId(userId, true);
+            root = folderDao.findRootRolderByUserId(userId);
+
+            List<FolderNode> nodes = new ArrayList<FolderNode>();
+            for (Folder folder : shares) {
+                FolderNode node = FolderNode.generateFolderTree(folder);
+                nodes.add(node);
+            }
+            FolderNode.copyProperties(shareRoot, root);
+            shareRoot.setSubNodes(nodes);
+        }
+        catch (Exception e) {
+            LOG.error("generate share tree exception", e);
+        }
+        return shareRoot;
     }
 }

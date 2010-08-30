@@ -6,9 +6,7 @@
 	<servlet>
 		<display-name>jcaptcha</display-name>
 		<servlet-name>jcaptcha</servlet-name>
-		<servlet-class>
-			com.ufinity.marchant.ubank.captcha.ImageCaptchaServlet
-		</servlet-class>
+		<servlet-class>com.ufinity.marchant.ubank.captcha.ImageCaptchaServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>jcaptcha</servlet-name>
@@ -17,15 +15,11 @@
 
 	<servlet>
 		<servlet-name>loginServlet</servlet-name>
-		<servlet-class>
-			com.ufinity.marchant.ubank.servlet.LoginServlet
-		</servlet-class>
+		<servlet-class>com.ufinity.marchant.ubank.servlet.LoginServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>regServlet</servlet-name>
-		<servlet-class>
-			com.ufinity.marchant.ubank.servlet.RegServlet
-		</servlet-class>
+		<servlet-class>com.ufinity.marchant.ubank.servlet.RegServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -47,9 +41,7 @@
 
 	<servlet>
 		<servlet-name>folderServlet</servlet-name>
-		<servlet-class>
-			com.ufinity.marchant.ubank.servlet.FolderServlet
-		</servlet-class>
+		<servlet-class>com.ufinity.marchant.ubank.servlet.FolderServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -86,18 +78,13 @@
 		<servlet-name>folderServlet</servlet-name>
 		<url-pattern>/portal/copyTo.do</url-pattern>
 	</servlet-mapping>
-
 	<servlet>
 		<servlet-name>searchServlet</servlet-name>
-		<servlet-class>
-			com.ufinity.marchant.ubank.servlet.SearchServlet
-		</servlet-class>
+		<servlet-class>com.ufinity.marchant.ubank.servlet.SearchServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>DownLoadServlet</servlet-name>
-		<servlet-class>
-			com.ufinity.marchant.ubank.servlet.DownLoadServlet
-		</servlet-class>
+		<servlet-class>com.ufinity.marchant.ubank.servlet.DownLoadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>searchServlet</servlet-name>
@@ -109,9 +96,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>fileUploadServlet</servlet-name>
-		<servlet-class>
-			com.ufinity.marchant.ubank.servlet.FileUploadServlet
-		</servlet-class>
+		<servlet-class>com.ufinity.marchant.ubank.servlet.FileUploadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>fileUploadServlet</servlet-name>
@@ -137,9 +122,7 @@
 
 	<filter>
 		<filter-name>charsetFilter</filter-name>
-		<filter-class>
-			com.ufinity.marchant.ubank.filter.CharsetFilter
-		</filter-class>
+		<filter-class>com.ufinity.marchant.ubank.filter.CharsetFilter</filter-class>
 		<init-param>
 			<param-name>enable</param-name>
 			<param-value>true</param-value>
@@ -156,9 +139,7 @@
 
 	<filter>
 		<filter-name>i18nFilter</filter-name>
-		<filter-class>
-			com.ufinity.marchant.ubank.filter.I18nFilter
-		</filter-class>
+		<filter-class>com.ufinity.marchant.ubank.filter.I18nFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>i18nFilter</filter-name>

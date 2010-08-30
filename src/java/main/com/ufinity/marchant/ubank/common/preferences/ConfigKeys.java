@@ -36,24 +36,24 @@ public class ConfigKeys {
 
     /** FileService key */
     public static final String SERVICE_FILE = "file.service";
-    
+
     /** FolderService key */
     public static final String SERVICE_FOLDER = "folder.service";
 
     public static final String SERVICE_DOWNLOAD = "download.service";
-    
+
     public static final String SERVICE_UPLOAD = "upload.service";
 
     public static final String DAO_USER = "user.dao";
     public static final String DAO_FILE = "file.dao";
     public static final String DAO_FOLDER = "folder.dao";
-    
+
     /** ubank pagination config : for per page count */
     public static final String PAGE_SIZE = "page.size";
-    
+
     // default 1G space for each user
     public static final String DEFAULT_USER_SPACE_SIZE = "default.user.space.size";
-    
+
     /** file search config keys */
     public static final String FILE_SIZE_0 = "file.size.0";
     public static final String FILE_SIZE_1 = "file.size.1";
@@ -66,12 +66,12 @@ public class ConfigKeys {
     public static final String FILE_PUBLISHDATE_3 = "file.publishDate.3";
     public static final String FILE_PUBLISHDATE_4 = "file.publishDate.4";
     public static final String FILE_PUBLISHDATE_5 = "file.publishDate.5";
-    
+
     public static final String I18N_BASE_NAME = "i18n.baseName";
-    
+
     // ubank app path
     public static final String SERVER_PATH = "ubank.path";
-    
+
     // user space root dir
     public static final String USER_SPACE_ROOT_DIR = "user.space.root.dir";
     // each user's dir
@@ -80,19 +80,20 @@ public class ConfigKeys {
     public static final String DOCUMENT_NAME = "document.name";
     public static final String PHOTO_NAME = "photo.name";
     public static final String ROOT_NAME = "root.name";
-    
+    public static final String SHARE_ROOT_NAME = "share.root.name";
+
     // Document type
     public static final String DOCUMENT_TYPE_FOLDER = "document.type.folder";
     public static final String DOCUMENT_TYPE_UNKNOWN = "document.type.unknown";
-    
+
     // captcha code
     public static final String MIN_WORD_LENGTH = "min.word.length";
     public static final String MAX_WORD_LENGTH = "max.word.length";
     public static final String IMAGE_WIDTH = "image.width";
     public static final String IMAGE_HEIGHT = "image.height";
     public static final String MIN_FONT_SIZE = "min.font.size";
-	public static final String MAX_FONT_SIZE = "max.font.size";
-	public static final String NUMBERIC_CHARS = "numberic.chars";
-	public static final String UPPER_ASCII_CHARS = "upper.ascii.chars";
-	public static final String LOWER_ASCII_CHARS = "lower.ascii.chars";
+    public static final String MAX_FONT_SIZE = "max.font.size";
+    public static final String NUMBERIC_CHARS = "numberic.chars";
+    public static final String UPPER_ASCII_CHARS = "upper.ascii.chars";
+    public static final String LOWER_ASCII_CHARS = "lower.ascii.chars";
 }

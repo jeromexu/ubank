@@ -49,6 +49,7 @@ public class JsonUtil {
      *            any object
      * @return String
      */
+    @SuppressWarnings("unchecked")
     public static String object2json(Object obj) {
         StringBuilder json = new StringBuilder();
         if (obj == null) {

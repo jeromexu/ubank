@@ -9,7 +9,7 @@ $(function() {
 		});
 
 function dirTree() {
-	$('#tt2').tree({
+	$('#dirTree').tree({
 				url : '/ubank/portal/showTree.do',
 				onClick : function(node) {
 					currTreeNode = node;
@@ -59,7 +59,6 @@ $(function() {
 												if (data == 'success') {
 													returnResult(true);
 													dirTree();
-													reload();
 													showContent(parentId);
 												} else {
 													returnResult(false);
@@ -119,7 +118,6 @@ $(function() {
 												if (data == 'success') {
 													returnResult(true);
 													dirTree();
-													reload();
 													showContent(parentId);
 												} else {
 													returnResult(false);
@@ -139,7 +137,7 @@ $(function() {
 		});
 
 function reload() {
-	$('#tt2').tree('reload');
+	$('#dirTree').tree('reload');
 }
 
 function showContent(param) {
@@ -203,7 +201,6 @@ function showContent(param) {
 														if (data == 'success') {
 															returnResult(true);
 															dirTree();
-															reload();
 															showContent(parentId);
 														} else {
 															returnResult(false);
@@ -248,7 +245,6 @@ function showContent(param) {
 															returnResult(true);
 															if (record == null) {
 																dirTree();
-																reload();
 															}
 															showContent(pid);
 														} else {
@@ -354,7 +350,6 @@ function showContent(param) {
 															returnResult(true);
 															if (record == null) {
 																dirTree();
-																reload();
 															}
 															showContent(pid);
 														} else {
