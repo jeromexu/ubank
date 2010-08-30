@@ -123,6 +123,7 @@
 	font-weight:bold;
 	background:#fff;
 	background:#7eabcd url('images/tabs_active.png') repeat-x left bottom;
+	outline: none;
 }
 .tabs li.tabs-selected a:hover{
 	cursor:default;

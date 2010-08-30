@@ -15,6 +15,7 @@
 .tree-node{
 	height:18px;
 	white-space:nowrap;
+	cursor:pointer;
 }
 .tree-indent{
 	display:inline-block;
@@ -30,14 +31,20 @@
 	width:16px;
 	height:18px;
 	vertical-align:middle;
-	background:url('images/tree_expanded.gif') no-repeat 4px 4px;
+	background:url('images/tree_arrows.gif') no-repeat -18px 0px;
+}
+.tree-expanded-hover{
+	background:url('images/tree_arrows.gif') no-repeat -50px 0px;
 }
 .tree-collapsed{
 	display:inline-block;
 	width:16px;
 	height:18px;
 	vertical-align:middle;
-	background:url('images/tree_collapsed.gif') no-repeat 4px 4px;
+	background:url('images/tree_arrows.gif') no-repeat 0px 0px;
+}
+.tree-collapsed-hover{
+	background:url('images/tree_arrows.gif') no-repeat -32px 0px;
 }
 .tree-folder{
 	display:inline-block;
@@ -66,10 +73,11 @@
 	vertical-align:middle;
 	padding:1px 2px 1px 2px;
 	white-space:nowrap;
-	cursor:pointer;
-}
-.tree-title-selected{
-	background:#F7BE77;
-	color1:white;
 }
 
+.tree-node-hover{
+	background:#fafafa;
+}
+.tree-node-selected{
+	background:#FBEC88;
+}
