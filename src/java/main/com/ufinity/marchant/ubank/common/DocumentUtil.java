@@ -25,7 +25,8 @@ public class DocumentUtil {
 	public static String FILENAME = null;
 
 	// Logger for this class
-	protected  final static Logger LOGGER = Logger.getInstance(DocumentUtil.class);
+	protected final static Logger LOGGER = Logger
+			.getInstance(DocumentUtil.class);
 
 	/**
 	 * add the real file in disk by the FILE object
@@ -55,10 +56,11 @@ public class DocumentUtil {
 			return 0;
 		}
 		File baseFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
+		boolean result = true;
 		if (!baseFile.exists()) {
-			baseFile.mkdir();
-		}
-		return 1;
+			result = baseFile.mkdir();
+		} 
+		return result ? 1 : 0;
 	}
 
 	/**
@@ -196,7 +198,7 @@ public class DocumentUtil {
 			newPath = newFolderDirecotry + File.separator + newFolderName
 					+ File.separator + FOLDERNAME;
 		}
-		LOGGER.debug("olderPath=" + olderPath+", newPath=" + newPath);
+		LOGGER.debug("olderPath=" + olderPath + ", newPath=" + newPath);
 		File oldFile = new File(olderPath);
 		boolean result = false;
 		if (oldFile.exists()) {
@@ -319,7 +321,7 @@ public class DocumentUtil {
 					fos.write(buffer, 0, byteread);
 				}
 				return 1;
-			} 
+			}
 		} catch (Exception e) {
 			LOGGER.error("copy a file exception!", e);
 		} finally {
@@ -388,14 +390,14 @@ public class DocumentUtil {
 		} catch (Exception e) {
 			LOGGER.debug("copy folder exception", e);
 		} finally {
-			if(input != null){
+			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
 					LOGGER.error("input stream close exception!", e);
 				}
 			}
-			if(output != null){
+			if (output != null) {
 				try {
 					output.close();
 				} catch (IOException e) {
