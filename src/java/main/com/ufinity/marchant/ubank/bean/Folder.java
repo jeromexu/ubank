@@ -147,7 +147,7 @@ public class Folder implements Serializable {
     /**
      * @return the directory
      */
-    @Column(name = "DIRECTORY")
+    @Column(name = "DIRECTORY", nullable = false, length = 2000)
     public String getDirectory() {
         return directory;
     }
