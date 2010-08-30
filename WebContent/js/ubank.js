@@ -18,11 +18,11 @@ function dirTree() {
 			});
 };
 
-$(function dialog() {
-			$('#dialog1').dialog({
+$(function() {
+			$('#moveTo').dialog({
 				height : 350,
 				width : 200,
-                modal:true,
+				modal : true,
 				buttons : [{
 							text : '确定',
 							iconCls : 'icon-ok',
@@ -65,16 +65,75 @@ $(function dialog() {
 												}
 											});
 								}
-								$('#dialog1').dialog('close');
+								$('#moveTo').dialog('close');
 							}
 						}, {
 							text : '取消',
 							handler : function() {
-								$('#dialog1').dialog('close');
+								$('#moveTo').dialog('close');
 							}
 						}]
 			});
-			$('#dialog1').dialog('close');
+			$('#moveTo').dialog('close');
+		});
+
+$(function() {
+			$('#copyTo').dialog({
+				height : 350,
+				width : 200,
+				modal : true,
+				buttons : [{
+							text : '确定',
+							iconCls : 'icon-ok',
+							handler : function() {
+								var node = $('#tt3').tree('getSelected');
+								if (node) {
+									if (node.attributes.type == 'R') {
+										$.messager.alert('提示 ', '不能复制到根目录下!',
+												'info');
+										return;
+									}
+									var record = $('#test')
+											.datagrid('getSelected');
+
+									var url = '/ubank/portal/copyTo.do';
+									var parentId = node.id;
+									var id;
+									var type = 'file';
+									if (record) {
+										id = record.id;
+										if (record.type == '文件夹') {
+											type = 'folder';
+										}
+									} else {
+										id = currTreeNode.id;
+										type = 'folder';
+									}
+									$.get(url, {
+												'parentId' : parentId,
+												'id' : id,
+												'type' : type
+											}, function(data) {
+												if (data == 'success') {
+													returnResult(true);
+													dirTree();
+													reload();
+													showContent(parentId);
+												} else {
+													returnResult(false);
+												}
+											});
+								}
+								$('#copyTo').dialog('close');
+							}
+						}, {
+							text : '取消',
+							handler : function() {
+								$('#copyTo').dialog('close');
+							}
+						}]
+			});
+			$('#copyTo').dialog('close');
 		});
 
 function reload() {
@@ -356,8 +415,21 @@ function showContent(param) {
 						var record = $('#test').datagrid('getSelected');
 						var result = executeChecking(currTreeNode, record);
 						if (result) {
-							$('#dialog1').dialog('open');
+							$('#moveTo').dialog('open');
 							$('#tt1').tree({
+										url : '/ubank/portal/showTree.do'
+									});
+						}
+					}
+				}, {
+					text : '复制到',
+					iconCls : 'icon-cancel',
+					handler : function() {
+						var record = $('#test').datagrid('getSelected');
+						var result = executeChecking(currTreeNode, record);
+						if (result) {
+							$('#copyTo').dialog('open');
+							$('#tt3').tree({
 										url : '/ubank/portal/showTree.do'
 									});
 						}
@@ -370,33 +442,29 @@ function showContent(param) {
 	$('#test').datagrid('clearSelections');
 };
 
-function closeDia() {
-	$('#dlg1').dialog({
-				closed : true
-			});
-}
+// function closeDia() {
+// $('#dlg1').dialog({
+// closed : true
+// });
+// }
 
-function getSelected() {
-	var selected = $('#test').datagrid('getSelected');
-	alert(selected.code + ":" + selected.name);
-}
-
-function getSelections() {
-	var ids = [];
-	var rows = $('#test').datagrid('getSelections');
-	for (var i = 0; i < rows.length; i++) {
-		ids.push(rows[i].code);
-	}
-	alert(ids.join(':'));
-}
-
-function myformatter(value, rec) {
-	return 'a:' + value + '>' + rec.name;
-}
-
-function setFolderId(folderId) {
-	$.get("setCurrentFolder.do?currentFolderId=" + folderId);
-}
+// function getSelected() {
+// var selected = $('#test').datagrid('getSelected');
+// alert(selected.code + ":" + selected.name);
+// }
+//
+// function getSelections() {
+// var ids = [];
+// var rows = $('#test').datagrid('getSelections');
+// for (var i = 0; i < rows.length; i++) {
+// ids.push(rows[i].code);
+// }
+// alert(ids.join(':'));
+// }
+//
+// function myformatter(value, rec) {
+// return 'a:' + value + '>' + rec.name;
+// }
 
 function returnResult(status) {
 	var message = '操作成功！';
