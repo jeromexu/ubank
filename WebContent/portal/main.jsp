@@ -23,11 +23,6 @@
 
 		<div region="west" split="true" title="网络硬盘"
 			style="width: 150px; padding: 10px;">
-			<h1>
-				Tree
-			</h1>
-
-
 			<ul id="tt2"></ul>
 		</div>
 		<div region="center" title="网络硬盘 > 
