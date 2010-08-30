@@ -23,6 +23,7 @@ $(function() {
 				height : 350,
 				width : 200,
 				modal : true,
+				title : '移动到...',
 				buttons : [{
 							text : '确定',
 							iconCls : 'icon-ok',
@@ -82,6 +83,7 @@ $(function() {
 				height : 350,
 				width : 200,
 				modal : true,
+				title : '复制到...',
 				buttons : [{
 							text : '确定',
 							iconCls : 'icon-ok',
@@ -367,7 +369,7 @@ function showContent(param) {
 					}
 				}, {
 					text : '重命名',
-					iconCls : 'icon-cancel',
+					iconCls : 'icon-redo',
 					handler : function() {
 						var record = $('#test').datagrid('getSelected');
 						var result = executeChecking(currTreeNode, record);
@@ -409,8 +411,8 @@ function showContent(param) {
 						}
 					}
 				}, {
-					text : '移动到',
-					iconCls : 'icon-cancel',
+					text : '移动到...',
+					iconCls : 'icon-cut',
 					handler : function() {
 						var record = $('#test').datagrid('getSelected');
 						var result = executeChecking(currTreeNode, record);
@@ -422,8 +424,8 @@ function showContent(param) {
 						}
 					}
 				}, {
-					text : '复制到',
-					iconCls : 'icon-cancel',
+					text : '复制到...',
+					iconCls : 'icon-edit',
 					handler : function() {
 						var record = $('#test').datagrid('getSelected');
 						var result = executeChecking(currTreeNode, record);
