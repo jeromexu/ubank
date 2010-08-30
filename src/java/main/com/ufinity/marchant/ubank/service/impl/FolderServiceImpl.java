@@ -659,12 +659,12 @@ public class FolderServiceImpl implements FolderService {
         String parentPath = parentFolder.getDirectory();
         if (parentPath.length() > 0) {
             char c = parentPath.charAt(parentPath.length() - 1);
-            if ('\\' == c) {
-                currentPath = parentPath + parentFolder.getFolderId() + "\\";
+            if ('\\' == c || '/' == c) {
+                currentPath = parentPath + parentFolder.getFolderId() + "/";
             }
             else {
-                currentPath = parentPath + "\\" + parentFolder.getFolderId()
-                        + "\\";
+                currentPath = parentPath + "/" + parentFolder.getFolderId()
+                        + "/";
             }
         }
         return currentPath;
@@ -780,6 +780,7 @@ public class FolderServiceImpl implements FolderService {
         }
         return folder;
     }
+
     @Override
     public List<Folder> getShareFolders(Long userId) {
         // TODO Auto-generated method stub
