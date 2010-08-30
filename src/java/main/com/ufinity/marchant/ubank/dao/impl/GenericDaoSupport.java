@@ -55,7 +55,7 @@ import com.ufinity.marchant.ubank.dao.GenericDao;
 public abstract class GenericDaoSupport<T, PK extends Serializable> implements
         GenericDao<T, PK> {
     // get logger method
-    protected Logger log = Logger.getInstance(GenericDaoSupport.class);
+    protected final Logger logger = Logger.getInstance(GenericDaoSupport.class);
 
     // save parameter class type
     private Class<T> type;
@@ -81,14 +81,14 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      * 
      */
     public void add(T entity) {
-        log.debug("Method: Add, Param:{Entity: " + entity + "}");
+        logger.debug("Method: Add, Param:{Entity: " + entity + "}");
         // check this parameter is invalidate or not,if invalidate
         if (null == entity) {
-            log.error("Parameter value is invalidate!");
+            logger.error("Parameter value is invalidate!");
             return;
         }
         EntityManagerUtil.getEntityManager().persist(entity);
-        log.debug("Execute persist method is successful!");
+        logger.debug("Execute persist method is successful!");
     }
 
     /**
@@ -99,13 +99,13 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      * 
      */
     public void delete(T entity) {
-        log.debug("Method: delete, Param:{Entity: " + entity + "}");
+        logger.debug("Method: delete, Param:{Entity: " + entity + "}");
         if (null == entity) {
-            log.error("Parameter value is invalidate!");
+            logger.error("Parameter value is invalidate!");
             return;
         }
         EntityManagerUtil.getEntityManager().remove(entity);
-        log.debug("Execute remove method is successful!");
+        logger.debug("Execute remove method is successful!");
 
     }
 
@@ -118,15 +118,15 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      * 
      */
     public void deleteById(PK id) {
-        log.debug("Method: deleteById, Param:{PK: " + id + "}");
+        logger.debug("Method: deleteById, Param:{PK: " + id + "}");
         if (null == id) {
-            log.error("Parameter value is invalidate!");
+            logger.error("Parameter value is invalidate!");
             return;
         }
         EntityManagerUtil.getEntityManager().remove(
                 EntityManagerUtil.getEntityManager()
                         .getReference(this.type, id));
-        log.debug("Execute deleteById method is successful!");
+        logger.debug("Execute deleteById method is successful!");
     }
 
     /**
@@ -139,13 +139,13 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      *         happen exception.
      */
     public T find(PK id) {
-        log.debug("Method: find, Param:{PK: " + id + "}");
+        logger.debug("Method: find, Param:{PK: " + id + "}");
         if (null == id) {
-            log.error("Parameter value is invalidate!");
+            logger.error("Parameter value is invalidate!");
             return null;
         }
         T entity = (T) EntityManagerUtil.getEntityManager().find(this.type, id);
-        log.debug("Execute find method is successful!");
+        logger.debug("Execute find method is successful!");
         return entity;
     }
 
@@ -162,7 +162,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
 
         count = ((Long) EntityManagerUtil.getEntityManager().createQuery(jpal)
                 .getSingleResult());
-        log.debug("Execute getRecordCount method is successful!");
+        logger.debug("Execute getRecordCount method is successful!");
 
         return (PK) count;
     }
@@ -174,14 +174,14 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      *            if you want to update entity.
      */
     public void modify(T entity) {
-        log.debug("Method: modify, Param:{Entity: " + entity + "}");
+        logger.debug("Method: modify, Param:{Entity: " + entity + "}");
         // check this parameter is invalidate or not,if invalidate
         if (null == entity) {
-            log.error("Parameter value is invalidate!");
+            logger.error("Parameter value is invalidate!");
             return;
         }
         EntityManagerUtil.getEntityManager().merge(entity);
-        log.debug("Execute entity method is successful!");
+        logger.debug("Execute entity method is successful!");
 
     }
 
@@ -202,12 +202,12 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      */
     @SuppressWarnings("unchecked")
     public List<T> queryList(PK startRecord, PK pageSize) {
-        log.debug("Method: queryList, Param:{startRecord: " + startRecord
+        logger.debug("Method: queryList, Param:{startRecord: " + startRecord
                 + " , pageSize: " + pageSize + "}");
         String jpal = "SELECT A FROM " + this.getType().getName() + " AS A";
         List<T> lists = null;
         if (null == startRecord || null == pageSize) {
-            log.error("Parameter value is invalidate!");
+            logger.error("Parameter value is invalidate!");
             return null;
         }
 
@@ -215,7 +215,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
                 .createQuery(jpal).setFirstResult(
                         ((Long) startRecord).intValue()).setMaxResults(
                         ((Long) pageSize).intValue()).getResultList();
-        log.debug("Execute queryList method is successful!");
+        logger.debug("Execute queryList method is successful!");
         return lists;
     }
 
@@ -255,20 +255,20 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     @SuppressWarnings("unused")
     private Pager<T> findPager(String hql, int currentPage, int pageSize,
             Class<T> clazz, Map<String, Object> properties) {
-        log.debug("Method: findPager, Param:{currentPage : " + currentPage
+        logger.debug("Method: findPager, Param:{currentPage : " + currentPage
                 + " ,pageSize : " + pageSize + " ,properties:" + properties
                 + "}");
         if (currentPage <= 0) {
-            log.error("current page's value isn't less than zero!");
+            logger.error("current page's value isn't less than zero!");
             return null;
         }
         int totalRecords = 0;
         if (clazz != null) {
             totalRecords = (int) this.getRecordCount(clazz);
-            log.debug("Param:{clazz : " + clazz + "}");
+            logger.debug("Param:{clazz : " + clazz + "}");
         } else {
             totalRecords = this.getRecordCount(hql, properties);
-            log.debug("Param:{clazz : " + clazz + "}");
+            logger.debug("Param:{clazz : " + clazz + "}");
         }
         Pager<T> page = new Pager<T>();
         List<T> list = null;
@@ -301,11 +301,11 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     @SuppressWarnings("unchecked")
     public List<T> queryList(String hql, int startRecord, int pageSize,
             Class<T> clazz, Map<String, Object> properties) {
-        log.debug("Method: queryList, Param:{startRecord : " + startRecord
+        logger.debug("Method: queryList, Param:{startRecord : " + startRecord
                 + " ,pageSize : " + pageSize + " ,properties:" + properties
                 + "}");
         if (hql == null && clazz == null) {
-            log.error("Parameter is invalidate!Param Value{hql :" + hql
+            logger.error("Parameter is invalidate!Param Value{hql :" + hql
                     + " ,clazz: " + clazz + "}");
             return null;
         }
@@ -338,7 +338,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
 
         count = ((Integer) EntityManagerUtil.getEntityManager().createQuery(
                 jpaQuery).getSingleResult());
-        log.debug("Execute getRecordCount method is successful!");
+        logger.debug("Execute getRecordCount method is successful!");
         return count;
     }
 
@@ -365,7 +365,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      */
     protected String getCountHql(String hql) {
         if (Validity.isEmpty(hql)) {
-            log.error("Error getHqlBean because hql is empty");
+            logger.error("Error getHqlBean because hql is empty");
             return "";
         }
         return "select count(*) "
@@ -412,7 +412,7 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
     @SuppressWarnings("unchecked")
     public Pager<T> queryEntitiesByCriteriaWithPager(int currentPage,
             int pageSize, Criterion... criterion) {
-        log
+        logger
                 .debug("Method: queryEntitiesByCriteriaWithPager, Param:{currentPage : "
                         + currentPage + " ,pageSize : " + pageSize + "}");
 

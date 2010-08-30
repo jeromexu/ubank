@@ -136,7 +136,7 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
                 }
             }
 
-            log.debug("Method: getJPAQueryString, Param:{fileName: " + fileName
+            logger.debug("Method: getJPAQueryString, Param:{fileName: " + fileName
                     + " , minFileSize: " + minFileSize + " , maxFileSize: "
                     + maxFileSize + " , minModifyTime: " + minModifyTime
                     + " , maxModifyTime: " + maxModifyTime + "}");
