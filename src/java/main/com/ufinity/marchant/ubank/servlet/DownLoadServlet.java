@@ -108,25 +108,25 @@ public class DownLoadServlet extends AbstractServlet {
 				logger.debug("filename = " + fileBean.getFileName());
 				// response.setHeader("Content-Disposition","attachment;filename="+
 				// URLEncoder.encode(fileBean.getFileName(),"UTF-8"));
-			} else {
-				return Constant.ERROR_PAGE;
-			}
-			// read file into i/o
-			buff = new BufferedInputStream(new FileInputStream(file));
-			// cache data
-			byte[] b = new byte[5 * 1024];
-			// count the file size which file has downloaded currently
-			long k = 0;
-			outPut = response.getOutputStream();
-			while (k < file.length()) {
-				int j = buff.read(b, 0, 1024);
-				k += j;
-				logger.debug("file has downloaded " + k);
-				// write the data into the client memory
-				outPut.write(b, 0, j);
-			}
-			// refresh the file content into the disk
-			outPut.flush();
+			
+				// read file into i/o
+				buff = new BufferedInputStream(new FileInputStream(file));
+				// cache data
+				byte[] b = new byte[5 * 1024];
+				// count the file size which file has downloaded currently
+				long k = 0;
+				outPut = response.getOutputStream();
+				while (k < file.length()) {
+					int j = buff.read(b, 0, 1024);
+					k += j;
+					logger.debug("file has downloaded " + k);
+					// write the data into the client memory
+					outPut.write(b, 0, j);
+				}
+				// refresh the file content into the disk
+				outPut.flush();
+				return null;
+			} 
 		} catch (Exception e) {
 			logger.error("download file exception!", e);
 		} finally {
@@ -145,7 +145,7 @@ public class DownLoadServlet extends AbstractServlet {
 				}
 			}
 		}
-		return null;
+		return Constant.ERROR_PAGE;
 	}
 
 	/**

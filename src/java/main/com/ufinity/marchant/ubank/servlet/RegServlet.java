@@ -120,12 +120,17 @@ public class RegServlet extends AbstractServlet {
                         .getInt(ConfigKeys.DEFAULT_USER_SPACE_SIZE));
                 userService = ServiceFactory.createService(UserService.class);
                 String registerMsg = userService.doRegister(user);
-                logger.debug(userName + " register success!");
+                if (MessageKeys.REGISTER_FAILURE.equals(registerMsg)) {
+                	logger.debug(userName + " register failure!");
+                } else {
+                	logger.debug(userName + " register success!");
+                }
                 request.setAttribute(Constant.REGISTER_MSG, registerMsg);
             }
         }
         catch (Exception e) {
             logger.error("register exception message!", e);
+            request.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.REGISTER_EXCEPTION));
         }
         return Constant.REGISTER_PAGE;
     }
