@@ -110,7 +110,7 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 			textPasterList.add(new RandomTextPaster(minWordLength,
 					maxWordLength, Color.blue));
 
-			Integer imageWidth = SystemGlobals.getInt(ConfigKeys.IMAGE_HEIGHT);
+			Integer imageWidth = SystemGlobals.getInt(ConfigKeys.IMAGE_WIDTH);
 			Integer imageHeight = SystemGlobals.getInt(ConfigKeys.IMAGE_HEIGHT);
 			backgroundGeneratorList.add(new GradientBackgroundGenerator(
 					imageWidth, imageHeight, Color.orange, Color.white));
