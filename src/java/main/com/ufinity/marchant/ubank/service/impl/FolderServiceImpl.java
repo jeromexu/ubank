@@ -664,7 +664,7 @@ public class FolderServiceImpl implements FolderService {
             }
             else {
                 currentPath = parentPath + "\\" + parentFolder.getFolderId()
-                        + "\\a";
+                        + "\\";
             }
         }
         return currentPath;
