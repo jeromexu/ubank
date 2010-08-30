@@ -36,39 +36,39 @@ import java.util.List;
  * @version 2010-8-23
  */
 public class NodeUtil {
-    /**
-     * this method copy folderNode property to JsonNode and return this JsonNode
-     * 
-     * @param folderNode FolderNode
-     * @return return copied JsonNode
-     */
-    public static JsonNode copyFolderNodeToJsonNode(FolderNode folderNode) {
-        if (folderNode == null) {
-            return null;
-        }
-        JsonNode jsonNode = new JsonNode();
-        List<JsonNode> children = null;
-        jsonNode.setId(folderNode.getFolderId());
-        jsonNode.setState("close");
-        jsonNode.setUid(folderNode.getUserId());
-        if (folderNode.getParentId() == null || 0l == folderNode.getParentId()) {
-            jsonNode.setState("open");
-        }
-        jsonNode.setText(folderNode.getFolderName());
-        List<FolderNode> subNodes = folderNode.getSubNodes();
-        if (subNodes.size() > 0) {
-            children = new ArrayList<JsonNode>();
-            JsonNode nodeTemp = null;
+	/**
+	 * this method copy folderNode property to JsonNode and return this JsonNode
+	 * 
+	 * @param folderNode
+	 *            FolderNode
+	 * @return return copied JsonNode
+	 */
+	public static JsonNode copyFolderNodeToJsonNode(FolderNode folderNode) {
+		if (folderNode == null) {
+			return null;
+		}
+		JsonNode jsonNode = new JsonNode();
+		List<JsonNode> children = null;
+		jsonNode.setId(folderNode.getFolderId());
+		jsonNode.setState("closed");
+		jsonNode.getAttributes().put("uid", folderNode.getUserId() + "");
+		jsonNode.getAttributes().put("type", folderNode.getFolderType());
+		if (folderNode.getParentId() == null || 0l == folderNode.getParentId()) {
+			jsonNode.setState("open");
+		}
+		jsonNode.setText(folderNode.getFolderName());
+		List<FolderNode> subNodes = folderNode.getSubNodes();
+		if (subNodes.size() > 0) {
+			children = new ArrayList<JsonNode>();
+			JsonNode nodeTemp = null;
 
-            for (int i = 0; i < subNodes.size(); i++) {
-                nodeTemp = copyFolderNodeToJsonNode(subNodes.get(i));
-                children.add(nodeTemp);
-            }
-
-            jsonNode.setChildren(children);
-        }
-
-        return jsonNode;
-    };
+			for (int i = 0; i < subNodes.size(); i++) {
+				nodeTemp = copyFolderNodeToJsonNode(subNodes.get(i));
+				children.add(nodeTemp);
+			}
+			jsonNode.setChildren(children);
+		}
+		return jsonNode;
+	};
 
 }

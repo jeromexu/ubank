@@ -33,17 +33,46 @@ package com.ufinity.marchant.ubank.common;
  * @version 2010-8-23
  */
 public class FileOrFolderJsonEntity {
-    public static final String TYPE_FILE = "file";
-    public static final String TYPE_FOLDER = "folder";
 
     private Long id;
+    private Long pid;
     private String name;
     private String modTime;
     private String type;
     private String dir;
     private Long size;
+    private boolean init;
+    
 
     /**
+	 * @return the init
+	 */
+	public boolean isInit() {
+		return init;
+	}
+
+	/**
+	 * @param init the init to set
+	 */
+	public void setInit(boolean init) {
+		this.init = init;
+	}
+
+	/**
+	 * @return the pid
+	 */
+	public Long getPid() {
+		return pid;
+	}
+
+	/**
+	 * @param pid the pid to set
+	 */
+	public void setPid(Long pid) {
+		this.pid = pid;
+	}
+
+	/**
      * the getter method of id
      * 
      * @return the id

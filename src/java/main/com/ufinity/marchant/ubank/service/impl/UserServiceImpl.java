@@ -95,7 +95,8 @@ public class UserServiceImpl implements UserService {
 				logger.debug("add user success!" + user);
 				// init user dir space
 				boolean initFlag = initUserDir(user.getUserId());
-				logger.debug("init user space "+(initFlag?"success":"failue")+"!");
+				logger.debug("init user space "
+						+ (initFlag ? "success" : "failue") + "!");
 				EntityManagerUtil.commit();
 
 				return initFlag ? MessageKeys.REGISTER_SUCCESS
@@ -194,7 +195,7 @@ public class UserServiceImpl implements UserService {
 				folder.setDirectory(SystemGlobals
 						.getString(ConfigKeys.USER_SPACE_ROOT_DIR));
 				folder.setModifyTime(new Date());
-				folder.setFolderType(Constant.ROOT);
+				folder.setFolderType(Constant.FOLDER_TYPE_ROOT);
 				folder.setShare(false);
 				folder.setParent(null);
 
@@ -276,7 +277,7 @@ public class UserServiceImpl implements UserService {
 			folder.setFolderName(folderName);
 			folder.setCreateTime(new Date());
 			folder.setModifyTime(new Date());
-			folder.setFolderType(Constant.INIT);
+			folder.setFolderType(Constant.FOLDER_TYPE_INIT);
 			folder.setShare(false);
 			folder.setDirectory(SystemGlobals
 					.getString(ConfigKeys.USER_SPACE_ROOT_DIR)

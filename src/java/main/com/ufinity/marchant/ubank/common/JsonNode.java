@@ -27,6 +27,7 @@
 package com.ufinity.marchant.ubank.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -37,110 +38,109 @@ import java.util.List;
  */
 public class JsonNode {
 
-    private Long id;
-    private String text;
-    private String state;
-    private Long uid;
-    /**
-     * the getter method of uid
-     * @return the uid
-     */
-    public Long getUid() {
-        return uid;
-    }
+	private Long id;
+	private String text;
+	private String state;
+	private List<JsonNode> children;
+	private HashMap<String, String> attributes;
 
-    /**
-     * the setter method of the uid
-     * @param uid the uid to set
-     */
-    public void setUid(Long uid) {
-        this.uid = uid;
-    }
+	/**
+	 * 
+	 * Constructor for JsonNode
+	 */
+	public JsonNode() {
+		this.children = new ArrayList<JsonNode>();
+		this.attributes = new HashMap<String, String>();
+	}
 
-    private List<JsonNode> children;
-    
-    /**
-     * 
-     * Constructor for JsonNode
-     */
-    public JsonNode(){
-        this.children = new ArrayList<JsonNode>();
-    }
+	/**
+	 * the getter method of id
+	 * 
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
 
-    /**
-     * the getter method of id
-     * 
-     * @return the id
-     */
-    public Long getId() {
-        return id;
-    }
+	/**
+	 * the setter method of the id
+	 * 
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    /**
-     * the setter method of the id
-     * 
-     * @param id
-     *            the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
+	/**
+	 * the getter method of text
+	 * 
+	 * @return the text
+	 */
+	public String getText() {
+		return text;
+	}
 
-    /**
-     * the getter method of text
-     * 
-     * @return the text
-     */
-    public String getText() {
-        return text;
-    }
+	/**
+	 * the setter method of the text
+	 * 
+	 * @param text
+	 *            the text to set
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
 
-    /**
-     * the setter method of the text
-     * 
-     * @param text
-     *            the text to set
-     */
-    public void setText(String text) {
-        this.text = text;
-    }
+	/**
+	 * the getter method of state
+	 * 
+	 * @return the state
+	 */
+	public String getState() {
+		return state;
+	}
 
-    /**
-     * the getter method of state
-     * 
-     * @return the state
-     */
-    public String getState() {
-        return state;
-    }
+	/**
+	 * the setter method of the state
+	 * 
+	 * @param state
+	 *            the state to set
+	 */
+	public void setState(String state) {
+		this.state = state;
+	}
 
-    /**
-     * the setter method of the state
-     * 
-     * @param state
-     *            the state to set
-     */
-    public void setState(String state) {
-        this.state = state;
-    }
+	/**
+	 * the getter method of children
+	 * 
+	 * @return the children
+	 */
+	public List<JsonNode> getChildren() {
+		return children;
+	}
 
-    /**
-     * the getter method of children
-     * 
-     * @return the children
-     */
-    public List<JsonNode> getChildren() {
-        return children;
-    }
+	/**
+	 * the setter method of the children
+	 * 
+	 * @param children
+	 *            the children to set
+	 */
+	public void setChildren(List<JsonNode> children) {
+		this.children = children;
+	}
 
-    /**
-     * the setter method of the children
-     * 
-     * @param children
-     *            the children to set
-     */
-    public void setChildren(List<JsonNode> children) {
-        this.children = children;
-    }
+	/**
+	 * @return the attributes
+	 */
+	public HashMap<String, String> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes the attributes to set
+	 */
+	public void setAttributes(HashMap<String, String> attributes) {
+		this.attributes = attributes;
+	}
 
 }

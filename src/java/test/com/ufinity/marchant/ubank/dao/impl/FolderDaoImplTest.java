@@ -211,7 +211,7 @@ public class FolderDaoImplTest {
     @Test
     public void testFind() {
         // init rigth data
-        packageData(true);
+       /* packageData(true);
         List<Folder> list = this.folderDao.queryList(0L,
                 (long) folderDatas.length);
 
@@ -220,7 +220,10 @@ public class FolderDaoImplTest {
             Folder folderTemp = this.folderDao.find(folder.getFolderId());
             System.err.println(folderTemp.getFolderName());
             assertNotNull(folderTemp.getFolderName());
-        }
+        }*/
+        
+        Folder folderTemp = this.folderDao.find(37L);
+        System.out.println(folderTemp.getChildren().size());
     }
 
     /**

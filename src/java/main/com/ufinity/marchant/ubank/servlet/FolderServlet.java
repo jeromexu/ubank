@@ -24,6 +24,7 @@ import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 
@@ -34,225 +35,326 @@ import com.ufinity.marchant.ubank.service.ServiceFactory;
  * @author liujun
  */
 public class FolderServlet extends AbstractServlet {
-    private static final long serialVersionUID = -8297805269743197486L;
-    // Logger for this class
-    protected final Logger LOG = Logger.getInstance(FolderServlet.class);
+	private static final long serialVersionUID = -8297805269743197486L;
+	// Logger for this class
+	protected final Logger LOG = Logger.getInstance(FolderServlet.class);
 
-    FolderService folderService = null;
+	FolderService folderService = null;
+	FileService fileService = null;
 
-    private static final String SHOW_MAIN = "showMain";
+	private static final String SHOW_MAIN = "showMain";
 
-    /**
-     * Constructor for FolderServlet
-     */
-    public FolderServlet() {
-        folderService = ServiceFactory.createService(FolderService.class);
-    }
+	/**
+	 * Constructor for FolderServlet
+	 */
+	public FolderServlet() {
+		folderService = ServiceFactory.createService(FolderService.class);
+		fileService = ServiceFactory.createService(FileService.class);
+	}
 
-    /**
-     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
-     *      javax.servlet.http.HttpServletResponse)
-     */
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        doPost(req, resp);
-    }
+	/**
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
+	 *      javax.servlet.http.HttpServletResponse)
+	 */
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		doPost(req, resp);
+	}
 
-    /**
-     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest,
-     *      javax.servlet.http.HttpServletResponse)
-     */
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+	/**
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest,
+	 *      javax.servlet.http.HttpServletResponse)
+	 */
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 
-        String method = parseActionName(req);
-        String rslt = Constant.ERROR_PAGE;
+		String method = parseActionName(req);
+		String rslt = Constant.ERROR_PAGE;
 
-        if (SHOW_MAIN.equals(method)) {
-            rslt = showMain(req, resp);
-        }
-        else if (Constant.SHOW_TREE.equals(method)) {
-            showTree(req, resp);
-            return;
-        }
-        else if (Constant.SHOW_FOLDER_CONTENT.equals(method)) {
-            showFolderContent(req, resp);
-            return;
-        }
-        else if (Constant.ADD_FOLDER.equals(method)) {
-            addFolder(req, resp);
-            return;
-        }
+		if (SHOW_MAIN.equals(method)) {
+			rslt = showMain(req, resp);
+		} else if (Constant.SHOW_TREE.equals(method)) {
+			showTree(req, resp);
+			return;
+		} else if (Constant.SHOW_FOLDER_CONTENT.equals(method)) {
+			showFolderContent(req, resp);
+			return;
+		} else if (Constant.ADD_FOLDER.equals(method)) {
+			addFolder(req, resp);
+			return;
+		} else if (Constant.DEL_FOLDER_OR_FILE.equals(method)) {
+			delFolderOrfile(req, resp);
+			return;
+		} else if (Constant.SHARE_FOLDER.equals(method)) {
+			sharefolder(req, resp);
+			return;
+		} else if (Constant.RENAME.equals(method)) {
+			rename(req, resp);
+			return;
+		} else if (Constant.MOVE_TO.equals(method)) {
+			moveTo(req, resp);
+			return;
+		}
 
-        forward(req, resp, rslt);
-    }
+		forward(req, resp, rslt);
+	}
 
-    /**
-     * show main
-     * 
-     * @param req
-     *            request
-     * @param resp
-     *            response
-     * @return forward page
-     */
-    private String showMain(HttpServletRequest req, HttpServletResponse resp) {
-        // String username = req.getParameter(USERNAME);
+	/**
+	 * show main
+	 * 
+	 * @param req
+	 *            request
+	 * @param resp
+	 *            response
+	 * @return forward page
+	 */
+	private String showMain(HttpServletRequest req, HttpServletResponse resp) {
+		// String username = req.getParameter(USERNAME);
 
-        EntityManagerUtil.begin();
-        // List<Folder> floders = folderDao.findAndProcessByUserName(username);
+		EntityManagerUtil.begin();
+		// List<Folder> floders = folderDao.findAndProcessByUserName(username);
 
-        EntityManagerUtil.commit();
+		EntityManagerUtil.commit();
 
-        return "";
-    }
+		return "";
+	}
 
-    /**
-     * {method description}
-     * 
-     * @param req
-     *            request
-     * @param resp
-     *            response
-     * @return forward page
-     * @author bxji
-     */
-    private void showTree(HttpServletRequest req, HttpServletResponse resp) {
-        User user = (User) req.getSession().getAttribute(Constant.SESSION_USER);
-        FolderNode treeRootNode = null;
+	/**
+	 * {method description}
+	 * 
+	 * @param req
+	 *            request
+	 * @param resp
+	 *            response
+	 * @return forward page
+	 * @author bxji
+	 */
+	private void showTree(HttpServletRequest req, HttpServletResponse resp) {
+		User user = (User) req.getSession().getAttribute(Constant.SESSION_USER);
+		if (user == null) {
+			return;
+		}
+		FolderNode treeRootNode = null;
+		try {
+			treeRootNode = folderService.getTreeRoot(user.getUserId());
+		} catch (UBankException e) {
+			LOG.error("when try get user root directory, "
+					+ "throw an exception:user id can not be null", e);
+		}
+		if (treeRootNode == null) {
+			return;
+		}
 
-        if (user != null) {
-            EntityManagerUtil.begin();
-            try {
-                treeRootNode = folderService.getTreeRoot(user.getUserId());
-            }
-            catch (UBankException e) {
-                LOG.error("when try get user root directory, "
-                        + "throw an exception:user id can not be null", e);
-            }
-            EntityManagerUtil.commit();
-        }
+		treeRootNode.setFolderName(SystemGlobals
+				.getString(ConfigKeys.ROOT_NAME));
+		JsonNode jsonNode = NodeUtil.copyFolderNodeToJsonNode(treeRootNode);
+		String treeJson = JsonUtil.bean2json(jsonNode);
+		resp.setContentType("application/json;charset=UTF-8");
+		System.out.println(treeJson);
+		try {
+			PrintWriter pw = resp.getWriter();
+			resp.getWriter().write("[" + treeJson + "]");
+			pw.flush();
+		} catch (IOException e) {
+		}
+	}
 
-        String treeJson = "";
-        if (treeRootNode != null) {
-            treeRootNode.setFolderName(SystemGlobals
-                    .getString(ConfigKeys.ROOT_NAME));
-            JsonNode jsonNode = NodeUtil.copyFolderNodeToJsonNode(treeRootNode);
-            treeJson = JsonUtil.bean2json(jsonNode);
-        }
-        resp.setContentType("application/json;charset=UTF-8");
+	/**
+	 * Respond to requests for users to view directory list of files
+	 * 
+	 * @param req
+	 *            request
+	 * @param resp
+	 *            response
+	 * @return forward page
+	 * @author bxji
+	 */
+	private void showFolderContent(HttpServletRequest req,
+			HttpServletResponse resp) {
+		String fid = req.getParameter(Constant.FOLDER_ID);
+		Long folderId = null;
+		if (Validity.isNullAndEmpty(fid)) {
+			// if request parameter folderid is null
+			User user = (User) req.getSession().getAttribute(
+					Constant.SESSION_USER);
+			if (user == null) {
+				return;
+			}
+			Folder folder = folderService.getRootFolder(user.getUserId());
+			folderId = folder.getFolderId();
+		} else {
+			folderId = Long.parseLong(fid);
+		}
+		List<FileOrFolderJsonEntity> josnEntitys = null;
+		josnEntitys = folderService.getAllByFolder(folderId);
 
-        try {
-            PrintWriter pw = resp.getWriter();
-            resp.getWriter().write("[" + treeJson + "]");
-            pw.flush();
-        }
-        catch (IOException e) {
-        }
-    }
+		if (josnEntitys != null) {
+			Map<String, Object> result = new HashMap<String, Object>();
+			result.put("total", josnEntitys.size());
+			result.put("rows", josnEntitys);
+			String jsonStr = JsonUtil.object2json(result);
+			System.out.println(jsonStr);
+			returnResp(jsonStr, resp);
+		}
+	}
 
-    /**
-     * Respond to requests for users to view directory list of files
-     * 
-     * @param req
-     *            request
-     * @param resp
-     *            response
-     * @return forward page
-     * @author bxji
-     */
-    private void showFolderContent(HttpServletRequest req,
-            HttpServletResponse resp) {
-        String id = req.getParameter("folderId");
-        Long folderId = null;
-        if (!Validity.isNullAndEmpty(id)) {
-            folderId = Long.parseLong(id);
-        }
-        else {
-            // if request parameter folderid is null
-            User user = (User) req.getSession().getAttribute(
-                    Constant.SESSION_USER);
-            if (user != null) {
-                Folder folder = folderService.getRootFolder(user.getUserId());
-                folderId = folder.getFolderId();
-            }
-            else {
-                return;
-            }
-        }
-        List<FileOrFolderJsonEntity> josnEntitys = null;
-        josnEntitys = folderService.getAllByFolder(folderId);
+	/**
+	 * create a new folder
+	 * 
+	 * @param req
+	 *            request
+	 * @param resp
+	 *            response
+	 * @return forward page
+	 * @author bxji
+	 */
+	private void addFolder(HttpServletRequest req, HttpServletResponse resp) {
+		String folderId = req.getParameter(Constant.PARENT_ID);
+		String folderName = req.getParameter(Constant.FOLDER_NAME);
+		String userID = req.getParameter(Constant.USER_ID);
+		String result = Constant.REQUEST_RESULT_FAIL;
 
-        String jsonStr = "";
-        if (josnEntitys != null) {
-            Map<String, Object> result = new HashMap<String, Object>();
-            result.put("total", josnEntitys.size());
-            result.put("rows", josnEntitys);
-            jsonStr = JsonUtil.object2json(result);
-        }
-        resp.setContentType("application/json;charset=UTF-8");
-        System.out.println(jsonStr);
-        returnResp(jsonStr, resp);
+		if (!Validity.isNullAndEmpty(folderName)
+				&& !Validity.isNullAndEmpty(folderId)
+				&& !Validity.isNullAndEmpty(userID)) {
+			Long pid = Long.parseLong(folderId);
+			Long uid = Long.parseLong(userID);
+			try {
+				EntityManagerUtil.begin();
+				Folder folder = folderService.addFolder(uid, pid, folderName,
+						null);
+				EntityManagerUtil.commit();
+				if (folder != null) {
+					result = Constant.REQUEST_RESULT_SUCCESS;
+				}
+			} catch (UBankException e) {
+				EntityManagerUtil.rollback();
+				LOG.error("create folder fail", e);
+			}
+		}
+		returnResp(result, resp);
+	}
 
-    }
+	private void delFolderOrfile(HttpServletRequest req,
+			HttpServletResponse resp) {
+		String id = req.getParameter(Constant.FOLDER_OR_FILE_ID);
+		String type = req.getParameter(Constant.DOCUMENT_TYPE);
+		String result = Constant.REQUEST_RESULT_FAIL;
 
-    /**
-     * create a new folder
-     * 
-     * @param req
-     *            request
-     * @param resp
-     *            response
-     * @return forward page
-     * @author bxji
-     */
-    private void addFolder(HttpServletRequest req, HttpServletResponse resp) {
-        String folderId = req.getParameter("parentId");
-        String folderName = req.getParameter("folderName");
-        User user = (User) req.getSession().getAttribute(Constant.SESSION_USER);
-        String result = Constant.FAIL;
+		if (!Validity.isNullAndEmpty(id) && !Validity.isNullAndEmpty(type)) {
+			Long docId = Long.parseLong(id);
 
-        if (!Validity.isNullAndEmpty(folderName)
-                && !Validity.isNullAndEmpty(folderId)
-                && !Validity.isEmpty(user)) {
-            Long pid = Long.parseLong(folderId);
-            try {
-                EntityManagerUtil.begin();
-                Folder folder = folderService.addFolder(user.getUserId(), pid,
-                        folderName, null);
-                EntityManagerUtil.commit();
-                if (folder != null) {
-                    result = Constant.SUCCESS;
-                }
-            }
-            catch (UBankException e) {
-                EntityManagerUtil.rollback();
-                LOG.error("create folder fail", e);
-            }
-        }
-        String jsonStr = JsonUtil.string2json(result);
-        returnResp(jsonStr, resp);
+			try {
+				EntityManagerUtil.begin();
+				// if this is file that deleted
+				if (Constant.DOCUMENT_TYPE_FILE.equals(type)) {
+					if (fileService.removeFile(docId)) {
+						result = Constant.REQUEST_RESULT_SUCCESS;
+					}
+				} else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type)) {
+					// if this is folder that deleted
+					if (folderService.delFolder(docId)) {
+						result = Constant.REQUEST_RESULT_SUCCESS;
+					} else {
+						EntityManagerUtil.rollback();
+						return;
+					}
+				}
+				EntityManagerUtil.commit();
+			} catch (Exception e) {
+				EntityManagerUtil.rollback();
+				LOG.error("deltte file or folder fail", e);
+			}
+			returnResp(result, resp);
+		}
+	}
 
-    }
+	private void sharefolder(HttpServletRequest req, HttpServletResponse resp) {
+		String id = req.getParameter(Constant.FOLDER_ID);
+		String result = Constant.REQUEST_RESULT_FAIL;
+		if (Validity.isNullAndEmpty(id)) {
+			return;
+		}
+		Long folderId = Long.parseLong("id");
+		try {
+			EntityManagerUtil.begin();
+			if (folderService.shareFolder(folderId)) {
+				result = Constant.REQUEST_RESULT_SUCCESS;
+			} else {
+				EntityManagerUtil.rollback();
+				return;
+			}
+			EntityManagerUtil.commit();
+		} catch (Exception e) {
+			EntityManagerUtil.rollback();
+			LOG.error("share folder fail", e);
+		}
+		returnResp(result, resp);
+	}
 
-    /**
-     * return ajax request result
-     * 
-     * @param jsonStr
-     *            json data String
-     * @param resp
-     *            HttpServletResponse
-     * @author bxji
-     */
-    private void returnResp(String jsonStr, HttpServletResponse resp) {
-        try {
-            PrintWriter pw = resp.getWriter();
-            resp.getWriter().write(jsonStr);
-            pw.flush();
-        }
-        catch (IOException e) {
-            LOG.error("return json string exception", e);
-        }
-    }
+	private void rename(HttpServletRequest req, HttpServletResponse resp) {
+		String id = req.getParameter(Constant.FOLDER_OR_FILE_ID);
+		String newName = req.getParameter(Constant.FOLDER_OR_FILE_NAME);
+		String type = req.getParameter(Constant.DOCUMENT_TYPE);
+		String result = Constant.REQUEST_RESULT_FAIL;
+		if (Validity.isNullAndEmpty(id) || Validity.isNullAndEmpty(newName)
+				|| Validity.isNullAndEmpty(type)) {
+			return;
+		}
+		Long fId = Long.parseLong(id);
+		if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
+			if (fileService.renameFile(fId, newName)) {
+				result = Constant.REQUEST_RESULT_SUCCESS;
+			}
+		} else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
+			if (folderService.renameFolder(fId, newName)) {
+				result = Constant.REQUEST_RESULT_SUCCESS;
+			}
+		}
+		returnResp(result, resp);
+	}
+
+	private void moveTo(HttpServletRequest req, HttpServletResponse resp) {
+		String id = req.getParameter(Constant.FOLDER_OR_FILE_ID);
+		String parentId = req.getParameter(Constant.PARENT_ID);
+		String type = req.getParameter(Constant.DOCUMENT_TYPE);
+		String result = Constant.REQUEST_RESULT_FAIL;
+		if (Validity.isNullAndEmpty(id) || Validity.isNullAndEmpty(parentId)
+				|| Validity.isNullAndEmpty(type)) {
+			return;
+		}
+		Long fId = Long.parseLong(id);
+		Long folderId = Long.parseLong(parentId);
+		if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
+			if (fileService.moveFileToFloder(folderId, fId)) {
+				result = Constant.REQUEST_RESULT_SUCCESS;
+			}
+		} else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
+			if (folderService.moveFolderTo(folderId, fId)) {
+				result = Constant.REQUEST_RESULT_SUCCESS;
+			}
+		}
+		returnResp(result, resp);
+	}
+
+	/**
+	 * return ajax request result
+	 * 
+	 * @param jsonStr
+	 *            json data String
+	 * @param resp
+	 *            HttpServletResponse
+	 * @author bxji
+	 */
+	private void returnResp(String jsonStr, HttpServletResponse resp) {
+		resp.setContentType("application/text;charset=UTF-8");
+		try {
+			PrintWriter pw = resp.getWriter();
+			resp.getWriter().write(jsonStr);
+			pw.flush();
+		} catch (IOException e) {
+			LOG.error("return json string exception", e);
+		}
+	}
 
 }

@@ -31,102 +31,118 @@ package com.ufinity.marchant.ubank.common;
  */
 public interface Constant {
 
-    /** error message key */
-    String ATTR_ERROR_MSG = "error_msg";
+	/** error message key */
+	String ATTR_ERROR_MSG = "error_msg";
 
-    String ATTR_FILEPAGER = "filePager";
-    String ATTR_FILENAME = "fileName";
-    String ATTR_FILESIZE = "fileSize";
-    String ATTR_PUBLISHDATE = "publishDate";
+	String ATTR_FILEPAGER = "filePager";
+	String ATTR_FILENAME = "fileName";
+	String ATTR_FILESIZE = "fileSize";
+	String ATTR_PUBLISHDATE = "publishDate";
 
-    /** charset filter config */
-    String ENABLE_FILTER = "true";
-    String ENABLE = "enable";
-    String ENCODE = "encode";
+	/** charset filter config */
+	String ENABLE_FILTER = "true";
+	String ENABLE = "enable";
+	String ENCODE = "encode";
 
-    /** user login and logout action */
-    String ACTION_LOGIN = "login";
-    String ACTION_LOGOUT = "logout";
-    String ACTION_HOME = "home";
+	/** user login and logout action */
+	String ACTION_LOGIN = "login";
+	String ACTION_LOGOUT = "logout";
+	String ACTION_HOME = "home";
 
-    /** file search action */
-    String ACTION_SEARCH = "search";
+	/** file search action */
+	String ACTION_SEARCH = "search";
 
-    /** user login parameters */
-    String REQ_PARAM_USERNAME = "userName";
-    String REQ_PARAM_PASSWORD = "password";
-    public final String REQ_PARAM_REPASSWORD = "repassword";
-    public final String REQ_PARAM_CAPTCHACODE = "captchaCode";
+	/** user login parameters */
+	String REQ_PARAM_USERNAME = "userName";
+	String REQ_PARAM_PASSWORD = "password";
+	public final String REQ_PARAM_REPASSWORD = "repassword";
+	public final String REQ_PARAM_CAPTCHACODE = "captchaCode";
 
-    /** file search parameters */
-    String REQ_PARAM_FILESIZE = "fileSize";
-    String REQ_PARAM_PUBLISHDATE = "publishDate";
-    String REQ_PARAM_FILENAME = "fileName";
+	/** file search parameters */
+	String REQ_PARAM_FILESIZE = "fileSize";
+	String REQ_PARAM_PUBLISHDATE = "publishDate";
+	String REQ_PARAM_FILENAME = "fileName";
 
-    /** the key for set session attribute */
-    String SESSION_USER = "session_user";
+	/** the key for set session attribute */
+	String SESSION_USER = "session_user";
 
-    String HOME_PAGE = "home.jsp";
-    String MAIN_PAGE = "main.jsp";
-    String SEARCH_RESULT_PAGE = "searchResult.jsp";
-    String ERROR_PAGE = "/common/404.html";
-    public final String REGISTER_PAGE = "register.jsp";
+	String HOME_PAGE = "home.jsp";
+	String MAIN_PAGE = "main.jsp";
+	String SEARCH_RESULT_PAGE = "searchResult.jsp";
+	String ERROR_PAGE = "/common/404.html";
+	public final String REGISTER_PAGE = "register.jsp";
 
-    // user register message
-    public final String REGISTER_MSG = "register_msg";
+	// user register message
+	public final String REGISTER_MSG = "register_msg";
 
-    // user download action
-    public final String ACTION_DOWNLOAD = "download";
-    // user register action
-    public final String ACTION_REGISTER = "register";
+	// user download action
+	public final String ACTION_DOWNLOAD = "download";
+	// user register action
+	public final String ACTION_REGISTER = "register";
 
-    short USERNAME_LENGTH = 30;
-    short PASSWORD_LENGTH = 50;
+	short USERNAME_LENGTH = 30;
+	short PASSWORD_LENGTH = 50;
 
-    /*
-     * Folder type: root--root directory; init--Initialization directoy;
-     * customer--user directory
-     */
-    public final String ROOT = "R";
-    public final String INIT = "I";
-    public final String CUSTOMER = "C";
-    public final String FILE_COPY = "_copy";
-    public final String FOLDER_COPY = "_copy";
+	/*
+	 * Folder type: root--root directory; 
+	 * init--Initialization directoy;
+	 * customer--user directory
+	 */
+	public final String FOLDER_TYPE_ROOT = "R";
+	public final String FOLDER_TYPE_INIT = "I";
+	public final String FOLDER_TYPE_CUSTOMER = "C";
+	public final String FILE_COPY = "_copy";
+	public final String FOLDER_COPY = "_copy";
 
-    /** file search pagenum */
-    String REQ_PARAM_PAGENUM = "pageNum";
-    int PAGE_NUM_DEF = 1;
+	/** file search pagenum */
+	String REQ_PARAM_PAGENUM = "pageNum";
+	int PAGE_NUM_DEF = 1;
 
-    /** file search constant */
-    String FILE_SIZE_SEPARATOR = ",";
-    String FILE_SIZE_0 = "0";
-    String FILE_SIZE_1 = "1";
-    String FILE_SIZE_2 = "2";
-    String FILE_SIZE_3 = "3";
-    String FILE_SIZE_4 = "4";
-    String FILE_PUBLISHDATE_0 = "0";
-    String FILE_PUBLISHDATE_1 = "1";
-    String FILE_PUBLISHDATE_2 = "2";
-    String FILE_PUBLISHDATE_3 = "3";
-    String FILE_PUBLISHDATE_4 = "4";
-    String FILE_PUBLISHDATE_5 = "5";
-    String FILENAME_EMPTY = "";
-    String FILENAME = "fileName";
-    String MIN_FILE_SIZE = "minFileSize";
-    String MAX_FILE_SIZE = "maxFileSize";
-    String MIN_MODIFY_TIME = "minModifyTime";
-    String MAX_MODIFY_TIME = "maxModifyTime";
+	/** file search constant */
+	String FILE_SIZE_SEPARATOR = ",";
+	String FILE_SIZE_0 = "0";
+	String FILE_SIZE_1 = "1";
+	String FILE_SIZE_2 = "2";
+	String FILE_SIZE_3 = "3";
+	String FILE_SIZE_4 = "4";
+	String FILE_PUBLISHDATE_0 = "0";
+	String FILE_PUBLISHDATE_1 = "1";
+	String FILE_PUBLISHDATE_2 = "2";
+	String FILE_PUBLISHDATE_3 = "3";
+	String FILE_PUBLISHDATE_4 = "4";
+	String FILE_PUBLISHDATE_5 = "5";
+	String FILENAME_EMPTY = "";
+	String FILENAME = "fileName";
+	String MIN_FILE_SIZE = "minFileSize";
+	String MAX_FILE_SIZE = "maxFileSize";
+	String MIN_MODIFY_TIME = "minModifyTime";
+	String MAX_MODIFY_TIME = "maxModifyTime";
 
-    // file and folder operations action names
-    public static final String SHOW_TREE = "showTree";
-    public static final String SHOW_FOLDER_CONTENT = "showFolderContent";
-    public static final String ADD_FOLDER = "addFolder";
-    
-    // rquest result  String
-    public static final String SUCCESS = "success";
-    public static final String FAIL = "fail";
+	// file and folder operation action names
+	public static final String SHOW_TREE = "showTree";
+	public static final String SHOW_FOLDER_CONTENT = "showFolderContent";
+	public static final String ADD_FOLDER = "addFolder";
+	public static final String DEL_FOLDER_OR_FILE = "delFolderOrFile";
+	public static final String SHARE_FOLDER = "shareFolder";
+	public static final String RENAME = "rename";
+	public static final String MOVE_TO = "moveTo";
+	
+	
 
-    // data Format String
-    public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+	// file and folder operation request parameter
+	public static final String FOLDER_ID = "folderId";
+	public static final String USER_ID = "userId";
+	public static final String FOLDER_NAME = "folderName";
+	public static final String PARENT_ID = "parentId";
+	public static final String DOCUMENT_TYPE = "type";
+	public static final String DOCUMENT_TYPE_FILE = "file";
+	public static final String DOCUMENT_TYPE_FOLDER = "folder";
+	public static final String FOLDER_OR_FILE_ID = "id";
+	public static final String FOLDER_OR_FILE_NAME= "name";
+
+	// rquest result  String
+	public static final String REQUEST_RESULT_SUCCESS = "success";
+	public static final String REQUEST_RESULT_FAIL = "fail";
+
 
 }

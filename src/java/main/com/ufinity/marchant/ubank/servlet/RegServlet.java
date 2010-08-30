@@ -72,25 +72,25 @@ public class RegServlet extends AbstractServlet {
 	private String register(HttpServletRequest request) {
 
 		try {
-			String captchaCode = request
-					.getParameter(Constant.REQ_PARAM_CAPTCHACODE);
-			logger.debug(" request captchaCode = " + captchaCode);
-			if (Validity.isNullAndEmpty(captchaCode)) {
-				request.setAttribute(Constant.ATTR_ERROR_MSG,
-						getText(MessageKeys.CAPTCHA_ERR_MSG));
-				return Constant.REGISTER_PAGE;
-			}
+//			String captchaCode = request
+//					.getParameter(Constant.REQ_PARAM_CAPTCHACODE);
+//			logger.debug(" request captchaCode = " + captchaCode);
+//			if (Validity.isNullAndEmpty(captchaCode)) {
+//				request.setAttribute(Constant.ATTR_ERROR_MSG,
+//						getText(MessageKeys.CAPTCHA_ERR_MSG));
+//				return Constant.REGISTER_PAGE;
+//			}
 			HttpSession session = request.getSession();
 			boolean isValidateCode = false;
 			// retrieve the response
-			String validateCode = captchaCode.trim();
-			isValidateCode = MyCaptchaService.getInstance()
-					.validateCaptchaResponse(validateCode, session);
-			if (!isValidateCode) {
-				// captcha code is not right
-				request.setAttribute(Constant.ATTR_ERROR_MSG,
-						getText(MessageKeys.CAPTCHA_ERR_MSG));
-			} else {
+////			String validateCode = captchaCode.trim();
+//			isValidateCode = MyCaptchaService.getInstance()
+//					.validateCaptchaResponse(validateCode, session);
+//			if (!isValidateCode) {
+//				// captcha code is not right
+//				request.setAttribute(Constant.ATTR_ERROR_MSG,
+//						getText(MessageKeys.CAPTCHA_ERR_MSG));
+//			} else {
 				String userName = request
 						.getParameter(Constant.REQ_PARAM_USERNAME);
 				String pass = request.getParameter(Constant.REQ_PARAM_PASSWORD);
@@ -122,7 +122,7 @@ public class RegServlet extends AbstractServlet {
 				String registerMsg = userService.doRegister(user);
 				logger.debug(userName + " register success!");
 				request.setAttribute(Constant.REGISTER_MSG, registerMsg);
-			}
+//			}
 		} catch (Exception e) {
 			logger.error("register exception message!", e);
 		}
