@@ -71,25 +71,31 @@ public class LoginServlet extends AbstractServlet {
             throws ServletException, IOException {
 
         String method = parseActionName(req);
-        String rslt = Constant.ERROR_PAGE;
+        String rslt = Constant.ERROR_PAGE_404;
 
         LOG.debug("action method=" + method);
 
-        if (Constant.ACTION_HOME.equals(method)) {
-            rslt = home(req, resp);
-        } else if (Constant.ACTION_LOGIN.equals(method)) {
-            rslt = login(req, resp);
-        } else if (Constant.ACTION_LOGOUT.equals(method)) {
-            rslt = logout(req, resp);
+        try {
+            if (Constant.ACTION_HOME.equals(method)) {
+                rslt = home(req, resp);
+            } else if (Constant.ACTION_LOGIN.equals(method)) {
+                rslt = login(req, resp);
+            } else if (Constant.ACTION_LOGOUT.equals(method)) {
+                rslt = logout(req, resp);
+            }
+        } catch (UBankException e) {
+            LOG.error("occur UBankException.", e);
+            redirect(resp, Constant.ERROR_PAGE_500);
+            return;
         }
 
         LOG.debug("go page=" + rslt);
 
-        if(Constant.MAIN_PAGE.equals(rslt)) {
+        if (Constant.MAIN_PAGE.equals(rslt)) {
             redirect(resp, rslt);
             return;
         }
-        
+
         forward(req, resp, rslt);
     }
 
@@ -102,20 +108,17 @@ public class LoginServlet extends AbstractServlet {
      *            response
      * @return forward page
      * @author zdxue
+     * @throws UBankException
      */
-    private String home(HttpServletRequest req, HttpServletResponse resp) {
+    private String home(HttpServletRequest req, HttpServletResponse resp)
+            throws UBankException {
         FileService fileService = ServiceFactory
                 .createService(FileService.class);
         int pageSize = SystemGlobals.getInt(ConfigKeys.PAGE_SIZE);
 
-        Pager<FileBean> filePager = null;
-        try {
-            filePager = fileService.searchShareFiles(Constant.FILENAME_EMPTY,
-                    Constant.FILE_SIZE_0, Constant.FILE_PUBLISHDATE_0,
-                    Constant.PAGE_NUM_DEF, pageSize);
-        } catch (UBankException e) {
-            LOG.error("search exception", e);
-        }
+        Pager<FileBean> filePager = fileService.searchShareFiles(
+                Constant.FILENAME_EMPTY, Constant.FILE_SIZE_0,
+                Constant.FILE_PUBLISHDATE_0, Constant.PAGE_NUM_DEF, pageSize);
 
         req.setAttribute(Constant.ATTR_FILEPAGER, filePager);
         req.setAttribute(Constant.ATTR_FILENAME, Constant.FILENAME_EMPTY);
@@ -135,8 +138,10 @@ public class LoginServlet extends AbstractServlet {
      *            response
      * @return forward page
      * @author zdxue
+     * @throws UBankException
      */
-    private String login(HttpServletRequest req, HttpServletResponse resp) {
+    private String login(HttpServletRequest req, HttpServletResponse resp)
+            throws UBankException {
         String username = req.getParameter(Constant.REQ_PARAM_USERNAME);
         String password = req.getParameter(Constant.REQ_PARAM_PASSWORD);
 
@@ -149,22 +154,19 @@ public class LoginServlet extends AbstractServlet {
                 || password.length() > Constant.PASSWORD_LENGTH) {
             LOG.debug("login validation failure!");
 
-            req.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.MSG_LOGIN_FAILURE));
+            req.setAttribute(Constant.ATTR_ERROR_MSG,
+                    getText(MessageKeys.MSG_LOGIN_FAILURE));
             return Constant.HOME_PAGE;
         }
 
         UserService userService = ServiceFactory
                 .createService(UserService.class);
-        User user = null;
-        try {
-            user = userService.getUser(username, password);
-        } catch (UBankException e) {
-            LOG.error("get user error", e);
-        }
+        User user = userService.getUser(username, password);
 
         if (user == null) {
             LOG.debug("user not exists, login failure");
-            req.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.MSG_LOGIN_FAILURE));
+            req.setAttribute(Constant.ATTR_ERROR_MSG,
+                    getText(MessageKeys.MSG_LOGIN_FAILURE));
             home(req, resp);
 
             return Constant.HOME_PAGE;
@@ -184,8 +186,10 @@ public class LoginServlet extends AbstractServlet {
      *            response
      * @return forward page
      * @author zdxue
+     * @throws UBankException
      */
-    private String logout(HttpServletRequest req, HttpServletResponse resp) {
+    private String logout(HttpServletRequest req, HttpServletResponse resp)
+            throws UBankException {
         LOG.debug("invalidate session");
 
         req.getSession().invalidate();

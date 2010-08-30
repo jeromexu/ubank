@@ -69,7 +69,9 @@ public interface Constant {
     String HOME_PAGE = "home.jsp";
     String MAIN_PAGE = "main.jsp";
     String SEARCH_RESULT_PAGE = "searchResult.jsp";
-    String ERROR_PAGE = "/common/404.html";
+    String ERROR_PAGE_403 = "../common/403.jsp";
+    String ERROR_PAGE_404 = "../common/404.jsp";
+    String ERROR_PAGE_500 = "../common/500.jsp";
     public final String REGISTER_PAGE = "register.jsp";
 
     // user register message

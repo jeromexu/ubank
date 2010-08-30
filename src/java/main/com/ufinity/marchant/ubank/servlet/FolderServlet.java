@@ -69,7 +69,7 @@ public class FolderServlet extends AbstractServlet {
             throws ServletException, IOException {
 
         String method = parseActionName(req);
-        String rslt = Constant.ERROR_PAGE;
+        String rslt = Constant.ERROR_PAGE_500;
 
         if (SHOW_MAIN.equals(method)) {
             rslt = showMain(req, resp);

@@ -50,13 +50,13 @@ public class RegServlet extends AbstractServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
-		String method = parseActionName(request);
-		String rslt = Constant.ERROR_PAGE;
-		if (Constant.ACTION_REGISTER.equals(method)) {
-			rslt = register(request);
-		}
-		forward(request, response, rslt);
-	}
+        String method = parseActionName(request);
+        String rslt = Constant.ERROR_PAGE_500;
+        if (Constant.ACTION_REGISTER.equals(method)) {
+            rslt = register(request);
+        }
+        forward(request, response, rslt);
+    }
 
 	/**
 	 * display register

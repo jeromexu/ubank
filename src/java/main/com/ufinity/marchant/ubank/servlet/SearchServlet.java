@@ -67,10 +67,16 @@ public class SearchServlet extends AbstractServlet {
             throws ServletException, IOException {
 
         String method = parseActionName(req);
-        String rslt = Constant.ERROR_PAGE;
+        String rslt = Constant.ERROR_PAGE_404;
 
-        if (Constant.ACTION_SEARCH.equals(method)) {
-            rslt = search(req);
+        try{
+            if (Constant.ACTION_SEARCH.equals(method)) {
+                rslt = search(req);
+            }
+        }catch(UBankException e) {
+            LOG.error("occur UBankException.", e);
+            redirect(resp, Constant.ERROR_PAGE_500);
+            return;
         }
 
         forward(req, resp, rslt);
@@ -83,8 +89,9 @@ public class SearchServlet extends AbstractServlet {
      *            request
      * @return forward page
      * @author zdxue
+     * @throws UBankException 
      */
-    private String search(HttpServletRequest req) {
+    private String search(HttpServletRequest req) throws UBankException {
         String fileName = req.getParameter(Constant.REQ_PARAM_FILENAME);
         String fileSize = req.getParameter(Constant.REQ_PARAM_FILESIZE);
         String publishDate = req.getParameter(Constant.REQ_PARAM_PUBLISHDATE);
@@ -101,13 +108,9 @@ public class SearchServlet extends AbstractServlet {
                 .createService(FileService.class);
 
         int pageSize = SystemGlobals.getInt(ConfigKeys.PAGE_SIZE);
-        Pager<FileBean> filePager = null;
-        try {
-            filePager = fileService.searchShareFiles(fileName, fileSize,
+        Pager<FileBean> filePager = fileService.searchShareFiles(fileName, fileSize,
                     publishDate, pageNum, pageSize);
-        } catch (UBankException e) {
-            LOG.error("search error", e);
-        }
+        
         req.setAttribute(Constant.ATTR_FILEPAGER, filePager);
         req.setAttribute(Constant.ATTR_FILENAME, fileName);
         req.setAttribute(Constant.ATTR_FILESIZE, fileSize);

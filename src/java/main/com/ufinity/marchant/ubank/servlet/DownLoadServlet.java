@@ -83,7 +83,7 @@ public class DownLoadServlet extends AbstractServlet {
 			if (!Validity.isEmpty(id)) {
 				fileId = Long.valueOf(id);
 			} else {
-				return Constant.ERROR_PAGE;
+				return Constant.ERROR_PAGE_500;
 			}
 			fileService = ServiceFactory.createService(FileService.class);
 			FileBean fileBean = fileService.getFileBean(fileId);
@@ -145,7 +145,7 @@ public class DownLoadServlet extends AbstractServlet {
 				}
 			}
 		}
-		return Constant.ERROR_PAGE;
+		return Constant.ERROR_PAGE_500;
 	}
 
 	/**
