@@ -144,5 +144,7 @@ public interface Constant {
     // rquest result String
     public static final String REQUEST_RESULT_SUCCESS = "success";
     public static final String REQUEST_RESULT_FAIL = "fail";
+    
+    
 
 }

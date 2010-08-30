@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import com.ufinity.marchant.ubank.common.Logger;
+import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
+import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
 
@@ -23,7 +25,9 @@ public class DocumentUtil {
 	public static String FILE_DIRECTORY = null;
 	public static String FOLDER_DIRECTORY = null;
 	public static String FILENAME = null;
-
+	private static final String FILE_SYSTEM_SEPARATOR = "/";
+	private static final StringBuffer SB = new StringBuffer();
+	
 	// Logger for this class
 	protected final static Logger LOGGER = Logger
 			.getInstance(DocumentUtil.class);
@@ -50,7 +54,7 @@ public class DocumentUtil {
 	public static int addNewFolder(Folder folder) {
 
 		if (folder != null) {
-			FOLDERNAME = folder.getFolderName();
+			FOLDERNAME = String.valueOf(folder.getFolderId());
 			FOLDER_DIRECTORY = folder.getDirectory();
 		} else {
 			return 0;
@@ -59,7 +63,7 @@ public class DocumentUtil {
 		boolean result = true;
 		if (!baseFile.exists()) {
 			result = baseFile.mkdir();
-		} 
+		}
 		return result ? 1 : 0;
 	}
 
@@ -185,29 +189,38 @@ public class DocumentUtil {
 		} else {
 			return 0;
 		}
-		String olderPath = null;
-		if (FOLDER_DIRECTORY.endsWith(File.separator)) {
-			olderPath = FOLDER_DIRECTORY + FOLDERNAME;
-		} else {
-			olderPath = FOLDER_DIRECTORY + File.separator + FOLDERNAME;
-		}
-		String newPath = null;
-		if (newFolderDirecotry.endsWith(File.separator)) {
-			newPath = newFolderDirecotry + newFolderName;
-		} else {
-			newPath = newFolderDirecotry + File.separator + newFolderName
-					+ File.separator + FOLDERNAME;
-		}
-		LOGGER.debug("olderPath=" + olderPath + ", newPath=" + newPath);
-		File oldFile = new File(olderPath);
+		String serverPath = getApplicationPath();
 		boolean result = false;
-		if (oldFile.exists()) {
-			copyFolder(olderPath, newPath);
-			result = delFolder(olderPath);
-		} else {
-			return 0;
+		if (serverPath != null) {
+			String olderPath = null;
+			if (FOLDER_DIRECTORY.endsWith(FILE_SYSTEM_SEPARATOR)) {
+				olderPath = SB.append(serverPath).append(FILE_SYSTEM_SEPARATOR)
+						.append(FOLDER_DIRECTORY).append(FOLDERNAME).toString();
+			} else {
+				olderPath = SB.append(serverPath).append(FILE_SYSTEM_SEPARATOR)
+						.append(FOLDER_DIRECTORY).append(FILE_SYSTEM_SEPARATOR)
+						.append(FOLDERNAME).toString();
+			}
+			String newPath = null;
+			if (newFolderDirecotry.endsWith(FILE_SYSTEM_SEPARATOR)) {
+				newPath = SB.append(serverPath).append(FILE_SYSTEM_SEPARATOR)
+						.append(newFolderDirecotry).append(newFolderName)
+						.toString();
+			} else {
+				newPath = SB.append(serverPath).append(FILE_SYSTEM_SEPARATOR)
+						.append(newFolderDirecotry).append(
+								FILE_SYSTEM_SEPARATOR).append(newFolderName)
+						.toString();
+			}
+			LOGGER.debug("olderPath=" + olderPath + ", newPath=" + newPath);
+			File oldFile = new File(olderPath);
+			if (oldFile.exists()) {
+				copyFolder(olderPath, newPath);
+				result = delFolder(olderPath);
+			} else {
+				return 0;
+			}
 		}
-
 		return result ? 1 : 0;
 	}
 
@@ -245,18 +258,18 @@ public class DocumentUtil {
 	 */
 	public static int removeFolder(Folder folder) {
 		if (folder != null) {
-			FOLDERNAME = folder.getFolderName();
+			FOLDERNAME = String.valueOf(folder.getFolderId());
 			FOLDER_DIRECTORY = folder.getDirectory();
 		} else {
 			return 0;
 		}
 		String path = null;
-		if (FOLDER_DIRECTORY.endsWith(File.separator)) {
+		if (FOLDER_DIRECTORY.endsWith(FILE_SYSTEM_SEPARATOR)) {
 			path = FOLDER_DIRECTORY + FOLDERNAME;
 		} else {
-			path = FOLDER_DIRECTORY + File.separator + FOLDERNAME;
+			path = FOLDER_DIRECTORY + FILE_SYSTEM_SEPARATOR + FOLDERNAME;
 		}
-		File baseFile = new File(path);
+		File baseFile = new File(getApplicationPath() + path);
 		boolean result = false;
 		if (baseFile.exists()) {
 			result = delFolder(path);
@@ -305,15 +318,14 @@ public class DocumentUtil {
 			if (sFile.exists()) {
 				// read source file
 				fis = new FileInputStream(sFile);
-				StringBuffer sb = new StringBuffer();
-				if (FOLDER_DIRECTORY.endsWith(File.separator)) {
-					sb.append(FOLDER_DIRECTORY).append(FOLDERNAME);
+				if (FOLDER_DIRECTORY.endsWith(FILE_SYSTEM_SEPARATOR)) {
+					SB.append(FOLDER_DIRECTORY).append(FOLDERNAME);
 				} else {
-					sb.append(FOLDER_DIRECTORY).append(File.separator).append(
-							FOLDERNAME);
+					SB.append(FOLDER_DIRECTORY).append(FILE_SYSTEM_SEPARATOR)
+							.append(FOLDERNAME);
 				}
-				fos = new FileOutputStream(sb.append(File.separator).append(
-						sFile.getName()).toString());
+				fos = new FileOutputStream(SB.append(FILE_SYSTEM_SEPARATOR)
+						.append(sFile.getName()).toString());
 				byte[] buffer = new byte[1024];
 				while ((byteread = fis.read(buffer)) != -1) {
 					bytesum += byteread;
@@ -365,16 +377,17 @@ public class DocumentUtil {
 			String[] file = oldPathFile.list();
 			File temp = null;
 			for (int i = 0; i < file.length; i++) {
-				if (oldPath.endsWith(File.separator)) {
+				if (oldPath.endsWith(FILE_SYSTEM_SEPARATOR)) {
 					temp = new File(oldPath + file[i]);
 				} else {
-					temp = new File(oldPath + File.separator + file[i]);
+					temp = new File(oldPath
+							+ FILE_SYSTEM_SEPARATOR + file[i]);
 				}
 				// file operation
 				if (temp.isFile()) {
 					input = new FileInputStream(temp);
-					output = new FileOutputStream(newPath + "/"
-							+ temp.getName().toString());
+					output = new FileOutputStream(newPath
+							+ FILE_SYSTEM_SEPARATOR + temp.getName().toString());
 					byte[] b = new byte[1024 * 10];
 					int len;
 					while ((len = input.read(b)) != -1) {
@@ -384,7 +397,8 @@ public class DocumentUtil {
 				}
 				// folder operaction
 				if (temp.isDirectory()) {
-					copyFolder(oldPath + "/" + file[i], newPath + "/" + file[i]);
+					copyFolder(oldPath + FILE_SYSTEM_SEPARATOR + file[i],
+							newPath + FILE_SYSTEM_SEPARATOR + file[i]);
 				}
 			}
 		} catch (Exception e) {
@@ -446,10 +460,10 @@ public class DocumentUtil {
 		String[] tempList = file.list();
 		File tempFile = null;
 		for (int i = 0; i < tempList.length; i++) {
-			if (path.endsWith(File.separator)) {
+			if (path.endsWith(FILE_SYSTEM_SEPARATOR)) {
 				tempFile = new File(path + tempList[i]);
 			} else {
-				tempFile = new File(path + File.separator + tempList[i]);
+				tempFile = new File(path + FILE_SYSTEM_SEPARATOR + tempList[i]);
 			}
 			if (tempFile.isFile()) {
 				try {
@@ -460,9 +474,9 @@ public class DocumentUtil {
 			}
 			if (tempFile.isDirectory()) {
 				// first delete the folder's child folder
-				delAllFile(path + File.separator + tempList[i]);
+				delAllFile(path + FILE_SYSTEM_SEPARATOR + tempList[i]);
 				// delete the empty folder
-				delFolder(path + File.separator + tempList[i]);
+				delFolder(path + FILE_SYSTEM_SEPARATOR + tempList[i]);
 			}
 		}
 	}
@@ -480,12 +494,38 @@ public class DocumentUtil {
 	 */
 	private static File createFile(String folderPath, String folderName) {
 		File file = null;
-		if (folderPath.endsWith(File.separator)) {
-			file = new File(folderPath + folderName);
-		} else {
-			file = new File(folderPath + File.separator + folderName);
+		String serverPath = getApplicationPath();
+		if (serverPath != null) {
+			if (folderPath.endsWith(FILE_SYSTEM_SEPARATOR)) {
+				file = new File(SB.append(serverPath).append(
+						FILE_SYSTEM_SEPARATOR).append(folderPath).append(
+						folderName).toString());
+			} else {
+				file = new File(SB.append(serverPath).append(
+						FILE_SYSTEM_SEPARATOR).append(folderPath).append(
+						FILE_SYSTEM_SEPARATOR).append(folderName).toString());
+			}
 		}
 		return file;
+	}
+
+	/**
+	 * 
+	 * get the server path
+	 * 
+	 * @return the server path
+	 * @author jerome
+	 */
+	private static String getApplicationPath() {
+		String catalinaHome = System.getProperty("catalina.home");
+		String serverPath = null;
+		if (!Validity.isEmpty(catalinaHome)) {
+			serverPath = SystemGlobals.getString(ConfigKeys.SERVER_PATH,
+					catalinaHome);
+		} else {
+			return null;
+		}
+		return serverPath;
 	}
 
 	/**
