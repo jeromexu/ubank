@@ -28,6 +28,8 @@ package com.ufinity.marchant.ubank.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.Query;
+
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.FolderDao;
@@ -39,27 +41,47 @@ import com.ufinity.marchant.ubank.dao.FolderDao;
  */
 public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
         FolderDao {
-
+    
     /**
-     * this method is find folder collection according user id
+     * this method is find folder collection according user id and share, if
+     * share is null, query all folder, else according share's value.
      * 
      * @param userId
      *            user's id
+     * @param share
+     *            folder share or not
      * @return List<Folder> folder's collection
      * @author skyqiang
      */
     @SuppressWarnings("unchecked")
-    public List<Folder> findFolderListByUserId(Long userId) {
+    public List<Folder> findFolderListByUserId(Long userId, Boolean share) {
         log.debug("Method: findFolderListByUserId, Param:{userId: " + userId
-                + "}");
-
-        String sqlQuery = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,"
+                + " , share:" + share + "}");
+        StringBuffer sqlQuery = new StringBuffer();
+        String sqlQueryStart = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,"
                 + "a.FOLDER_TYPE,a.MODIFIED_TIME,a.SHARE,a.USER_ID,a.PARENT_ID FROM U_FOLDER a "
-                + "LEFT JOIN U_FOLDER b on a.PARENT_ID = b.PARENT_ID WHERE a.USER_ID = :userId"
-                + " ORDER BY a.PARENT_ID , a.CREATE_TIME DESC";
+                + "LEFT JOIN U_FOLDER b on a.PARENT_ID = b.PARENT_ID WHERE a.USER_ID = :userId ";
+        
+        String sqlQueryEnd = "ORDER BY a.PARENT_ID , a.CREATE_TIME DESC";
+        String sqlQueryAppend = " AND a.share = :share ";
 
-        return EntityManagerUtil.getEntityManager().createNativeQuery(sqlQuery,
-                Folder.class).setParameter("userId", userId).getResultList();
+        Query query = null;
+        sqlQuery.append(sqlQueryStart);
+        if (null == share) {
+            sqlQuery.append(sqlQueryEnd);
+            query = EntityManagerUtil.getEntityManager().createNativeQuery(
+                    sqlQuery.toString(), Folder.class).setParameter("userId",
+                    userId);
+        } else {
+            sqlQuery.append(sqlQueryAppend).append(sqlQueryEnd);
+            query = EntityManagerUtil.getEntityManager().createNativeQuery(
+                    sqlQuery.toString(), Folder.class).setParameter("userId",
+                    userId).setParameter("share", share);
+        }
+
+        log.debug("Method: findFolderListByUserId, SQL:{" + sqlQuery.toString()
+                + "}");
+        return query.getResultList();
     }
 
     /**

@@ -211,7 +211,7 @@ public class FolderDaoImplTest {
     @Test
     public void testFind() {
         // init rigth data
-       /* packageData(true);
+        packageData(true);
         List<Folder> list = this.folderDao.queryList(0L,
                 (long) folderDatas.length);
 
@@ -220,10 +220,8 @@ public class FolderDaoImplTest {
             Folder folderTemp = this.folderDao.find(folder.getFolderId());
             System.err.println(folderTemp.getFolderName());
             assertNotNull(folderTemp.getFolderName());
-        }*/
-        
-        Folder folderTemp = this.folderDao.find(37L);
-        System.out.println(folderTemp.getChildren().size());
+        }
+
     }
 
     /**
@@ -264,8 +262,8 @@ public class FolderDaoImplTest {
         packageData(true);
 
         User userTemp = this.userDao.findUserByName(user.getUserName());
-        List<Folder> folderList = this.folderDao
-                .findFolderListByUserId(userTemp.getUserId());
+        List<Folder> folderList = this.folderDao.findFolderListByUserId(
+                userTemp.getUserId(), null);
         assertTrue(folderList.size() > 0);
         assertTrue(folderList.size() == folderDatas.length);
     }
@@ -279,8 +277,8 @@ public class FolderDaoImplTest {
         packageData(true);
 
         User userTemp = this.userDao.findUserByName("Folder_Error_Modify");
-        List<Folder> folderList = this.folderDao
-                .findFolderListByUserId(userTemp.getUserId());
+        List<Folder> folderList = this.folderDao.findFolderListByUserId(
+                userTemp.getUserId(), null);
         assertTrue(folderList.size() > 0);
         assertTrue(folderList.size() == folderDatas.length);
     }

@@ -38,14 +38,17 @@ import com.ufinity.marchant.ubank.bean.Folder;
 public interface FolderDao extends GenericDao<Folder, Long> {
 
     /**
-     * this method is find folder collection according user id
+     * this method is find folder collection according user id and share, if
+     * share is null, query all folder, else according share's value.
      * 
      * @param userId
      *            user's id
+     * @param share
+     *            folder share or not
      * @return List<Folder> folder's collection
      * @author skyqiang
-     */
-    public List<Folder> findFolderListByUserId(Long userId);
+     */                 
+    public List<Folder> findFolderListByUserId(Long userId, Boolean share);
 
     /**
      * this method is find root folder collection according user id
