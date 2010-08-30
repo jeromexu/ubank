@@ -80,7 +80,7 @@
 			return false;
 		}
 		var password = document.getElementById("password").value;
-		var passpord2 = document.getElementById("repassword").value;
+		var password2 = document.getElementById("repassword").value;
 		if (password.replace(/ /g, "") == "") {
 			alert("请输入密码");
 			return false;
