@@ -48,7 +48,7 @@ import com.ufinity.marchant.ubank.service.ServiceFactory;
  */
 @SuppressWarnings("serial")
 public class SearchServlet extends AbstractServlet {
-    private final Logger LOG = Logger.getInstance(SearchServlet.class);
+    private final Logger logger = Logger.getInstance(SearchServlet.class);
 
     /**
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
@@ -74,7 +74,7 @@ public class SearchServlet extends AbstractServlet {
                 rslt = search(req);
             }
         }catch(UBankException e) {
-            LOG.error("occur UBankException.", e);
+            logger.error("occur UBankException.", e);
             redirect(resp, Constant.ERROR_PAGE_500);
             return;
         }
@@ -96,13 +96,13 @@ public class SearchServlet extends AbstractServlet {
         String fileSize = req.getParameter(Constant.REQ_PARAM_FILESIZE);
         String publishDate = req.getParameter(Constant.REQ_PARAM_PUBLISHDATE);
         String pageNumber = req.getParameter(Constant.REQ_PARAM_PAGENUM);
-        LOG.debug("fileName=" + fileName + " , fileSize=" + fileSize
+        logger.debug("fileName=" + fileName + " , fileSize=" + fileSize
                 + " , publishDate=" + publishDate + " , pageNumber="
                 + pageNumber);
 
         int pageNum = StringUtil.parseInt(pageNumber, Constant.PAGE_NUM_DEF);
 
-        LOG.debug("pageNum=" + pageNum);
+        logger.debug("pageNum=" + pageNum);
 
         FileService fileService = ServiceFactory
                 .createService(FileService.class);

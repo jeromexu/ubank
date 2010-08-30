@@ -52,7 +52,7 @@ import com.ufinity.marchant.ubank.service.UserService;
 @SuppressWarnings("serial")
 public class LoginServlet extends AbstractServlet {
 
-    private final Logger LOG = Logger.getInstance(LoginServlet.class);
+    private final Logger logger = Logger.getInstance(LoginServlet.class);
 
     /**
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
@@ -73,7 +73,7 @@ public class LoginServlet extends AbstractServlet {
         String method = parseActionName(req);
         String rslt = Constant.ERROR_PAGE_404;
 
-        LOG.debug("action method=" + method);
+        logger.debug("action method=" + method);
 
         try {
             if (Constant.ACTION_HOME.equals(method)) {
@@ -84,12 +84,12 @@ public class LoginServlet extends AbstractServlet {
                 rslt = logout(req, resp);
             }
         } catch (UBankException e) {
-            LOG.error("occur UBankException.", e);
+            logger.error("occur UBankException.", e);
             redirect(resp, Constant.ERROR_PAGE_500);
             return;
         }
 
-        LOG.debug("go page=" + rslt);
+        logger.debug("go page=" + rslt);
 
         if (Constant.MAIN_PAGE.equals(rslt)) {
             redirect(resp, rslt);
@@ -145,14 +145,14 @@ public class LoginServlet extends AbstractServlet {
         String username = req.getParameter(Constant.REQ_PARAM_USERNAME);
         String password = req.getParameter(Constant.REQ_PARAM_PASSWORD);
 
-        LOG.debug("username=" + username + " , password=" + password);
+        logger.debug("username=" + username + " , password=" + password);
 
         // If validate failure, then return.
         if (Validity.isEmpty(username)
                 || username.length() > Constant.USERNAME_LENGTH
                 || Validity.isEmpty(password)
                 || password.length() > Constant.PASSWORD_LENGTH) {
-            LOG.debug("login validation failure!");
+            logger.debug("login validation failure!");
 
             req.setAttribute(Constant.ATTR_ERROR_MSG,
                     getText(MessageKeys.MSG_LOGIN_FAILURE));
@@ -164,14 +164,14 @@ public class LoginServlet extends AbstractServlet {
         User user = userService.getUser(username, password);
 
         if (user == null) {
-            LOG.debug("user not exists, login failure");
+            logger.debug("user not exists, login failure");
             req.setAttribute(Constant.ATTR_ERROR_MSG,
                     getText(MessageKeys.MSG_LOGIN_FAILURE));
             home(req, resp);
 
             return Constant.HOME_PAGE;
         } else {
-            LOG.debug("login success");
+            logger.debug("login success");
             req.getSession().setAttribute(Constant.SESSION_USER, user);
             return Constant.MAIN_PAGE;
         }
@@ -190,7 +190,7 @@ public class LoginServlet extends AbstractServlet {
      */
     private String logout(HttpServletRequest req, HttpServletResponse resp)
             throws UBankException {
-        LOG.debug("invalidate session");
+        logger.debug("invalidate session");
 
         req.getSession().invalidate();
 
