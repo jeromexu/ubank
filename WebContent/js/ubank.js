@@ -484,7 +484,6 @@ function returnResult(status) {
 			});
 }
 
-
 function executeChecking(node, record) {
 	if (node == null && record == null) {
 		$.messager.alert('提示 ', '请选择要操作的对象', 'info');
