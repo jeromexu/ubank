@@ -144,7 +144,7 @@
 				if(isUpload){
 					$.ajax({
 						type: "GET",
-  						url: "getInfo.do?filedName="+filedName,
+  						url: "getInfo.do?filedName="+filedName+"&d="+new Date(),
 						dataType: "json",
 						success: function(json){
 						  updateProgress(json,filedName);
