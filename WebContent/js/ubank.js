@@ -162,7 +162,7 @@ function showContent(param) {
 		frozenColumns : [[{
 					title : '名称',
 					field : 'name',
-					width : 380,
+					width : 450,
 					sortable : true
 				}]],
 		columns : [[{
@@ -228,7 +228,6 @@ function showContent(param) {
 					iconCls : 'icon-remove',
 					handler : function() {
 						var record = $('#test').datagrid('getSelected');
-						alert(record);
 						var result = executeChecking(currTreeNode, record);
 						if (result) {
 							var url = '/ubank/portal/delFolderOrFile.do';
@@ -241,7 +240,7 @@ function showContent(param) {
 											if (record) {
 												id = record.id;
 												pid = record.pid;
-												if (!record.sizel) {
+												if (record.type == '文件夹') {
 													type = 'folder';
 												}
 											} else {

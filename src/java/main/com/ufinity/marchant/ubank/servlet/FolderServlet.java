@@ -294,6 +294,10 @@ public class FolderServlet extends AbstractServlet {
                     if (fileService.removeFile(docId)) {
                         result = Constant.REQUEST_RESULT_SUCCESS;
                     }
+                    else {
+                        EntityManagerUtil.rollback();
+                        return;
+                    }
                 }
                 else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type)) {
                     // if this is folder that deleted

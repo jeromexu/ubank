@@ -40,6 +40,7 @@ import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DateUtil;
 import com.ufinity.marchant.ubank.common.DocumentUtil;
+import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.common.FileOrFolderJsonEntity;
 import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.common.Logger;
@@ -137,18 +138,24 @@ public class FolderServiceImpl implements FolderService {
             if (!Validity.isNullAndEmpty(folderType)) {
                 newFolder.setFolderType(folderType);
             }
+            EntityManagerUtil.begin();
             // save to database
             folderDao.add(newFolder);
 
             // create disk file
             int result = DocumentUtil.addNewFolder(newFolder);
-            if (result != 1) {
+            if (result == 1) {
+                EntityManagerUtil.commit();
+            }
+            else {
                 logger.debug("Create disk directory fail.");
+                EntityManagerUtil.rollback();
                 return null;
             }
             return newFolder;
         }
         catch (Exception e) {
+            EntityManagerUtil.rollback();
             logger.error("The database throw an  exception "
                     + "when create a folder. ", e);
             return null;
@@ -326,6 +333,7 @@ public class FolderServiceImpl implements FolderService {
             return false;
         }
         try {
+            EntityManagerUtil.begin();
             Folder source = folderDao.find(sourceFolderId);
             Folder target = folderDao.find(targetFolderId);
             target.getChildren().add(source);
@@ -335,6 +343,7 @@ public class FolderServiceImpl implements FolderService {
                 logger.debug("move disk file fail");
                 return false;
             }
+
             folderDao.modify(target);
             folderDao.modify(source);
             // update all files Shared state and reset disk path (directory
@@ -345,8 +354,10 @@ public class FolderServiceImpl implements FolderService {
             else {
                 resetChildrenDiskPathAndShare(source, false);
             }
+            EntityManagerUtil.commit();
         }
         catch (Exception e) {
+            EntityManagerUtil.rollback();
             logger.error("When moving folder to specified directory ,"
                     + " the database throw an exception.", e);
             return false;
@@ -681,33 +692,26 @@ public class FolderServiceImpl implements FolderService {
      * @return success return true else return false
      * @author bxji
      */
-    private boolean resetChildrenDiskPathAndShare(Folder folder, boolean share) {
+    private void resetChildrenDiskPathAndShare(Folder folder, boolean share) {
         if (folder == null) {
-            return true;
+            return;
         }
-        final Date DATE = new Date();
+        Date date = new Date();
         final String PATH = getDiskPath(folder);
-        try {
-            Set<Folder> children = folder.getChildren();
-            for (Folder child : children) {
-                child.setModifyTime(DATE);
-                child.setDirectory(PATH);
-                folderDao.modify(child);
-                resetChildrenDiskPathAndShare(child, share);
-            }
-            Set<FileBean> files = folder.getFiles();
-            for (FileBean file : files) {
-                file.setModifyTime(DATE);
-                file.setShare(share);
-                file.setDirectory(PATH);
-                fileDao.modify(file);
-            }
+        Set<Folder> children = folder.getChildren();
+        for (Folder child : children) {
+            child.setModifyTime(date);
+            child.setDirectory(PATH);
+            folderDao.modify(child);
+            resetChildrenDiskPathAndShare(child, share);
         }
-        catch (Exception e) {
-            logger.error("update database exception", e);
-            return false;
+        Set<FileBean> files = folder.getFiles();
+        for (FileBean file : files) {
+            file.setModifyTime(date);
+            file.setShare(share);
+            file.setDirectory(PATH);
+            fileDao.modify(file);
         }
-        return true;
     }
 
     /**
