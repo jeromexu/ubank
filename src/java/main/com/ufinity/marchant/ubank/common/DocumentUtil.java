@@ -182,29 +182,24 @@ public class DocumentUtil {
 			return 0;
 		}
 		String serverPath = getApplicationPath();
-		StringBuffer sb = new StringBuffer();
 		boolean result = false;
 		if (serverPath != null) {
 			String olderPath = null;
 			if (FOLDER_DIRECTORY.endsWith(FILE_SYSTEM_SEPARATOR)) {
-				olderPath = sb.append(serverPath).append(FOLDER_DIRECTORY).append(FOLDERNAME).toString();
+				olderPath = serverPath + FOLDER_DIRECTORY + FOLDERNAME;
 			} else {
-				olderPath = sb.append(serverPath).append(FOLDER_DIRECTORY).append(FILE_SYSTEM_SEPARATOR)
-						.append(FOLDERNAME).toString();
+				olderPath = serverPath + FOLDER_DIRECTORY + FILE_SYSTEM_SEPARATOR + FOLDERNAME;
 			}
 			String newPath = null;
 			if (newFolderDirecotry.endsWith(FILE_SYSTEM_SEPARATOR)) {
-				newPath = sb.append(serverPath).append(newFolderDirecotry).append(newFolderName)
-						.toString();
+				newPath = serverPath + newFolderDirecotry + newFolderName;
 			} else {
-				newPath = sb.append(serverPath).append(newFolderDirecotry).append(
-								FILE_SYSTEM_SEPARATOR).append(newFolderName)
-						.toString();
+				newPath = serverPath + newFolderDirecotry + FILE_SYSTEM_SEPARATOR + newFolderName;
 			}
 			LOGGER.debug("olderPath=" + olderPath + ", newPath=" + newPath);
 			File oldFile = new File(olderPath);
 			if (oldFile.exists()) {
-				copyFolder(olderPath, newPath);
+				copyFolder(olderPath, newPath + FILE_SYSTEM_SEPARATOR + FOLDERNAME );
 				result = delFolder(olderPath);
 			} else {
 				return 0;
