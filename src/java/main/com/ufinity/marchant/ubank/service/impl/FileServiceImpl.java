@@ -63,7 +63,7 @@ public class FileServiceImpl implements FileService {
     private FolderDao folderDao;
 
     // Logger for this class
-    protected final Logger LOG = Logger.getInstance(FileServiceImpl.class);
+    protected final Logger logger = Logger.getInstance(FileServiceImpl.class);
 
     /**
      * Constructor
@@ -134,7 +134,7 @@ public class FileServiceImpl implements FileService {
         }
         catch (Exception e) {
             // not need rollback
-            LOG.error("search share file exception", e);
+            logger.error("search share file exception", e);
             throw new UBankException("search share file exception");
         }
         finally {
@@ -165,7 +165,7 @@ public class FileServiceImpl implements FileService {
             EntityManagerUtil.commit();
         }
         catch (Exception e) {
-            LOG.error("get fileBean excepiton!", e);
+            logger.error("get fileBean excepiton!", e);
             throw new UBankException("get file exception by fileId!");
         }
         finally {
@@ -319,14 +319,14 @@ public class FileServiceImpl implements FileService {
                 // copy disk file
                 int result = DocumentUtil.copyFile(fileCopy, folder);
                 if (result != 1) {
-                    LOG.debug("copy disk file IO exception");
+                    logger.debug("copy disk file IO exception");
                     return false;
                 }
                 fileDao.modify(fileCopy);
                 return true;
             }
             catch (Exception e) {
-                LOG.error("Update the file information database exception ", e);
+                logger.error("Update the file information database exception ", e);
                 return false;
             }
         }
@@ -353,7 +353,7 @@ public class FileServiceImpl implements FileService {
             }
         }
         catch (Exception e) {
-            LOG.error(" copy file throw exception", e);
+            logger.error(" copy file throw exception", e);
         }
         return copy;
     }
@@ -400,7 +400,7 @@ public class FileServiceImpl implements FileService {
             // move disk file
             int result = DocumentUtil.moveFileTo(file, folder);
             if (result != 1) {
-                LOG.debug("Move disk file IO exception");
+                logger.debug("Move disk file IO exception");
                 return false;
             }
             // update database table
@@ -408,7 +408,7 @@ public class FileServiceImpl implements FileService {
             return true;
         }
         catch (Exception e) {
-            LOG.error("Database operation exception when moving a file. ", e);
+            logger.error("Database operation exception when moving a file. ", e);
             return false;
         }
     }
@@ -430,14 +430,14 @@ public class FileServiceImpl implements FileService {
             if (file != null) {
                 int result = DocumentUtil.removeFile(file);
                 if (result != 1) {
-                    LOG.debug("delete disk file fail.");
+                    logger.debug("delete disk file fail.");
                     return false;
                 }
                 fileDao.deleteById(fileId);
             }
         }
         catch (Exception e) {
-            LOG.error("Database exception where tried to remove a file.", e);
+            logger.error("Database exception where tried to remove a file.", e);
             return false;
         }
         return true;
@@ -466,7 +466,7 @@ public class FileServiceImpl implements FileService {
                 }
                 int result = DocumentUtil.renameFile(file, newName);
                 if (result != 1) {
-                    LOG.debug("rename disk file fail.");
+                    logger.debug("rename disk file fail.");
                     return false;
                 }
                 fileDao.modify(file);
@@ -474,7 +474,7 @@ public class FileServiceImpl implements FileService {
             }
         }
         catch (Exception e) {
-            LOG.error("update the database exception when rename a file", e);
+            logger.error("update the database exception when rename a file", e);
         }
         return false;
     }
@@ -520,7 +520,7 @@ public class FileServiceImpl implements FileService {
      */
     private boolean isSameName(Folder folder, String name) throws DbException {
         if (folder == null || Validity.isNullAndEmpty(name)) {
-            LOG.debug("target folder can not be null");
+            logger.debug("target folder can not be null");
             throw new DbException("target folder and name can not be null.");
         }
         Set<FileBean> files = folder.getFiles();
