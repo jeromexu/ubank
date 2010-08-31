@@ -112,12 +112,13 @@ public class FolderServiceImpl implements FolderService {
                 throw new UBankException(
                         "can not create new folder under the root directory");
             }
+            Date date = new Date();
 
             // create new folder object and set value
             Folder newFolder = new Folder();
             newFolder.setParent(parentfolder);
-            newFolder.setCreateTime(new Date());
-            newFolder.setModifyTime(new Date());
+            newFolder.setCreateTime(date);
+            newFolder.setModifyTime(date);
             newFolder.setDirectory(getDiskPath(parentfolder));
             newFolder.setShare(false);
             newFolder.setUser(user);

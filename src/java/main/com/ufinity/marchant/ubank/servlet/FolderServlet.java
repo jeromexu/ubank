@@ -252,9 +252,13 @@ public class FolderServlet extends AbstractServlet {
                 EntityManagerUtil.begin();
                 Folder folder = folderService.addFolder(uid, pid, folderName,
                         null);
-                EntityManagerUtil.commit();
+
                 if (folder != null) {
                     result = Constant.REQUEST_RESULT_SUCCESS;
+                    EntityManagerUtil.commit();
+                }
+                else {
+                    EntityManagerUtil.rollback();
                 }
             }
             catch (UBankException e) {

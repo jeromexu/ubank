@@ -219,7 +219,6 @@ function showContent(param) {
 														returnResult(false);
 													}
 												});
-												reload();
 									}
 								});
 
@@ -264,7 +263,6 @@ function showContent(param) {
 															returnResult(false);
 														}
 													});
-											reload();
 										}
 									});
 						}
