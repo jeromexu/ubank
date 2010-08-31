@@ -368,14 +368,23 @@ public class FolderServlet extends AbstractServlet {
             return;
         }
         Long fId = Long.parseLong(id);
+        EntityManagerUtil.begin();
         if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
             if (fileService.renameFile(fId, newName)) {
                 result = Constant.REQUEST_RESULT_SUCCESS;
+                EntityManagerUtil.commit();
+            }
+            else {
+                EntityManagerUtil.rollback();
             }
         }
         else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
             if (folderService.renameFolder(fId, newName)) {
                 result = Constant.REQUEST_RESULT_SUCCESS;
+                EntityManagerUtil.commit();
+            }
+            else {
+                EntityManagerUtil.rollback();
             }
         }
         returnResp(result, resp);

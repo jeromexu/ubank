@@ -228,6 +228,7 @@ function showContent(param) {
 					iconCls : 'icon-remove',
 					handler : function() {
 						var record = $('#test').datagrid('getSelected');
+						alert(record);
 						var result = executeChecking(currTreeNode, record);
 						if (result) {
 							var url = '/ubank/portal/delFolderOrFile.do';
