@@ -26,7 +26,6 @@ public class DocumentUtil {
 	public static String FOLDER_DIRECTORY = null;
 	public static String FILENAME = null;
 	private static final String FILE_SYSTEM_SEPARATOR = "/";
-	private static final StringBuffer SB = new StringBuffer();
 	
 	// Logger for this class
 	protected final static Logger LOGGER = Logger
@@ -110,7 +109,7 @@ public class DocumentUtil {
 	public static int renameFolder(Folder folder, String newFolder) {
 
 		if (folder != null) {
-			FOLDERNAME = folder.getFolderName();
+			FOLDERNAME = String.valueOf(folder.getFolderId());
 			FOLDER_DIRECTORY = folder.getDirectory();
 		} else {
 			return 0;
@@ -146,7 +145,7 @@ public class DocumentUtil {
 			return 0;
 		}
 		if (newPath != null) {
-			FOLDERNAME = newPath.getFolderName();
+			FOLDERNAME = String.valueOf(newPath.getFolderId());
 			FOLDER_DIRECTORY = newPath.getDirectory();
 		} else {
 			return 0;
@@ -176,7 +175,7 @@ public class DocumentUtil {
 	 */
 	public static int moveFolderTo(Folder folder, Folder newFolder) {
 		if (folder != null) {
-			FOLDERNAME = folder.getFolderName();
+			FOLDERNAME = String.valueOf(folder.getFolderId());
 			FOLDER_DIRECTORY = folder.getDirectory();
 		} else {
 			return 0;
@@ -184,31 +183,28 @@ public class DocumentUtil {
 		String newFolderName = null;
 		String newFolderDirecotry = null;
 		if (newFolder != null) {
-			newFolderName = newFolder.getFolderName();
+			newFolderName = String.valueOf(newFolder.getFolderId());
 			newFolderDirecotry = newFolder.getDirectory();
 		} else {
 			return 0;
 		}
 		String serverPath = getApplicationPath();
+		StringBuffer sb = new StringBuffer();
 		boolean result = false;
 		if (serverPath != null) {
 			String olderPath = null;
 			if (FOLDER_DIRECTORY.endsWith(FILE_SYSTEM_SEPARATOR)) {
-				olderPath = SB.append(serverPath).append(FILE_SYSTEM_SEPARATOR)
-						.append(FOLDER_DIRECTORY).append(FOLDERNAME).toString();
+				olderPath = sb.append(serverPath).append(FOLDER_DIRECTORY).append(FOLDERNAME).toString();
 			} else {
-				olderPath = SB.append(serverPath).append(FILE_SYSTEM_SEPARATOR)
-						.append(FOLDER_DIRECTORY).append(FILE_SYSTEM_SEPARATOR)
+				olderPath = sb.append(serverPath).append(FOLDER_DIRECTORY).append(FILE_SYSTEM_SEPARATOR)
 						.append(FOLDERNAME).toString();
 			}
 			String newPath = null;
 			if (newFolderDirecotry.endsWith(FILE_SYSTEM_SEPARATOR)) {
-				newPath = SB.append(serverPath).append(FILE_SYSTEM_SEPARATOR)
-						.append(newFolderDirecotry).append(newFolderName)
+				newPath = sb.append(serverPath).append(newFolderDirecotry).append(newFolderName)
 						.toString();
 			} else {
-				newPath = SB.append(serverPath).append(FILE_SYSTEM_SEPARATOR)
-						.append(newFolderDirecotry).append(
+				newPath = sb.append(serverPath).append(newFolderDirecotry).append(
 								FILE_SYSTEM_SEPARATOR).append(newFolderName)
 						.toString();
 			}
@@ -269,7 +265,8 @@ public class DocumentUtil {
 		} else {
 			path = FOLDER_DIRECTORY + FILE_SYSTEM_SEPARATOR + FOLDERNAME;
 		}
-		File baseFile = new File(getApplicationPath() + path);
+		path = getApplicationPath() + path;
+		File baseFile = new File(path);
 		boolean result = false;
 		if (baseFile.exists()) {
 			result = delFolder(path);
@@ -299,7 +296,7 @@ public class DocumentUtil {
 			return 0;
 		}
 		if (folder != null) {
-			FOLDERNAME = folder.getFolderName();
+			FOLDERNAME = String.valueOf(folder.getFolderId());
 			FOLDER_DIRECTORY = folder.getDirectory();
 		} else {
 			return 0;
@@ -318,14 +315,7 @@ public class DocumentUtil {
 			if (sFile.exists()) {
 				// read source file
 				fis = new FileInputStream(sFile);
-				if (FOLDER_DIRECTORY.endsWith(FILE_SYSTEM_SEPARATOR)) {
-					SB.append(FOLDER_DIRECTORY).append(FOLDERNAME);
-				} else {
-					SB.append(FOLDER_DIRECTORY).append(FILE_SYSTEM_SEPARATOR)
-							.append(FOLDERNAME);
-				}
-				fos = new FileOutputStream(SB.append(FILE_SYSTEM_SEPARATOR)
-						.append(sFile.getName()).toString());
+				fos = new FileOutputStream(new File(dFile,sFile.getName()));
 				byte[] buffer = new byte[1024];
 				while ((byteread = fis.read(buffer)) != -1) {
 					bytesum += byteread;
@@ -495,13 +485,14 @@ public class DocumentUtil {
 	private static File createFile(String folderPath, String folderName) {
 		File file = null;
 		String serverPath = getApplicationPath();
+		StringBuffer sb = new StringBuffer();
 		if (serverPath != null) {
 			if (folderPath.endsWith(FILE_SYSTEM_SEPARATOR)) {
-				file = new File(SB.append(serverPath).append(
+				file = new File(sb.append(serverPath).append(
 						FILE_SYSTEM_SEPARATOR).append(folderPath).append(
 						folderName).toString());
 			} else {
-				file = new File(SB.append(serverPath).append(
+				file = new File(sb.append(serverPath).append(
 						FILE_SYSTEM_SEPARATOR).append(folderPath).append(
 						FILE_SYSTEM_SEPARATOR).append(folderName).toString());
 			}
