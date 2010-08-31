@@ -338,10 +338,10 @@ public class FolderServiceImpl implements FolderService {
             Folder target = folderDao.find(targetFolderId);
             target.getChildren().add(source);
             source.setParent(target);
+            int result = DocumentUtil.moveFolderTo(source, target);
             source.setDirectory(getDiskPath(target));
             folderDao.modify(target);
             folderDao.modify(source);
-            int result = DocumentUtil.moveFolderTo(source, target);
             if (result != 1) {
                 EntityManagerUtil.rollback();
                 logger.debug("move disk file fail");
@@ -483,15 +483,19 @@ public class FolderServiceImpl implements FolderService {
             else {
                 folder.setFolderName(newName);
             }
+            EntityManagerUtil.begin();
+            folderDao.modify(folder);
             int result = DocumentUtil.renameFolder(folder, newName);
             if (result != 1) {
+                EntityManagerUtil.rollback();
                 logger.debug("disk folder rename fail");
                 return false;
             }
-            folderDao.modify(folder);
+            EntityManagerUtil.commit();
             return true;
         }
         catch (Exception e) {
+            EntityManagerUtil.rollback();
             logger.error("database exception ,when folder rename .", e);
             return false;
         }
@@ -577,12 +581,19 @@ public class FolderServiceImpl implements FolderService {
             return false;
         }
         try {
+            EntityManagerUtil.begin();
             Folder folder = folderDao.find(folderId);
             folder.setShare(true);
             folderDao.modify(folder);
-            return shareOrCanceAllFiles(folder, true);
+            if (shareOrCanceAllFiles(folder, true)) {
+                EntityManagerUtil.commit();
+                return true;
+            }
+            EntityManagerUtil.rollback();
+            return false;
         }
         catch (Exception e) {
+            EntityManagerUtil.rollback();
             logger.error("When sharing a folder,database"
                     + " throw an exception .", e);
             return false;
@@ -602,10 +613,14 @@ public class FolderServiceImpl implements FolderService {
             return false;
         }
         try {
+            EntityManagerUtil.begin();
             Folder folder = folderDao.find(folderId);
-            return cancelShareFolder(folder);
+            cancelShareFolder(folder);
+            EntityManagerUtil.commit();
+            return true;
         }
         catch (Exception e) {
+            EntityManagerUtil.rollback();
             logger.error("When cancel share a folder "
                     + ",database throw an exception", e);
             return false;
@@ -648,30 +663,22 @@ public class FolderServiceImpl implements FolderService {
      * @return success return true else return false
      * @author bxji
      */
-    private boolean cancelShareFolder(Folder folder) {
+    private void cancelShareFolder(Folder folder) {
         if (folder == null) {
-            return false;
+            return;
         }
-        try {
-            folder.setShare(false);
-            folderDao.modify(folder);
-            Set<FileBean> files = folder.getFiles();
-            for (FileBean file : files) {
-                file.setModifyTime(new Date());
-                file.setShare(false);
-                fileDao.modify(file);
-            }
-            Set<Folder> children = folder.getChildren();
-            for (Folder child : children) {
-                cancelShareFolder(child);
-            }
+        folder.setShare(false);
+        folderDao.modify(folder);
+        Set<FileBean> files = folder.getFiles();
+        for (FileBean file : files) {
+            file.setModifyTime(new Date());
+            file.setShare(false);
+            fileDao.modify(file);
         }
-        catch (Exception e) {
-            logger.error("update database exception", e);
-            return false;
+        Set<Folder> children = folder.getChildren();
+        for (Folder child : children) {
+            cancelShareFolder(child);
         }
-
-        return true;
     }
 
     /**
