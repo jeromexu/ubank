@@ -92,6 +92,7 @@ public class UploadServiceImpl implements UploadService {
         OutputStream out = null;
         ByteArrayOutputStream bStream = null;
         List<File> createFiles = new ArrayList<File>();
+        String realDir = getRealFolderDir(folderDir, folderId);
 
         try {
             fldName = item.getFieldName();
@@ -99,7 +100,8 @@ public class UploadServiceImpl implements UploadService {
             if (fileFullName == null || "".equals(fileFullName.trim())) {
                 return;
             }
-
+            
+            fileFullName = checkFileName(fileFullName);
             pi.setCurFileName(fileFullName);
             pi.setUploadedFiles(pi.getUploadedFiles() + "<b>" + fileFullName
                     + "</b><br/>");
@@ -109,11 +111,11 @@ public class UploadServiceImpl implements UploadService {
             long bStreamLen = Streams.copy(stream, bStream, true);
 
             logger.debug("Upload path is :"
-                    + this.getFileDir(folderDir, fileFullName));
+                    + this.getFileDir(realDir, fileFullName));
             System.out.println("Upload path is :"
-                    + this.getFileDir(folderDir, fileFullName));
+                    + this.getFileDir(realDir, fileFullName));
 
-            File file = new File(this.getFileDir(folderDir, fileFullName));
+            File file = new File(this.getFileDir(realDir, fileFullName));
             if (file.exists()) {
                 file.delete();
             }
@@ -134,7 +136,7 @@ public class UploadServiceImpl implements UploadService {
             fb.setFileName(fileFullName);
             fb.setFileType(getFileType(fileFullName));
             fb.setCreateTime(new Date());
-            fb.setDirectory(folderDir);
+            fb.setDirectory(folderDir + File.separator + folderId);
             // kb
             fb.setSize(bStreamLen / 1024);
             fb.setShare(false);
@@ -158,6 +160,33 @@ public class UploadServiceImpl implements UploadService {
             } catch (Exception e) {
             }
         }
+    }
+    
+    /**
+     * check file name with ie and firefox
+     * 
+     * @param fileName file name
+     * @return file name
+     */
+    private String checkFileName(String fileName){
+        String separator = File.separator;
+        if(fileName.contains(separator)){
+            fileName = fileName.substring(fileName.lastIndexOf(separator)+1);
+        }
+        return fileName;
+    }
+    
+    /**
+     * get real folder dir
+     * 
+     * @param folderDir
+     * @param folderId
+     * @return
+     */
+    private String getRealFolderDir(String folderDir, Long folderId){
+        String objectPath = SystemGlobals.getString(UploadConstant.UBANK_PATH, new String[]{System.getProperty("catalina.home")});
+        String dir = objectPath + folderDir + File.separator  + folderId + File.separator;
+        return dir;
     }
 
     /**
@@ -209,10 +238,7 @@ public class UploadServiceImpl implements UploadService {
                 throw new DbException("Upload folder is null.");
             }
             EntityManagerUtil.commit();
-            
-            String objectPath = SystemGlobals.getString(UploadConstant.UBANK_PATH, new String[]{System.getProperty("catalina.home")});
-            String folderDir = objectPath + File.separator + folder.getDirectory()+ File.separator  + folderId + File.separator;
-            return folderDir;
+            return folder.getDirectory();
         } catch (RuntimeException e) {
             throw new DbException(e);
         } finally {

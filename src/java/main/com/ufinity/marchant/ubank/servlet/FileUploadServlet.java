@@ -272,7 +272,7 @@ public class FileUploadServlet extends AbstractServlet {
                 pi.setErrorMsg(getText(MessageKeys.UPLOAD_EXECEPTION));
             }
             logger.error("Upload interrupted or exception!" ,e);
-            //will remove
+            //TODO will remove
             e.printStackTrace();
         } 
     }
