@@ -208,7 +208,8 @@ function showContent(param) {
 										$.get(url, {
 													'parentId' : parentId,
 													'folderName' : name,
-													'userId' : userId
+													'userId' : userId,
+													'layer' : layer
 												}, function(data) {
 													if (data == 'success') {
 														returnResult(true);

@@ -233,15 +233,15 @@ public class FolderServlet extends AbstractServlet {
         String folderName = req.getParameter(Constant.FOLDER_NAME);
         String userID = req.getParameter(Constant.USER_ID);
         String layerNumber = req.getParameter(Constant.FOLDER_LAYER);
-        String result = Constant.REQUEST_RESULT_FAIL;
 
+        String result = Constant.REQUEST_RESULT_FAIL;
         if (!Validity.isNullAndEmpty(folderName)
                 && !Validity.isNullAndEmpty(folderId)
                 && !Validity.isNullAndEmpty(userID)
                 && !Validity.isNullAndEmpty(layerNumber)) {
             Long layer = Long.parseLong(layerNumber);
             // user directory layer number must less than ten
-            if (layer > 10l) {
+            if (layer > 9l) {
                 LOG.debug("create new Folder failed, "
                         + "user directory layer number must less than ten.");
                 returnResp(result, resp);
