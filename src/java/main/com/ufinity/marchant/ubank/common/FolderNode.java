@@ -109,7 +109,6 @@ public class FolderNode {
         Folder lastFolder = folders.get(folders.size() - 1);
         if (lastFolder.getParent() == null) {
             rootNode = new FolderNode();
-            rootNode.setLayer(0l);
             copyProperties(rootNode, lastFolder);
             addToTree(nodes, rootNode);
 
@@ -117,7 +116,6 @@ public class FolderNode {
                 Folder folder = folders.get(i);
                 FolderNode node = new FolderNode();
                 copyProperties(node, folder);
-                node.setLayer(1l + i);
                 addToTree(nodes, node);
             }
         }
@@ -129,7 +127,6 @@ public class FolderNode {
                     rootNode = node;
                 }
                 copyProperties(node, folder);
-                node.setLayer(0l + i);
                 addToTree(nodes, node);
             }
         }
@@ -177,7 +174,11 @@ public class FolderNode {
         }
         if (node.getParentId() != null) {
             FolderNode parentNode = nodes.get(node.getParentId());
+            node.setLayer(parentNode.getLayer() + 1l);
             parentNode.getSubNodes().add(node);
+        }
+        else {
+            node.setLayer(0l);
         }
         nodes.put(node.getFolderId(), node);
     }

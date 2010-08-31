@@ -25,54 +25,57 @@ $(function() {
 				modal : true,
 				title : '移动到...',
 				buttons : [{
-							text : '确定',
-							iconCls : 'icon-ok',
-							handler : function() {
-								var node = $('#tt1').tree('getSelected');
-								if (node) {
-									if (node.attributes.type == 'R') {
-										$.messager.alert('提示 ', '不能移到根目录下!',
-												'info');
-										return;
-									}
-									var record = $('#test')
-											.datagrid('getSelected');
+					text : '确定',
+					iconCls : 'icon-ok',
+					handler : function() {
+						var node = $('#tt1').tree('getSelected');
+						if (node) {
+							if (node.attributes.type == 'R') {
+								$.messager.alert('提示 ', '不能移到根目录下!', 'info');
+								return;
+							}
+							if (node.attributes.layer > 9) {
+								$.messager.alert('提示 ', '文件夹层次不能超过 10 层！!',
+										'info');
+								return;
+							}
+							var record = $('#test').datagrid('getSelected');
 
-									var url = '/ubank/portal/moveTo.do';
-									var parentId = node.id;
-									var id;
-									var type = 'file';
-									if (record) {
-										id = record.id;
-										if (record.type == '文件夹') {
-											type = 'folder';
-										}
-									} else {
-										id = currTreeNode.id;
-										type = 'folder';
-									}
-									$.get(url, {
-												'parentId' : parentId,
-												'id' : id,
-												'type' : type
-											}, function(data) {
-												if (data == 'success') {
-													returnResult(true);
-													dirTree();
-													showContent(parentId);
-												} else {
-													returnResult(false);
-												}
-											});
+							var url = '/ubank/portal/moveTo.do';
+							var parentId = node.id;
+							var id;
+							var type = 'file';
+							if (record) {
+								id = record.id;
+								if (record.type == '文件夹') {
+									type = 'folder';
 								}
-								$('#moveTo').dialog('close');
+							} else {
+								id = currTreeNode.id;
+								type = 'folder';
 							}
-						}, {
-							text : '取消',
-							handler : function() {
-								$('#moveTo').dialog('close');
-							}
-						}]
+							$.get(url, {
+										'parentId' : parentId,
+										'id' : id,
+										'type' : type
+									}, function(data) {
+										if (data == 'success') {
+											returnResult(true);
+											dirTree();
+											showContent(parentId);
+										} else {
+											returnResult(false);
+										}
+									});
+						}
+						$('#moveTo').dialog('close');
+					}
+				}, {
+					text : '取消',
+					handler : function() {
+						$('#moveTo').dialog('close');
+					}
+				}]
 			});
 			$('#moveTo').dialog('close');
 		});
@@ -84,54 +87,57 @@ $(function() {
 				modal : true,
 				title : '复制到...',
 				buttons : [{
-							text : '确定',
-							iconCls : 'icon-ok',
-							handler : function() {
-								var node = $('#tt3').tree('getSelected');
-								if (node) {
-									if (node.attributes.type == 'R') {
-										$.messager.alert('提示 ', '不能复制到根目录下!',
-												'info');
-										return;
-									}
-									var record = $('#test')
-											.datagrid('getSelected');
+					text : '确定',
+					iconCls : 'icon-ok',
+					handler : function() {
+						var node = $('#tt3').tree('getSelected');
+						if (node) {
+							if (node.attributes.type == 'R') {
+								$.messager.alert('提示 ', '不能复制到根目录下!', 'info');
+								return;
+							}
+							if (node.attributes.layer > 9) {
+								$.messager.alert('提示 ', '文件夹层次不能超过 10 层！!',
+										'info');
+								return;
+							}
+							var record = $('#test').datagrid('getSelected');
 
-									var url = '/ubank/portal/copyTo.do';
-									var parentId = node.id;
-									var id;
-									var type = 'file';
-									if (record) {
-										id = record.id;
-										if (record.type == '文件夹') {
-											type = 'folder';
-										}
-									} else {
-										id = currTreeNode.id;
-										type = 'folder';
-									}
-									$.get(url, {
-												'parentId' : parentId,
-												'id' : id,
-												'type' : type
-											}, function(data) {
-												if (data == 'success') {
-													returnResult(true);
-													dirTree();
-													showContent(parentId);
-												} else {
-													returnResult(false);
-												}
-											});
+							var url = '/ubank/portal/copyTo.do';
+							var parentId = node.id;
+							var id;
+							var type = 'file';
+							if (record) {
+								id = record.id;
+								if (record.type == '文件夹') {
+									type = 'folder';
 								}
-								$('#copyTo').dialog('close');
+							} else {
+								id = currTreeNode.id;
+								type = 'folder';
 							}
-						}, {
-							text : '取消',
-							handler : function() {
-								$('#copyTo').dialog('close');
-							}
-						}]
+							$.get(url, {
+										'parentId' : parentId,
+										'id' : id,
+										'type' : type
+									}, function(data) {
+										if (data == 'success') {
+											returnResult(true);
+											dirTree();
+											showContent(parentId);
+										} else {
+											returnResult(false);
+										}
+									});
+						}
+						$('#copyTo').dialog('close');
+					}
+				}, {
+					text : '取消',
+					handler : function() {
+						$('#copyTo').dialog('close');
+					}
+				}]
 			});
 			$('#copyTo').dialog('close');
 		});
@@ -190,7 +196,8 @@ function showContent(param) {
 						}
 						var layer = currTreeNode.attributes.layer;
 						if (layer > 9) {
-							$.messager.alert('提示', '最大目录层数不能超过 10 层!', 'warning');
+							$.messager.alert('提示', '最大目录层数不能超过 10 层!',
+									'warning');
 							return;
 						}
 						$.messager.prompt('新建文件夹', '新建文件夹名称：', function(name) {
@@ -476,6 +483,7 @@ function returnResult(status) {
 				showType : 'show'
 			});
 }
+
 
 function executeChecking(node, record) {
 	if (node == null && record == null) {
