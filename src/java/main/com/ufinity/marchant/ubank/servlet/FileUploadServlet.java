@@ -39,9 +39,13 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 
+import com.ufinity.marchant.ubank.bean.Folder;
+import com.ufinity.marchant.ubank.bean.User;
+import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.JsonUtil;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
+import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UploadService;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
@@ -63,6 +67,8 @@ public class FileUploadServlet extends AbstractServlet {
     private final Logger logger = Logger.getLogger(FileUploadServlet.class);
     
     private UploadService uploadService = null;
+    
+    private FolderService folderService = null;
     
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -226,7 +232,16 @@ public class FileUploadServlet extends AbstractServlet {
     @SuppressWarnings("unchecked")
     private void doUpload(HttpServletRequest request, HttpServletResponse response) {
         ProgressInfo pi = new ProgressInfo();
+        
         try {
+            User user = (User)request.getSession().getAttribute(Constant.SESSION_USER);
+            if(user == null){
+                logger.warn("Upload file user is not login.");
+                String errorMsg = getText(MessageKeys.UPLOAD_NOT_LOGIN);
+                responseClientMsg(response,errorMsg);
+                return;
+            }
+            
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
             if (isMultipart) {
                 int filesSize = request.getContentLength()
@@ -248,11 +263,18 @@ public class FileUploadServlet extends AbstractServlet {
                 // Parse the request
                 FileItemIterator items = upload.getItemIterator(request);
                 
+                Long currentFolderId = (Long)request.getSession().getAttribute(UploadConstant.CURRENT_FOLDER_ID);
+                folderService = ServiceFactory.createService(FolderService.class);
+                Folder folder = folderService.getRootFolder(user.getUserId());
+                if(folder.getFolderId().equals(currentFolderId)){
+                    logger.warn("Root folder is not allow to upload.");
+                    String errorMsg = getText(MessageKeys.UPLOAD_NOT_ALLOW);
+                    responseClientMsg(response,errorMsg);
+                    return;
+                }
+                
                 //get folder
                 uploadService = ServiceFactory.createService(UploadService.class);
-                Long currentFolderId = (Long)request.getSession().getAttribute(UploadConstant.CURRENT_FOLDER_ID);
-                //TODO remove
-                currentFolderId = 1l;
                 String currentFolderDir = uploadService.getFolderDir(currentFolderId);
                 
                 while (items.hasNext()) {
@@ -272,8 +294,6 @@ public class FileUploadServlet extends AbstractServlet {
                 pi.setErrorMsg(getText(MessageKeys.UPLOAD_EXECEPTION));
             }
             logger.error("Upload interrupted or exception!" ,e);
-            //TODO will remove
-            e.printStackTrace();
         } 
     }
 
