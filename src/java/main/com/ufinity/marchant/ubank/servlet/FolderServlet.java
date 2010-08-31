@@ -330,7 +330,7 @@ public class FolderServlet extends AbstractServlet {
         if (Validity.isNullAndEmpty(id)) {
             return;
         }
-        Long folderId = Long.parseLong("id");
+        Long folderId = Long.parseLong(id);
         try {
             EntityManagerUtil.begin();
             if (folderService.shareFolder(folderId)) {

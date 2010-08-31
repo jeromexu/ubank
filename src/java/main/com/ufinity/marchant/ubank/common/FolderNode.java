@@ -174,8 +174,12 @@ public class FolderNode {
         }
         if (node.getParentId() != null) {
             FolderNode parentNode = nodes.get(node.getParentId());
-            node.setLayer(parentNode.getLayer() + 1l);
-            parentNode.getSubNodes().add(node);
+            if (parentNode != null) {
+                node.setLayer(1l + parentNode.getLayer());
+                parentNode.getSubNodes().add(node);
+            }else {
+                node.setLayer(0l);
+            }
         }
         else {
             node.setLayer(0l);
