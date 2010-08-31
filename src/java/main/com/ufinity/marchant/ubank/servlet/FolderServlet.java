@@ -249,20 +249,13 @@ public class FolderServlet extends AbstractServlet {
             Long pid = Long.parseLong(folderId);
             Long uid = Long.parseLong(userID);
             try {
-                EntityManagerUtil.begin();
                 Folder folder = folderService.addFolder(uid, pid, folderName,
                         null);
-
                 if (folder != null) {
                     result = Constant.REQUEST_RESULT_SUCCESS;
-                    EntityManagerUtil.commit();
-                }
-                else {
-                    EntityManagerUtil.rollback();
                 }
             }
             catch (UBankException e) {
-                EntityManagerUtil.rollback();
                 LOG.error("create folder fail", e);
             }
         }
@@ -288,15 +281,10 @@ public class FolderServlet extends AbstractServlet {
             Long docId = Long.parseLong(id);
 
             try {
-                EntityManagerUtil.begin();
                 // if this is file that deleted
                 if (Constant.DOCUMENT_TYPE_FILE.equals(type)) {
                     if (fileService.removeFile(docId)) {
                         result = Constant.REQUEST_RESULT_SUCCESS;
-                    }
-                    else {
-                        EntityManagerUtil.rollback();
-                        return;
                     }
                 }
                 else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type)) {
@@ -304,15 +292,9 @@ public class FolderServlet extends AbstractServlet {
                     if (folderService.delFolder(docId)) {
                         result = Constant.REQUEST_RESULT_SUCCESS;
                     }
-                    else {
-                        EntityManagerUtil.rollback();
-                        return;
-                    }
                 }
-                EntityManagerUtil.commit();
             }
             catch (Exception e) {
-                EntityManagerUtil.rollback();
                 LOG.error("deltte file or folder fail", e);
             }
             returnResp(result, resp);
@@ -336,18 +318,11 @@ public class FolderServlet extends AbstractServlet {
         }
         Long folderId = Long.parseLong(id);
         try {
-            EntityManagerUtil.begin();
             if (folderService.shareFolder(folderId)) {
                 result = Constant.REQUEST_RESULT_SUCCESS;
             }
-            else {
-                EntityManagerUtil.rollback();
-                return;
-            }
-            EntityManagerUtil.commit();
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             LOG.error("share folder fail", e);
         }
         returnResp(result, resp);
@@ -372,23 +347,14 @@ public class FolderServlet extends AbstractServlet {
             return;
         }
         Long fId = Long.parseLong(id);
-        EntityManagerUtil.begin();
         if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
             if (fileService.renameFile(fId, newName)) {
                 result = Constant.REQUEST_RESULT_SUCCESS;
-                EntityManagerUtil.commit();
-            }
-            else {
-                EntityManagerUtil.rollback();
             }
         }
         else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
             if (folderService.renameFolder(fId, newName)) {
                 result = Constant.REQUEST_RESULT_SUCCESS;
-                EntityManagerUtil.commit();
-            }
-            else {
-                EntityManagerUtil.rollback();
             }
         }
         returnResp(result, resp);
