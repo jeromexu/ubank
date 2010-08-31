@@ -194,8 +194,8 @@ public class UploadServiceImpl implements UploadService {
      * 
      * @param folderId
      *            folder id
-     * @throws RuntimeException
-     *             if has RuntimeException
+     * @throws DbException
+     *             if has DbException
      * @return folder dir
      */
     public String getFolderDir(Long folderId) throws DbException {

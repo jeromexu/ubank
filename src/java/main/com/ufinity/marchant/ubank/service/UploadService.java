@@ -48,7 +48,17 @@ public interface UploadService {
      * @throws Exception
      *             if have exception
      */
-    public void uploadAndSaveDb(Long folderId, String folderDir, ProgressInfo pi, FileItemStream item) throws Exception;
+    public void uploadAndSaveDb(Long folderId, String folderDir,
+            ProgressInfo pi, FileItemStream item) throws Exception;
 
+    /**
+     * get folder dir with id
+     * 
+     * @param folderId
+     *            folder id
+     * @return folder dir
+     * @throws DbException
+     *             if db have exception
+     */
     public String getFolderDir(Long folderId) throws DbException;
 }
