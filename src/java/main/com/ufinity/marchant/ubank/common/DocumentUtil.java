@@ -115,15 +115,8 @@ public class DocumentUtil {
 			return 0;
 		}
 		File sFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
-		File dFile = createFile(FOLDER_DIRECTORY, newFolder);
-		boolean result = false;
-		if (sFile.exists()) {
-			result = sFile.renameTo(dFile);
-		} else {
-			return 0;
-		}
 
-		return result ? 1 : 0;
+		return (sFile.exists())? 1 : 0;
 
 	}
 
