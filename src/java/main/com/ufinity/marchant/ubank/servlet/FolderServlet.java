@@ -91,7 +91,7 @@ public class FolderServlet extends AbstractServlet {
             return;
         }
         else if (Constant.SHARE_FOLDER.equals(method)) {
-            sharefolder(req, resp);
+            shareFolder(req, resp);
             return;
         }
         else if (Constant.RENAME.equals(method)) {
@@ -189,8 +189,9 @@ public class FolderServlet extends AbstractServlet {
         Long layerNumber = null;
         if (Validity.isNullAndEmpty(layer)) {
             layerNumber = 1l;
-        }else {
-            layerNumber = Long.parseLong(layer)+1l;
+        }
+        else {
+            layerNumber = Long.parseLong(layer) + 1l;
         }
         if (Validity.isNullAndEmpty(fid)) {
             // if request parameter folderid is null
@@ -231,11 +232,20 @@ public class FolderServlet extends AbstractServlet {
         String folderId = req.getParameter(Constant.PARENT_ID);
         String folderName = req.getParameter(Constant.FOLDER_NAME);
         String userID = req.getParameter(Constant.USER_ID);
+        String layerNumber = req.getParameter(Constant.FOLDER_LAYER);
         String result = Constant.REQUEST_RESULT_FAIL;
 
         if (!Validity.isNullAndEmpty(folderName)
                 && !Validity.isNullAndEmpty(folderId)
-                && !Validity.isNullAndEmpty(userID)) {
+                && !Validity.isNullAndEmpty(userID)
+                && !Validity.isNullAndEmpty(layerNumber)) {
+            Long layer = Long.parseLong(layerNumber);
+            // user directory layer number must less than ten
+            if (layer > 10l) {
+                LOG.debug("create new Folder failed, "
+                        + "user directory layer number must less than ten.");
+                returnResp(result, resp);
+            }
             Long pid = Long.parseLong(folderId);
             Long uid = Long.parseLong(userID);
             try {
@@ -310,7 +320,7 @@ public class FolderServlet extends AbstractServlet {
      *            response
      * @author bxji
      */
-    private void sharefolder(HttpServletRequest req, HttpServletResponse resp) {
+    private void shareFolder(HttpServletRequest req, HttpServletResponse resp) {
         String id = req.getParameter(Constant.FOLDER_ID);
         String result = Constant.REQUEST_RESULT_FAIL;
         if (Validity.isNullAndEmpty(id)) {

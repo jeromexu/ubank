@@ -185,31 +185,35 @@ function showContent(param) {
 					handler : function() {
 						if (!currTreeNode
 								|| currTreeNode.attributes.type == 'R') {
-							$.messager.alert('警告', '不能在根目录下创建子目录!', 'warning');
-						} else {
-							$.messager.prompt('新建文件夹', '新建文件夹名称：', function(
-											name) {
-										if (name) {
-											var userId = currTreeNode.attributes.uid;
-											var parentId = currTreeNode.id;
-											var url = '/ubank/portal/addFolder.do';
-											$.get(url, {
-														'parentId' : parentId,
-														'folderName' : name,
-														'userId' : userId
-													}, function(data) {
-														if (data == 'success') {
-															returnResult(true);
-															dirTree();
-															showContent(parentId);
-														} else {
-															returnResult(false);
-														}
-													});
-										}
-									});
-
+							$.messager.alert('提示', '根目录下能创建子目录!', 'warning');
+							return;
 						}
+						var layer = currTreeNode.attributes.layer;
+						if (layer > 9) {
+							$.messager.alert('提示', '最大目录层数不能超过 10 层!', 'warning');
+							return;
+						}
+						$.messager.prompt('新建文件夹', '新建文件夹名称：', function(name) {
+									if (name) {
+										var userId = currTreeNode.attributes.uid;
+										var parentId = currTreeNode.id;
+										var url = '/ubank/portal/addFolder.do';
+										$.get(url, {
+													'parentId' : parentId,
+													'folderName' : name,
+													'userId' : userId
+												}, function(data) {
+													if (data == 'success') {
+														returnResult(true);
+														dirTree();
+														showContent(parentId);
+													} else {
+														returnResult(false);
+													}
+												});
+									}
+								});
+
 					}
 				}, {
 					text : '删除',

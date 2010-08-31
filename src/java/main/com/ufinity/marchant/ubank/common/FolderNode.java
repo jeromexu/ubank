@@ -117,6 +117,7 @@ public class FolderNode {
                 Folder folder = folders.get(i);
                 FolderNode node = new FolderNode();
                 copyProperties(node, folder);
+                node.setLayer(1l + i);
                 addToTree(nodes, node);
             }
         }
@@ -128,6 +129,7 @@ public class FolderNode {
                     rootNode = node;
                 }
                 copyProperties(node, folder);
+                node.setLayer(0l + i);
                 addToTree(nodes, node);
             }
         }

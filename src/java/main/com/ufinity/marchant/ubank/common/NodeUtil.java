@@ -44,6 +44,7 @@ public class NodeUtil {
      * @param folderNode
      *            FolderNode
      * @return return copied JsonNode
+     * @author bxji
      */
     public static JsonNode copyFolderNodeToJsonNode(FolderNode folderNode) {
         if (folderNode == null) {
@@ -55,6 +56,7 @@ public class NodeUtil {
         jsonNode.setState("closed");
         jsonNode.getAttributes().put("uid", folderNode.getUserId() + "");
         jsonNode.getAttributes().put("type", folderNode.getFolderType());
+        jsonNode.getAttributes().put("layer", folderNode.getLayer() + "");
         if (folderNode.getParentId() == null || 0l == folderNode.getParentId()) {
             jsonNode.setState("open");
         }
