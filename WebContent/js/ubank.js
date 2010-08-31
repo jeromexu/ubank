@@ -61,7 +61,7 @@ $(function() {
 									}, function(data) {
 										if (data == 'success') {
 											returnResult(true);
-											dirTree();
+											reload();
 											showContent(parentId);
 										} else {
 											returnResult(false);
@@ -123,7 +123,7 @@ $(function() {
 									}, function(data) {
 										if (data == 'success') {
 											returnResult(true);
-											dirTree();
+											reload();
 											showContent(parentId);
 										} else {
 											returnResult(false);
@@ -213,12 +213,13 @@ function showContent(param) {
 												}, function(data) {
 													if (data == 'success') {
 														returnResult(true);
-														dirTree();
+														reload();
 														showContent(parentId);
 													} else {
 														returnResult(false);
 													}
 												});
+												reload();
 									}
 								});
 
@@ -256,13 +257,14 @@ function showContent(param) {
 														if (data == 'success') {
 															returnResult(true);
 															if (record == null) {
-																dirTree();
+																reload();
 															}
 															showContent(pid);
 														} else {
 															returnResult(false);
 														}
 													});
+											reload();
 										}
 									});
 						}
@@ -361,7 +363,7 @@ function showContent(param) {
 														if (data == 'success') {
 															returnResult(true);
 															if (record == null) {
-																dirTree();
+																reload();
 															}
 															showContent(pid);
 														} else {
