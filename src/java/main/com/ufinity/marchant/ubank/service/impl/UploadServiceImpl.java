@@ -46,6 +46,7 @@ import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.exception.DbException;
 import com.ufinity.marchant.ubank.service.UploadService;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
+import com.ufinity.marchant.ubank.upload.UploadConstant;
 
 /**
  * UploadService implements
@@ -209,7 +210,7 @@ public class UploadServiceImpl implements UploadService {
             }
             EntityManagerUtil.commit();
             
-            String objectPath = SystemGlobals.getString("ubank.path", new String[]{System.getProperty("catalina.home")});
+            String objectPath = SystemGlobals.getString(UploadConstant.UBANK_PATH, new String[]{System.getProperty("catalina.home")});
             String folderDir = objectPath + File.separator + folder.getDirectory()+ File.separator  + folderId + File.separator;
             return folderDir;
         } catch (RuntimeException e) {

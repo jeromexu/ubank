@@ -51,6 +51,9 @@ public interface UploadConstant {
     String CURRENT_FOLDER_ID = "currentFolderId";
     String FILED_NAME = "filedName";
     
+    //global
+    String UBANK_PATH = "ubank.path";
+    
     //updates info every 10kb
     long UPDATE_THRESHOLD = 10 * 1024L;
 }
