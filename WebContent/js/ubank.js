@@ -495,3 +495,7 @@ function executeChecking(node, record) {
 	}
 	return true;
 }
+
+function setFolderId(folderId) {
+	$.get("setCurrentFolder.do?currentFolderId=" + folderId);
+}
