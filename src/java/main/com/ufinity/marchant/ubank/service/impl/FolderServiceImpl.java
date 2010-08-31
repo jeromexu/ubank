@@ -338,14 +338,16 @@ public class FolderServiceImpl implements FolderService {
             Folder target = folderDao.find(targetFolderId);
             target.getChildren().add(source);
             source.setParent(target);
+            source.setDirectory(getDiskPath(target));
+            folderDao.modify(target);
+            folderDao.modify(source);
             int result = DocumentUtil.moveFolderTo(source, target);
             if (result != 1) {
+                EntityManagerUtil.rollback();
                 logger.debug("move disk file fail");
                 return false;
             }
 
-            folderDao.modify(target);
-            folderDao.modify(source);
             // update all files Shared state and reset disk path (directory
             // property)
             if (target.getShare()) {
@@ -403,10 +405,13 @@ public class FolderServiceImpl implements FolderService {
 
         // update database
         try {
+            EntityManagerUtil.begin();
             folderDao.add(temp);
             folderDao.modify(targetFolder);
+            EntityManagerUtil.commit();
         }
         catch (Exception e) {
+            EntityManagerUtil.rollback();
             logger.error("An exception when copying a directory "
                     + "to update the database. ", e);
             return false;
@@ -418,14 +423,17 @@ public class FolderServiceImpl implements FolderService {
         if (files.size() > 0) {
             for (FileBean file : files) {
                 try {
+                    EntityManagerUtil.begin();
                     FileBean copy = (FileBean) BeanUtils.cloneBean(file);
                     copy.setFolder(temp);
                     copy.setDirectory(getDiskPath(temp));
                     copy.setModifyTime(new Date());
                     copy.setShare(share);
                     fileDao.add(copy);
+                    EntityManagerUtil.commit();
                 }
                 catch (Exception e) {
+                    EntityManagerUtil.rollback();
                     logger.error("An exception when copying a file"
                             + " add to the database", e);
                     return false;
@@ -507,16 +515,22 @@ public class FolderServiceImpl implements FolderService {
         // delete all files
         for (FileBean file : files) {
             try {
+                EntityManagerUtil.begin();
+                fileDao.delete(file);
                 int result = DocumentUtil.removeFile(file);
                 // if disk file delete fail, return 'false'
-                if (result != 1) {
+                if (result == 1) {
+                    EntityManagerUtil.commit();
+                }
+                else {
+                    EntityManagerUtil.rollback();
                     logger.debug("delete disk file fail, file name:"
                             + file.getDirectory() + file.getFileName());
                     return false;
                 }
-                fileDao.delete(file);
             }
             catch (Exception e) {
+                EntityManagerUtil.rollback();
                 logger.error("update the database exception "
                         + "when delete a disk file .", e);
                 return false;
@@ -527,17 +541,23 @@ public class FolderServiceImpl implements FolderService {
             delFolder(folder);
         }
         try {
+            EntityManagerUtil.begin();
+            folderDao.delete(targetFolder);
             int result = DocumentUtil.removeFolder(targetFolder);
             // if disk file delete fail, return 'false'
-            if (result != 1) {
+            if (result == 1) {
+                EntityManagerUtil.commit();
+            }
+            else {
+                EntityManagerUtil.rollback();
                 logger.debug("delete disk folder fail, file name:"
                         + targetFolder.getDirectory()
                         + targetFolder.getFolderId());
                 return false;
             }
-            folderDao.delete(targetFolder);
         }
         catch (Exception e) {
+            EntityManagerUtil.rollback();
             logger.error("delete disk directory fail.", e);
             return false;
         }
@@ -697,11 +717,11 @@ public class FolderServiceImpl implements FolderService {
             return;
         }
         Date date = new Date();
-        final String PATH = getDiskPath(folder);
+        String path = getDiskPath(folder);
         Set<Folder> children = folder.getChildren();
         for (Folder child : children) {
             child.setModifyTime(date);
-            child.setDirectory(PATH);
+            child.setDirectory(path);
             folderDao.modify(child);
             resetChildrenDiskPathAndShare(child, share);
         }
@@ -709,7 +729,7 @@ public class FolderServiceImpl implements FolderService {
         for (FileBean file : files) {
             file.setModifyTime(date);
             file.setShare(share);
-            file.setDirectory(PATH);
+            file.setDirectory(path);
             fileDao.modify(file);
         }
     }
