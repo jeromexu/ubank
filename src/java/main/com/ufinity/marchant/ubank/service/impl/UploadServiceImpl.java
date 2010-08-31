@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
+import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
@@ -207,8 +208,10 @@ public class UploadServiceImpl implements UploadService {
                 throw new DbException("Upload folder is null.");
             }
             EntityManagerUtil.commit();
-
-            return folder.getDirectory();
+            
+            String objectPath = SystemGlobals.getString("ubank.path", new String[]{System.getProperty("catalina.home")});
+            String folderDir = objectPath + File.separator + folder.getDirectory()+ File.separator  + folderId + File.separator;
+            return folderDir;
         } catch (RuntimeException e) {
             throw new DbException(e);
         } finally {
