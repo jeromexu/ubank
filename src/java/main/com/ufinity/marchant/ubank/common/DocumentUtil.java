@@ -380,7 +380,7 @@ public class DocumentUtil {
 	 * @return success:1 failure:0
 	 * @author jerome
 	 */
-	public static boolean copyFolder(String oldPath, String newPath) {
+	private static boolean copyFolder(String oldPath, String newPath) {
 		FileInputStream input = null;
 		FileOutputStream output = null;
 		try {
@@ -452,7 +452,7 @@ public class DocumentUtil {
 	 * @return true:delete success false: delete failure
 	 * @author jerome
 	 */
-	public static boolean delFolder(String folderPath) {
+	private static boolean delFolder(String folderPath) {
 		try {
 			// delete all files of the folder
 			delAllFile(folderPath);
@@ -472,7 +472,7 @@ public class DocumentUtil {
 	 *            String the folder path for example c:/hello
 	 * @author jerome
 	 */
-	public static void delAllFile(String path) {
+	private static void delAllFile(String path) {
 		File file = new File(path);
 		if (!file.exists()) {
 			return;
@@ -543,7 +543,7 @@ public class DocumentUtil {
 	 * @return the server path
 	 * @author jerome
 	 */
-	public static String getApplicationPath() {
+	private static String getApplicationPath() {
 		String catalinaHome = System.getProperty("catalina.home");
 		String serverPath = null;
 		if (!Validity.isEmpty(catalinaHome)) {
