@@ -14,6 +14,7 @@ function dirTree() {
 				onClick : function(node) {
 					currTreeNode = node;
 					showContent(node.id);
+					setFolderId(node.id);
 				}
 			});
 };

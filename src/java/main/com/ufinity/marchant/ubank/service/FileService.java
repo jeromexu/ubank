@@ -60,16 +60,6 @@ public interface FileService {
             throws UBankException;
 
     /**
-     * get all files under specified directory
-     * 
-     * @param folderId
-     *            folder directory ID
-     * @return files list
-     * @author bxji
-     */
-    public List<FileBean> getFilesByFolder(Long folderId);
-
-    /**
      * get the file path by the file id
      * 
      * @param fileId

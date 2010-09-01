@@ -144,14 +144,12 @@ public class FolderServiceImpl implements FolderService {
 
             // create disk file
             int result = DocumentUtil.addNewFolder(newFolder);
-            if (result == 1) {
-                EntityManagerUtil.commit();
-            }
-            else {
-                logger.debug("Create disk directory fail.");
+            if (result != 1) {
                 EntityManagerUtil.rollback();
+                logger.debug("Create disk directory fail.");
                 return null;
             }
+            EntityManagerUtil.commit();
             return newFolder;
         }
         catch (Exception e) {
@@ -179,7 +177,7 @@ public class FolderServiceImpl implements FolderService {
         FolderNode rootNode = null;
         try {
             List<Folder> folders = folderDao.findFolderListByUserId(userId,
-                    false);
+                    null);
             rootNode = FolderNode.generateFolderTree(folders);
         }
         catch (Exception e) {
@@ -303,9 +301,10 @@ public class FolderServiceImpl implements FolderService {
         Folder source = folderDao.find(sourceFolderId);
         Folder target = folderDao.find(targetFolderId);
 
-        String sourcePath = source.getDirectory() + source.getFolderName();
-        String targetPath = target.getDirectory() + target.getFolderName();
-        DocumentUtil.copyFolder(sourcePath, targetPath);
+        int result = DocumentUtil.moveOrCopyFolderTo(source, target, false);
+        if(result!=1){
+            
+        }
         if (target.getShare()) {
             return copyFolder(target, source, true);
         }
@@ -338,7 +337,7 @@ public class FolderServiceImpl implements FolderService {
             Folder target = folderDao.find(targetFolderId);
             target.getChildren().add(source);
             source.setParent(target);
-            int result = DocumentUtil.moveFolderTo(source, target);
+            int result = DocumentUtil.moveOrCopyFolderTo(source, target, true);
             source.setDirectory(getDiskPath(target));
             folderDao.modify(target);
             folderDao.modify(source);
@@ -401,6 +400,7 @@ public class FolderServiceImpl implements FolderService {
         temp.setFiles(new HashSet<FileBean>());
         temp.setChildren(new HashSet<Folder>());
         temp.setModifyTime(new Date());
+        temp.setFolderId(null);
         targetFolder.getChildren().add(temp);
 
         // update database
@@ -417,7 +417,7 @@ public class FolderServiceImpl implements FolderService {
             return false;
         }
 
-        // If there are files in the directory,
+        // If there are some files in the directory,
         // copy the documents and save to database
         Set<FileBean> files = sourceFolder.getFiles();
         if (files.size() > 0) {
@@ -429,6 +429,7 @@ public class FolderServiceImpl implements FolderService {
                     copy.setDirectory(getDiskPath(temp));
                     copy.setModifyTime(new Date());
                     copy.setShare(share);
+                    copy.setFileId(null);
                     fileDao.add(copy);
                     EntityManagerUtil.commit();
                 }
@@ -485,12 +486,13 @@ public class FolderServiceImpl implements FolderService {
             }
             EntityManagerUtil.begin();
             folderDao.modify(folder);
-            int result = DocumentUtil.renameFolder(folder, newName);
-            if (result != 1) {
-                EntityManagerUtil.rollback();
-                logger.debug("disk folder rename fail");
-                return false;
-            }
+            // disk operate
+            // int result = DocumentUtil.renameFolder(folder, newName);
+            // if (result != 1) {
+            // EntityManagerUtil.rollback();
+            // logger.debug("disk folder rename fail");
+            // return false;
+            // }
             EntityManagerUtil.commit();
             return true;
         }
@@ -523,15 +525,13 @@ public class FolderServiceImpl implements FolderService {
                 fileDao.delete(file);
                 int result = DocumentUtil.removeFile(file);
                 // if disk file delete fail, return 'false'
-                if (result == 1) {
-                    EntityManagerUtil.commit();
-                }
-                else {
+                if (result != 1) {
                     EntityManagerUtil.rollback();
                     logger.debug("delete disk file fail, file name:"
                             + file.getDirectory() + file.getFileName());
                     return false;
                 }
+                EntityManagerUtil.commit();
             }
             catch (Exception e) {
                 EntityManagerUtil.rollback();
@@ -549,16 +549,14 @@ public class FolderServiceImpl implements FolderService {
             folderDao.delete(targetFolder);
             int result = DocumentUtil.removeFolder(targetFolder);
             // if disk file delete fail, return 'false'
-            if (result == 1) {
-                EntityManagerUtil.commit();
-            }
-            else {
+            if (result != 1) {
                 EntityManagerUtil.rollback();
                 logger.debug("delete disk folder fail, file name:"
                         + targetFolder.getDirectory()
                         + targetFolder.getFolderId());
                 return false;
             }
+            EntityManagerUtil.commit();
         }
         catch (Exception e) {
             EntityManagerUtil.rollback();

@@ -37,7 +37,7 @@ import com.ufinity.marchant.ubank.exception.UBankException;
  * {description of method or object}
  * 
  * @author bxji
- * @version 2010-8-20
+ * @version 2010-8-20  
  */
 public interface FolderService {
 

@@ -446,5 +446,4 @@ public class FolderServlet extends AbstractServlet {
             LOG.error("return json string exception", e);
         }
     }
-
 }

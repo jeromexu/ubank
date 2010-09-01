@@ -26,7 +26,6 @@ package com.ufinity.marchant.ubank.service.impl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -110,7 +109,7 @@ public class FileServiceImpl implements FileService {
         if (publishDate == null) {
             publishDate = Constant.FILE_PUBLISHDATE_0;
         }
-        
+
         Map<String, Object> condition = new HashMap<String, Object>();
         condition.put(Constant.FILENAME, fileName);
         condition.put(Constant.MIN_FILE_SIZE, getMinFileSize(fileSize));
@@ -269,19 +268,6 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
-     * get all files under specified directory
-     * 
-     * @param folderId
-     *            folder directory ID
-     * @return files list
-     * @author bxji
-     */
-    public List<FileBean> getFilesByFolder(Long folderId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
      * Copy file to the specified directory
      * 
      * @param targetFolderId
@@ -299,6 +285,7 @@ public class FileServiceImpl implements FileService {
         FileBean fileCopy = copyFile(sourceFileId);
         if (fileCopy != null) {
             try {
+                EntityManagerUtil.begin();
                 Folder folder = folderDao.find(targetFolderId);
 
                 // If there is a same name file in the target directory
@@ -316,17 +303,21 @@ public class FileServiceImpl implements FileService {
                 fileCopy.setDirectory(getDiskPath(folder));
                 fileCopy.setFolder(folder);
                 fileCopy.setModifyTime(new Date());
+                fileCopy.setFileId(null);
+                fileDao.add(fileCopy);
                 // copy disk file
                 int result = DocumentUtil.copyFile(fileCopy, folder);
                 if (result != 1) {
+                    EntityManagerUtil.rollback();
                     logger.debug("copy disk file IO exception");
                     return false;
                 }
-                fileDao.modify(fileCopy);
+                EntityManagerUtil.commit();
                 return true;
             }
             catch (Exception e) {
-                logger.error("Update the file information database exception ", e);
+                EntityManagerUtil.rollback();
+                logger.error("Update the file  database exception ", e);
                 return false;
             }
         }
@@ -374,19 +365,17 @@ public class FileServiceImpl implements FileService {
             return false;
         }
         try {
+            EntityManagerUtil.begin();
             Folder folder = folderDao.find(targetFolderId);
             FileBean file = fileDao.find(sourceFileId);
-
             // if target directory is current directory
             if (file.getFolder().equals(folder)) {
                 return true;
             }
-
             // If there is a same name file in the target directory
             if (isSameName(folder, file.getFileName())) {
                 autoRename(file);
             }
-
             // if target folder is shared directory
             if (folder.getShare()) {
                 file.setShare(true);
@@ -397,18 +386,23 @@ public class FileServiceImpl implements FileService {
             file.setFolder(folder);
             file.setDirectory(getDiskPath(folder));
             file.setModifyTime(new Date());
+            // update database table
+            fileDao.modify(file);
             // move disk file
             int result = DocumentUtil.moveFileTo(file, folder);
             if (result != 1) {
+                EntityManagerUtil.rollback();
                 logger.debug("Move disk file IO exception");
                 return false;
             }
-            // update database table
-            fileDao.modify(file);
+            EntityManagerUtil.commit();
             return true;
         }
         catch (Exception e) {
-            logger.error("Database operation exception when moving a file. ", e);
+            EntityManagerUtil.rollback();
+            logger
+                    .error("Database operation exception when moving a file. ",
+                            e);
             return false;
         }
     }
@@ -426,17 +420,23 @@ public class FileServiceImpl implements FileService {
             return false;
         }
         try {
+            EntityManagerUtil.begin();
             FileBean file = fileDao.find(fileId);
             if (file != null) {
+                fileDao.deleteById(fileId);
                 int result = DocumentUtil.removeFile(file);
-                if (result != 1) {
+                if (result == 1) {
+                    EntityManagerUtil.commit();
+                }
+                else {
+                    EntityManagerUtil.rollback();
                     logger.debug("delete disk file fail.");
                     return false;
                 }
-                fileDao.deleteById(fileId);
             }
         }
         catch (Exception e) {
+            EntityManagerUtil.rollback();
             logger.error("Database exception where tried to remove a file.", e);
             return false;
         }
@@ -458,22 +458,26 @@ public class FileServiceImpl implements FileService {
             return false;
         }
         try {
+            EntityManagerUtil.begin();
             FileBean file = fileDao.find(fileId);
             if (file != null) {
                 file.setFileName(newName);
                 if (isSameName(file.getFolder(), newName)) {
                     autoRename(file);
                 }
+                fileDao.modify(file);
                 int result = DocumentUtil.renameFile(file, newName);
                 if (result != 1) {
+                    EntityManagerUtil.rollback();
                     logger.debug("rename disk file fail.");
                     return false;
                 }
-                fileDao.modify(file);
+                EntityManagerUtil.commit();
                 return true;
             }
         }
         catch (Exception e) {
+            EntityManagerUtil.rollback();
             logger.error("update the database exception when rename a file", e);
         }
         return false;
