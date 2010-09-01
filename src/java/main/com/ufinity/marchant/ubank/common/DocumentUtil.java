@@ -25,7 +25,7 @@ public class DocumentUtil {
 	public static String FILE_DIRECTORY = null;
 	public static String FOLDER_DIRECTORY = null;
 	public static String FILENAME = null;
-	private static final String FILE_SYSTEM_SEPARATOR = "/";
+	public static final String FILE_SYSTEM_SEPARATOR = "/";
 	
 	// Logger for this class
 	protected final static Logger LOGGER = Logger
@@ -349,10 +349,13 @@ public class DocumentUtil {
 			// if file not exist and create the new file
 			File newPathFile = new File(newPath);
 			if (!newPathFile.exists()) {
-				newPathFile.mkdirs();
+				newPathFile.mkdir();
 			}
 			File oldPathFile = new File(oldPath);
 			String[] file = oldPathFile.list();
+			if(file == null){
+				return ;
+			}
 			File temp = null;
 			for (int i = 0; i < file.length; i++) {
 				if (oldPath.endsWith(FILE_SYSTEM_SEPARATOR)) {
@@ -436,6 +439,9 @@ public class DocumentUtil {
 			return;
 		}
 		String[] tempList = file.list();
+		if(tempList == null){
+			return ;
+		}
 		File tempFile = null;
 		for (int i = 0; i < tempList.length; i++) {
 			if (path.endsWith(FILE_SYSTEM_SEPARATOR)) {
@@ -495,7 +501,7 @@ public class DocumentUtil {
 	 * @return the server path
 	 * @author jerome
 	 */
-	private static String getApplicationPath() {
+	public static String getApplicationPath() {
 		String catalinaHome = System.getProperty("catalina.home");
 		String serverPath = null;
 		if (!Validity.isEmpty(catalinaHome)) {

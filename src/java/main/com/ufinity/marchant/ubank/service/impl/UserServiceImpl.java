@@ -189,12 +189,14 @@ public class UserServiceImpl implements UserService {
 				if (!baseFile.exists()) {
 					baseFile.mkdir();
 				}
+				
 				Folder folder = new Folder();
 				folder.setFolderName(String.valueOf(userId));
-				folder.setCreateTime(new Date());
+				Date date = new Date();
+				folder.setCreateTime(date);
 				folder.setDirectory(SystemGlobals
 						.getString(ConfigKeys.USER_SPACE_ROOT_DIR));
-				folder.setModifyTime(new Date());
+				folder.setModifyTime(date);
 				folder.setFolderType(Constant.FOLDER_TYPE_ROOT);
 				folder.setShare(false);
 				folder.setParent(null);
@@ -273,10 +275,12 @@ public class UserServiceImpl implements UserService {
 				+ folderName);
 		boolean result = false;
 		try {
+			
 			Folder folder = new Folder();
 			folder.setFolderName(folderName);
-			folder.setCreateTime(new Date());
-			folder.setModifyTime(new Date());
+			Date date = new Date();
+			folder.setCreateTime(date);
+			folder.setModifyTime(date);
 			folder.setFolderType(Constant.FOLDER_TYPE_INIT);
 			folder.setShare(false);
 			folder.setDirectory(SystemGlobals
