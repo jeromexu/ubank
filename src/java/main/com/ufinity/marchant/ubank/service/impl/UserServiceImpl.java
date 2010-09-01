@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
 				userDao.add(user);
 				logger.debug("add user success!" + user);
 				// init user dir space
-				boolean initFlag = initUserDir(user.getUserId());
+				boolean initFlag = initDirSpace(user.getUserId());
 				logger.debug("init user space "
 						+ (initFlag ? "success" : "failue") + "!");
 				EntityManagerUtil.commit();
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
 	 * @return true:success false：failure
 	 * @author jerome
 	 */
-	private boolean initUserDir(Long userId) {
+	private boolean initDirSpace(Long userId) {
 
 		logger.debug("initUserDir:param[userId]=" + userId);
 		try {
