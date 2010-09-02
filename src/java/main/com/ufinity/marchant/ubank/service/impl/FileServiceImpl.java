@@ -286,6 +286,16 @@ public class FileServiceImpl implements FileService {
             try {
                 EntityManagerUtil.begin();
                 Folder folder = folderDao.find(targetFolderId);
+                
+                // If there is a same name file in the target directory
+                if (isSameNameFile(folder, fileCopy.getFileName())) {
+                    String newName = autoRename(fileCopy);
+                    int result1 = DocumentUtil.renameFile(fileCopy, newName);
+                    if (result1 != 1) {
+                        return false;
+                    }
+                    fileCopy.setFileName(newName);
+                }
 
                 // copy disk file
                 int result = DocumentUtil.copyFile(fileCopy, folder);
@@ -294,11 +304,6 @@ public class FileServiceImpl implements FileService {
                     return false;
                 }
 
-                // If there is a same name file in the target directory
-                if (isSameNameFile(folder, fileCopy.getFileName())) {
-                    autoRename(fileCopy);
-                    // autoRename(fileCopy, fileCopy.getFileName());
-                }
                 // if target folder is shared directory
                 if (folder.getShare()) {
                     fileCopy.setShare(true);
@@ -317,7 +322,6 @@ public class FileServiceImpl implements FileService {
             catch (Exception e) {
                 EntityManagerUtil.rollback();
                 logger.error("Update the file  database exception ", e);
-                return false;
             }
             finally {
                 EntityManagerUtil.closeEntityManager();
@@ -552,26 +556,26 @@ public class FileServiceImpl implements FileService {
      * 
      * @param file
      *            file object
+     * @return new name
      * @author bxji
      */
-    private void autoRename(FileBean file) {
+    private String autoRename(FileBean file) {
         if (file == null) {
-            return;
+            return "";
         }
         String oldName = file.getFileName();
-        StringBuilder name = new StringBuilder();
+        StringBuilder newName = new StringBuilder();
         int index = oldName.lastIndexOf('.');
         if (index != -1) {
             String prefix = oldName.substring(0, index);
             String suffix = oldName.substring(index, oldName.length());
-            name.append(prefix).append(Constant.FILE_COPY).append(suffix);
+            newName.append(prefix).append(Constant.FILE_COPY).append(suffix);
         }
         else {
-            name.append(oldName).append(Constant.FILE_COPY);
+            newName.append(oldName).append(Constant.FILE_COPY);
         }
-        if (name.length() != 0) {
-            file.setFileName(name.toString());
-        }
+        // file.setFileName(newName.toString());
+        return newName.toString();
     }
 
 }
