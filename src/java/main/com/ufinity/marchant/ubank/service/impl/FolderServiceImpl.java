@@ -330,7 +330,8 @@ public class FolderServiceImpl implements FolderService {
             source = folderDao.find(sourceFolderId);
             target = folderDao.find(targetFolderId);
 
-            int result = DocumentUtil.moveOrCopyFolderTo(source, target, false);
+            int result = DocumentUtil.moveOrCopyFolderTo(source, target, false,
+                    false);
             if (result != 1) {
                 return false;
             }
@@ -378,7 +379,8 @@ public class FolderServiceImpl implements FolderService {
             Folder target = folderDao.find(targetFolderId);
             target.getChildren().add(source);
             source.setParent(target);
-            int result = DocumentUtil.moveOrCopyFolderTo(source, target, true);
+            int result = DocumentUtil.moveOrCopyFolderTo(source, target, false,
+                    false);
             source.setDirectory(getDiskPath(target));
             folderDao.modify(target);
             folderDao.modify(source);

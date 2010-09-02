@@ -157,7 +157,7 @@ function showContent(param) {
 		nowrap : false,
 		striped : true,
 		url : reqUrl,
-		sortName : 'name',
+		sortName : 'type',
 		sortOrder : 'desc',
 		idField : 'id',
 		frozenColumns : [[{
@@ -274,7 +274,7 @@ function showContent(param) {
 					iconCls : 'icon-share',
 					handler : function() {
 						var record = $('#test').datagrid('getSelected');
-						if (record != null && record.type!='文件夹') {
+						if (record != null && record.type != '文件夹') {
 							$.messager.alert('提示 ', '文件不能共享，请选择文件夹', 'info');
 							return;
 						}
@@ -313,7 +313,7 @@ function showContent(param) {
 					iconCls : 'icon-share',
 					handler : function() {
 						var record = $('#test').datagrid('getSelected');
-						if (record != null && record.type!='文件夹') {
+						if (record != null && record.type != '文件夹') {
 							$.messager.alert('提示 ', '文件不会被共享，请选择文件夹', 'info');
 							return;
 						}
@@ -444,30 +444,6 @@ function showContent(param) {
 	});
 	$('#test').datagrid('clearSelections');
 };
-
-// function closeDia() {
-// $('#dlg1').dialog({
-// closed : true
-// });
-// }
-
-// function getSelected() {
-// var selected = $('#test').datagrid('getSelected');
-// alert(selected.code + ":" + selected.name);
-// }
-//
-// function getSelections() {
-// var ids = [];
-// var rows = $('#test').datagrid('getSelections');
-// for (var i = 0; i < rows.length; i++) {
-// ids.push(rows[i].code);
-// }
-// alert(ids.join(':'));
-// }
-//
-// function myformatter(value, rec) {
-// return 'a:' + value + '>' + rec.name;
-// }
 
 function returnResult(status) {
 	var message = '操作成功！';

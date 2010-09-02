@@ -182,9 +182,9 @@ public class FileServiceImpl implements FileService {
             return response;
         }
 
-        //find here in order to override the session user's opint
+        // find here in order to override the session user's opint
         user = userDao.find(user.getUserId());
-        
+
         try {
             EntityManagerUtil.begin();
             FileBean fileBean = fileDao.find(fileId);
@@ -353,22 +353,19 @@ public class FileServiceImpl implements FileService {
 
             FileBean fileCopy = copyFile(sourceFileId);
             if (fileCopy != null) {
+                EntityManagerUtil.begin();
                 Folder folder = folderDao.find(targetFolderId);
                 // If there is a same name file in the target directory
-                if (isSameNameFile(folder, fileCopy.getFileName())) {
-                    String newName = autoRename(fileCopy);
-                    int result1 = DocumentUtil.renameFile(fileCopy, newName);
-                    if (result1 != 1) {
-                        return false;
-                    }
-                    fileCopy.setFileName(newName);
-                }
-
+                boolean same = isSameNameFile(folder, fileCopy.getFileName());
                 // copy disk file
-                int result = DocumentUtil.copyFile(fileCopy, folder);
+                int result = DocumentUtil.moveOrCopyFileTo(fileCopy, folder,
+                        false, same);
                 if (result != 1) {
                     logger.debug("copy disk file IO exception");
                     return false;
+                }
+                if (same) {
+                    autoRename(fileCopy);
                 }
 
                 // if target folder is shared directory
@@ -383,10 +380,7 @@ public class FileServiceImpl implements FileService {
                 fileCopy.setModifyTime(new Date());
                 fileCopy.setFileId(null);
                 fileCopy.setDownLoadLogs(new HashSet<DownLoadLog>());
-
-                EntityManagerUtil.begin();
                 fileDao.add(fileCopy);
-
                 EntityManagerUtil.commit();
                 return true;
             }
@@ -451,7 +445,15 @@ public class FileServiceImpl implements FileService {
                 return true;
             }
             // If there is a same name file in the target directory
-            if (isSameNameFile(folder, file.getFileName())) {
+            boolean same = isSameNameFile(folder, file.getFileName());
+            // move disk file
+            int result = DocumentUtil
+                    .moveOrCopyFileTo(file, folder, true, same);
+            if (result != 1) {
+                logger.debug("Move disk file IO exception");
+                return false;
+            }
+            if (same) {
                 autoRename(file);
             }
             // if target folder is shared directory
@@ -461,26 +463,18 @@ public class FileServiceImpl implements FileService {
             else {
                 file.setShare(false);
             }
-            // move disk file
-            int result = DocumentUtil.moveFileTo(file, folder);
             file.setFolder(folder);
             file.setModifyTime(new Date());
             file.setDirectory(getDiskPath(folder));
             // update database table
             fileDao.modify(file);
-            if (result != 1) {
-                EntityManagerUtil.rollback();
-                logger.debug("Move disk file IO exception");
-                return false;
-            }
             EntityManagerUtil.commit();
             return true;
         }
         catch (Exception e) {
+            logger.error("Database operation exception "
+                    + "when moving a file. ", e);
             EntityManagerUtil.rollback();
-            logger
-                    .error("Database operation exception when moving a file. ",
-                            e);
             return false;
         }
         finally {
@@ -646,7 +640,7 @@ public class FileServiceImpl implements FileService {
         else {
             newName.append(oldName).append(Constant.FILE_COPY);
         }
-        // file.setFileName(newName.toString());
+        file.setFileName(newName.toString());
         return newName.toString();
     }
 
