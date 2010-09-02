@@ -135,7 +135,7 @@ public class FileUploadServlet extends AbstractServlet {
      *            msg
      */
     private void responseClientMsg(HttpServletResponse response, String msg) {
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("GBK");
         PrintWriter out = null;
         try {
             out = response.getWriter();
