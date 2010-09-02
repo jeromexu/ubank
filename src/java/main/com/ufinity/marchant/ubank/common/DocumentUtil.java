@@ -557,7 +557,7 @@ public class DocumentUtil {
 		 * =renameFolder(folder,"ggggggg"); System.out.println(result);
 		 */
 
-		FileBean fileBean = new FileBean();
+		/*FileBean fileBean = new FileBean();
 		fileBean.setDirectory("D:\\test\\a");
 		fileBean.setFileName("haha.txt");
 
@@ -566,6 +566,6 @@ public class DocumentUtil {
 		folder.setFolderName("c");
 
 		Integer result = copyFile(fileBean, folder);
-		System.out.println(result);
+		System.out.println(result);*/
 	}
 }
