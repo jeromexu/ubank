@@ -383,13 +383,13 @@ public class FileServiceImpl implements FileService {
             else {
                 file.setShare(false);
             }
-            file.setFolder(folder);
-            file.setDirectory(getDiskPath(folder));
-            file.setModifyTime(new Date());
-            // update database table
-            fileDao.modify(file);
             // move disk file
             int result = DocumentUtil.moveFileTo(file, folder);
+            file.setFolder(folder);
+            file.setModifyTime(new Date());
+            file.setDirectory(getDiskPath(folder));
+            // update database table
+            fileDao.modify(file);
             if (result != 1) {
                 EntityManagerUtil.rollback();
                 logger.debug("Move disk file IO exception");
@@ -461,6 +461,11 @@ public class FileServiceImpl implements FileService {
             EntityManagerUtil.begin();
             FileBean file = fileDao.find(fileId);
             if (file != null) {
+                int result = DocumentUtil.renameFile(file, newName);
+                if (result != 1) {
+                    logger.debug("rename disk file fail.");
+                    return false;
+                }
                 if (isSameNameFile(file.getFolder(), newName)) {
                     file.setFileName(newName);
                     autoRename(file);
@@ -469,12 +474,6 @@ public class FileServiceImpl implements FileService {
                     file.setFileName(newName);
                 }
                 fileDao.modify(file);
-                int result = DocumentUtil.renameFile(file, newName);
-                if (result != 1) {
-                    EntityManagerUtil.rollback();
-                    logger.debug("rename disk file fail.");
-                    return false;
-                }
                 EntityManagerUtil.commit();
                 return true;
             }
