@@ -135,7 +135,10 @@ public class UploadServiceImpl implements UploadService {
             fb.setFolder(folder);
             fb.setFileName(fileFullName);
             fb.setFileType(getFileType(fileFullName));
-            fb.setCreateTime(new Date());
+            Date now = new Date();
+            fb.setCreateTime(now);
+            fb.setModifyTime(now);
+            
             fb.setDirectory(folderDir + File.separator + folderId);
             // kb
             fb.setSize(bStreamLen / 1024);
