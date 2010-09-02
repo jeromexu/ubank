@@ -126,4 +126,42 @@ public class DownLoadLog {
         this.file = file;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (null != obj && obj instanceof DownLoadLog) {
+            if (this.downLoadLogId.equals(((DownLoadLog) obj)
+                    .getDownLoadLogId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return null == this.downLoadLogId ? super.hashCode()
+                : this.downLoadLogId.hashCode();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "DownLoadLog : downLoadLogId = " + this.getDownLoadLogId()
+                + "\t downLoadTime = " + this.getDownLoadTime();
+    }
+
 }
