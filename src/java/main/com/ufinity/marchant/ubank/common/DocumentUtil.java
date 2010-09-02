@@ -89,12 +89,10 @@ public class DocumentUtil {
 				return 0;
 			}
 			File sFile = createFile(FILE_DIRECTORY, FILENAME);
-			File dFile = createFile(FILE_DIRECTORY, newName);
-			boolean result = false;
 			if (sFile.exists()) {
-				result = sFile.renameTo(dFile);
+				return 1;
 			} 
-			return result ? 1 : 0;
+			
 		} catch (Exception e) {
 			LOGGER.error("rename file exception!", e);
 		}
