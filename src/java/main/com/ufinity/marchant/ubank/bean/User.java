@@ -66,7 +66,7 @@ public class User implements Serializable {
     private String password;
     private Date createTime;
     private Integer overSize;
-    private Long point;
+    private Long point = 0L;
 
     private Set<Folder> folders = new HashSet<Folder>();
     private Set<DownLoadLog> downLoadLogs = new HashSet<DownLoadLog>();
@@ -163,7 +163,8 @@ public class User implements Serializable {
     }
 
     /**
-     * @param point the point to set
+     * @param point
+     *            the point to set
      */
     public void setPoint(Long point) {
         this.point = point;
@@ -194,7 +195,8 @@ public class User implements Serializable {
     }
 
     /**
-     * @param downLoadLogs the downLoadLogs to set
+     * @param downLoadLogs
+     *            the downLoadLogs to set
      */
     public void setDownLoadLogs(Set<DownLoadLog> downLoadLogs) {
         this.downLoadLogs = downLoadLogs;
