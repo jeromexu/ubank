@@ -53,7 +53,8 @@ import javax.persistence.TemporalType;
 @Table(name = "U_USER")
 @NamedQueries( {
         @NamedQuery(name = "User.findUserByNameAndPass", query = "SELECT u FROM User AS u WHERE u.userName=:name AND u.password = :pass"),
-        @NamedQuery(name = "User.findUserByName", query = "SELECT u FROM User AS u WHERE u.userName=:name") })
+        @NamedQuery(name = "User.findUserByName", query = "SELECT u FROM User AS u WHERE u.userName=:name"),
+        @NamedQuery(name = "User.modifyPointByUserId", query = "UPDATE User u set u.point = :point WHERE u.userId = :userId") })
 public class User implements Serializable {
 
     /**

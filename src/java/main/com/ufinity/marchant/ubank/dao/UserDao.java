@@ -56,4 +56,15 @@ public interface UserDao extends GenericDao<User, Long> {
      * @author skyqiang
      */
     public User findUserByName(String userName);
+
+    /**
+     * this method is modify user's point according user's id
+     * 
+     * @param userId
+     *            user's id
+     * @param point
+     *            user's point
+     * @author skyqiang
+     */
+    public void modifyPointByUserId(Long userId, Long point);
 }

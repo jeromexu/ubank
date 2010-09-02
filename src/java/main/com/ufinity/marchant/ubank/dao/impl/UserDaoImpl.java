@@ -92,4 +92,19 @@ public class UserDaoImpl extends GenericDaoSupport<User, Long> implements
         }
         return null;
     }
+
+    /**
+     * this method is modify user's point according user's id
+     * 
+     * @param userId
+     *            user's id
+     * @param point
+     *            user's point
+     * @author skyqiang
+     */
+    public void modifyPointByUserId(Long userId, Long point) {
+        EntityManagerUtil.getEntityManager().createNamedQuery(
+                "User.modifyPointByUserId").setParameter("point", point)
+                .setParameter("userId", userId).executeUpdate();
+    }
 }
