@@ -131,6 +131,7 @@ public interface Constant {
     public static final String RENAME = "rename";
     public static final String MOVE_TO = "moveTo";
     public static final String COPY_TO = "copyTo";
+    public static final String CANCEL_SHARE = "cancelShare";
 
     // file and folder operation request parameter
     public static final String FOLDER_ID = "folderId";
@@ -147,7 +148,5 @@ public interface Constant {
     // rquest result String
     public static final String REQUEST_RESULT_SUCCESS = "success";
     public static final String REQUEST_RESULT_FAIL = "fail";
-    
-    
 
 }

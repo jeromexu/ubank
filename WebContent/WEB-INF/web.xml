@@ -78,6 +78,10 @@
 		<servlet-name>folderServlet</servlet-name>
 		<url-pattern>/portal/copyTo.do</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>folderServlet</servlet-name>
+		<url-pattern>/portal/cancelShare.do</url-pattern>
+	</servlet-mapping>
 	<servlet>
 		<servlet-name>searchServlet</servlet-name>
 		<servlet-class>com.ufinity.marchant.ubank.servlet.SearchServlet</servlet-class>
