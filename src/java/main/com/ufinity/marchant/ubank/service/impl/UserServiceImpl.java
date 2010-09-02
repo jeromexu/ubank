@@ -110,6 +110,7 @@ public class UserServiceImpl implements UserService {
 			logger.debug("doRegister complete!");
 		} catch (Exception e) {
 			logger.error("user register exception!", e);
+			EntityManagerUtil.rollback();
 		} finally {
 			EntityManagerUtil.closeEntityManager();
 		}
