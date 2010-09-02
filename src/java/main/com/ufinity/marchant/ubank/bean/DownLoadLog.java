@@ -36,6 +36,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -46,6 +48,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "U_DOWNLOAD_LOG")
+@NamedQueries( { @NamedQuery(name = "DownLoadLog.findDownLoadLog", query = "SELECT d FROM DownLoadLog d WHERE d.user.userId = :userId AND d.file.fileId = :fileId") })
 public class DownLoadLog {
 
     private Long downLoadLogId;
