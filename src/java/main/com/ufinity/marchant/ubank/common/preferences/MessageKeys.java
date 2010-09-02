@@ -59,10 +59,13 @@ public class MessageKeys {
     // upload size is to max
     public static final String UPLOAD_SIZE_MAX = "upload.size.max";
     
+    // upload over size
+    public static final String UPLOAD_OVER_SIZE = "upload.over.size";
+    
     // uplpad not allow
     public static final String UPLOAD_NOT_ALLOW = "upload.not.allow";
     
-    // uplpad not allow
+    // uplpad not login
     public static final String UPLOAD_NOT_LOGIN = "upload.not.login";
 }
 

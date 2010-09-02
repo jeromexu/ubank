@@ -61,4 +61,15 @@ public interface UploadService {
      *             if db have exception
      */
     public String getFolderDir(Long folderId) throws DbException;
+    
+    /**
+     * get all file size by user id
+     * 
+     * @param userId
+     *            user id
+     * @throws DbException
+     *             if has DbException
+     * @return total size
+     */
+    public long getTotalFileSize(Long userId) throws DbException;
 }

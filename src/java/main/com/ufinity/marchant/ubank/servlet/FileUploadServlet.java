@@ -45,6 +45,7 @@ import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.JsonUtil;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
+import com.ufinity.marchant.ubank.exception.DbException;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UploadService;
@@ -226,7 +227,7 @@ public class FileUploadServlet extends AbstractServlet {
      * 
      * @param request
      *            request
-     *  @param response
+     * @param response
      *            response
      */
     @SuppressWarnings("unchecked")
@@ -234,22 +235,17 @@ public class FileUploadServlet extends AbstractServlet {
         ProgressInfo pi = new ProgressInfo();
         
         try {
-            User user = (User)request.getSession().getAttribute(Constant.SESSION_USER);
-            if(user == null){
-                logger.warn("Upload file user is not login.");
-                String errorMsg = getText(MessageKeys.UPLOAD_NOT_LOGIN);
-                responseClientMsg(response,errorMsg);
-                return;
-            }
-            
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
             if (isMultipart) {
-                int filesSize = request.getContentLength()
-                        - UploadConstant.HTTP_REDUNDANT_LENGTH;
-                if (filesSize >= UploadConstant.MAX_LENGTH) {
-                    String[] params = {filesSize / (1024 * 1024)+"MB",UploadConstant.MAX_LENGTH/(1024*1024)+"MB"};
-                    String errorMsg = getText(MessageKeys.UPLOAD_SIZE_MAX, params);
-                    logger.warn("Upload files size is to big");
+                User user = (User)request.getSession().getAttribute(Constant.SESSION_USER);
+                Long currentFolderId = (Long)request.getSession().getAttribute(UploadConstant.CURRENT_FOLDER_ID);
+                long filesSize = request.getContentLength() - UploadConstant.HTTP_REDUNDANT_LENGTH;
+                //innt service
+                uploadService = ServiceFactory.createService(UploadService.class);
+                folderService = ServiceFactory.createService(FolderService.class);
+                
+                String errorMsg = validateUpload(filesSize,currentFolderId,user);
+                if(errorMsg != null){
                     responseClientMsg(response,errorMsg);
                     return;
                 }
@@ -263,18 +259,7 @@ public class FileUploadServlet extends AbstractServlet {
                 // Parse the request
                 FileItemIterator items = upload.getItemIterator(request);
                 
-                Long currentFolderId = (Long)request.getSession().getAttribute(UploadConstant.CURRENT_FOLDER_ID);
-                folderService = ServiceFactory.createService(FolderService.class);
-                Folder folder = folderService.getRootFolder(user.getUserId());
-                if(folder.getFolderId().equals(currentFolderId)){
-                    logger.warn("Root folder is not allow to upload.");
-                    String errorMsg = getText(MessageKeys.UPLOAD_NOT_ALLOW);
-                    responseClientMsg(response,errorMsg);
-                    return;
-                }
-                
                 //get folder
-                uploadService = ServiceFactory.createService(UploadService.class);
                 String currentFolderDir = uploadService.getFolderDir(currentFolderId);
                 
                 while (items.hasNext()) {
@@ -297,4 +282,45 @@ public class FileUploadServlet extends AbstractServlet {
         } 
     }
 
+    /**
+     * validate upload file
+     * 
+     * @param fileSize 
+     *            the upload file size
+     * @param currentFolderId 
+     *            the current folder id
+     * @param user 
+     *            login user
+     * @return error msg if have
+     * @throws DbException 
+     *            if has db exception
+     */
+    private String validateUpload(long fileSize,long currentFolderId, User user) throws DbException{
+        if(user == null){
+            logger.warn("Upload file user is not login.");
+            return getText(MessageKeys.UPLOAD_NOT_LOGIN);
+        }
+        
+        if (fileSize >= UploadConstant.MAX_LENGTH) {
+            String[] params = {fileSize / (1024 * 1024)+"MB",UploadConstant.MAX_LENGTH/(1024*1024)+"MB"};
+            logger.warn("Upload files size is to big");
+            return getText(MessageKeys.UPLOAD_SIZE_MAX, params);
+        }
+        
+        Folder folder = folderService.getRootFolder(user.getUserId());
+        if(folder.getFolderId().equals(currentFolderId)){
+            logger.warn("Root folder is not allow to upload.");
+            return getText(MessageKeys.UPLOAD_NOT_ALLOW);
+        }
+        
+        long totalFileSize = uploadService.getTotalFileSize(user.getUserId());
+        long currentSize = fileSize/1000 + totalFileSize;
+        if((user.getOverSize()*1000) < currentSize){
+            logger.warn("Used up all the space.");
+            return getText(MessageKeys.UPLOAD_OVER_SIZE);
+        }
+        
+        return null;
+    }
+    
 }

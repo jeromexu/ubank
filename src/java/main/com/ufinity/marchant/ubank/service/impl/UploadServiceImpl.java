@@ -248,6 +248,33 @@ public class UploadServiceImpl implements UploadService {
             EntityManagerUtil.closeEntityManager();
         }
     }
+    
+    /**
+     * get all file size by user id
+     * 
+     * @param userId
+     *            user id
+     * @throws DbException
+     *             if has DbException
+     * @return total size
+     */
+    public long getTotalFileSize(Long userId) throws DbException {
+        try {
+            EntityManagerUtil.begin();
+            fileDao = DaoFactory.createDao(FileDao.class);
+            Long size = fileDao.findTotalSizeWithFileByUser(userId);
+            logger.debug("Total size of user:" + userId + " is " + size);
+            if(size == null){
+                throw new DbException("Get total file size is null.");
+            }
+            EntityManagerUtil.commit();
+            return size;
+        } catch (RuntimeException e) {
+            throw new DbException(e);
+        } finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+    }
 
     /**
      * save file to db
