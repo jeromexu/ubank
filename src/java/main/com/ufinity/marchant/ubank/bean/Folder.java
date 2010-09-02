@@ -69,7 +69,8 @@ public class Folder implements Serializable {
     private String directory;
     private Boolean share;
     private String folderType;
-
+    private Integer repeatCount;
+    
     private Folder parent;
     private Set<Folder> children = new HashSet<Folder>();
 
@@ -190,6 +191,22 @@ public class Folder implements Serializable {
      */
     public void setFolderType(String folderType) {
         this.folderType = folderType;
+    }
+    
+    
+    /**
+     * @return the repeatCount
+     */
+    @Column(name = "REPEAT_COUNT")
+    public Integer getRepeatCount() {
+        return repeatCount;
+    }
+
+    /**
+     * @param repeatCount the repeatCount to set
+     */
+    public void setRepeatCount(Integer repeatCount) {
+        this.repeatCount = repeatCount;
     }
 
     /**

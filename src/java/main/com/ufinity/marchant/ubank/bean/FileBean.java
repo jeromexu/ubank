@@ -67,11 +67,12 @@ public class FileBean implements Serializable {
     private String directory;
     private Long size;
     private Boolean share;
-
+    private Integer repeatCount;
+    
     private Folder folder;
-
     private Set<DownLoadLog> downLoadLogs = new HashSet<DownLoadLog>();
-
+    
+    
     /**
      * @return the fileId
      */
@@ -162,6 +163,21 @@ public class FileBean implements Serializable {
     @Column(name = "DIRECTORY", nullable = false, length = 2000)
     public String getDirectory() {
         return directory;
+    }
+    
+    /**
+     * @return the repeatCount
+     */
+    @Column(name = "REPEAT_COUNT")
+    public Integer getRepeatCount() {
+        return repeatCount;
+    }
+
+    /**
+     * @param repeatCount the repeatCount to set
+     */
+    public void setRepeatCount(Integer repeatCount) {
+        this.repeatCount = repeatCount;
     }
 
     /**
