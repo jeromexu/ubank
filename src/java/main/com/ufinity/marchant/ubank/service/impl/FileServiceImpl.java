@@ -26,6 +26,7 @@ package com.ufinity.marchant.ubank.service.impl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -157,65 +158,71 @@ public class FileServiceImpl implements FileService {
      * 
      * @param fileId
      *            the id of the file
-     * @param user who will download
+     * @param user
+     *            who will download
      * @return the response obj of download operation
      * @throws UBankException
      *             the exception which do not get the file
      * @author jerome
      * @author modify by zdxue - refact the return type and method name
      */
-    public DownloadResponse download(Long fileId, User user) throws UBankException {
+    public DownloadResponse download(Long fileId, User user)
+            throws UBankException {
         DownloadResponse response = new DownloadResponse();
-        
+
         if (Validity.isEmpty(fileId)) {
             response.setFile(null);
             response.setStatus(DownloadStatus.FILE_NOT_EXIST);
             return response;
         }
-        
-        if(user == null || user.getUserId() == null){
+
+        if (user == null || user.getUserId() == null) {
             response.setFile(null);
             response.setStatus(DownloadStatus.OTHER_ERROR);
             return response;
         }
-        
+
         try {
             EntityManagerUtil.begin();
             FileBean fileBean = fileDao.find(fileId);
             response.setFile(fileBean);
-            
-            if(fileBean == null) {
+
+            if (fileBean == null) {
                 response.setStatus(DownloadStatus.FILE_NOT_EXIST);
                 return response;
             }
-            
-            if(user.getUserId().equals(fileBean.getFolder().getUser().getUserId())){
+
+            if (user.getUserId().equals(
+                    fileBean.getFolder().getUser().getUserId())) {
                 response.setStatus(DownloadStatus.OK);
                 return response;
             }
-            
+
             Date downLoadTime = new Date();
-            DownLoadLog downloadLog = downloadLogDao.findDownLoadLog(user.getUserId(), fileBean.getFileId());
+            DownLoadLog downloadLog = downloadLogDao.findDownLoadLog(user
+                    .getUserId(), fileBean.getFileId());
             int downloadPoint = SystemGlobals.getInt(ConfigKeys.DOWNLOAD_POINT);
-            if(downloadLog == null) {
-                if(user.getPoint() < downloadPoint){
+            if (downloadLog == null) {
+                if (user.getPoint() < downloadPoint) {
                     response.setStatus(DownloadStatus.POINT_NOT_ENOUGH);
                     return response;
                 }
-                
+
                 userDao.modifyPointByUserId(user.getUserId(), -downloadPoint);
                 DownLoadLog entity = new DownLoadLog();
                 entity.setUser(user);
                 entity.setFile(fileBean);
                 entity.setDownLoadTime(downLoadTime);
                 downloadLogDao.add(entity);
-            }else{
+            }
+            else {
                 downloadLog.setDownLoadTime(downLoadTime);
                 downloadLogDao.modify(downloadLog);
             }
-            
-            userDao.modifyPointByUserId(fileBean.getFolder().getUser().getUserId(), downloadPoint);
-            
+
+            userDao.modifyPointByUserId(fileBean.getFolder().getUser()
+                    .getUserId(), downloadPoint);
+
             EntityManagerUtil.commit();
 
             response.setStatus(DownloadStatus.OK);
@@ -340,7 +347,7 @@ public class FileServiceImpl implements FileService {
             return false;
         }
         try {
-            
+
             FileBean fileCopy = copyFile(sourceFileId);
             if (fileCopy != null) {
                 Folder folder = folderDao.find(targetFolderId);
@@ -372,17 +379,18 @@ public class FileServiceImpl implements FileService {
                 fileCopy.setFolder(folder);
                 fileCopy.setModifyTime(new Date());
                 fileCopy.setFileId(null);
-                
+                fileCopy.setDownLoadLogs(new HashSet<DownLoadLog>());
+
                 EntityManagerUtil.begin();
                 fileDao.add(fileCopy);
-                
+
                 EntityManagerUtil.commit();
                 return true;
             }
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("Update the file  database exception ", e);
+            EntityManagerUtil.rollback();
         }
         finally {
             EntityManagerUtil.closeEntityManager();
