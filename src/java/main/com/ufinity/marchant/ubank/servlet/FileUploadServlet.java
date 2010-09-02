@@ -135,11 +135,12 @@ public class FileUploadServlet extends AbstractServlet {
      *            msg
      */
     private void responseClientMsg(HttpServletResponse response, String msg) {
-        response.setCharacterEncoding("GBK");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = null;
         try {
             out = response.getWriter();
-            out.write("<div id='uploadError'>"+msg+"</div>");
+            out.write("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>"
+                    +"<div id='uploadError'>"+msg+"</div>");
             out.flush();
         } catch (Exception e) {
             logger.error("response client error:", e);
@@ -323,5 +324,4 @@ public class FileUploadServlet extends AbstractServlet {
         
         return null;
     }
-    
 }
