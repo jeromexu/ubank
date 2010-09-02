@@ -47,7 +47,8 @@ public class ConfigKeys {
     public static final String DAO_USER = "user.dao";
     public static final String DAO_FILE = "file.dao";
     public static final String DAO_FOLDER = "folder.dao";
-
+    public static final String DAO_DOWNLOAD_LOG = "downloadlog.dao";
+    
     /** ubank pagination config : for per page count */
     public static final String PAGE_SIZE = "page.size";
 
