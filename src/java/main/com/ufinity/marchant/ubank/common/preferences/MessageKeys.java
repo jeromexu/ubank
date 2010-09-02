@@ -67,5 +67,8 @@ public class MessageKeys {
     
     // uplpad not login
     public static final String UPLOAD_NOT_LOGIN = "upload.not.login";
+    
+    public static final String MUST_LOGIN = "must.login";
+    
 }
 

@@ -36,6 +36,7 @@ public interface Constant {
 
     String ATTR_FILEPAGER = "filePager";
     String ATTR_FILENAME = "fileName";
+    String ATTR_EVENTPATH = "eventPath";
     String ATTR_FILESIZE = "fileSize";
     String ATTR_PUBLISHDATE = "publishDate";
 
@@ -67,6 +68,7 @@ public interface Constant {
     /** the key for set session attribute */
     String SESSION_USER = "session_user";
 
+    String HOME_HTML = "home.html";
     String HOME_PAGE = "home.jsp";
     String MAIN_PAGE = "main.jsp";
     String SEARCH_RESULT_PAGE = "searchResult.jsp";

@@ -15,6 +15,7 @@ import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
+import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 
@@ -73,6 +74,11 @@ public class DownLoadServlet extends AbstractServlet {
 	@SuppressWarnings("deprecation")
 	private String download(HttpServletRequest request,
 			HttpServletResponse response) {
+	    if(!checkLogin(request)){
+	        request.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.MUST_LOGIN));
+	        return Constant.HOME_HTML;
+	    }
+	    
 		BufferedInputStream buff = null;
 		OutputStream outPut = null;
 		try {

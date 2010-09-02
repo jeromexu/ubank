@@ -166,10 +166,13 @@ public class LoginServlet extends AbstractServlet {
 
         if (user == null) {
             logger.debug("user not exists, login failure");
-            req.setAttribute(Constant.ATTR_ERROR_MSG,
-                    getText(MessageKeys.MSG_LOGIN_FAILURE));
+            req.setAttribute(Constant.ATTR_ERROR_MSG,getText(MessageKeys.MSG_LOGIN_FAILURE));
+            if(Validity.isNotEmpty(eventPath)){
+                req.setAttribute(Constant.ATTR_EVENTPATH, eventPath);
+            }
+            
             home(req, resp);
-
+            
             return Constant.HOME_PAGE;
         } else {
             logger.debug("login success");
