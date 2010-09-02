@@ -48,28 +48,28 @@ import javax.persistence.TemporalType;
 @Table(name = "U_DOWNLOAD_LOG")
 public class DownLoadLog {
 
-    private Long downLoadLog;
+    private Long downLoadLogId;
     private Date downLoadTime;
 
     private User user;
     private FileBean file;
 
     /**
-     * @return the downLoadLog
+     * @return the downLoadLogId
      */
     @Column(name = "DOWNLOAD_LOG_ID")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getDownLoadLog() {
-        return downLoadLog;
+    public Long getDownLoadLogId() {
+        return downLoadLogId;
     }
 
     /**
-     * @param downLoadLog
-     *            the downLoadLog to set
+     * @param downLoadLogId
+     *            the downLoadLogId to set
      */
-    public void setDownLoadLog(Long downLoadLog) {
-        this.downLoadLog = downLoadLog;
+    public void setDownLoadLogId(Long downLoadLogId) {
+        this.downLoadLogId = downLoadLogId;
     }
 
     /**
