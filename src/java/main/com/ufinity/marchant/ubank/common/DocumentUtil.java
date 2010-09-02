@@ -93,9 +93,9 @@ public class DocumentUtil {
 			boolean result = false;
 			if (sFile.exists()) {
 				result = sFile.renameTo(dFile);
-			} 
+			}
 			return result ? 1 : 0;
-			
+
 		} catch (Exception e) {
 			LOGGER.error("rename file exception!", e);
 		}
@@ -130,16 +130,25 @@ public class DocumentUtil {
 	}
 
 	/**
-	 * move the file to new path
 	 * 
-	 * @param newPath
-	 *            the new file path
+	 * copy the file to the dest folder
+	 * 
 	 * @param fileBean
-	 *            the target file
-	 * @return integer success or not: success 1 failure 0
+	 *            file object
+	 * @param folder
+	 *            folder object
+	 * @param isMoveOrCopy
+	 *            move:true copy:false
+	 * @param isSameName
+	 *            same:true not same:false
+	 * @return success:1 failure:0
 	 * @author jerome
 	 */
-	public static int moveFileTo(FileBean fileBean, Folder newPath) {
+	public static Integer moveOrCopyFileTo(FileBean fileBean, Folder folder,
+			boolean isMoveOrCopy, boolean isSameName) {
+
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
 		try {
 			if (fileBean != null) {
 				FILENAME = fileBean.getFileName();
@@ -147,25 +156,50 @@ public class DocumentUtil {
 			} else {
 				return 0;
 			}
-			if (newPath != null) {
-				FOLDERNAME = String.valueOf(newPath.getFolderId());
-				FOLDER_DIRECTORY = newPath.getDirectory();
+			if (folder != null) {
+				FOLDERNAME = String.valueOf(folder.getFolderId());
+				FOLDER_DIRECTORY = folder.getDirectory();
 			} else {
 				return 0;
 			}
 			File sFile = createFile(FILE_DIRECTORY, FILENAME);
-			if (!sFile.exists()) {
-				return 0;
-			}
 			File dFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
 			if (!dFile.exists()) {
 				dFile.mkdirs();
 			}
-			boolean result = sFile.renameTo(new File(dFile, sFile.getName()));
-
-			return result ? 1 : 0;
+			int bytesum = 0;
+			int byteread = 0;
+			// file exists
+			if (sFile.exists()) {
+				// read source file
+				fis = new FileInputStream(sFile);
+				fos = new FileOutputStream(new File(dFile, sFile.getName()));
+				byte[] buffer = new byte[1024];
+				while ((byteread = fis.read(buffer)) != -1) {
+					bytesum += byteread;
+					LOGGER.debug("file length=" + bytesum);
+					fos.write(buffer, 0, byteread);
+				}
+				fos.flush();
+				return isMoveOrCopy ? (sFile.delete() ? 1 : 0) : 1;
+			}
 		} catch (Exception e) {
-			LOGGER.error("move file to exception!", e);
+			LOGGER.error("move or copy a file exception!", e);
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return 0;
 	}
@@ -179,11 +213,13 @@ public class DocumentUtil {
 	 *            the target folder
 	 * @param isMoveOrCopy
 	 *            move:true copy:false
+	 * @param isSameName
+	 *            same:true not same:false
 	 * @return integer success or not: success 1 failure 0
 	 * @author jerome
 	 */
 	public static int moveOrCopyFolderTo(Folder folder, Folder newFolder,
-			Boolean isMoveOrCopy) {
+			boolean isMoveOrCopy, boolean isSameName) {
 		try {
 			if (folder != null) {
 				FOLDERNAME = String.valueOf(folder.getFolderId());
@@ -233,7 +269,7 @@ public class DocumentUtil {
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.error("copy folder exception!", e);
+			LOGGER.error("move or copy folder exception!", e);
 		}
 		return 0;
 	}
@@ -258,7 +294,7 @@ public class DocumentUtil {
 			boolean result = false;
 			if (baseFile.exists()) {
 				result = baseFile.delete();
-			} 
+			}
 			return result ? 1 : 0;
 		} catch (Exception e) {
 			LOGGER.error("remove file exception!", e);
@@ -276,7 +312,7 @@ public class DocumentUtil {
 	 * @author jerome
 	 */
 	public static int removeFolder(Folder folder) {
-		try{
+		try {
 			if (folder != null) {
 				FOLDERNAME = String.valueOf(folder.getFolderId());
 				FOLDER_DIRECTORY = folder.getDirectory();
@@ -294,79 +330,10 @@ public class DocumentUtil {
 			boolean result = false;
 			if (baseFile.exists()) {
 				result = delFolder(path);
-			} 
+			}
 			return result ? 1 : 0;
-		}catch(Exception e){
-			LOGGER.error("remove folder exception!", e);
-		}
-		return 0;
-	}
-
-	/**
-	 * 
-	 * copy the file to the dest folder
-	 * 
-	 * @param fileBean
-	 *            file object
-	 * @param folder
-	 *            folder object
-	 * @return success:1 failure:0
-	 * @author jerome
-	 */
-	public static Integer copyFile(FileBean fileBean, Folder folder) {
-
-		FileInputStream fis = null;
-		FileOutputStream fos = null;
-		try {
-			if (fileBean != null) {
-				FILENAME = fileBean.getFileName();
-				FILE_DIRECTORY = fileBean.getDirectory();
-			} else {
-				return 0;
-			}
-			if (folder != null) {
-				FOLDERNAME = String.valueOf(folder.getFolderId());
-				FOLDER_DIRECTORY = folder.getDirectory();
-			} else {
-				return 0;
-			}
-			File sFile = createFile(FILE_DIRECTORY, FILENAME);
-			File dFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
-			if (!dFile.exists()) {
-				dFile.mkdirs();
-			}
-			int bytesum = 0;
-			int byteread = 0;
-			// file exists
-			if (sFile.exists()) {
-				// read source file
-				fis = new FileInputStream(sFile);
-				fos = new FileOutputStream(new File(dFile, sFile.getName()));
-				byte[] buffer = new byte[1024];
-				while ((byteread = fis.read(buffer)) != -1) {
-					bytesum += byteread;
-					LOGGER.debug("file length=" + bytesum);
-					fos.write(buffer, 0, byteread);
-				}
-				return 1;
-			}
 		} catch (Exception e) {
-			LOGGER.error("copy a file exception!", e);
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			LOGGER.error("remove folder exception!", e);
 		}
 		return 0;
 	}
