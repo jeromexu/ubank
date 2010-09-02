@@ -66,8 +66,10 @@ public class User implements Serializable {
     private String password;
     private Date createTime;
     private Integer overSize;
+    private Long ponit;
 
     private Set<Folder> folders = new HashSet<Folder>();
+    private Set<DownLoadLog> downLoadLogs = new HashSet<DownLoadLog>();
 
     /**
      * @return the userId
@@ -153,19 +155,50 @@ public class User implements Serializable {
     }
 
     /**
+     * @return the ponit
+     */
+    @Column(name = "POINT")
+    public Long getPonit() {
+        return ponit;
+    }
+
+    /**
+     * @param ponit
+     *            the ponit to set
+     */
+    public void setPonit(Long ponit) {
+        this.ponit = ponit;
+    }
+
+    /**
      * @return the folders
      */
     @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "user")
     public Set<Folder> getFolders() {
         return folders;
     }
-
+    
     /**
      * @param folders
      *            the folders to set
      */
     public void setFolders(Set<Folder> folders) {
         this.folders = folders;
+    }
+    
+    /**
+     * @return the downLoadLogs
+     */
+    @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "user")
+    public Set<DownLoadLog> getDownLoadLogs() {
+        return downLoadLogs;
+    }
+
+    /**
+     * @param downLoadLogs the downLoadLogs to set
+     */
+    public void setDownLoadLogs(Set<DownLoadLog> downLoadLogs) {
+        this.downLoadLogs = downLoadLogs;
     }
 
     /*

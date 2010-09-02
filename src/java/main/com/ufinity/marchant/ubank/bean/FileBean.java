@@ -28,6 +28,8 @@ package com.ufinity.marchant.ubank.bean;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,6 +40,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -63,6 +66,8 @@ public class FileBean implements Serializable {
     private Boolean share;
 
     private Folder folder;
+
+    private Set<DownLoadLog> downLoadLogs = new HashSet<DownLoadLog>();
 
     /**
      * @return the fileId
@@ -211,6 +216,21 @@ public class FileBean implements Serializable {
      */
     public void setFolder(Folder folder) {
         this.folder = folder;
+    }
+
+    /**
+     * @return the downLoadLogs
+     */
+    @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "file")
+    public Set<DownLoadLog> getDownLoadLogs() {
+        return downLoadLogs;
+    }
+
+    /**
+     * @param downLoadLogs the downLoadLogs to set
+     */
+    public void setDownLoadLogs(Set<DownLoadLog> downLoadLogs) {
+        this.downLoadLogs = downLoadLogs;
     }
 
     /*
