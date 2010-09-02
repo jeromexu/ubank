@@ -26,7 +26,10 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.dao.impl;
 
+import java.util.List;
+
 import com.ufinity.marchant.ubank.bean.DownLoadLog;
+import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.DownLoadLogDao;
 
 /**
@@ -37,4 +40,31 @@ import com.ufinity.marchant.ubank.dao.DownLoadLogDao;
 public class DownLoadLogDaoImpl extends GenericDaoSupport<DownLoadLog, Long>
         implements DownLoadLogDao {
 
+    /**
+     * this method is find download log by user id and file id.
+     * 
+     * @param userId
+     *            user's id
+     * @param fileId
+     *            file's id
+     * @return DownLoadLog
+     * @author skyqiang
+     */
+    @SuppressWarnings("unchecked")
+    public DownLoadLog findDownLoadLog(Long userId, Long fileId) {
+        logger.debug("Method: findDownLoadLog, Param:{userId: " + userId
+                + " , fileId" + fileId + "}");
+
+        List<DownLoadLog> list = EntityManagerUtil.getEntityManager()
+                .createNamedQuery("DownLoadLog.findDownLoadLog").setParameter(
+                        "userId", userId).setParameter("fileId", fileId)
+                .getResultList();
+        logger
+                .debug("Execute find download log according user id and file id method is success!");
+
+        if (null != list && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
 }

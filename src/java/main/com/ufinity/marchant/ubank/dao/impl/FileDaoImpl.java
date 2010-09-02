@@ -161,9 +161,14 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
      */
     @SuppressWarnings("unchecked")
     public Long findTotalSizeWithFileByUser(Long userId) {
+        logger.debug("Method: findTotalSizeWithFileByUser, Param:{userId: "
+                + userId + "}");
+
         List<Long> list = EntityManagerUtil.getEntityManager()
                 .createNamedQuery("File.findTotalSizeWithFileByUser")
                 .setParameter("userId", userId).getResultList();
+        logger
+                .debug("Execute find total size with file according user id method is success!");
         return list.get(0);
     }
 
