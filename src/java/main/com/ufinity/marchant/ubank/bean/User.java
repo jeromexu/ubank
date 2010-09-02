@@ -54,7 +54,7 @@ import javax.persistence.TemporalType;
 @NamedQueries( {
         @NamedQuery(name = "User.findUserByNameAndPass", query = "SELECT u FROM User AS u WHERE u.userName=:name AND u.password = :pass"),
         @NamedQuery(name = "User.findUserByName", query = "SELECT u FROM User AS u WHERE u.userName=:name"),
-        @NamedQuery(name = "User.modifyPointByUserId", query = "UPDATE User u set u.point = :point WHERE u.userId = :userId") })
+        @NamedQuery(name = "User.modifyPointByUserId", query = "UPDATE User u set u.point = (u.point + :point) WHERE u.userId = :userId") })
 public class User implements Serializable {
 
     /**
@@ -67,7 +67,7 @@ public class User implements Serializable {
     private String password;
     private Date createTime;
     private Integer overSize;
-    private Long point = 0L;
+    private Integer point = 0;
 
     private Set<Folder> folders = new HashSet<Folder>();
     private Set<DownLoadLog> downLoadLogs = new HashSet<DownLoadLog>();
@@ -159,7 +159,7 @@ public class User implements Serializable {
      * @return the point
      */
     @Column(name = "POINT")
-    public Long getPoint() {
+    public Integer getPoint() {
         return point;
     }
 
@@ -167,7 +167,7 @@ public class User implements Serializable {
      * @param point
      *            the point to set
      */
-    public void setPoint(Long point) {
+    public void setPoint(Integer point) {
         this.point = point;
     }
 
