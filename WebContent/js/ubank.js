@@ -330,50 +330,6 @@ function showContent(param) {
 						}
 					}
 				}, {
-					text : '删除文件',
-					iconCls : 'icon-cancel',
-					handler : function() {
-						var record = $('#test').datagrid('getSelected');
-						var result = executeChecking(currTreeNode, record);
-						if (result) {
-							var url = '/ubank/portal/delFolderOrFile.do';
-							$.messager.confirm('Warning', 'Are you sure  ?',
-									function(r) {
-										if (r) {
-											var id;
-											var pid;
-											var type = 'file';
-											if (record) {
-												id = record.id;
-												pid = record.pid;
-												if (!record.sizel) {
-													type = 'folder';
-												}
-											} else {
-												id = currTreeNode.id;
-												pid = currTreeNode.pid;
-												type = 'folder';
-											}
-											$.get(url, {
-														'id' : id,
-														'type' : type
-													}, function(data) {
-
-														if (data == 'success') {
-															returnResult(true);
-															if (record == null) {
-																reload();
-															}
-															showContent(pid);
-														} else {
-															returnResult(false);
-														}
-													});
-										}
-									});
-						}
-					}
-				}, {
 					text : '重命名',
 					iconCls : 'icon-redo',
 					handler : function() {

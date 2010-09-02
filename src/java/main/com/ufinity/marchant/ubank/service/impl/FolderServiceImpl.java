@@ -126,9 +126,6 @@ public class FolderServiceImpl implements FolderService {
             newFolder.setUser(user);
             parentfolder.getChildren().add(newFolder);
 
-            // encoding the folder name
-            folderName = new String(folderName.getBytes("iso-8859-1"), "utf-8");
-
             // If there is a same name folder in the target directory
             if (isSameNameFolder(parentfolder, folderName)) {
                 newFolder.setFolderName(folderName + Constant.FOLDER_COPY);
@@ -527,8 +524,6 @@ public class FolderServiceImpl implements FolderService {
 
         try {
             EntityManagerUtil.begin();
-            // encoding the folder name
-            newName = new String(newName.getBytes("iso-8859-1"), "utf-8");
 
             Folder folder = folderDao.find(folderId);
             // if old name equals new name
@@ -853,8 +848,8 @@ public class FolderServiceImpl implements FolderService {
         String name = file.getFileName();
         int index = name.lastIndexOf('.');
         if (index != -1) {
-            String typeName = name.substring(index);
-            if (Validity.isNullAndEmpty(typeName)) {
+            String typeName = name.substring(index+1);
+            if (!Validity.isNullAndEmpty(typeName)) {
                 return typeName.trim().toUpperCase();
             }
         }

@@ -281,12 +281,11 @@ public class FileServiceImpl implements FileService {
                 || sourceFileId == null || 0l == sourceFileId) {
             return false;
         }
-        FileBean fileCopy = copyFile(sourceFileId);
-        if (fileCopy != null) {
-            try {
-                EntityManagerUtil.begin();
+        try {
+            EntityManagerUtil.begin();
+            FileBean fileCopy = copyFile(sourceFileId);
+            if (fileCopy != null) {
                 Folder folder = folderDao.find(targetFolderId);
-                
                 // If there is a same name file in the target directory
                 if (isSameNameFile(folder, fileCopy.getFileName())) {
                     String newName = autoRename(fileCopy);
@@ -319,14 +318,15 @@ public class FileServiceImpl implements FileService {
                 EntityManagerUtil.commit();
                 return true;
             }
-            catch (Exception e) {
-                EntityManagerUtil.rollback();
-                logger.error("Update the file  database exception ", e);
-            }
-            finally {
-                EntityManagerUtil.closeEntityManager();
-            }
         }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("Update the file  database exception ", e);
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+
         return false;
     }
 
