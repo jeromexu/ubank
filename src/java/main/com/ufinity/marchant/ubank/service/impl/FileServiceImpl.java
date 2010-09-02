@@ -182,6 +182,9 @@ public class FileServiceImpl implements FileService {
             return response;
         }
 
+        //find here in order to override the session user's opint
+        user = userDao.find(user.getUserId());
+        
         try {
             EntityManagerUtil.begin();
             FileBean fileBean = fileDao.find(fileId);

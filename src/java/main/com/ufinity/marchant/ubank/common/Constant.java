@@ -34,6 +34,7 @@ public interface Constant {
     /** error message key */
     String ATTR_ERROR_MSG = "error_msg";
 
+    String ATTR_USER = "req_user";
     String ATTR_FILEPAGER = "filePager";
     String ATTR_FILENAME = "fileName";
     String ATTR_EVENTPATH = "eventPath";

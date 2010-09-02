@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.DocumentUtil;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
@@ -152,12 +153,11 @@ public class DownLoadServlet extends AbstractServlet {
      * @throws IOException
      * @author zdxue
      */
-    @SuppressWarnings("deprecation")
     private String download(File file, FileBean fileBean, HttpServletRequest request, 
             HttpServletResponse response, BufferedInputStream buff,OutputStream outPut) 
     throws IOException {
         // create file object
-        file = new File(request.getRealPath("/")
+        file = new File(DocumentUtil.getApplicationPath()
                 + getFilePath(fileBean.getDirectory(), fileBean
                         .getFileName()));
 

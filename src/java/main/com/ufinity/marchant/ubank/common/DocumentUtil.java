@@ -544,7 +544,7 @@ public class DocumentUtil {
 	 * @return the server path
 	 * @author jerome
 	 */
-	private static String getApplicationPath() {
+	public static String getApplicationPath() {
 		String catalinaHome = System.getProperty("catalina.home");
 		String serverPath = null;
 		if (!Validity.isEmpty(catalinaHome)) {

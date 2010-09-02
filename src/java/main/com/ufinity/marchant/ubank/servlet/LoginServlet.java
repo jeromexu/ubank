@@ -120,12 +120,17 @@ public class LoginServlet extends AbstractServlet {
                 Constant.FILENAME_EMPTY, Constant.FILE_SIZE_0,
                 Constant.FILE_PUBLISHDATE_0, Constant.PAGE_NUM_DEF, pageSize);
 
+        User user = null;
+        if((user = getLoginUser(req)) != null){
+            user = ServiceFactory.createService(UserService.class).getUser(user.getUserName(), user.getPassword());
+            req.setAttribute(Constant.ATTR_USER, user);
+        }
+        
         req.setAttribute(Constant.ATTR_FILEPAGER, filePager);
         req.setAttribute(Constant.ATTR_FILENAME, Constant.FILENAME_EMPTY);
         req.setAttribute(Constant.ATTR_FILESIZE, Constant.FILE_SIZE_0);
-        req
-                .setAttribute(Constant.ATTR_PUBLISHDATE,
-                        Constant.FILE_PUBLISHDATE_0);
+        req.setAttribute(Constant.ATTR_PUBLISHDATE, Constant.FILE_PUBLISHDATE_0);
+        
         return Constant.HOME_PAGE;
     }
 
