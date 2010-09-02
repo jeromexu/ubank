@@ -27,6 +27,7 @@
 package com.ufinity.marchant.ubank.dao.impl;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.hibernate.criterion.Criterion;
@@ -34,6 +35,7 @@ import org.hibernate.criterion.Restrictions;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.FileDao;
 
@@ -136,10 +138,11 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
                 }
             }
 
-            logger.debug("Method: getJPAQueryString, Param:{fileName: " + fileName
-                    + " , minFileSize: " + minFileSize + " , maxFileSize: "
-                    + maxFileSize + " , minModifyTime: " + minModifyTime
-                    + " , maxModifyTime: " + maxModifyTime + "}");
+            logger.debug("Method: getJPAQueryString, Param:{fileName: "
+                    + fileName + " , minFileSize: " + minFileSize
+                    + " , maxFileSize: " + maxFileSize + " , minModifyTime: "
+                    + minModifyTime + " , maxModifyTime: " + maxModifyTime
+                    + "}");
         }
 
         StringBuffer order = new StringBuffer("ORDER BY f.modifyTime DESC");
@@ -147,4 +150,21 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
 
         return jpqQuery.toString();
     }
+
+    /**
+     * this method is find total size with file according user id.
+     * 
+     * @param userId
+     *            user's id
+     * @return Long total size
+     * @author skyqiang
+     */
+    @SuppressWarnings("unchecked")
+    public Long findTotalSizeWithFileByUser(Long userId) {
+        List<Long> list = EntityManagerUtil.getEntityManager()
+                .createNamedQuery("File.findTotalSizeWithFileByUser")
+                .setParameter("userId", userId).getResultList();
+        return list.get(0);
+    }
+
 }

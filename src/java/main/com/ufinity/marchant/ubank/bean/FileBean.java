@@ -40,6 +40,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -51,6 +53,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "U_FILE")
+@NamedQueries( { @NamedQuery(name = "File.findTotalSizeWithFileByUser", query = "SELECT SUM(f.size) FROM FileBean f WHERE f.folder.user.userId = :userId") })
 public class FileBean implements Serializable {
     /**
      * 
@@ -227,7 +230,8 @@ public class FileBean implements Serializable {
     }
 
     /**
-     * @param downLoadLogs the downLoadLogs to set
+     * @param downLoadLogs
+     *            the downLoadLogs to set
      */
     public void setDownLoadLogs(Set<DownLoadLog> downLoadLogs) {
         this.downLoadLogs = downLoadLogs;

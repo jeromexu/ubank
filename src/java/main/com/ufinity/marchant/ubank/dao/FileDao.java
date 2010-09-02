@@ -67,4 +67,14 @@ public interface FileDao extends GenericDao<FileBean, Long> {
      */
     public Pager<FileBean> searchPaginatedByCriteriaWithFile(int currentPage,
             int pageSize, Map<String, Object> condition);
+
+    /**
+     * this method is find total size with file according user id.
+     * 
+     * @param userId
+     *            user's id
+     * @return Long total size
+     * @author skyqiang
+     */
+    public Long findTotalSizeWithFileByUser(Long userId);
 }
