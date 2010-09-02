@@ -23,8 +23,6 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service;
 
-import java.util.List;
-
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.exception.UBankException;

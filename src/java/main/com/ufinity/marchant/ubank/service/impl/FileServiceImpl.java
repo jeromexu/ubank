@@ -46,7 +46,6 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
-import com.ufinity.marchant.ubank.exception.DbException;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FileService;
 
@@ -462,14 +461,13 @@ public class FileServiceImpl implements FileService {
             EntityManagerUtil.begin();
             FileBean file = fileDao.find(fileId);
             if (file != null) {
-                autoRename(file);
-                // if (isSameNameFile(file.getFolder(), newName)) {
-                // file.setFileName(newName);
-                // autoRename(file);
-                // }
-                // else {
-                // file.setFileName(newName);
-                // }
+                if (isSameNameFile(file.getFolder(), newName)) {
+                    file.setFileName(newName);
+                    autoRename(file);
+                }
+                else {
+                    file.setFileName(newName);
+                }
                 fileDao.modify(file);
                 int result = DocumentUtil.renameFile(file, newName);
                 if (result != 1) {
