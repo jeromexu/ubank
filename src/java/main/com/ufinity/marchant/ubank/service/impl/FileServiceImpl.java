@@ -31,8 +31,10 @@ import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 
+import com.ufinity.marchant.ubank.bean.DownLoadLog;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
+import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DateUtil;
 import com.ufinity.marchant.ubank.common.DocumentUtil;
@@ -44,9 +46,13 @@ import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
+import com.ufinity.marchant.ubank.dao.DownLoadLogDao;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
+import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.model.DownloadResponse;
+import com.ufinity.marchant.ubank.model.DownloadStatus;
 import com.ufinity.marchant.ubank.service.FileService;
 
 /**
@@ -58,7 +64,9 @@ import com.ufinity.marchant.ubank.service.FileService;
 public class FileServiceImpl implements FileService {
 
     private FileDao fileDao;
+    private UserDao userDao;
     private FolderDao folderDao;
+    private DownLoadLogDao downloadLogDao;
 
     // Logger for this class
     protected final Logger logger = Logger.getInstance(FileServiceImpl.class);
@@ -67,8 +75,10 @@ public class FileServiceImpl implements FileService {
      * Constructor
      */
     public FileServiceImpl() {
+        userDao = DaoFactory.createDao(UserDao.class);
         fileDao = DaoFactory.createDao(FileDao.class);
         folderDao = DaoFactory.createDao(FolderDao.class);
+        downloadLogDao = DaoFactory.createDao(DownLoadLogDao.class);
     }
 
     public void setFileDao(FileDao fileDao) {
@@ -143,34 +153,81 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
-     * get the file path by the file id
+     * download file by id
      * 
      * @param fileId
      *            the id of the file
-     * @return the fileBean object
+     * @param user who will download
+     * @return the response obj of download operation
      * @throws UBankException
      *             the exception which do not get the file
      * @author jerome
+     * @author modify by zdxue - refact the return type and method name
      */
-    public FileBean getFileBean(Long fileId) throws UBankException {
+    public DownloadResponse download(Long fileId, User user) throws UBankException {
+        DownloadResponse response = new DownloadResponse();
+        
         if (Validity.isEmpty(fileId)) {
-            return null;
+            response.setFile(null);
+            response.setStatus(DownloadStatus.FILE_NOT_EXIST);
+            return response;
         }
-        FileBean fileBean = null;
+        
+        if(user == null || user.getUserId() == null){
+            response.setFile(null);
+            response.setStatus(DownloadStatus.OTHER_ERROR);
+            return response;
+        }
+        
         try {
             EntityManagerUtil.begin();
-            fileBean = fileDao.find(fileId);
+            FileBean fileBean = fileDao.find(fileId);
+            response.setFile(fileBean);
+            
+            if(fileBean == null) {
+                response.setStatus(DownloadStatus.FILE_NOT_EXIST);
+                return response;
+            }
+            
+            if(user.getUserId().equals(fileBean.getFolder().getUser().getUserId())){
+                return response;
+            }
+            
+            Date downLoadTime = new Date();
+            DownLoadLog downloadLog = downloadLogDao.findDownLoadLog(user.getUserId(), fileBean.getFileId());
+            int downloadPoint = SystemGlobals.getInt(ConfigKeys.DOWNLOAD_POINT);
+            if(downloadLog == null) {
+                if(user.getPoint() < downloadPoint){
+                    response.setStatus(DownloadStatus.POINT_NOT_ENOUGH);
+                    return response;
+                }
+                
+                userDao.modifyPointByUserId(user.getUserId(), -downloadPoint);
+                DownLoadLog entity = new DownLoadLog();
+                entity.setUser(user);
+                entity.setFile(fileBean);
+                entity.setDownLoadTime(downLoadTime);
+                downloadLogDao.add(entity);
+            }else{
+                downloadLog.setDownLoadTime(downLoadTime);
+                downloadLogDao.modify(downloadLog);
+            }
+            
+            userDao.modifyPointByUserId(fileBean.getFolder().getUser().getUserId(), downloadPoint);
+            
             EntityManagerUtil.commit();
+
+            response.setStatus(DownloadStatus.OK);
+            return response;
         }
         catch (Exception e) {
             logger.error("get fileBean excepiton!", e);
+            EntityManagerUtil.rollback();
             throw new UBankException("get file exception by fileId!");
         }
         finally {
             EntityManagerUtil.closeEntityManager();
         }
-
-        return fileBean;
     }
 
     /**

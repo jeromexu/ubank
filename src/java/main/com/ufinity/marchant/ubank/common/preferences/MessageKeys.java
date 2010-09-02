@@ -68,7 +68,11 @@ public class MessageKeys {
     // uplpad not login
     public static final String UPLOAD_NOT_LOGIN = "upload.not.login";
     
+    //download
     public static final String MUST_LOGIN = "must.login";
+    public static final String DOWNLOAD_POINT_NOT_ENOUGH = "download.point.notenough";
+    public static final String DOWNLOAD_FILE_NOT_EXIST = "download.file.notexist";
+    public static final String DOWNLOAD_OTHER_ERROR = "download.other.error";
     
 }
 

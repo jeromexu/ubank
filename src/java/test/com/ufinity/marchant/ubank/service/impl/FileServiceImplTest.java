@@ -146,7 +146,7 @@ public class FileServiceImplTest {
 			}
 		});
 		try {
-			assertEquals(null,fileService.getFileBean(fileId));
+			assertEquals(null,fileService.download(fileId, null));
 		} catch (UBankException e) {
 			fail("get file error");
 		}
@@ -163,7 +163,7 @@ public class FileServiceImplTest {
 			}
 		});
 		try {
-			assertEquals(filebean.getFileId(),fileService.getFileBean(fileId).getFileId());
+			assertEquals(filebean.getFileId(),fileService.download(fileId, null).getFile().getFileId());
 		} catch (UBankException e) {
 			fail("get file error");
 		}
