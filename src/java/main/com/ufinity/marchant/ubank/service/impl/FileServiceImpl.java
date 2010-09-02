@@ -190,6 +190,7 @@ public class FileServiceImpl implements FileService {
             }
             
             if(user.getUserId().equals(fileBean.getFolder().getUser().getUserId())){
+                response.setStatus(DownloadStatus.OK);
                 return response;
             }
             
