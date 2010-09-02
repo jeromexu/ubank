@@ -339,7 +339,7 @@ public class FileServiceImpl implements FileService {
             return false;
         }
         try {
-            EntityManagerUtil.begin();
+            
             FileBean fileCopy = copyFile(sourceFileId);
             if (fileCopy != null) {
                 Folder folder = folderDao.find(targetFolderId);
@@ -371,7 +371,10 @@ public class FileServiceImpl implements FileService {
                 fileCopy.setFolder(folder);
                 fileCopy.setModifyTime(new Date());
                 fileCopy.setFileId(null);
+                
+                EntityManagerUtil.begin();
                 fileDao.add(fileCopy);
+                
                 EntityManagerUtil.commit();
                 return true;
             }
