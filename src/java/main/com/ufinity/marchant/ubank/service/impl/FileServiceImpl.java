@@ -289,7 +289,7 @@ public class FileServiceImpl implements FileService {
                 Folder folder = folderDao.find(targetFolderId);
 
                 // If there is a same name file in the target directory
-                if (isSameName(folder, fileCopy.getFileName())) {
+                if (isSameNameFile(folder, fileCopy.getFileName())) {
                     autoRename(fileCopy);
                 }
 
@@ -373,7 +373,7 @@ public class FileServiceImpl implements FileService {
                 return true;
             }
             // If there is a same name file in the target directory
-            if (isSameName(folder, file.getFileName())) {
+            if (isSameNameFile(folder, file.getFileName())) {
                 autoRename(file);
             }
             // if target folder is shared directory
@@ -461,8 +461,8 @@ public class FileServiceImpl implements FileService {
             EntityManagerUtil.begin();
             FileBean file = fileDao.find(fileId);
             if (file != null) {
-                file.setFileName(newName);
-                if (isSameName(file.getFolder(), newName)) {
+                if (isSameNameFile(file.getFolder(), newName)) {
+                    file.setFileName(newName);
                     autoRename(file);
                 }
                 fileDao.modify(file);
@@ -522,7 +522,8 @@ public class FileServiceImpl implements FileService {
      *             if folder is null or name is nul throw exception
      * @author bxji
      */
-    private boolean isSameName(Folder folder, String name) throws DbException {
+    private boolean isSameNameFile(Folder folder, String name)
+            throws DbException {
         if (folder == null || Validity.isNullAndEmpty(name)) {
             logger.debug("target folder can not be null");
             throw new DbException("target folder and name can not be null.");
@@ -548,9 +549,15 @@ public class FileServiceImpl implements FileService {
             return;
         }
         String name = file.getFileName();
-        int index = name.indexOf('.');
-        String newName = name.substring(0, index) + Constant.FILE_COPY
-                + name.substring(index, name.length());
+        String newName = "";
+        int index = name.lastIndexOf('.');
+        if (index != -1) {
+            newName = name.substring(0, index) + Constant.FILE_COPY
+                    + name.substring(index, name.length());
+        }
+        else {
+            newName = name + Constant.FILE_COPY;
+        }
         file.setFileName(newName);
     }
 }

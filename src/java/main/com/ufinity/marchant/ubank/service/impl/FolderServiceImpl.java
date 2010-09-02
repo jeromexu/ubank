@@ -302,8 +302,8 @@ public class FolderServiceImpl implements FolderService {
         Folder target = folderDao.find(targetFolderId);
 
         int result = DocumentUtil.moveOrCopyFolderTo(source, target, false);
-        if(result!=1){
-            
+        if (result != 1) {
+            return false;
         }
         if (target.getShare()) {
             return copyFolder(target, source, true);
