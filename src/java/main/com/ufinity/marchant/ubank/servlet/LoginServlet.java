@@ -142,6 +142,7 @@ public class LoginServlet extends AbstractServlet {
      */
     private String login(HttpServletRequest req, HttpServletResponse resp)
             throws UBankException {
+        String eventPath = req.getParameter(Constant.REQ_PARAM_EVENTPATH);
         String username = req.getParameter(Constant.REQ_PARAM_USERNAME);
         String password = req.getParameter(Constant.REQ_PARAM_PASSWORD);
 
@@ -173,6 +174,11 @@ public class LoginServlet extends AbstractServlet {
         } else {
             logger.debug("login success");
             req.getSession().setAttribute(Constant.SESSION_USER, user);
+            
+            if(Validity.isNotEmpty(eventPath)){
+                return eventPath;
+            }
+            
             return Constant.MAIN_PAGE;
         }
     }

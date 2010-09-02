@@ -53,6 +53,7 @@ public interface Constant {
     String ACTION_SEARCH = "search";
 
     /** user login parameters */
+    String REQ_PARAM_EVENTPATH = "eventPath";
     String REQ_PARAM_USERNAME = "userName";
     String REQ_PARAM_PASSWORD = "password";
     public final String REQ_PARAM_REPASSWORD = "repassword";

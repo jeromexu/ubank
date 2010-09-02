@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ufinity.marchant.ubank.Context;
+import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 
 /**
@@ -125,5 +126,20 @@ public class AbstractServlet extends HttpServlet {
      */
     protected String getText(String key, String...objects) {
         return MessageResource.getText(key, objects);
+    }
+    
+    /**
+     * check login  
+     *
+     * @param req HttpServletRequest
+     * @return if login return true, else return false
+     * @author zdxue
+     */
+    protected boolean checkLogin(HttpServletRequest req) {
+        if(req.getSession().getAttribute(Constant.SESSION_USER) != null) {
+            return true;
+        }
+        
+        return false;
     }
 }
