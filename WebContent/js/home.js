@@ -126,3 +126,21 @@ function requestTimeout(){
 	var text = "<script>location.href='../common/500.jsp';</script>";
 	$('#searchResultDiv').empty().append(text);
 }
+
+function download(isLogin, url, point, needPoint) {
+	if(confirm('下载该资料将扣除' + needPoint + '分。重复下载不会重复扣分。是否继续？')) {
+		if(isLogin) {
+			if(point < needPoint){
+				alert('积分不够！');
+				return false;
+			}
+			location.href=url;
+		}else{
+			alert('请先登录！');
+			$('#eventPath').val("../portal/home.html");
+			$('#userName').focus();
+			//location.href="../portal/home.html";
+		}
+	}
+	return false;
+}

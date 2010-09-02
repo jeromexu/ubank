@@ -57,13 +57,22 @@
                         <span title="${error_msg}">${error_msg}</span>
                       </div>
                     </c:if>
-        
-					<form action="login.do" method="post" id="loginForm">
-						${u:getText('ubank.home.login.username.ipt')}:<input class="username_clz" type="text" name="userName" maxlength="50" id="userName"><br>
-						${u:getText('ubank.home.login.password.ipt')}:<input class="password_clz" type="password" name="password" maxlength="50" id="password"><br>
-						<input class="login_btn" type="button" onclick="return login()"  id="loginBtn" value=${u:getText('ubank.home.login.login.btn')} />
-                        <input class="register_btn" type="button" onclick="goPage('register.jsp')" value=${u:getText('ubank.home.login.register.btn')} />
-					</form>
+                    
+                    <c:choose>
+                      <c:when  test="${empty session_user}">
+                        <form action="login.do" method="post" id="loginForm">
+                          <input type="hidden" name="eventPath" id="eventPath">
+                                  
+                          ${u:getText('ubank.home.login.username.ipt')}:<input class="username_clz" type="text" name="userName" maxlength="50" id="userName"><br>
+                          ${u:getText('ubank.home.login.password.ipt')}:<input class="password_clz" type="password" name="password" maxlength="50" id="password"><br>
+                          <input class="login_btn" type="button" onclick="return login()"  id="loginBtn" value=${u:getText('ubank.home.login.login.btn')} />
+                          <input class="register_btn" type="button" onclick="goPage('register.jsp')" value=${u:getText('ubank.home.login.register.btn')} />
+                       </form>                      
+                      </c:when>
+                      <c:otherwise>
+                        <span>welcome, <a href="main.jsp">${session_user.userName }</a></span>
+                      </c:otherwise>
+                    </c:choose>
 				</div>
         
 			</div>	

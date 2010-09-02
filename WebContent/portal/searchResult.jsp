@@ -18,7 +18,7 @@
             <td>${file.size }</td>
             <td><c:out value="${file.folder.user.userName}" escapeXml="true" /></td>
             <td><fmt:formatDate value="${file.modifyTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-            <td><a href="download.do?id=${file.fileId }"><font size="2">${u:getText('ubank.home.thead.download') }</font></a></td>
+            <td><a href="" onclick="return download(${not empty sessionScope.session_user}, 'download.do?id=${file.fileId }', '${sessionScope.session_user.point}', ${u:getValue('download.point') })"><font size="2">${u:getText('ubank.home.thead.download') }</font></a></td>
           </tr>
       </c:forEach>
     </c:when>
