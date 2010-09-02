@@ -62,773 +62,866 @@ import com.ufinity.marchant.ubank.service.FolderService;
  * @version 2010-8-20
  */
 public class FolderServiceImpl implements FolderService {
-	private FileDao fileDao;
-	private FolderDao folderDao;
-	private UserDao userDao;
+    private FileDao fileDao;
+    private FolderDao folderDao;
+    private UserDao userDao;
 
-	// Logger for this class
-	protected final Logger logger = Logger.getInstance(FolderServiceImpl.class);
+    // Logger for this class
+    protected final Logger logger = Logger.getInstance(FolderServiceImpl.class);
 
-	/**
-	 * Constructor for FolderServiceImpl
-	 */
-	public FolderServiceImpl() {
-		folderDao = DaoFactory.createDao(FolderDao.class);
-		fileDao = DaoFactory.createDao(FileDao.class);
-		userDao = DaoFactory.createDao(UserDao.class);
-	}
+    /**
+     * Constructor for FolderServiceImpl
+     */
+    public FolderServiceImpl() {
+        folderDao = DaoFactory.createDao(FolderDao.class);
+        fileDao = DaoFactory.createDao(FileDao.class);
+        userDao = DaoFactory.createDao(UserDao.class);
+    }
 
-	/**
-	 * create a new folder on disk and save to database
-	 * 
-	 * @param folderName
-	 *            folderName
-	 * @param folderType
-	 *            default folder for the user directory
-	 * @param parentId
-	 *            parent foler 'folderId'
-	 * @param userId
-	 *            user ID identification
-	 * @return return a folder object
-	 * @throws UBankException
-	 *             throw Possible exception
-	 * @author bxji
-	 */
-	public Folder addFolder(Long userId, Long parentId, String folderName,
-			String folderType) throws UBankException {
-		if (userId == null || 0l == userId) {
-			throw new UBankException("userId can not be empty");
-		}
-		if (parentId == null || 0l == parentId
-				|| Validity.isNullAndEmpty(folderName)) {
-			throw new UBankException(
-					"parentId can not be null and folderName can not be null or space String");
-		}
-		try {
-			User user = userDao.find(userId);
-			Folder parentfolder = folderDao.find(parentId);
-			if (parentfolder.getParent() == null) {
-				logger
-						.debug("can not create new folder under the root directory");
-				throw new UBankException(
-						"can not create new folder under the root directory");
-			}
-			Date date = new Date();
+    /**
+     * create a new folder on disk and save to database
+     * 
+     * @param folderName
+     *            folderName
+     * @param folderType
+     *            default folder for the user directory
+     * @param parentId
+     *            parent foler 'folderId'
+     * @param userId
+     *            user ID identification
+     * @return return a folder object
+     * @throws UBankException
+     *             throw Possible exception
+     * @author bxji
+     */
+    public Folder addFolder(Long userId, Long parentId, String folderName,
+            String folderType) throws UBankException {
+        if (userId == null || 0l == userId) {
+            throw new UBankException("userId can not be empty");
+        }
+        if (parentId == null || 0l == parentId
+                || Validity.isNullAndEmpty(folderName)) {
+            throw new UBankException(
+                    "parentId can not be null and folderName can not be null or space String");
+        }
+        try {
+            User user = userDao.find(userId);
+            Folder parentfolder = folderDao.find(parentId);
+            if (parentfolder.getParent() == null) {
+                logger
+                        .debug("can not create new folder under the root directory");
+                throw new UBankException(
+                        "can not create new folder under the root directory");
+            }
+            Date date = new Date();
 
-			// create new folder object and set value
-			Folder newFolder = new Folder();
-			newFolder.setParent(parentfolder);
-			newFolder.setCreateTime(date);
-			newFolder.setModifyTime(date);
-			newFolder.setDirectory(getDiskPath(parentfolder));
-			newFolder.setShare(false);
-			newFolder.setUser(user);
-			parentfolder.getChildren().add(newFolder);
+            // create new folder object and set value
+            Folder newFolder = new Folder();
+            newFolder.setParent(parentfolder);
+            newFolder.setCreateTime(date);
+            newFolder.setModifyTime(date);
+            newFolder.setDirectory(getDiskPath(parentfolder));
+            newFolder.setShare(false);
+            newFolder.setUser(user);
+            parentfolder.getChildren().add(newFolder);
 
-			// encoding the folder name
-			folderName = new String(folderName.getBytes("iso-8859-1"), "utf-8");
+            // encoding the folder name
+            folderName = new String(folderName.getBytes("iso-8859-1"), "utf-8");
 
-			// If there is a same name folder in the target directory
-			if (isSameNameFolder(parentfolder, folderName)) {
-				newFolder.setFolderName(folderName + Constant.FOLDER_COPY);
-			} else {
-				newFolder.setFolderName(folderName);
-			}
+            // If there is a same name folder in the target directory
+            if (isSameNameFolder(parentfolder, folderName)) {
+                newFolder.setFolderName(folderName + Constant.FOLDER_COPY);
+            }
+            else {
+                newFolder.setFolderName(folderName);
+            }
 
-			// set Folder type ,default is user directory
-			newFolder.setFolderType(Constant.FOLDER_TYPE_CUSTOMER);
-			if (!Validity.isNullAndEmpty(folderType)) {
-				newFolder.setFolderType(folderType);
-			}
-			EntityManagerUtil.begin();
-			// save to database
-			folderDao.add(newFolder);
+            // set Folder type ,default is user directory
+            newFolder.setFolderType(Constant.FOLDER_TYPE_CUSTOMER);
+            if (!Validity.isNullAndEmpty(folderType)) {
+                newFolder.setFolderType(folderType);
+            }
+            EntityManagerUtil.begin();
+            // save to database
+            folderDao.add(newFolder);
 
-			// create disk file
-			int result = DocumentUtil.addNewFolder(newFolder);
-			if (result != 1) {
-				EntityManagerUtil.rollback();
-				logger.debug("Create disk directory fail.");
-				return null;
-			}
-			EntityManagerUtil.commit();
-			return newFolder;
-		} catch (Exception e) {
-			EntityManagerUtil.rollback();
-			logger.error("The database throw an  exception "
-					+ "when create a folder. ", e);
-			return null;
-		}
-	}
+            // create disk file
+            int result = DocumentUtil.addNewFolder(newFolder);
+            if (result != 1) {
+                EntityManagerUtil.rollback();
+                logger.debug("Create disk directory fail.");
+                return null;
+            }
+            EntityManagerUtil.commit();
+            return newFolder;
+        }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("The database throw an  exception "
+                    + "when create a folder. ", e);
+            return null;
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+    }
 
-	/**
-	 * this method get a user directory tree
-	 * 
-	 * @param userId
-	 *            User id identification
-	 * @return return this user directory tree Struct
-	 * @author bxji
-	 * @throws UBankException
-	 *             throw Possible exception
-	 */
-	public FolderNode getTreeRoot(Long userId) throws UBankException {
-		if (userId == null || 0l == userId) {
-			throw new UBankException("userId can not be empty");
-		}
-		FolderNode rootNode = null;
-		try {
-			List<Folder> folders = folderDao.findFolderListByUserId(userId,
-					null);
-			rootNode = FolderNode.generateFolderTree(folders);
-		} catch (Exception e) {
-			logger.error("When try get user directory tree "
-					+ "happened to thd database an exception", e);
-		}
-		return rootNode;
-	}
+    /**
+     * this method get a user directory tree
+     * 
+     * @param userId
+     *            User id identification
+     * @return return this user directory tree Struct
+     * @author bxji
+     * @throws UBankException
+     *             throw Possible exception
+     */
+    public FolderNode getTreeRoot(Long userId) throws UBankException {
+        if (userId == null || 0l == userId) {
+            throw new UBankException("userId can not be empty");
+        }
+        FolderNode rootNode = null;
+        try {
+            EntityManagerUtil.begin();
+            List<Folder> folders = folderDao.findFolderListByUserId(userId,
+                    null);
+            rootNode = FolderNode.generateFolderTree(folders);
+            EntityManagerUtil.commit();
+        }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("When try get user directory tree "
+                    + "happened to thd database an exception", e);
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+        return rootNode;
+    }
 
-	/**
-	 * Get all files and sub-folders under specified directory,return
-	 * FileOrFolderJsonEntity class list {method description}
-	 * 
-	 * @param folderId
-	 *            specified folder id
-	 * @return FileOrFolderJsonEntity list
-	 * @author bxji
-	 */
-	public List<FileOrFolderJsonEntity> getAllFromFolder(Long folderId,
-			Long layer) {
-		if (folderId == null || 0l == folderId || layer == null || 0l == layer) {
-			return null;
-		}
-		Folder folder = null;
-		try {
-			folder = folderDao.find(folderId);
-		} catch (Exception e) {
-			logger.error("happened to thd database an exception", e);
-			return null;
-		}
-		List<FileOrFolderJsonEntity> jsonEntitys = new ArrayList<FileOrFolderJsonEntity>();
-		if (folder != null) {
-			// convert the FileBean to FileOrFolderJsonEntity
-			Set<FileBean> files = folder.getFiles();
-			for (FileBean file : files) {
-				FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
-				jsonEntity.setId(file.getFileId());
-				jsonEntity.setPid(folder.getFolderId());
-				jsonEntity.setName(file.getFileName());
-				jsonEntity.setSize(file.getSize());
-				jsonEntity.setModTime(DateUtil.format(file.getModifyTime(),
-						DateUtil.YYYY_MM_DD_HH_MM_SS));
-				jsonEntity.setDir(file.getDirectory());
-				jsonEntity.setType(getDocType(file));
-				jsonEntity.setInit(false);
-				jsonEntitys.add(jsonEntity);
-				jsonEntity.setLayer(layer);
-			}
-			// conver sub-folders Object to FileOrFolderJsonEntity
-			Set<Folder> chiFolders = folder.getChildren();
-			for (Folder child : chiFolders) {
-				FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
-				jsonEntity.setId(child.getFolderId());
-				jsonEntity.setPid(folder.getFolderId());
-				jsonEntity.setName(child.getFolderName());
-				jsonEntity.setLayer(layer);
-				jsonEntity.setModTime(DateUtil.format(child.getModifyTime(),
-						DateUtil.YYYY_MM_DD_HH_MM_SS));
-				jsonEntity.setDir(child.getDirectory());
-				jsonEntity.setType(SystemGlobals
-						.getString(ConfigKeys.DOCUMENT_TYPE_FOLDER));
-				if (Constant.FOLDER_TYPE_CUSTOMER.equals(child.getFolderType())) {
-					jsonEntity.setInit(false);
-				} else {
-					jsonEntity.setInit(true);
-				}
-				jsonEntitys.add(jsonEntity);
-			}
-		}
-		return jsonEntitys;
-	}
+    /**
+     * Get all files and sub-folders under specified directory,return
+     * FileOrFolderJsonEntity class list {method description}
+     * 
+     * @param folderId
+     *            specified folder id
+     * @return FileOrFolderJsonEntity list
+     * @author bxji
+     */
+    public List<FileOrFolderJsonEntity> getAllFromFolder(Long folderId,
+            Long layer) {
+        if (folderId == null || 0l == folderId || layer == null || 0l == layer) {
+            return null;
+        }
+        Folder folder = null;
+        try {
+            EntityManagerUtil.begin();
+            folder = folderDao.find(folderId);
+            EntityManagerUtil.commit();
+        }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("happened to thd database an exception", e);
+            return null;
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+        List<FileOrFolderJsonEntity> jsonEntitys = new ArrayList<FileOrFolderJsonEntity>();
+        if (folder != null) {
+            // convert the FileBean to FileOrFolderJsonEntity
+            Set<FileBean> files = folder.getFiles();
+            for (FileBean file : files) {
+                FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
+                jsonEntity.setId(file.getFileId());
+                jsonEntity.setPid(folder.getFolderId());
+                jsonEntity.setName(file.getFileName());
+                jsonEntity.setSize(file.getSize());
+                jsonEntity.setModTime(DateUtil.format(file.getModifyTime(),
+                        DateUtil.YYYY_MM_DD_HH_MM_SS));
+                jsonEntity.setDir(file.getDirectory());
+                jsonEntity.setType(getDocType(file));
+                jsonEntity.setInit(false);
+                jsonEntitys.add(jsonEntity);
+                jsonEntity.setLayer(layer);
+            }
+            // conver sub-folders Object to FileOrFolderJsonEntity
+            Set<Folder> chiFolders = folder.getChildren();
+            for (Folder child : chiFolders) {
+                FileOrFolderJsonEntity jsonEntity = new FileOrFolderJsonEntity();
+                jsonEntity.setId(child.getFolderId());
+                jsonEntity.setPid(folder.getFolderId());
+                jsonEntity.setName(child.getFolderName());
+                jsonEntity.setLayer(layer);
+                jsonEntity.setModTime(DateUtil.format(child.getModifyTime(),
+                        DateUtil.YYYY_MM_DD_HH_MM_SS));
+                jsonEntity.setDir(child.getDirectory());
+                jsonEntity.setType(SystemGlobals
+                        .getString(ConfigKeys.DOCUMENT_TYPE_FOLDER));
+                if (Constant.FOLDER_TYPE_CUSTOMER.equals(child.getFolderType())) {
+                    jsonEntity.setInit(false);
+                }
+                else {
+                    jsonEntity.setInit(true);
+                }
+                jsonEntitys.add(jsonEntity);
+            }
+        }
+        return jsonEntitys;
+    }
 
-	/**
-	 * this method is removed 'Folder' from the disk and database
-	 * 
-	 * @param folderId
-	 *            folder identification
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	public boolean delFolder(Long folderId) {
-		if (folderId == null || 0l == folderId) {
-			logger.debug("delete fail ,target folder id can not is null.");
-			return false;
-		}
-		try {
-			Folder folder = folderDao.find(folderId);
-			if (!Constant.FOLDER_TYPE_CUSTOMER.equals(folder.getFolderType())) {
-				logger.debug("system Initial directoy can not delete");
-				throw new UBankException(
-						"system Initial directoy can not delete");
-			}
-			return delFolder(folder);
-		} catch (Exception e) {
-			logger.error("delete folder failed ", e);
-			return false;
-		}
-	}
+    /**
+     * this method is removed 'Folder' from the disk and database
+     * 
+     * @param folderId
+     *            folder identification
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean delFolder(Long folderId) {
+        if (folderId == null || 0l == folderId) {
+            logger.debug("delete fail ,target folder id can not is null.");
+            return false;
+        }
+        try {
+            EntityManagerUtil.begin();
+            Folder folder = folderDao.find(folderId);
+            EntityManagerUtil.commit();
+            if (!Constant.FOLDER_TYPE_CUSTOMER.equals(folder.getFolderType())) {
+                logger.debug("system Initial directoy can not delete");
+                throw new UBankException(
+                        "system Initial directoy can not delete");
+            }
+            return delFolder(folder);
+        }
+        catch (Exception e) {
+            logger.error("delete folder failed ", e);
+            return false;
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+    }
 
-	/**
-	 * Copy all the contents of the source directory to the destination folder,
-	 * This method is the physical disk copy and database copy
-	 * 
-	 * @param targetFolderId
-	 *            target Folder object identification
-	 * @param sourceFolderId
-	 *            source Folder object identification
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId) {
-		if (targetFolderId == null || 0l == targetFolderId
-				|| sourceFolderId == null || 0l == sourceFolderId) {
-			logger.debug("Folder replication fails, "
-					+ "'targetFolderId' and 'sourceFolderId' can not be null.");
-			return false;
-		}
-		Folder source = folderDao.find(sourceFolderId);
-		Folder target = folderDao.find(targetFolderId);
+    /**
+     * Copy all the contents of the source directory to the destination folder,
+     * This method is the physical disk copy and database copy
+     * 
+     * @param targetFolderId
+     *            target Folder object identification
+     * @param sourceFolderId
+     *            source Folder object identification
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId) {
+        if (targetFolderId == null || 0l == targetFolderId
+                || sourceFolderId == null || 0l == sourceFolderId) {
+            logger.debug("Folder replication fails, "
+                    + "'targetFolderId' and 'sourceFolderId' can not be null.");
+            return false;
+        }
+        Folder source = null;
+        Folder target = null;
+        try {
+            EntityManagerUtil.begin();
+            source = folderDao.find(sourceFolderId);
+            target = folderDao.find(targetFolderId);
+            EntityManagerUtil.commit();
+        }
+        catch (Exception e) {
+            logger.error("database exception", e);
+            return false;
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
 
-		int result = DocumentUtil.moveOrCopyFolderTo(source, target, false);
-		if (result != 1) {
-			return false;
-		}
-		if (target.getShare()) {
-			return copyFolder(target, source, true);
-		} else {
-			return copyFolder(target, source, false);
-		}
-	}
+        int result = DocumentUtil.moveOrCopyFolderTo(source, target, false);
+        if (result != 1) {
+            return false;
+        }
+        if (target.getShare()) {
+            return copyFolder(target, source, true);
+        }
+        else {
+            return copyFolder(target, source, false);
+        }
+    }
 
-	/**
-	 * Move all the contents of the source directory to the destination folder,
-	 * This method is the physical disk move and database move
-	 * 
-	 * @param targetFolderId
-	 *            target Folder object identification
-	 * @param sourceFolderId
-	 *            source Folder object identification
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	public boolean moveFolderTo(Long targetFolderId, Long sourceFolderId) {
-		if (targetFolderId == null || 0l == targetFolderId
-				|| sourceFolderId == null || 0l == sourceFolderId) {
-			logger.debug("Folder moved fails, "
-					+ "'targetFolderId' and 'sourceFolderId' can not be null.");
-			return false;
-		}
-		try {
-			EntityManagerUtil.begin();
-			Folder source = folderDao.find(sourceFolderId);
-			Folder target = folderDao.find(targetFolderId);
-			target.getChildren().add(source);
-			source.setParent(target);
-			int result = DocumentUtil.moveOrCopyFolderTo(source, target, true);
-			source.setDirectory(getDiskPath(target));
-			folderDao.modify(target);
-			folderDao.modify(source);
-			if (result != 1) {
-				EntityManagerUtil.rollback();
-				logger.debug("move disk file fail");
-				return false;
-			}
+    /**
+     * Move all the contents of the source directory to the destination folder,
+     * This method is the physical disk move and database move
+     * 
+     * @param targetFolderId
+     *            target Folder object identification
+     * @param sourceFolderId
+     *            source Folder object identification
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean moveFolderTo(Long targetFolderId, Long sourceFolderId) {
+        if (targetFolderId == null || 0l == targetFolderId
+                || sourceFolderId == null || 0l == sourceFolderId) {
+            logger.debug("Folder moved fails, "
+                    + "'targetFolderId' and 'sourceFolderId' can not be null.");
+            return false;
+        }
+        try {
+            EntityManagerUtil.begin();
+            Folder source = folderDao.find(sourceFolderId);
+            Folder target = folderDao.find(targetFolderId);
+            target.getChildren().add(source);
+            source.setParent(target);
+            int result = DocumentUtil.moveOrCopyFolderTo(source, target, true);
+            source.setDirectory(getDiskPath(target));
+            folderDao.modify(target);
+            folderDao.modify(source);
+            if (result != 1) {
+                EntityManagerUtil.rollback();
+                logger.debug("move disk file fail");
+                return false;
+            }
 
-			// update all files Shared state and reset disk path (directory
-			// property)
-			if (target.getShare()) {
-				resetChildrenDiskPathAndShare(source, true);
-			} else {
-				resetChildrenDiskPathAndShare(source, false);
-			}
-			EntityManagerUtil.commit();
-		} catch (Exception e) {
-			EntityManagerUtil.rollback();
-			logger.error("When moving folder to specified directory ,"
-					+ " the database throw an exception.", e);
-			return false;
-		}
-		return true;
-	}
+            // update all files Shared state and reset disk path (directory
+            // property)
+            if (target.getShare()) {
+                resetChildrenDiskPathAndShare(source, true);
+            }
+            else {
+                resetChildrenDiskPathAndShare(source, false);
+            }
+            EntityManagerUtil.commit();
+        }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("When moving folder to specified directory ,"
+                    + " the database throw an exception.", e);
+            return false;
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+        return true;
+    }
 
-	/**
-	 * Copy all the contents of the source directory to the destination folder
-	 * 
-	 * @param targetFolder
-	 *            target Folder
-	 * @param sourceFolder
-	 *            source folder
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	private boolean copyFolder(Folder targetFolder, Folder sourceFolder,
-			boolean share) {
-		if (targetFolder == null || sourceFolder == null) {
-			logger.debug("Folder replication fails, "
-					+ "'targetFolder' and 'sourceFolder' can not be null.");
-			return false;
-		}
-		Folder temp = null;
-		try {
-			temp = (Folder) BeanUtils.cloneBean(sourceFolder);
-			// If there is a same name folder in the target directory
-			if (isSameNameFolder(targetFolder, temp.getFolderName())) {
-				temp.setFolderName(temp.getFolderName() + Constant.FOLDER_COPY);
-			}
-		} catch (Exception e) {
-			logger.error("An exception when copying a 'Folder' bean object", e);
-			return false;
-		}
-		temp.setParent(targetFolder);
-		temp.setDirectory(getDiskPath(targetFolder));
-		temp.setFiles(new HashSet<FileBean>());
-		temp.setChildren(new HashSet<Folder>());
-		temp.setModifyTime(new Date());
-		temp.setFolderId(null);
-		targetFolder.getChildren().add(temp);
+    /**
+     * Copy all the contents of the source directory to the destination folder
+     * 
+     * @param targetFolder
+     *            target Folder
+     * @param sourceFolder
+     *            source folder
+     * @return success return true else return false
+     * @author bxji
+     */
+    private boolean copyFolder(Folder targetFolder, Folder sourceFolder,
+            boolean share) {
+        if (targetFolder == null || sourceFolder == null) {
+            logger.debug("Folder replication fails, "
+                    + "'targetFolder' and 'sourceFolder' can not be null.");
+            return false;
+        }
+        Folder tempFolder = null;
+        try {
+            tempFolder = (Folder) BeanUtils.cloneBean(sourceFolder);
+            // If there is a same name folder in the target directory
+            if (isSameNameFolder(targetFolder, tempFolder.getFolderName())) {
+                tempFolder.setFolderName(tempFolder.getFolderName()
+                        + Constant.FOLDER_COPY);
+            }
 
-		// update database
-		try {
-			EntityManagerUtil.begin();
-			folderDao.add(temp);
-			folderDao.modify(targetFolder);
-			EntityManagerUtil.commit();
-		} catch (Exception e) {
-			EntityManagerUtil.rollback();
-			logger.error("An exception when copying a directory "
-					+ "to update the database. ", e);
-			return false;
-		}
+            tempFolder.setParent(targetFolder);
+            tempFolder.setDirectory(getDiskPath(targetFolder));
+            tempFolder.setFiles(new HashSet<FileBean>());
+            tempFolder.setChildren(new HashSet<Folder>());
+            tempFolder.setModifyTime(new Date());
+            tempFolder.setFolderId(null);
+            targetFolder.getChildren().add(tempFolder);
 
-		// If there are some files in the directory,
-		// copy the documents and save to database
-		Set<FileBean> files = sourceFolder.getFiles();
-		if (files.size() > 0) {
-			for (FileBean file : files) {
-				try {
-					EntityManagerUtil.begin();
-					FileBean copy = (FileBean) BeanUtils.cloneBean(file);
-					copy.setFolder(temp);
-					copy.setDirectory(getDiskPath(temp));
-					copy.setModifyTime(new Date());
-					copy.setShare(share);
-					copy.setFileId(null);
-					fileDao.add(copy);
-					EntityManagerUtil.commit();
-				} catch (Exception e) {
-					EntityManagerUtil.rollback();
-					logger.error("An exception when copying a file"
-							+ " add to the database", e);
-					return false;
-				}
-			}
-		}
-		// If the directory has a subdirectory, copy the entire directory
-		Set<Folder> folders = sourceFolder.getChildren();
-		if (folders.size() > 0) {
-			for (Folder folder : folders) {
-				// Subfolders recursive copy
-				copyFolder(temp, folder, share);
-			}
-		}
-		return true;
-	}
+            // update database
+            try {
+                EntityManagerUtil.begin();
+                folderDao.add(tempFolder);
+                folderDao.modify(targetFolder);
+                EntityManagerUtil.commit();
+            }
+            catch (Exception e) {
+                EntityManagerUtil.rollback();
+                logger.error("An exception when copying a directory "
+                        + "to update the database. ", e);
+                return false;
+            }
+            finally {
+                EntityManagerUtil.closeEntityManager();
+            }
 
-	/**
-	 * This method is used to rename a folder
-	 * 
-	 * @param folderId
-	 *            target folder object id
-	 * @param newName
-	 *            new name
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	public boolean renameFolder(Long folderId, String newName) {
-		if (folderId == null || 0l == folderId
-				|| Validity.isNullAndEmpty(newName)) {
-			logger.debug("rename folder fail,"
-					+ "target folder id can not be null"
-					+ " and new name can not be null or space string");
-			return false;
-		}
+            // If there are some files in the directory,
+            // copy the documents and save to database
+            Set<FileBean> files = sourceFolder.getFiles();
+            if (files.size() > 0) {
+                for (FileBean file : files) {
+                    try {
+                        EntityManagerUtil.begin();
+                        FileBean copy = (FileBean) BeanUtils.cloneBean(file);
+                        copy.setFolder(tempFolder);
+                        copy.setDirectory(getDiskPath(tempFolder));
+                        copy.setModifyTime(new Date());
+                        copy.setShare(share);
+                        copy.setFileId(null);
+                        fileDao.add(copy);
+                        EntityManagerUtil.commit();
+                    }
+                    catch (Exception e) {
+                        EntityManagerUtil.rollback();
+                        logger.error("An exception when copying a file"
+                                + " add to the database", e);
+                        // return false;
+                    }
+                    finally {
+                        EntityManagerUtil.closeEntityManager();
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            logger.error("An exception when copying a 'Folder' bean object", e);
+            return false;
+        }
+        // If the directory has a subdirectory, copy the entire directory
+        Set<Folder> folders = sourceFolder.getChildren();
+        if (folders.size() > 0) {
+            for (Folder folder : folders) {
+                // Subfolders recursive copy
+                copyFolder(tempFolder, folder, share);
+            }
+        }
+        return true;
+    }
 
-		try {
+    /**
+     * This method is used to rename a folder
+     * 
+     * @param folderId
+     *            target folder object id
+     * @param newName
+     *            new name
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean renameFolder(Long folderId, String newName) {
+        if (folderId == null || 0l == folderId
+                || Validity.isNullAndEmpty(newName)) {
+            logger.debug("rename folder fail,"
+                    + "target folder id can not be null"
+                    + " and new name can not be null or space string");
+            return false;
+        }
 
-			// encoding the folder name
-			newName = new String(newName.getBytes("iso-8859-1"), "utf-8");
-			
-			
-			Folder folder = folderDao.find(folderId);
-			// if old name equals new name
-			if (newName.equals(folder.getFolderName())) {
-				return true;
-			}
+        try {
+            // encoding the folder name
+            newName = new String(newName.getBytes("iso-8859-1"), "utf-8");
 
-			// If there is a same name folder in the target directory
-			if (isSameNameFolder(folder.getParent(), newName)) {
-				folder.setFolderName(newName + Constant.FOLDER_COPY);
-			} else {
-				folder.setFolderName(newName);
-			}
-			EntityManagerUtil.begin();
-			folderDao.modify(folder);
-			// disk operate
-			// int result = DocumentUtil.renameFolder(folder, newName);
-			// if (result != 1) {
-			// EntityManagerUtil.rollback();
-			// logger.debug("disk folder rename fail");
-			// return false;
-			// }
-			EntityManagerUtil.commit();
-			return true;
-		} catch (Exception e) {
-			EntityManagerUtil.rollback();
-			logger.error("database exception ,when folder rename .", e);
-			return false;
-		}
-	}
+            Folder folder = folderDao.find(folderId);
+            // if old name equals new name
+            if (newName.equals(folder.getFolderName())) {
+                return true;
+            }
 
-	/**
-	 * Remove all the contents of the specified directory from the disk and the
-	 * database
-	 * 
-	 * @param targetFolder
-	 *            the specified directory
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	private boolean delFolder(Folder targetFolder) {
-		if (targetFolder == null) {
-			return true;
-		}
-		Set<FileBean> files = targetFolder.getFiles();
-		Set<Folder> folders = targetFolder.getChildren();
-		// delete all files
-		for (FileBean file : files) {
-			try {
-				EntityManagerUtil.begin();
-				fileDao.delete(file);
-				int result = DocumentUtil.removeFile(file);
-				// if disk file delete fail, return 'false'
-				if (result != 1) {
-					EntityManagerUtil.rollback();
-					logger.debug("delete disk file fail, file name:"
-							+ file.getDirectory() + file.getFileName());
-					return false;
-				}
-				EntityManagerUtil.commit();
-			} catch (Exception e) {
-				EntityManagerUtil.rollback();
-				logger.error("update the database exception "
-						+ "when delete a disk file .", e);
-				return false;
-			}
-		}
-		// delete all folders
-		for (Folder folder : folders) {
-			delFolder(folder);
-		}
-		try {
-			EntityManagerUtil.begin();
-			folderDao.delete(targetFolder);
-			int result = DocumentUtil.removeFolder(targetFolder);
-			// if disk file delete fail, return 'false'
-			if (result != 1) {
-				EntityManagerUtil.rollback();
-				logger.debug("delete disk folder fail, file name:"
-						+ targetFolder.getDirectory()
-						+ targetFolder.getFolderId());
-				return false;
-			}
-			EntityManagerUtil.commit();
-		} catch (Exception e) {
-			EntityManagerUtil.rollback();
-			logger.error("delete disk directory fail.", e);
-			return false;
-		}
-		return true;
-	}
+            // If there is a same name folder in the target directory
+            if (isSameNameFolder(folder.getParent(), newName)) {
+                folder.setFolderName(newName + Constant.FOLDER_COPY);
+            }
+            else {
+                folder.setFolderName(newName);
+            }
+            EntityManagerUtil.begin();
+            folderDao.modify(folder);
+            // disk operate
+            // int result = DocumentUtil.renameFolder(folder, newName);
+            // if (result != 1) {
+            // EntityManagerUtil.rollback();
+            // logger.debug("disk folder rename fail");
+            // return false;
+            // }
+            EntityManagerUtil.commit();
+            return true;
+        }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("database exception ,when folder rename .", e);
+            return false;
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+    }
 
-	/**
-	 * this method can Sharing a directory
-	 * 
-	 * @param folderId
-	 *            target folder object id
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	public boolean shareFolder(Long folderId) {
-		if (folderId == null || 0l == folderId) {
-			return false;
-		}
-		try {
-			EntityManagerUtil.begin();
-			Folder folder = folderDao.find(folderId);
-			folder.setShare(true);
-			folderDao.modify(folder);
-			if (shareOrCanceAllFiles(folder, true)) {
-				EntityManagerUtil.commit();
-				return true;
-			}
-			EntityManagerUtil.rollback();
-			return false;
-		} catch (Exception e) {
-			EntityManagerUtil.rollback();
-			logger.error("When sharing a folder,database"
-					+ " throw an exception .", e);
-			return false;
-		}
-	}
+    /**
+     * Remove all the contents of the specified directory from the disk and the
+     * database
+     * 
+     * @param targetFolder
+     *            the specified directory
+     * @return success return true else return false
+     * @author bxji
+     */
+    private boolean delFolder(Folder targetFolder) {
+        if (targetFolder == null) {
+            return true;
+        }
+        Set<FileBean> files = targetFolder.getFiles();
+        Set<Folder> folders = targetFolder.getChildren();
+        // delete all files
+        for (FileBean file : files) {
+            try {
+                EntityManagerUtil.begin();
+                fileDao.delete(file);
+                int result = DocumentUtil.removeFile(file);
+                // if disk file delete fail, return 'false'
+                if (result != 1) {
+                    EntityManagerUtil.rollback();
+                    logger.debug("delete disk file fail, file name:"
+                            + file.getDirectory() + file.getFileName());
+                    // return false;
+                }
+                else {
+                    EntityManagerUtil.commit();
 
-	/**
-	 * this method is cancel share a directory operation
-	 * 
-	 * @param folderId
-	 *            target folder object id
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	public boolean cancelShareFolder(Long folderId) {
-		if (folderId == null || 0l == folderId) {
-			return false;
-		}
-		try {
-			EntityManagerUtil.begin();
-			Folder folder = folderDao.find(folderId);
-			cancelShareFolder(folder);
-			EntityManagerUtil.commit();
-			return true;
-		} catch (Exception e) {
-			EntityManagerUtil.rollback();
-			logger.error("When cancel share a folder "
-					+ ",database throw an exception", e);
-			return false;
-		}
-	};
+                }
+            }
+            catch (Exception e) {
+                EntityManagerUtil.rollback();
+                logger.error("update the database exception "
+                        + "when delete a disk file .", e);
+                // return false;
+            }
+            finally {
+                EntityManagerUtil.closeEntityManager();
+            }
+        }
+        // delete all folders
+        for (Folder folder : folders) {
+            delFolder(folder);
+        }
+        try {
+            EntityManagerUtil.begin();
+            folderDao.delete(targetFolder);
+            int result = DocumentUtil.removeFolder(targetFolder);
+            // if disk file delete fail, return 'false'
+            if (result != 1) {
+                EntityManagerUtil.rollback();
+                logger.debug("delete disk folder fail, file name:"
+                        + targetFolder.getDirectory()
+                        + targetFolder.getFolderId());
+                // return false;
+            }
+            else {
+                EntityManagerUtil.commit();
+            }
+        }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("delete disk directory fail.", e);
+            return false;
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
 
-	/**
-	 * This method share all files under the target directory, including the
-	 * subdirectories of all files
-	 * 
-	 * @param folder
-	 *            target directory
-	 * @param share
-	 *            Shared state
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	private boolean shareOrCanceAllFiles(Folder folder, boolean share) {
-		if (folder == null) {
-			return false;
-		}
-		Set<Folder> children = folder.getChildren();
-		Set<FileBean> files = folder.getFiles();
-		for (FileBean file : files) {
-			file.setShare(share);
-			fileDao.modify(file);
-		}
-		for (Folder child : children) {
-			shareOrCanceAllFiles(child, share);
-		}
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * this method is set all files share status is 'false' under specified
-	 * directory
-	 * 
-	 * @param folder
-	 *            target folder
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	private void cancelShareFolder(Folder folder) {
-		if (folder == null) {
-			return;
-		}
-		folder.setShare(false);
-		folderDao.modify(folder);
-		Set<FileBean> files = folder.getFiles();
-		for (FileBean file : files) {
-			file.setModifyTime(new Date());
-			file.setShare(false);
-			fileDao.modify(file);
-		}
-		Set<Folder> children = folder.getChildren();
-		for (Folder child : children) {
-			cancelShareFolder(child);
-		}
-	}
+    /**
+     * this method can Sharing a directory
+     * 
+     * @param folderId
+     *            target folder object id
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean shareFolder(Long folderId) {
+        if (folderId == null || 0l == folderId) {
+            return false;
+        }
+        try {
+            EntityManagerUtil.begin();
+            Folder folder = folderDao.find(folderId);
+            folder.setShare(true);
+            folderDao.modify(folder);
+            if (shareOrCanceAllFiles(folder, true)) {
+                EntityManagerUtil.commit();
+                return true;
+            }
+            EntityManagerUtil.rollback();
+            return false;
+        }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("When sharing a folder,database"
+                    + " throw an exception .", e);
+            return false;
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+    }
 
-	/**
-	 * get current directory disk path
-	 * 
-	 * @param parentFolder
-	 *            parent directory of current directory
-	 * @return disk path String
-	 * @author bxji
-	 */
-	private String getDiskPath(Folder parentFolder) {
-		String currentPath = "";
-		if (parentFolder == null) {
-			return currentPath;
-		}
-		String parentPath = parentFolder.getDirectory();
-		if (parentPath.length() > 0) {
-			char c = parentPath.charAt(parentPath.length() - 1);
-			if ('\\' == c || '/' == c) {
-				currentPath = parentPath + parentFolder.getFolderId() + "/";
-			} else {
-				currentPath = parentPath + "/" + parentFolder.getFolderId()
-						+ "/";
-			}
-		}
-		return currentPath;
-	}
+    /**
+     * this method is cancel share a directory operation
+     * 
+     * @param folderId
+     *            target folder object id
+     * @return success return true else return false
+     * @author bxji
+     */
+    public boolean cancelShareFolder(Long folderId) {
+        if (folderId == null || 0l == folderId) {
+            return false;
+        }
+        try {
+            EntityManagerUtil.begin();
+            Folder folder = folderDao.find(folderId);
+            cancelShareFolder(folder);
+            EntityManagerUtil.commit();
+            return true;
+        }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("When cancel share a folder "
+                    + ",database throw an exception", e);
+            return false;
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+    };
 
-	/**
-	 * Reset the subfolders and files disk path and reset all files shared
-	 * status
-	 * 
-	 * @param folder
-	 *            target directory
-	 * @param share
-	 *            share status
-	 * @return success return true else return false
-	 * @author bxji
-	 */
-	private void resetChildrenDiskPathAndShare(Folder folder, boolean share) {
-		if (folder == null) {
-			return;
-		}
-		Date date = new Date();
-		String path = getDiskPath(folder);
-		Set<Folder> children = folder.getChildren();
-		for (Folder child : children) {
-			child.setModifyTime(date);
-			child.setDirectory(path);
-			folderDao.modify(child);
-			resetChildrenDiskPathAndShare(child, share);
-		}
-		Set<FileBean> files = folder.getFiles();
-		for (FileBean file : files) {
-			file.setModifyTime(date);
-			file.setShare(share);
-			file.setDirectory(path);
-			fileDao.modify(file);
-		}
-	}
+    /**
+     * This method share all files under the target directory, including the
+     * subdirectories of all files
+     * 
+     * @param folder
+     *            target directory
+     * @param share
+     *            Shared state
+     * @return success return true else return false
+     * @author bxji
+     */
+    private boolean shareOrCanceAllFiles(Folder folder, boolean share) {
+        if (folder == null) {
+            return false;
+        }
+        Set<Folder> children = folder.getChildren();
+        Set<FileBean> files = folder.getFiles();
+        for (FileBean file : files) {
+            file.setShare(share);
+            fileDao.modify(file);
+        }
+        for (Folder child : children) {
+            shareOrCanceAllFiles(child, share);
+        }
+        return true;
+    }
 
-	/**
-	 * Whether the same name with the current directory folders
-	 * 
-	 * @param folder
-	 *            current directory
-	 * @param name
-	 *            folder name
-	 * @return have same name return 'true' else return 'false'
-	 * @throws DbException
-	 *             if folder is null or name is nul throw exception
-	 * @author bxji
-	 */
-	private boolean isSameNameFolder(Folder folder, String name)
-			throws DbException {
-		if (folder == null || Validity.isNullAndEmpty(name)) {
-			logger.debug("target folder can not be null");
-			throw new DbException("target folder and name can not be null.");
-		}
-		Set<Folder> children = folder.getChildren();
-		for (Folder child : children) {
-			if (name.equals(child.getFolderName())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * this method is set all files share status is 'false' under specified
+     * directory
+     * 
+     * @param folder
+     *            target folder
+     * @return success return true else return false
+     * @author bxji
+     */
+    private void cancelShareFolder(Folder folder) {
+        if (folder == null) {
+            return;
+        }
+        folder.setShare(false);
+        folderDao.modify(folder);
+        Set<FileBean> files = folder.getFiles();
+        for (FileBean file : files) {
+            file.setModifyTime(new Date());
+            file.setShare(false);
+            fileDao.modify(file);
+        }
+        Set<Folder> children = folder.getChildren();
+        for (Folder child : children) {
+            cancelShareFolder(child);
+        }
+    }
 
-	/**
-	 * get file type by the file suffix
-	 * 
-	 * @param file
-	 *            fileBean object
-	 * @return file type string
-	 * @author bxji
-	 */
-	private String getDocType(FileBean file) {
-		if (file == null) {
-			return "";
-		}
-		String name = file.getFileName();
-		int index = name.lastIndexOf('.');
-		if (index != -1) {
-			String typeName = name.substring(index);
-			if (Validity.isNullAndEmpty(typeName)) {
-				return typeName.trim().toUpperCase();
-			}
-		}
-		return SystemGlobals.getString(ConfigKeys.DOCUMENT_TYPE_UNKNOWN);
-	}
+    /**
+     * get current directory disk path
+     * 
+     * @param parentFolder
+     *            parent directory of current directory
+     * @return disk path String
+     * @author bxji
+     */
+    private String getDiskPath(Folder parentFolder) {
+        String currentPath = "";
+        if (parentFolder == null) {
+            return currentPath;
+        }
+        String parentPath = parentFolder.getDirectory();
+        if (parentPath.length() > 0) {
+            char c = parentPath.charAt(parentPath.length() - 1);
+            if ('\\' == c || '/' == c) {
+                currentPath = parentPath + parentFolder.getFolderId() + "/";
+            }
+            else {
+                currentPath = parentPath + "/" + parentFolder.getFolderId()
+                        + "/";
+            }
+        }
+        return currentPath;
+    }
 
-	/**
-	 * get user root directory
-	 * 
-	 * @param userId
-	 *            user id
-	 * @return return user root directory
-	 * @author bxji
-	 */
-	public Folder getRootFolder(Long userId) {
-		if (userId == null || 0l == userId) {
-			return null;
-		}
-		Folder folder = null;
-		try {
-			folder = folderDao.findRootRolderByUserId(userId);
-		} catch (Exception e) {
-			logger.error("get user root folder the database exception ", e);
-		}
-		return folder;
-	}
+    /**
+     * Reset the subfolders and files disk path and reset all files shared
+     * status
+     * 
+     * @param folder
+     *            target directory
+     * @param share
+     *            share status
+     * @return success return true else return false
+     * @author bxji
+     */
+    private void resetChildrenDiskPathAndShare(Folder folder, boolean share) {
+        if (folder == null) {
+            return;
+        }
+        Date date = new Date();
+        String path = getDiskPath(folder);
+        Set<Folder> children = folder.getChildren();
+        for (Folder child : children) {
+            child.setModifyTime(date);
+            child.setDirectory(path);
+            folderDao.modify(child);
+            resetChildrenDiskPathAndShare(child, share);
+        }
+        Set<FileBean> files = folder.getFiles();
+        for (FileBean file : files) {
+            file.setModifyTime(date);
+            file.setShare(share);
+            file.setDirectory(path);
+            fileDao.modify(file);
+        }
+    }
 
-	/**
-	 * get user's share directory root node
-	 * 
-	 * @param userId
-	 *            user id
-	 * @return root Folder node
-	 * @author bxji
-	 */
-	public FolderNode getShareTree(Long userId) {
-		if (userId == null || 0l == userId) {
-			return null;
-		}
-		List<Folder> shares = null;
-		Folder root = null;
-		FolderNode shareRoot = new FolderNode();
-		try {
-			shares = folderDao.findFolderListByUserId(userId, true);
-			root = folderDao.findRootRolderByUserId(userId);
+    /**
+     * Whether the same name with the current directory folders
+     * 
+     * @param folder
+     *            current directory
+     * @param name
+     *            folder name
+     * @return have same name return 'true' else return 'false'
+     * @throws DbException
+     *             if folder is null or name is nul throw exception
+     * @author bxji
+     */
+    private boolean isSameNameFolder(Folder folder, String name)
+            throws DbException {
+        if (folder == null || Validity.isNullAndEmpty(name)) {
+            logger.debug("target folder can not be null");
+            throw new DbException("target folder and name can not be null.");
+        }
+        Set<Folder> children = folder.getChildren();
+        for (Folder child : children) {
+            if (name.equals(child.getFolderName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-			List<FolderNode> nodes = new ArrayList<FolderNode>();
-			for (Folder folder : shares) {
-				FolderNode node = FolderNode.generateFolderTree(folder);
-				nodes.add(node);
-			}
-			FolderNode.copyProperties(shareRoot, root);
-			shareRoot.setSubNodes(nodes);
-		} catch (Exception e) {
-			logger.error("generate share tree exception", e);
-		}
-		return shareRoot;
-	}
+    /**
+     * get file type by the file suffix
+     * 
+     * @param file
+     *            fileBean object
+     * @return file type string
+     * @author bxji
+     */
+    private String getDocType(FileBean file) {
+        if (file == null) {
+            return "";
+        }
+        String name = file.getFileName();
+        int index = name.lastIndexOf('.');
+        if (index != -1) {
+            String typeName = name.substring(index);
+            if (Validity.isNullAndEmpty(typeName)) {
+                return typeName.trim().toUpperCase();
+            }
+        }
+        return SystemGlobals.getString(ConfigKeys.DOCUMENT_TYPE_UNKNOWN);
+    }
+
+    /**
+     * get user root directory
+     * 
+     * @param userId
+     *            user id
+     * @return return user root directory
+     * @author bxji
+     */
+    public Folder getRootFolder(Long userId) {
+        if (userId == null || 0l == userId) {
+            return null;
+        }
+        Folder folder = null;
+        try {
+            EntityManagerUtil.begin();
+            folder = folderDao.findRootRolderByUserId(userId);
+            EntityManagerUtil.commit();
+        }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("get user root folder the database exception ", e);
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+        return folder;
+    }
+
+    /**
+     * get user's share directory root node
+     * 
+     * @param userId
+     *            user id
+     * @return root Folder node
+     * @author bxji
+     */
+    public FolderNode getShareTree(Long userId) {
+        if (userId == null || 0l == userId) {
+            return null;
+        }
+        List<Folder> shares = null;
+        Folder root = null;
+        FolderNode shareRoot = new FolderNode();
+        try {
+            EntityManagerUtil.begin();
+            shares = folderDao.findFolderListByUserId(userId, true);
+            root = folderDao.findRootRolderByUserId(userId);
+
+            List<FolderNode> nodes = new ArrayList<FolderNode>();
+            for (Folder folder : shares) {
+                FolderNode node = FolderNode.generateFolderTree(folder);
+                nodes.add(node);
+            }
+            FolderNode.copyProperties(shareRoot, root);
+            shareRoot.setSubNodes(nodes);
+            EntityManagerUtil.commit();
+        }
+        catch (Exception e) {
+            EntityManagerUtil.rollback();
+            logger.error("generate share tree exception", e);
+        }
+        return shareRoot;
+    }
 }

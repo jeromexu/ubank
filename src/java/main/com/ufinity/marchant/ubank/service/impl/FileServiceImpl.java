@@ -320,6 +320,9 @@ public class FileServiceImpl implements FileService {
                 logger.error("Update the file  database exception ", e);
                 return false;
             }
+            finally {
+                EntityManagerUtil.closeEntityManager();
+            }
         }
         return false;
     }
@@ -405,6 +408,9 @@ public class FileServiceImpl implements FileService {
                             e);
             return false;
         }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
     }
 
     /**
@@ -440,6 +446,9 @@ public class FileServiceImpl implements FileService {
             logger.error("Database exception where tried to remove a file.", e);
             return false;
         }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
         return true;
     }
 
@@ -473,6 +482,7 @@ public class FileServiceImpl implements FileService {
                 else {
                     file.setFileName(newName);
                 }
+
                 fileDao.modify(file);
                 EntityManagerUtil.commit();
                 return true;
@@ -481,6 +491,9 @@ public class FileServiceImpl implements FileService {
         catch (Exception e) {
             EntityManagerUtil.rollback();
             logger.error("update the database exception when rename a file", e);
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
         }
         return false;
     }
