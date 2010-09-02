@@ -286,13 +286,19 @@ public class FileServiceImpl implements FileService {
             try {
                 EntityManagerUtil.begin();
                 Folder folder = folderDao.find(targetFolderId);
+                
+                // copy disk file
+                int result = DocumentUtil.copyFile(fileCopy, folder);
+                if (result != 1) {
+                    logger.debug("copy disk file IO exception");
+                    return false;
+                }
 
                 // If there is a same name file in the target directory
                 if (isSameNameFile(folder, fileCopy.getFileName())) {
                     autoRename(fileCopy);
                     // autoRename(fileCopy, fileCopy.getFileName());
                 }
-
                 // if target folder is shared directory
                 if (folder.getShare()) {
                     fileCopy.setShare(true);
@@ -305,13 +311,6 @@ public class FileServiceImpl implements FileService {
                 fileCopy.setModifyTime(new Date());
                 fileCopy.setFileId(null);
                 fileDao.add(fileCopy);
-                // copy disk file
-                int result = DocumentUtil.copyFile(fileCopy, folder);
-                if (result != 1) {
-                    EntityManagerUtil.rollback();
-                    logger.debug("copy disk file IO exception");
-                    return false;
-                }
                 EntityManagerUtil.commit();
                 return true;
             }
