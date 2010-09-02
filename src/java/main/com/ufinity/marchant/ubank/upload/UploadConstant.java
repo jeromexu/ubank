@@ -56,4 +56,7 @@ public interface UploadConstant {
     
     //updates info every 10kb
     long UPDATE_THRESHOLD = 10 * 1024L;
+    
+    //default add point
+    int UPLOAD_DEFAULT_POINT = 2;
 }

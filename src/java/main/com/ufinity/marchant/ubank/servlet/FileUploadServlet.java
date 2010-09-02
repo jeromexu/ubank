@@ -267,6 +267,7 @@ public class FileUploadServlet extends AbstractServlet {
                     String fieldName = item.getFieldName();
                         request.getSession().setAttribute(UploadConstant.PROGRESS_INFO + fieldName, pi);
                         uploadService.uploadAndSaveDb(currentFolderId, currentFolderDir, pi, item);
+                        uploadService.addPoint(user.getUserId());
                 }
                 
                 pi.setCurrentTime(System.currentTimeMillis());

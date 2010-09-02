@@ -43,6 +43,7 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
+import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.DbException;
 import com.ufinity.marchant.ubank.service.UploadService;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
@@ -61,6 +62,8 @@ public class UploadServiceImpl implements UploadService {
     private FileDao fileDao;
 
     private FolderDao folderDao;
+    
+    private UserDao userDao;
 
     /**
      * upload file and save to db
@@ -271,6 +274,26 @@ public class UploadServiceImpl implements UploadService {
             return size;
         } catch (RuntimeException e) {
             throw new DbException(e);
+        } finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+    }
+    
+    /**
+     * user add point
+     * 
+     * @param userId
+     *            user id
+     */
+    public void addPoint(Long userId) {
+        try {
+            EntityManagerUtil.begin();
+            userDao = DaoFactory.createDao(UserDao.class);
+            userDao.modifyPointByUserId(userId, UploadConstant.UPLOAD_DEFAULT_POINT);
+            EntityManagerUtil.commit();
+        } catch (RuntimeException e) {
+            //Ignore
+            logger.warn("user add point has exception", e);
         } finally {
             EntityManagerUtil.closeEntityManager();
         }

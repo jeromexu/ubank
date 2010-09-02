@@ -72,4 +72,12 @@ public interface UploadService {
      * @return total size
      */
     public long getTotalFileSize(Long userId) throws DbException;
+    
+    /**
+     * user add point
+     * 
+     * @param userId
+     *            user id
+     */
+    public void addPoint(Long userId);
 }
