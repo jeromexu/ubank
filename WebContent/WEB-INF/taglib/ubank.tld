@@ -17,6 +17,12 @@
     </function>
     
     <function>
+        <name>getTextWithParams</name>
+        <function-class>com.ufinity.marchant.ubank.common.preferences.MessageResource</function-class>
+        <function-signature>java.lang.String getText(java.lang.String, java.lang.String[])</function-signature>
+    </function>
+    
+    <function>
         <name>getValue</name>
         <function-class>com.ufinity.marchant.ubank.common.preferences.SystemGlobals</function-class>
         <function-signature>java.lang.String getString(java.lang.String)</function-signature>

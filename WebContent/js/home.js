@@ -127,16 +127,16 @@ function requestTimeout(){
 	$('#searchResultDiv').empty().append(text);
 }
 
-function download(isLogin, url, point, needPoint) {
-	if(confirm('下载该资料将扣除' + needPoint + '分。重复下载不会重复扣分。是否继续？')) {
+function download(confirmMsg, pointNotEnough, mustLogin, isLogin, url, point, needPoint) {
+	if(confirm(confirmMsg)) {
 		if(isLogin) {
 			if(point < needPoint){
-				alert('积分不够！');
+				alert(pointNotEnough);
 				return false;
 			}
 			location.href=url;
 		}else{
-			alert('请先登录！');
+			alert(mustLogin);
 			$('#eventPath').val("../portal/home.html");
 			$('#userName').focus();
 			//location.href="../portal/home.html";

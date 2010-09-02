@@ -18,7 +18,15 @@
             <td>${file.size }</td>
             <td><c:out value="${file.folder.user.userName}" escapeXml="true" /></td>
             <td><fmt:formatDate value="${file.modifyTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-            <td><a href="" onclick="return download(${not empty sessionScope.session_user}, 'download.do?id=${file.fileId }', '${sessionScope.session_user.point}', ${u:getValue('download.point') })"><font size="2">${u:getText('ubank.home.thead.download') }</font></a></td>
+            
+            <c:set var="isLogin" value="${not empty sessionScope.session_user}" />
+            <c:set var="currenthasPoint" value="${sessionScope.session_user.point}" />
+            <c:set var="needPoint" value="${u:getValue('download.point')}" />
+            <c:set var="params" value="${fn:split(needPoint, ',')}" />
+            <c:set var="confirmMsg" value="${u:getTextWithParams('download.msg', params)}" />
+            <c:set var="pointNotEnough" value="${u:getText('download.point.notenough')}" />
+            <c:set var="mustLogin" value="${u:getText('must.login')}" />
+            <td><a onclick="return download('${confirmMsg}', '${pointNotEnough}', '${mustLogin}', ${isLogin}, 'download.do?id=${file.fileId }', '${currenthasPoint}', '${needPoint}')" href=''><font size="2">${u:getText('ubank.home.thead.download') }</font></a></td>
           </tr>
       </c:forEach>
     </c:when>

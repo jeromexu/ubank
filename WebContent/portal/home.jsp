@@ -61,7 +61,7 @@
                     <c:choose>
                       <c:when  test="${empty session_user}">
                         <form action="login.do" method="post" id="loginForm">
-                          <input type="hidden" name="eventPath" id="eventPath">
+                          <input type="hidden" name="eventPath" id="eventPath" value="${eventPath}">
                                   
                           ${u:getText('ubank.home.login.username.ipt')}:<input class="username_clz" type="text" name="userName" maxlength="50" id="userName"><br>
                           ${u:getText('ubank.home.login.password.ipt')}:<input class="password_clz" type="password" name="password" maxlength="50" id="password"><br>
