@@ -117,9 +117,6 @@ public class RegServlet extends AbstractServlet {
 				User user = new User();
 				user.setUserName(userName);
 				user.setPassword(pass);
-				user.setCreateTime(new Date());
-				user.setOverSize(SystemGlobals
-						.getInt(ConfigKeys.DEFAULT_USER_SPACE_SIZE));
 				userService = ServiceFactory.createService(UserService.class);
 				String registerMsg = userService.doRegister(user);
 				if (MessageKeys.REGISTER_FAILURE.equals(registerMsg)) {

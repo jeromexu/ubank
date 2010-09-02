@@ -91,6 +91,11 @@ public class UserServiceImpl implements UserService {
 			User queryUser = userDao.findUserByName(userName);
 			if (queryUser == null) {
 				EntityManagerUtil.begin();
+				user.setCreateTime(new Date());
+				user.setOverSize(SystemGlobals
+						.getInt(ConfigKeys.DEFAULT_USER_SPACE_SIZE));
+				user.setPoint(SystemGlobals
+						.getInt(ConfigKeys.USER_DEFAULT_POINT));
 				userDao.add(user);
 				logger.debug("add user success!" + user);
 				// init user dir space

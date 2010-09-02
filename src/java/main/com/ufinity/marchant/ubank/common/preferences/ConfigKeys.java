@@ -97,4 +97,6 @@ public class ConfigKeys {
     public static final String NUMBERIC_CHARS = "numberic.chars";
     public static final String UPPER_ASCII_CHARS = "upper.ascii.chars";
     public static final String LOWER_ASCII_CHARS = "lower.ascii.chars";
+    
+    public static final String USER_DEFAULT_POINT = "user.default.point";
 }
