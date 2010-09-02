@@ -154,13 +154,14 @@ a:hover{
 }
 
 .errorMsgDiv{
-	margin-top:20px;
-	margin-left:20px;
+	margin-top:4px;
+	margin-left:500px;
 	background-color:#D2B4F0;
-	width:240px;
+	width:auto;
 	height:22px;
 	line-height: 22px;
 	text-align: center;
+	display: inline-table;
 }
 
 .loadingImage {

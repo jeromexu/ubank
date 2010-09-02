@@ -15,7 +15,16 @@
 	<body>
 		<div class="mainDiv">
 			<div class="topDiv">
-			<h2>UBank</h2>
+			   <h2>UBank</h2>
+                
+                <c:if test="${not empty error_msg}">
+                <span class="errorMsgDiv" title="${error_msg}">${error_msg}</span>
+                  <!-- 
+                  <div class="errorMsgDiv">
+                    <span title="${error_msg}">${error_msg}</span>
+                  </div>
+                   -->
+                </c:if>
 			</div>
 			
 			<div class="leftDiv">
@@ -52,11 +61,6 @@
 			<div class="rightDiv">
       
 				<div class="loginDiv">
-                    <c:if test="${not empty error_msg}">
-                      <div class="errorMsgDiv">
-                        <span title="${error_msg}">${error_msg}</span>
-                      </div>
-                    </c:if>
                     
                     <c:choose>
                       <c:when  test="${empty session_user}">
