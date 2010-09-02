@@ -286,7 +286,7 @@ public class FileServiceImpl implements FileService {
             try {
                 EntityManagerUtil.begin();
                 Folder folder = folderDao.find(targetFolderId);
-                
+
                 // copy disk file
                 int result = DocumentUtil.copyFile(fileCopy, folder);
                 if (result != 1) {

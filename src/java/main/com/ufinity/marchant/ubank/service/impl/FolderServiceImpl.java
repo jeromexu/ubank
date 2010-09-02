@@ -105,6 +105,7 @@ public class FolderServiceImpl implements FolderService {
                     "parentId can not be null and folderName can not be null or space String");
         }
         try {
+            EntityManagerUtil.begin();
             User user = userDao.find(userId);
             Folder parentfolder = folderDao.find(parentId);
             if (parentfolder.getParent() == null) {
@@ -141,7 +142,7 @@ public class FolderServiceImpl implements FolderService {
             if (!Validity.isNullAndEmpty(folderType)) {
                 newFolder.setFolderType(folderType);
             }
-            EntityManagerUtil.begin();
+
             // save to database
             folderDao.add(newFolder);
 
@@ -330,9 +331,22 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.begin();
             source = folderDao.find(sourceFolderId);
             target = folderDao.find(targetFolderId);
+
+            int result = DocumentUtil.moveOrCopyFolderTo(source, target, false);
+            if (result != 1) {
+                return false;
+            }
+            if (target.getShare()) {
+                copyFolder(target, source, true);
+            }
+            else {
+                copyFolder(target, source, false);
+            }
             EntityManagerUtil.commit();
+            return true;
         }
         catch (Exception e) {
+            EntityManagerUtil.rollback();
             logger.error("database exception", e);
             return false;
         }
@@ -340,16 +354,6 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.closeEntityManager();
         }
 
-        int result = DocumentUtil.moveOrCopyFolderTo(source, target, false);
-        if (result != 1) {
-            return false;
-        }
-        if (target.getShare()) {
-            return copyFolder(target, source, true);
-        }
-        else {
-            return copyFolder(target, source, false);
-        }
     }
 
     /**
@@ -522,6 +526,7 @@ public class FolderServiceImpl implements FolderService {
         }
 
         try {
+            EntityManagerUtil.begin();
             // encoding the folder name
             newName = new String(newName.getBytes("iso-8859-1"), "utf-8");
 
@@ -538,15 +543,7 @@ public class FolderServiceImpl implements FolderService {
             else {
                 folder.setFolderName(newName);
             }
-            EntityManagerUtil.begin();
             folderDao.modify(folder);
-            // disk operate
-            // int result = DocumentUtil.renameFolder(folder, newName);
-            // if (result != 1) {
-            // EntityManagerUtil.rollback();
-            // logger.debug("disk folder rename fail");
-            // return false;
-            // }
             EntityManagerUtil.commit();
             return true;
         }
