@@ -290,7 +290,7 @@ public class FileServiceImpl implements FileService {
 
                 // If there is a same name file in the target directory
                 if (isSameNameFile(folder, fileCopy.getFileName())) {
-                    autoRename(fileCopy);
+                    autoRename(fileCopy, fileCopy.getFileName());
                 }
 
                 // if target folder is shared directory
@@ -374,7 +374,7 @@ public class FileServiceImpl implements FileService {
             }
             // If there is a same name file in the target directory
             if (isSameNameFile(folder, file.getFileName())) {
-                autoRename(file);
+                autoRename(file, file.getFileName());
             }
             // if target folder is shared directory
             if (folder.getShare()) {
@@ -461,10 +461,14 @@ public class FileServiceImpl implements FileService {
             EntityManagerUtil.begin();
             FileBean file = fileDao.find(fileId);
             if (file != null) {
-                if (isSameNameFile(file.getFolder(), newName)) {
-                    file.setFileName(newName);
-                    autoRename(file);
-                }
+                autoRename(file, newName);
+                // if (isSameNameFile(file.getFolder(), newName)) {
+                // file.setFileName(newName);
+                // autoRename(file);
+                // }
+                // else {
+                // file.setFileName(newName);
+                // }
                 fileDao.modify(file);
                 int result = DocumentUtil.renameFile(file, newName);
                 if (result != 1) {
@@ -518,15 +522,11 @@ public class FileServiceImpl implements FileService {
      * @param name
      *            name
      * @return have same name return 'true' else return 'false'
-     * @throws DbException
-     *             if folder is null or name is nul throw exception
      * @author bxji
      */
-    private boolean isSameNameFile(Folder folder, String name)
-            throws DbException {
+    private boolean isSameNameFile(Folder folder, String name) {
         if (folder == null || Validity.isNullAndEmpty(name)) {
-            logger.debug("target folder can not be null");
-            throw new DbException("target folder and name can not be null.");
+            return false;
         }
         Set<FileBean> files = folder.getFiles();
         for (FileBean file : files) {
@@ -544,20 +544,33 @@ public class FileServiceImpl implements FileService {
      *            file object
      * @author bxji
      */
-    private void autoRename(FileBean file) {
-        if (file == null) {
+    private void autoRename(FileBean file, String newName) {
+        if (file == null || Validity.isNullAndEmpty(newName)) {
             return;
         }
-        String name = file.getFileName();
-        String newName = "";
-        int index = name.lastIndexOf('.');
+        StringBuilder name = new StringBuilder();
+        String oldName = file.getFileName();
+        int index = oldName.lastIndexOf('.');
         if (index != -1) {
-            newName = name.substring(0, index) + Constant.FILE_COPY
-                    + name.substring(index, name.length());
+            String prefix = oldName.substring(0, index);
+            String suffix = oldName.substring(index, oldName.length());
+            if (newName.equals(prefix)) {
+                name.append(newName).append(Constant.FILE_COPY).append(suffix);
+            }
+            else {
+                name.append(newName).append(suffix);
+            }
         }
         else {
-            newName = name + Constant.FILE_COPY;
+            if (newName.equals(oldName)) {
+                name.append(newName).append(Constant.FILE_COPY);
+            }
+            else {
+                name.append(newName);
+            }
         }
-        file.setFileName(newName);
+        if (name.length() != 0) {
+            file.setFileName(name.toString());
+        }
     }
 }

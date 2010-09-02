@@ -126,7 +126,7 @@ public class FolderServiceImpl implements FolderService {
             parentfolder.getChildren().add(newFolder);
 
             // If there is a same name folder in the target directory
-            if (isSameName(parentfolder, folderName)) {
+            if (isSameNameFolder(parentfolder, folderName)) {
                 newFolder.setFolderName(folderName + Constant.FOLDER_COPY);
             }
             else {
@@ -387,7 +387,7 @@ public class FolderServiceImpl implements FolderService {
         try {
             temp = (Folder) BeanUtils.cloneBean(sourceFolder);
             // If there is a same name folder in the target directory
-            if (isSameName(targetFolder, temp.getFolderName())) {
+            if (isSameNameFolder(targetFolder, temp.getFolderName())) {
                 temp.setFolderName(temp.getFolderName() + Constant.FOLDER_COPY);
             }
         }
@@ -478,7 +478,7 @@ public class FolderServiceImpl implements FolderService {
             }
 
             // If there is a same name folder in the target directory
-            if (isSameName(folder.getParent(), newName)) {
+            if (isSameNameFolder(folder.getParent(), newName)) {
                 folder.setFolderName(newName + Constant.FOLDER_COPY);
             }
             else {
@@ -751,7 +751,7 @@ public class FolderServiceImpl implements FolderService {
      *             if folder is null or name is nul throw exception
      * @author bxji
      */
-    private boolean isSameName(Folder folder, String name) throws DbException {
+    private boolean isSameNameFolder(Folder folder, String name) throws DbException {
         if (folder == null || Validity.isNullAndEmpty(name)) {
             logger.debug("target folder can not be null");
             throw new DbException("target folder and name can not be null.");
