@@ -45,6 +45,7 @@ import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.JsonUtil;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
+import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.exception.DbException;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
@@ -251,10 +252,12 @@ public class FileUploadServlet extends AbstractServlet {
                     return;
                 }
                 
+                long sizeMax = SystemGlobals.getInt(UploadConstant.MAX_LENGTH)*1024*1024;
+                
                 ServletFileUpload upload = new ServletFileUpload();
                 upload.setHeaderEncoding(UploadConstant.HEADER_ENCODE);
-                upload.setFileSizeMax(UploadConstant.MAX_LENGTH);
-                upload.setSizeMax(UploadConstant.MAX_LENGTH);
+                upload.setFileSizeMax(sizeMax);
+                upload.setSizeMax(sizeMax);
                 UploadListener uploadListener = new UploadListener(pi);
                 upload.setProgressListener(uploadListener);
                 // Parse the request
@@ -303,8 +306,10 @@ public class FileUploadServlet extends AbstractServlet {
             return getText(MessageKeys.UPLOAD_NOT_LOGIN);
         }
         
-        if (fileSize >= UploadConstant.MAX_LENGTH) {
-            String[] params = {fileSize / (1024 * 1024)+"MB",UploadConstant.MAX_LENGTH/(1024*1024)+"MB"};
+        long sizeMax = SystemGlobals.getInt(UploadConstant.MAX_LENGTH);
+        
+        if (fileSize >= sizeMax*1024*1024) {
+            String[] params = {fileSize / (1024 * 1024)+"MB",sizeMax+"MB"};
             logger.warn("Upload files size is to big");
             return getText(MessageKeys.UPLOAD_SIZE_MAX, params);
         }

@@ -289,7 +289,8 @@ public class UploadServiceImpl implements UploadService {
         try {
             EntityManagerUtil.begin();
             userDao = DaoFactory.createDao(UserDao.class);
-            userDao.modifyPointByUserId(userId, UploadConstant.UPLOAD_DEFAULT_POINT);
+            int point = SystemGlobals.getInt(UploadConstant.UPLOAD_DEFAULT_POINT);
+            userDao.modifyPointByUserId(userId, point);
             EntityManagerUtil.commit();
         } catch (RuntimeException e) {
             //Ignore

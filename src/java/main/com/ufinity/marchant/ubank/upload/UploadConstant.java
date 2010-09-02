@@ -39,7 +39,7 @@ public interface UploadConstant {
     String SET_CURRENT_FOLDER_METHOD = "setCurrentFolder";
     
     //upload max size 10M
-    long MAX_LENGTH = 10 * 1024 * 1024L;
+    String MAX_LENGTH = "upload.file.max";
     //1KB
     int HTTP_REDUNDANT_LENGTH = 1024;
     
@@ -58,5 +58,5 @@ public interface UploadConstant {
     long UPDATE_THRESHOLD = 10 * 1024L;
     
     //default add point
-    int UPLOAD_DEFAULT_POINT = 2;
+    String UPLOAD_DEFAULT_POINT = "upload.default.point";
 }
