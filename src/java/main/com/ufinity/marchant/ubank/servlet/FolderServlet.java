@@ -106,6 +106,10 @@ public class FolderServlet extends AbstractServlet {
             copyTo(req, resp);
             return;
         }
+        else if (Constant.CANCEL_SHARE.equals(method)) {
+            cancelShare(req, resp);
+            return;
+        }
 
         forward(req, resp, rslt);
     }
@@ -445,5 +449,33 @@ public class FolderServlet extends AbstractServlet {
         catch (IOException e) {
             LOG.error("return json string exception", e);
         }
+    }
+
+    /**
+     * return ajax cancel share folder request result
+     * 
+     * @param jsonStr
+     *            json data String
+     * @param resp
+     *            HttpServletResponse
+     * @author bxji
+     */
+    private void cancelShare(HttpServletRequest req, HttpServletResponse resp) {
+        String id = req.getParameter(Constant.FOLDER_ID);
+        String result = Constant.REQUEST_RESULT_FAIL;
+        if (Validity.isNullAndEmpty(id)) {
+            return;
+        }
+        Long folderId = Long.parseLong(id);
+        try {
+            if (folderService.cancelShareFolder(folderId)) {
+                result = Constant.REQUEST_RESULT_SUCCESS;
+            }
+        }
+        catch (Exception e) {
+            LOG.error("share folder fail", e);
+        }
+        returnResp(result, resp);
+
     }
 }

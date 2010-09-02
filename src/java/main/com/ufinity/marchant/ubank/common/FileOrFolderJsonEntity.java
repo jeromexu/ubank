@@ -40,7 +40,7 @@ public class FileOrFolderJsonEntity {
     private String modTime;
     private String type;
     private String dir;
-    private Long size;
+    private String size;
     private boolean init;
     private Long layer;
 
@@ -151,15 +151,6 @@ public class FileOrFolderJsonEntity {
     }
 
     /**
-     * the getter method of size
-     * 
-     * @return the size
-     */
-    public Long getSize() {
-        return size;
-    }
-
-    /**
      * the getter method of modTime
      * 
      * @return the modTime
@@ -198,12 +189,21 @@ public class FileOrFolderJsonEntity {
     }
 
     /**
+     * the getter method of size
+     * 
+     * @return the size
+     */
+    public String getSize() {
+        return size;
+    }
+
+    /**
      * the setter method of the size
      * 
      * @param size
      *            the size to set
      */
-    public void setSize(Long size) {
+    public void setSize(String size) {
         this.size = size;
     }
 

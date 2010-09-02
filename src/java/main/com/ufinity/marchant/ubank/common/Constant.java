@@ -150,4 +150,7 @@ public interface Constant {
     public static final String REQUEST_RESULT_SUCCESS = "success";
     public static final String REQUEST_RESULT_FAIL = "fail";
 
+    // file size
+    public static final String FILE_SIZE_UNIT_KB = "KB";
+
 }

@@ -224,7 +224,8 @@ public class FolderServiceImpl implements FolderService {
                     jsonEntity.setId(file.getFileId());
                     jsonEntity.setPid(folder.getFolderId());
                     jsonEntity.setName(file.getFileName());
-                    jsonEntity.setSize(file.getSize());
+                    jsonEntity.setSize(file.getSize()
+                            + Constant.FILE_SIZE_UNIT_KB);
                     jsonEntity.setModTime(DateUtil.format(file.getModifyTime(),
                             DateUtil.YYYY_MM_DD_HH_MM_SS));
                     jsonEntity.setDir(file.getDirectory());
@@ -763,11 +764,10 @@ public class FolderServiceImpl implements FolderService {
         if (parentPath.length() > 0) {
             char c = parentPath.charAt(parentPath.length() - 1);
             if ('\\' == c || '/' == c) {
-                currentPath = parentPath + parentFolder.getFolderId() + "/";
+                currentPath = parentPath + parentFolder.getFolderId();
             }
             else {
-                currentPath = parentPath + "/" + parentFolder.getFolderId()
-                        + "/";
+                currentPath = parentPath + "/" + parentFolder.getFolderId();
             }
         }
         return currentPath;
@@ -848,7 +848,7 @@ public class FolderServiceImpl implements FolderService {
         String name = file.getFileName();
         int index = name.lastIndexOf('.');
         if (index != -1) {
-            String typeName = name.substring(index+1);
+            String typeName = name.substring(index + 1);
             if (!Validity.isNullAndEmpty(typeName)) {
                 return typeName.trim().toUpperCase();
             }

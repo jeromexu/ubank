@@ -274,7 +274,7 @@ function showContent(param) {
 					iconCls : 'icon-share',
 					handler : function() {
 						var record = $('#test').datagrid('getSelected');
-						if (record != null && !!record.sizel) {
+						if (record != null && record.type!='文件夹') {
 							$.messager.alert('提示 ', '文件不能共享，请选择文件夹', 'info');
 							return;
 						}
@@ -292,6 +292,45 @@ function showContent(param) {
 							}
 							$.messager.confirm('My Title', '你确定要共享“'
 											+ folderName + '”文件夹吗？',
+									function(r) {
+										if (r) {
+											$.get(url, {
+														'folderId' : id
+													}, function(data) {
+														if (data == 'success') {
+															returnResult(true);
+															reload();
+														} else {
+															returnResult(false);
+														}
+													});
+										}
+									});
+						}
+					}
+				}, {
+					text : '取消共享',
+					iconCls : 'icon-share',
+					handler : function() {
+						var record = $('#test').datagrid('getSelected');
+						if (record != null && record.type!='文件夹') {
+							$.messager.alert('提示 ', '文件不会被共享，请选择文件夹', 'info');
+							return;
+						}
+						var result = executeChecking(currTreeNode, record);
+						if (result) {
+							var url = '/ubank/portal/cancelShare.do';
+							var id;
+							var folderName;
+							if (record) {
+								id = record.id;
+								folderName = record.name;
+							} else {
+								id = currTreeNode.id;
+								folderName = currTreeNode.text;
+							}
+							$.messager.confirm('My Title', '你确定要取消“'
+											+ folderName + '”文件夹共享吗？',
 									function(r) {
 										if (r) {
 											$.get(url, {
