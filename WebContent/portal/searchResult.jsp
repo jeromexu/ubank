@@ -20,7 +20,10 @@
             <td><fmt:formatDate value="${file.modifyTime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
             
             <c:set var="isLogin" value="${not empty sessionScope.session_user}" />
-            <c:set var="currenthasPoint" value="${sessionScope.session_user.point}" />
+            <c:set var="currenthasPoint" value="${req_user.point}" />
+            <c:if test="${empty currenthasPoint}">
+              <c:set var="currenthasPoint" value="0" />
+            </c:if>
             <c:set var="needPoint" value="${u:getValue('download.point')}" />
             <c:set var="params" value="${fn:split(needPoint, ',')}" />
             <c:set var="confirmMsg" value="${u:getTextWithParams('download.msg', params)}" />
