@@ -66,7 +66,7 @@ public class User implements Serializable {
     private String password;
     private Date createTime;
     private Integer overSize;
-    private Long ponit;
+    private Long point;
 
     private Set<Folder> folders = new HashSet<Folder>();
     private Set<DownLoadLog> downLoadLogs = new HashSet<DownLoadLog>();
@@ -155,19 +155,18 @@ public class User implements Serializable {
     }
 
     /**
-     * @return the ponit
+     * @return the point
      */
     @Column(name = "POINT")
-    public Long getPonit() {
-        return ponit;
+    public Long getPoint() {
+        return point;
     }
 
     /**
-     * @param ponit
-     *            the ponit to set
+     * @param point the point to set
      */
-    public void setPonit(Long ponit) {
-        this.ponit = ponit;
+    public void setPoint(Long point) {
+        this.point = point;
     }
 
     /**
@@ -177,7 +176,7 @@ public class User implements Serializable {
     public Set<Folder> getFolders() {
         return folders;
     }
-    
+
     /**
      * @param folders
      *            the folders to set
@@ -185,7 +184,7 @@ public class User implements Serializable {
     public void setFolders(Set<Folder> folders) {
         this.folders = folders;
     }
-    
+
     /**
      * @return the downLoadLogs
      */
