@@ -113,22 +113,16 @@ public class UploadServiceImpl implements UploadService {
             bStream = new ByteArrayOutputStream();
             long bStreamLen = Streams.copy(stream, bStream, true);
 
-            logger.debug("Upload path is :"
-                    + this.getFileDir(realDir, fileFullName));
-            System.out.println("Upload path is :"
-                    + this.getFileDir(realDir, fileFullName));
-
-            File file = new File(this.getFileDir(realDir, fileFullName));
-            if (file.exists()) {
-                file.delete();
-            }
+            String name = getFileName(fileFullName);
+            String type = getFileType(fileFullName);
+            
+            File file = getUploadFile(realDir, name, type, 0);
+            
             out = new FileOutputStream(file);
             bStream.writeTo(out);
             createFiles.add(file);
 
             logger.debug("Upload fldName :" + fldName
-                    + ",just was uploaded len:" + bStreamLen);
-            System.out.println("Upload fldName :" + fldName
                     + ",just was uploaded len:" + bStreamLen);
 
             Folder folder = new Folder();
@@ -137,7 +131,7 @@ public class UploadServiceImpl implements UploadService {
             FileBean fb = new FileBean();
             fb.setFolder(folder);
             fb.setFileName(fileFullName);
-            fb.setFileType(getFileType(fileFullName));
+            fb.setFileType(type);
             Date now = new Date();
             fb.setCreateTime(now);
             fb.setModifyTime(now);
@@ -197,21 +191,6 @@ public class UploadServiceImpl implements UploadService {
 
     /**
      * 
-     * get file dir
-     * 
-     * @param currentDir
-     *            current dir
-     * @param fileName
-     *            file name
-     * @return file dir
-     */
-    private String getFileDir(String currentDir, String fileName) {
-        String name = fileName.substring(fileName.lastIndexOf("\\") + 1);
-        return currentDir + name;
-    }
-
-    /**
-     * 
      * get file type
      * 
      * @param fileName
@@ -224,6 +203,20 @@ public class UploadServiceImpl implements UploadService {
             return "";
         }
         return fileName.substring(i + 1);
+    }
+    
+    /**
+     * get file name
+     * 
+     * @param fileFullName file full name
+     * @return file name
+     */
+    private String getFileName(String fileFullName) {
+        int i = fileFullName.lastIndexOf(".");
+        if (i == -1) {
+            return fileFullName;
+        }
+        return fileFullName.substring(0, i);
     }
 
     /**
@@ -319,6 +312,35 @@ public class UploadServiceImpl implements UploadService {
             throw new DbException(e);
         } finally {
             EntityManagerUtil.closeEntityManager();
+        }
+    }
+    
+    /**
+     * get upload file
+     * 
+     * @param realDir dir
+     * @param name file name
+     * @param type file type
+     * @param index repeat index
+     * @return file
+     */
+    private File getUploadFile(String realDir, String name, String type, int index){
+        String newName = name;
+        
+        if(index != 0){
+            newName = name + "(" + index + ")";
+        }
+        if(!type.equals("")){
+            newName = newName + "." +type;
+        }
+       
+        File file = new File(realDir + newName);
+        if (file.exists()) {
+            index++;
+            return getUploadFile(realDir, name, type, index);
+        }else{
+            logger.debug("Upload path is :" + realDir + name + type);
+            return file;
         }
     }
 }
