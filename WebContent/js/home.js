@@ -130,10 +130,12 @@ function requestTimeout(){
 function download(confirmMsg, pointNotEnough, mustLogin, isLogin, url, point, needPoint) {
 	if(confirm(confirmMsg)) {
 		if(isLogin) {
+			/*
 			if(point < needPoint){
 				alert(pointNotEnough);
 				return false;
 			}
+			*/
 			location.href=url;
 		}else{
 			alert(mustLogin);
