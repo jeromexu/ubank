@@ -35,4 +35,16 @@ import com.ufinity.marchant.ubank.bean.DownLoadLog;
  */
 public interface DownLoadLogDao extends GenericDao<DownLoadLog, Long> {
 
+    /**
+     * this method is find download log by user id and file id.
+     * 
+     * @param userId
+     *            user's id
+     * @param fileId
+     *            file's id
+     * @return DownLoadLog
+     * @author skyqiang
+     */
+    public DownLoadLog findDownLoadLog(Long userId, Long fileId);
+
 }
