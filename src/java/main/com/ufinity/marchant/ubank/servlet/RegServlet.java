@@ -1,7 +1,6 @@
 package com.ufinity.marchant.ubank.servlet;
 
 import java.io.IOException;
-import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,9 +11,7 @@ import com.ufinity.marchant.ubank.captcha.MyCaptchaService;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
-import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
-import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UserService;
 
@@ -50,13 +47,13 @@ public class RegServlet extends AbstractServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
-        String method = parseActionName(request);
-        String rslt = Constant.ERROR_PAGE_500;
-        if (Constant.ACTION_REGISTER.equals(method)) {
-            rslt = register(request);
-        }
-        forward(request, response, rslt);
-    }
+		String method = parseActionName(request);
+		String rslt = Constant.ERROR_PAGE_500;
+		if (Constant.ACTION_REGISTER.equals(method)) {
+			rslt = register(request);
+		}
+		forward(request, response, rslt);
+	}
 
 	/**
 	 * display register
@@ -70,20 +67,7 @@ public class RegServlet extends AbstractServlet {
 	private String register(HttpServletRequest request) {
 
 		try {
-			String captchaCode = request
-					.getParameter(Constant.REQ_PARAM_CAPTCHACODE);
-			logger.debug(" request captchaCode = " + captchaCode);
-			if (Validity.isNullAndEmpty(captchaCode)) {
-				request.setAttribute(Constant.ATTR_ERROR_MSG,
-						getText(MessageKeys.CAPTCHA_ERR_MSG));
-				return Constant.REGISTER_PAGE;
-			}
-			HttpSession session = request.getSession();
-			boolean isValidateCode = false;
-			// retrieve the response
-			String validateCode = captchaCode.trim();
-			isValidateCode = MyCaptchaService.getInstance()
-					.validateCaptchaResponse(validateCode, session);
+			boolean isValidateCode = checkValidateCode(request);
 			if (!isValidateCode) {
 				// captcha code is not right
 				request.setAttribute(Constant.ATTR_ERROR_MSG,
@@ -96,23 +80,9 @@ public class RegServlet extends AbstractServlet {
 						.getParameter(Constant.REQ_PARAM_REPASSWORD);
 				logger.debug("userName = " + userName + ",pass = " + pass
 						+ ",repass = " + repass);
-				if (Validity.isNullAndEmpty(userName)
-						&& !(Validity.isLessLength(userName,
-								Constant.USERNAME_LENGTH))) {
-					request.setAttribute(Constant.ATTR_ERROR_MSG,
-							getText(MessageKeys.USERNAME_ERR_MSG));
-					return Constant.REGISTER_PAGE;
-				}
-				if (Validity.isNullAndEmpty(pass)
-						&& !(Validity.isLessLength(pass,
-								Constant.PASSWORD_LENGTH))) {
-					request.setAttribute(Constant.ATTR_ERROR_MSG,
-							getText(MessageKeys.PASS_ERR_MSG));
-					return Constant.REGISTER_PAGE;
-				} else if (!pass.equals(repass)) {
-					request.setAttribute(Constant.ATTR_ERROR_MSG,
-							getText(MessageKeys.REPASS_ERR_MSG));
-					return Constant.REGISTER_PAGE;
+				String errorMsg = validateParam(request, userName, pass, repass);
+				if (errorMsg != null) {
+					return errorMsg;
 				}
 				User user = new User();
 				user.setUserName(userName);
@@ -132,6 +102,64 @@ public class RegServlet extends AbstractServlet {
 					getText(MessageKeys.REGISTER_EXCEPTION));
 		}
 		return Constant.REGISTER_PAGE;
+	}
+
+	/**
+	 * 
+	 * check the captcha code
+	 * 
+	 * @param request
+	 *            user request code
+	 * @return true:right false:not right
+	 */
+	private boolean checkValidateCode(HttpServletRequest request) {
+		String captchaCode = request
+				.getParameter(Constant.REQ_PARAM_CAPTCHACODE);
+		logger.debug(" request captchaCode = " + captchaCode);
+		if (Validity.isNullAndEmpty(captchaCode)) {
+			return false;
+		}
+		HttpSession session = request.getSession();
+		// retrieve the response
+		boolean isValidateCode = MyCaptchaService.getInstance()
+				.validateCaptchaResponse(captchaCode.trim(), session);
+		return isValidateCode;
+	}
+
+	/**
+	 * 
+	 * check the param
+	 * 
+	 * @param request
+	 *            user request event
+	 * @param userName
+	 *            user's name
+	 * @param pass
+	 *            user's password
+	 * @param repass
+	 *            user's repassword
+	 * @return hava error message(view page) or not 
+	 */
+	private String validateParam(HttpServletRequest request, String userName,
+			String pass, String repass) {
+		if (Validity.isNullAndEmpty(userName)
+				&& !(Validity.isLessLength(userName, Constant.USERNAME_LENGTH))) {
+			request.setAttribute(Constant.ATTR_ERROR_MSG,
+					getText(MessageKeys.USERNAME_ERR_MSG));
+			return Constant.REGISTER_PAGE;
+		}
+		if (Validity.isNullAndEmpty(pass)
+				&& !(Validity.isLessLength(pass, Constant.PASSWORD_LENGTH))) {
+			request.setAttribute(Constant.ATTR_ERROR_MSG,
+					getText(MessageKeys.PASS_ERR_MSG));
+			return Constant.REGISTER_PAGE;
+		} else if (!pass.equals(repass)) {
+			request.setAttribute(Constant.ATTR_ERROR_MSG,
+					getText(MessageKeys.REPASS_ERR_MSG));
+			return Constant.REGISTER_PAGE;
+		}
+		return null;
+
 	}
 
 }
