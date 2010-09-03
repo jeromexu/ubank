@@ -67,11 +67,11 @@
 
 	<body onload="addUploadForm()">
 		<input type="button" id="addFormButton" onclick="addUploadForm()"
-				value="add file"/>
+				value="增加文件"/>
 		<hr><br><br>
 		<div id = "mainUpload"></div>
 		<input type="button" id="uploadbutton" onclick="doUpload();"
-				value="upload" />
+				value="上传" />
 				
 		<script type="text/javascript">
 			var index = 1;
@@ -97,6 +97,7 @@
 						$("#uploadedFiles"+tagUpload).html("");
 						$("#progressBarText"+tagUpload).hide();
 						$("#progressBarBoxContent"+tagUpload).hide();
+						$("#uploadbutton").hide();
 					}
 				}
 			}
@@ -116,7 +117,7 @@
 					+ "	</div>"
 					+ " </div>"
 					+ "<input type='button' id='controlbutton"+index+"' onclick='controlUpload("+index+");'"
-					+ "	value='pause' style='display: none;'/>"
+					+ "	value='暂停' style='display: none;'/>"
 					+ "<br>"
 					+ "<iframe id='upload_frame"+index+"' name='upload_frame"+index+"' style='display: none;' height='50' width='400'></iframe>"
 					+ "</form>");
@@ -164,7 +165,7 @@
 			    }
 			    
 			    $("#uploadedFiles"+filedName).html(uploadInfo.uploadedFiles);
-			    $("#progressBarText"+filedName).html('Time elapsed: <b>' + secondsElapsed + '</b> seconds;Average Speed: <b>' + speed + 'KB/s</b><br/>Uploading <b>' + uploadInfo.curFileName + '.. [' + progressPercent + '%]</b>');
+			    $("#progressBarText"+filedName).html('花费时间: <b>' + secondsElapsed + '</b> 秒;平局速度: <b>' + speed + 'KB/s</b><br/>上传 <b>' + uploadInfo.curFileName + '.. [' + progressPercent + '%]</b>');
 			    $("#progressBarBoxContent"+filedName).attr("style","width:"+ parseInt(progressPercent * 3.5) + "px");
 			    
 			    if(uploadInfo.errorMsg){
@@ -172,7 +173,15 @@
 				  	$("#progressBarBoxContent"+filedName).hide();
 			    	$("#uploadedFiles"+filedName).html('<font color="red"><b>' + uploadInfo.errorMsg + '</b></font><br/>');
 			    }else{
-			    	$("#uploadedFiles"+filedName).html(uploadInfo.uploadedFiles + '<br/><b>Total size: ' + Math.ceil(uploadInfo.totalSize/1024) + 'KB</b>');
+			    	var displaySize;
+			    	var size = Math.ceil(uploadInfo.totalSize/1024);
+			    	if(size >= 1024){
+			    		displaySize = Math.round(size/1024*100)/100 + "MB";
+			    	}else{
+			    		displaySize = size + "KB";
+			    	}
+			    
+			    	$("#uploadedFiles"+filedName).html(uploadInfo.uploadedFiles + '<br/><b>文件大小: ' + displaySize + '</b>');
 			   	}
 			   	
 			   	if(uploadInfo.inProgress == "false"){
@@ -182,7 +191,7 @@
 				  	
 				  	$("#controlbutton"+filedName).hide();
 				  	if(uploadInfo.completed == "true"){
-				  		 $("#progressBarText"+filedName).html('Time elapsed: <b>' + secondsElapsed + '</b> seconds;Average Speed: <b>' + speed + 'KB/s</b><br/>Uploading <b>' + uploadInfo.curFileName + '.. [100%]</b>');
+				  		 $("#progressBarText"+filedName).html('花费时间: <b>' + secondsElapsed + '</b> 秒;平局速度: <b>' + speed + 'KB/s</b><br/>上传 <b>' + uploadInfo.curFileName + '.. [100%]</b>');
 				  		 $("#progressBarBoxContent"+filedName).attr("style","width:"+ parseInt(100 * 3.5) + "px");
 				  	}
 				}
@@ -190,7 +199,7 @@
 
 			function init(filedName){
 				$("#progressBar"+filedName).attr("style","display: block");
-				$("#progressBarText"+filedName).html("<b>Loading...</b>");
+				$("#progressBarText"+filedName).html("<b>读取中...</b>");
 				$("#controlbutton"+filedName).show();
 				$("#uploadedFiles"+filedName).html("");
 				$("#progressBarText"+filedName).show();
@@ -203,11 +212,11 @@
 				if(pauseOrContinue){
 					controllMap.put(filedName,false);
 					$.get("pause.do?filedName="+filedName); 
-					$("#controlbutton"+filedName).attr("value","continue");
+					$("#controlbutton"+filedName).attr("value","继续");
 				}else{
 					controllMap.put(filedName,true);
 					$.get("continueUpload.do?filedName="+filedName); 
-					$("#controlbutton"+filedName).attr("value","pause");
+					$("#controlbutton"+filedName).attr("value","暂停");
 				}
 			}
 			
