@@ -18,7 +18,7 @@ import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
-import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.UserService;
 
@@ -92,7 +92,7 @@ public class UserServiceImplTest {
 
         try {
             assertNull(userService.getUser(userName, password));
-        } catch (UBankException e) {
+        } catch (UBankServiceException e) {
             fail("get user error");
         }
 
@@ -110,9 +110,9 @@ public class UserServiceImplTest {
 		try {
 			assertEquals("admin", userService.getUser(userName, password)
 					.getUserName());
-		} catch (UBankException e) {
-			fail("get user error");
-		}
+		} catch (UBankServiceException e) {
+		    fail("get user error");
+        }
 
 		context.assertIsSatisfied();
 	}

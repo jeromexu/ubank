@@ -17,6 +17,7 @@ import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.FileService;
 
 /**
@@ -101,9 +102,9 @@ public class FileServiceImplTest {
 		try {
 			assertEquals(0, fileService.searchShareFiles(fileName, fileSize,
 					publishDate, pageNum, pageSize).getTotalRecords());
-		} catch (UBankException e) {
-			fail("search file error");
-		}
+		} catch (UBankServiceException e) {
+		    fail("search file error");
+        }
 
 		// Case2:测试有满足搜索条件的记录
 		// 输入参数： 预设搜索条件
@@ -120,9 +121,9 @@ public class FileServiceImplTest {
 		try {
 			assertEquals(1, fileService.searchShareFiles(fileName, fileSize,
 					publishDate, pageNum, pageSize).getTotalRecords());
-		} catch (UBankException e) {
-			fail("search file error");
-		}
+		} catch (UBankServiceException e) {
+		    fail("search file error");
+        }
 
 		context.assertIsSatisfied();
 	}

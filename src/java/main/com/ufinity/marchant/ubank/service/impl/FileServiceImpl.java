@@ -52,6 +52,7 @@ import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.model.DownloadResponse;
 import com.ufinity.marchant.ubank.model.DownloadStatus;
 import com.ufinity.marchant.ubank.service.FileService;
@@ -100,13 +101,13 @@ public class FileServiceImpl implements FileService {
      * @param pageSize
      *            pageSize
      * @return file pager obj
-     * @throws UBankException
+     * @throws UBankServiceException
      *             if occur exception, throw it
      * @author zdxue
      */
     public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
             String publishDate, int pageNum, int pageSize)
-            throws UBankException {
+            throws UBankServiceException {
 
         logger.debug("search condition - [fileName=" + fileName
                 + " , fileSize=" + fileSize + " , publishDate=" + publishDate
@@ -151,7 +152,7 @@ public class FileServiceImpl implements FileService {
         catch (Exception e) {
             // not need rollback
             logger.error("search share file exception", e);
-            throw new UBankException("search share file exception");
+            throw new UBankServiceException("search share file exception");
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -696,5 +697,34 @@ public class FileServiceImpl implements FileService {
         }
         oldFile.setRepeatCount(repeatCount + 1);
         return newName.toString();
+    }
+
+    /**
+     * get file 
+     *
+     * @param fileId file id
+     * @return FileBean
+     * @throws UBankServiceException occur exception, throw it 
+     * @author zdxue
+     */
+    public FileBean getFile(long fileId) throws UBankServiceException {
+        logger.debug("fileId=" + fileId);
+        
+        FileBean file = null; 
+        try{
+            EntityManagerUtil.begin();
+            
+            file = fileDao.find(fileId);
+            logger.debug("file=" + file);
+            
+            EntityManagerUtil.commit();
+        }catch(Exception e) {
+            logger.error("find file exception", e);
+            throw new UBankServiceException("find file exception");
+        }finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+         
+        return file;
     }
 }

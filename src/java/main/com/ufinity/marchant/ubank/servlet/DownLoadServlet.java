@@ -15,9 +15,11 @@ import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DocumentUtil;
 import com.ufinity.marchant.ubank.common.Logger;
+import com.ufinity.marchant.ubank.common.StringUtil;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.model.DownloadResponse;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
@@ -61,6 +63,8 @@ public class DownLoadServlet extends AbstractServlet {
         try{
             if (Constant.ACTION_DOWNLOAD.equals(method)) {
                 rslt = download(request, response);
+            }else if(Constant.ACTION_SHOW_DOWNLOAD.equals(method)) {
+                rslt = showDownload(request, response);
             }
         } catch (UBankException e) {
             logger.error("occur UBankException.", e);
@@ -71,6 +75,37 @@ public class DownLoadServlet extends AbstractServlet {
         if (rslt != null) {
             forward(request, response, rslt);
         }
+    }
+    
+    /**
+     * show download 
+     *
+     * @param request request
+     * @param response response
+     * @return download page
+     * @throws UBankException 
+     * @author zdxue
+     */
+    private String showDownload(HttpServletRequest request, HttpServletResponse response) throws UBankException {
+        String id = request.getParameter("id");
+        logger.debug("fileId=" + id);
+        
+        int fileId = StringUtil.parseInt(id, 0);
+        logger.debug("fileId=" + fileId);
+        
+        FileService fileService = ServiceFactory.createService(FileService.class);
+        FileBean file = null;
+        try {
+            file = fileService.getFile(fileId);
+            logger.debug("file=" + file);
+        } catch (UBankServiceException e) {
+            logger.error("show download exception", e);
+            throw new UBankException("show download exception");
+        }
+        
+        request.setAttribute(Constant.ATTR_FILE, file);
+        request.setAttribute(Constant.ATTR_EVENTPATH, request.getServletPath()+"?"+request.getQueryString());
+        return Constant.DOWNLOAD;
     }
 
     /**
@@ -87,8 +122,8 @@ public class DownLoadServlet extends AbstractServlet {
     private String download(HttpServletRequest request,
             HttpServletResponse response) throws IOException, UBankException {
         if(!checkLogin(request)){
-            request.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.MUST_LOGIN));
-            return Constant.HOME_HTML;
+            request.setAttribute(Constant.ATTR_EVENTPATH, request.getParameter(Constant.REQ_PARAM_EVENTPATH));
+            return Constant.LOGIN_PAGE;
         }
 
         BufferedInputStream buff = null;
@@ -108,18 +143,22 @@ public class DownLoadServlet extends AbstractServlet {
             File file = null;
 
             DownloadResponse resp = fileService.download(fileId, getLoginUser(request));
+            FileBean fileBean = resp.getFile();
             switch(resp.getStatus()) {
             case OK :
-                return download(file, resp.getFile(), request, response, buff,outPut);
+                return download(file, fileBean, request, response, buff,outPut);
             case FILE_NOT_EXIST:
                 request.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.DOWNLOAD_FILE_NOT_EXIST));
-                return Constant.HOME_HTML;
+                request.setAttribute(Constant.ATTR_FILE, fileBean);
+                return Constant.DOWNLOAD;
             case POINT_NOT_ENOUGH:
                 request.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.DOWNLOAD_POINT_NOT_ENOUGH));
-                return Constant.HOME_HTML;
+                request.setAttribute(Constant.ATTR_FILE, fileBean);
+                return Constant.DOWNLOAD;
             case OTHER_ERROR: 
                 request.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.DOWNLOAD_OTHER_ERROR));
-                return Constant.HOME_HTML;
+                request.setAttribute(Constant.ATTR_FILE, fileBean);
+                return Constant.DOWNLOAD;
             }
         } finally {
             if (buff != null) {

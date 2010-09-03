@@ -37,6 +37,7 @@ import com.ufinity.marchant.ubank.common.StringUtil;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 
@@ -100,20 +101,23 @@ public class SearchServlet extends AbstractServlet {
         String fileSize = req.getParameter(Constant.REQ_PARAM_FILESIZE);
         String publishDate = req.getParameter(Constant.REQ_PARAM_PUBLISHDATE);
         String pageNumber = req.getParameter(Constant.REQ_PARAM_PAGENUM);
-        logger.debug("fileName=" + fileName + " , fileSize=" + fileSize
-                + " , publishDate=" + publishDate + " , pageNumber="
-                + pageNumber);
 
         int pageNum = StringUtil.parseInt(pageNumber, Constant.PAGE_NUM_DEF);
-
-        logger.debug("pageNum=" + pageNum);
-
-        FileService fileService = ServiceFactory
-                .createService(FileService.class);
-
         int pageSize = SystemGlobals.getInt(ConfigKeys.PAGE_SIZE);
-        Pager<FileBean> filePager = fileService.searchShareFiles(fileName, fileSize,
-                    publishDate, pageNum, pageSize);
+        
+        logger.debug("fileName=" + fileName + " , fileSize=" + fileSize
+                + " , publishDate=" + publishDate + " , pageNumber="
+                + pageNumber + " , pageNum=" + pageNum + " , pageSize="+pageSize);
+
+        FileService fileService = ServiceFactory.createService(FileService.class);
+
+        Pager<FileBean> filePager = null;
+        try{
+            filePager = fileService.searchShareFiles(fileName, fileSize,publishDate, pageNum, pageSize);
+        }catch(UBankServiceException e){
+            logger.error("search exception", e);
+            throw new UBankException("search exception");
+        }
         
         req.setAttribute(Constant.ATTR_FILEPAGER, filePager);
         req.setAttribute(Constant.ATTR_FILENAME, fileName);

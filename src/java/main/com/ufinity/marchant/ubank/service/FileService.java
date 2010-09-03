@@ -27,6 +27,7 @@ import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.model.DownloadResponse;
 
 /**
@@ -51,13 +52,13 @@ public interface FileService {
      * @param pageSize
      *            pageSize
      * @return file pager obj
-     * @throws UBankException
+     * @throws UBankServiceException
      *             if occur exception, throw it
      * @author zdxue
      */
     public Pager<FileBean> searchShareFiles(String fileName, String fileSize,
             String publishDate, int pageNum, int pageSize)
-            throws UBankException;
+            throws UBankServiceException;
 
     /**
      * download file by id
@@ -118,5 +119,15 @@ public interface FileService {
      * @author bxji
      */
     public boolean renameFile(Long fileId, String newName);
+    
+    /**
+     * get file 
+     *
+     * @param fileId file id
+     * @return FileBean
+     * @throws UBankServiceException occur exception, throw it 
+     * @author zdxue
+     */
+    public FileBean getFile(long fileId) throws UBankServiceException ;
 
 }

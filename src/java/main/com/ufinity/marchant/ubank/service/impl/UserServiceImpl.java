@@ -41,7 +41,7 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
-import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.UserService;
 
@@ -124,18 +124,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * Get User by username and password
-	 * 
-	 * @param username
-	 *            user's name
-	 * @param password
-	 *            user's password
-	 * @return User obj
-	 * @throws UBankException
-	 *             if occur exception, then throw it
-	 * @author zdxue
-	 */
-	public User getUser(String username, String password) throws UBankException {
+     * Get User by username and password
+     * 
+     * @param username
+     *            user's name
+     * @param password
+     *            user's password
+     * @return User obj
+     * @throws UBankServiceException if occur exception, then throw it
+     * @author zdxue
+     */
+	public User getUser(String username, String password) throws UBankServiceException {
 	    logger.debug("username=" + username + " , password=" + password);
 	    
 		User user = null;
@@ -149,6 +148,7 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			// not need rollback
 			logger.error("get user exception", e);
+			throw new UBankServiceException("get user exception");
 		} finally {
 			EntityManagerUtil.closeEntityManager();
 		}
