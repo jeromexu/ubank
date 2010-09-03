@@ -169,11 +169,11 @@ public class DocumentUtil {
 			if (!sFile.exists()) {
 				return 0;
 			}
-			dFile = new File(sFile, newName);
+			dFile = new File(dFile, newName);
 			// copy the file
 			boolean copyResult = copyFile(sFile, dFile);
-			return isMoveOrCopy ? (sFile.delete() ? 1 : 0) : (copyResult ? 1
-					: 0);
+			return isMoveOrCopy ? (copyResult && sFile.delete() ? 1 : 0)
+					: (copyResult ? 1 : 0);
 
 		} catch (Exception e) {
 			LOGGER.error("move or copy a file exception!", e);
@@ -216,15 +216,20 @@ public class DocumentUtil {
 			if (serverPath != null) {
 				StringBuffer olderPath = new StringBuffer();
 				if (FOLDER_DIRECTORY.endsWith(FILE_SYSTEM_SEPARATOR)) {
-					olderPath.append(serverPath).append(FOLDER_DIRECTORY).append(FOLDERNAME);
+					olderPath.append(serverPath).append(FOLDER_DIRECTORY)
+							.append(FOLDERNAME);
 				} else {
-					olderPath.append(serverPath).append(FOLDER_DIRECTORY).append(FILE_SYSTEM_SEPARATOR).append(FOLDERNAME);
+					olderPath.append(serverPath).append(FOLDER_DIRECTORY)
+							.append(FILE_SYSTEM_SEPARATOR).append(FOLDERNAME);
 				}
 				StringBuffer newPath = new StringBuffer();
 				if (newFolderDirecotry.endsWith(FILE_SYSTEM_SEPARATOR)) {
-					newPath.append(serverPath).append(newFolderDirecotry).append(newFolderName); 
+					newPath.append(serverPath).append(newFolderDirecotry)
+							.append(newFolderName);
 				} else {
-					newPath.append(serverPath).append(newFolderDirecotry).append(FILE_SYSTEM_SEPARATOR).append(newFolderName);
+					newPath.append(serverPath).append(newFolderDirecotry)
+							.append(FILE_SYSTEM_SEPARATOR)
+							.append(newFolderName);
 				}
 				LOGGER.debug("olderPath=" + olderPath + ", newPath=" + newPath);
 				newPath.append(FILE_SYSTEM_SEPARATOR).append(FOLDERNAME);
@@ -234,7 +239,8 @@ public class DocumentUtil {
 				}
 
 				// copy the folder
-				copyResult = copyFolder(olderPath.toString(), newPath.toString());
+				copyResult = copyFolder(olderPath.toString(), newPath
+						.toString());
 				// move operation
 				if (isMoveOrCopy) {
 					// move: first copy and then delete the folder
@@ -352,7 +358,7 @@ public class DocumentUtil {
 		try {
 			// read source file
 			fis = new FileInputStream(sFile);
-			fos = new FileOutputStream(new File(dFile, sFile.getName()));
+			fos = new FileOutputStream(dFile);
 			byte[] buffer = new byte[1024];
 			int bytesum = 0;
 			int byteread = 0;
