@@ -66,8 +66,8 @@ public class User implements Serializable {
     private String userName;
     private String password;
     private Date createTime;
-    private Integer overSize;
-    private Integer point = 0;
+    private int overSize;
+    private int point;
 
     private Set<Folder> folders = new HashSet<Folder>();
     private Set<DownLoadLog> downLoadLogs = new HashSet<DownLoadLog>();
@@ -143,7 +143,7 @@ public class User implements Serializable {
      * @return the overSize
      */
     @Column(name = "OVER_SIZE", nullable = false)
-    public Integer getOverSize() {
+    public int getOverSize() {
         return overSize;
     }
 
@@ -151,7 +151,7 @@ public class User implements Serializable {
      * @param overSize
      *            the overSize to set
      */
-    public void setOverSize(Integer overSize) {
+    public void setOverSize(int overSize) {
         this.overSize = overSize;
     }
 
@@ -159,7 +159,7 @@ public class User implements Serializable {
      * @return the point
      */
     @Column(name = "POINT")
-    public Integer getPoint() {
+    public int getPoint() {
         return point;
     }
 
@@ -167,7 +167,7 @@ public class User implements Serializable {
      * @param point
      *            the point to set
      */
-    public void setPoint(Integer point) {
+    public void setPoint(int point) {
         this.point = point;
     }
 
