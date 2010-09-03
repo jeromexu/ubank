@@ -79,14 +79,16 @@ public class FolderNode {
         }
         Long layer = NodeUtil.getLayer(folder);
         FolderNode node = new FolderNode();
-        FolderNode temp = new FolderNode();
+        FolderNode temp = null;
         copyProperties(node, folder);
         node.setLayer(layer);
         Set<Folder> children = folder.getChildren();
         for (Folder child : children) {
             temp = generateFolderTree(child);
         }
-        node.getSubNodes().add(temp);
+        if (temp != null) {
+            node.getSubNodes().add(temp);
+        }
         return node;
     }
 
@@ -177,7 +179,8 @@ public class FolderNode {
             if (parentNode != null) {
                 node.setLayer(1l + parentNode.getLayer());
                 parentNode.getSubNodes().add(node);
-            }else {
+            }
+            else {
                 node.setLayer(0l);
             }
         }
