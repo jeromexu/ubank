@@ -29,7 +29,7 @@
             <c:set var="confirmMsg" value="${u:getTextWithParams('download.msg', params)}" />
             <c:set var="pointNotEnough" value="${u:getText('download.point.notenough')}" />
             <c:set var="mustLogin" value="${u:getText('must.login')}" />
-            <td><a onclick="return download('${confirmMsg}', '${pointNotEnough}', '${mustLogin}', ${isLogin}, 'download.do?id=${file.fileId }', '${currenthasPoint}', '${needPoint}')" href=''><font size="2">${u:getText('ubank.home.thead.download') }</font></a></td>
+            <td><a onclick="showDownload(${isLogin}, '${mustLogin}', 'showDownload.do?id=${file.fileId}')" href="#"><font size="2">${u:getText('ubank.home.thead.download') }</font></a></td>
           </tr>
       </c:forEach>
     </c:when>

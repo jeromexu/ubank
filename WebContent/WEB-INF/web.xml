@@ -98,6 +98,10 @@
 		<servlet-name>DownLoadServlet</servlet-name>
 		<url-pattern>/portal/download.do</url-pattern>
 	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DownLoadServlet</servlet-name>
+        <url-pattern>/portal/showDownload.do</url-pattern>
+    </servlet-mapping>
 	<servlet>
 		<servlet-name>fileUploadServlet</servlet-name>
 		<servlet-class>com.ufinity.marchant.ubank.servlet.FileUploadServlet</servlet-class>

@@ -17,18 +17,21 @@
 			<div class="topDiv">
 			   <h2>UBank</h2>
                 
-                <c:if test="${not empty error_msg}">
-                <span class="errorMsgDiv" title="${error_msg}">${error_msg}</span>
-                  <!-- 
-                  <div class="errorMsgDiv">
-                    <span title="${error_msg}">${error_msg}</span>
-                  </div>
-                   -->
-                </c:if>
+                <div class="loginAndRegDiv">
+                  <c:choose>
+                    <c:when test="${not empty session_user}">
+                      hi , <a href="main.jsp"><c:out value="${session_user.userName}" escapeXml="true"/></a>
+                    </c:when>
+                    <c:otherwise>
+                      <a href="login.jsp">${u:getText('ubank.home.message.login')}</a>
+                      <a href="register.jsp">${u:getText('ubank.home.message.register')}</a>
+                    </c:otherwise>
+                  </c:choose>
+                </div>
 			</div>
 			
 			<div class="leftDiv">
-				
+
 				<div class="search_div">
 						<select class="file_size_select" name="fileSize" id="fileSize">
 							<option value="0">${u:getText('ubank.home.search.filesize.0') }</option>
@@ -57,29 +60,6 @@
 				</div>
 				
 			</div>
-			
-			<div class="rightDiv">
-      
-				<div class="loginDiv">
-                    
-                    <c:choose>
-                      <c:when  test="${empty session_user}">
-                        <form action="login.do" method="post" id="loginForm">
-                          <input type="hidden" name="eventPath" id="eventPath" value="${eventPath}">
-                                  
-                          ${u:getText('ubank.home.login.username.ipt')}:<input class="username_clz" type="text" name="userName" maxlength="50" id="userName"><br>
-                          ${u:getText('ubank.home.login.password.ipt')}:<input class="password_clz" type="password" name="password" maxlength="50" id="password"><br>
-                          <input class="login_btn" type="button" onclick="return login()"  id="loginBtn" value=${u:getText('ubank.home.login.login.btn')} />
-                          <input class="register_btn" type="button" onclick="goPage('register.jsp')" value=${u:getText('ubank.home.login.register.btn')} />
-                       </form>                      
-                      </c:when>
-                      <c:otherwise>
-                        <span>welcome, <a href="main.jsp">${session_user.userName }</a></span>
-                      </c:otherwise>
-                    </c:choose>
-				</div>
-        
-			</div>	
 			
 			<div class="footDiv"></div>
 		</div>	

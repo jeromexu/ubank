@@ -127,7 +127,7 @@ function requestTimeout(){
 	$('#searchResultDiv').empty().append(text);
 }
 
-function download(confirmMsg, pointNotEnough, mustLogin, isLogin, url, point, needPoint) {
+function download(confirmMsg, pointNotEnough, mustLogin, isLogin, url, eventPath, point, needPoint) {
 	if(confirm(confirmMsg)) {
 		if(isLogin) {
 			/*
@@ -139,10 +139,19 @@ function download(confirmMsg, pointNotEnough, mustLogin, isLogin, url, point, ne
 			location.href=url;
 		}else{
 			alert(mustLogin);
-			$('#eventPath').val("../portal/home.html");
-			$('#userName').focus();
-			//location.href="../portal/home.html";
+			location.href="../portal/login.jsp?eventPath="+eventPath;
 		}
 	}
 	return false;
+}
+
+function showDownload(isLogin, mustLogin, url) {
+	//if(isLogin) {
+		//window.open (url, 'newwindow', 'height=300,width=800,top=0,left=0,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no');
+	top.window.open(url);
+//	}else{
+//		alert(mustLogin);
+//		$('#eventPath').val("../portal/home.html");
+//		$('#userName').focus();
+//	}
 }
