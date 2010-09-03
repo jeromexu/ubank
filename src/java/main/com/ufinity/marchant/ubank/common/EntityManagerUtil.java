@@ -108,6 +108,19 @@ public class EntityManagerUtil {
     }
 
     /**
+     * this method is get transacton active or not.
+     * 
+     * @return boolean true is transacton is active, else is not.
+     * @author skyqiang
+     */
+    public static boolean isActive() {
+        if (getEntityManager().getTransaction().isActive()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 
      * this method is transaction roll back
      * 
