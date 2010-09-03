@@ -139,16 +139,14 @@ public class DocumentUtil {
 	 *            folder object
 	 * @param isMoveOrCopy
 	 *            move:true copy:false
-	 * @param isSameName
-	 *            same:true not same:false
+	 * @param newName
+	 *            the new file name
+	 * 
 	 * @return success:1 failure:0
 	 * @author jerome
 	 */
 	public static Integer moveOrCopyFileTo(FileBean fileBean, Folder folder,
-			boolean isMoveOrCopy, boolean isSameName) {
-
-		FileInputStream fis = null;
-		FileOutputStream fos = null;
+			boolean isMoveOrCopy, String newName) {
 		try {
 			if (fileBean != null) {
 				FILENAME = fileBean.getFileName();
@@ -167,39 +165,18 @@ public class DocumentUtil {
 			if (!dFile.exists()) {
 				dFile.mkdirs();
 			}
-			int bytesum = 0;
-			int byteread = 0;
-			// file exists
-			if (sFile.exists()) {
-				// read source file
-				fis = new FileInputStream(sFile);
-				fos = new FileOutputStream(new File(dFile, sFile.getName()));
-				byte[] buffer = new byte[1024];
-				while ((byteread = fis.read(buffer)) != -1) {
-					bytesum += byteread;
-					LOGGER.debug("file length=" + bytesum);
-					fos.write(buffer, 0, byteread);
-				}
-				fos.flush();
-				return isMoveOrCopy ? (sFile.delete() ? 1 : 0) : 1;
+			// source file exists
+			if (!sFile.exists()) {
+				return 0;
 			}
+			dFile = new File(sFile, newName);
+			// copy the file
+			boolean copyResult = copyFile(sFile, dFile);
+			return isMoveOrCopy ? (sFile.delete() ? 1 : 0) : (copyResult ? 1
+					: 0);
+
 		} catch (Exception e) {
 			LOGGER.error("move or copy a file exception!", e);
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		return 0;
 	}
@@ -213,13 +190,11 @@ public class DocumentUtil {
 	 *            the target folder
 	 * @param isMoveOrCopy
 	 *            move:true copy:false
-	 * @param isSameName
-	 *            same:true not same:false
 	 * @return integer success or not: success 1 failure 0
 	 * @author jerome
 	 */
 	public static int moveOrCopyFolderTo(Folder folder, Folder newFolder,
-			boolean isMoveOrCopy, boolean isSameName) {
+			boolean isMoveOrCopy) {
 		try {
 			if (folder != null) {
 				FOLDERNAME = String.valueOf(folder.getFolderId());
@@ -239,33 +214,36 @@ public class DocumentUtil {
 			boolean delResult = false;
 			boolean copyResult = false;
 			if (serverPath != null) {
-				String olderPath = null;
+				StringBuffer olderPath = new StringBuffer();
 				if (FOLDER_DIRECTORY.endsWith(FILE_SYSTEM_SEPARATOR)) {
-					olderPath = serverPath + FOLDER_DIRECTORY + FOLDERNAME;
+					olderPath.append(serverPath).append(FOLDER_DIRECTORY).append(FOLDERNAME);
 				} else {
-					olderPath = serverPath + FOLDER_DIRECTORY
-							+ FILE_SYSTEM_SEPARATOR + FOLDERNAME;
+					olderPath.append(serverPath).append(FOLDER_DIRECTORY).append(FILE_SYSTEM_SEPARATOR).append(FOLDERNAME);
 				}
-				String newPath = null;
+				StringBuffer newPath = new StringBuffer();
 				if (newFolderDirecotry.endsWith(FILE_SYSTEM_SEPARATOR)) {
-					newPath = serverPath + newFolderDirecotry + newFolderName;
+					newPath.append(serverPath).append(newFolderDirecotry).append(newFolderName); 
 				} else {
-					newPath = serverPath + newFolderDirecotry
-							+ FILE_SYSTEM_SEPARATOR + newFolderName;
+					newPath.append(serverPath).append(newFolderDirecotry).append(FILE_SYSTEM_SEPARATOR).append(newFolderName);
 				}
 				LOGGER.debug("olderPath=" + olderPath + ", newPath=" + newPath);
-				newPath = newPath + FILE_SYSTEM_SEPARATOR + FOLDERNAME;
-				File oldFile = new File(olderPath);
-				if (oldFile.exists()) {
-					copyResult = copyFolder(olderPath, newPath);
-					if (isMoveOrCopy) {
-						// move operation
-						delResult = delFolder(olderPath);
-						return (copyResult && delResult) ? 1 : 0;
-					} else {
-						// copy operation
-						return copyResult ? 1 : 0;
-					}
+				newPath.append(FILE_SYSTEM_SEPARATOR).append(FOLDERNAME);
+				File oldFile = new File(olderPath.toString());
+				if (!oldFile.exists()) {
+					return 0;
+				}
+
+				// copy the folder
+				copyResult = copyFolder(olderPath.toString(), newPath.toString());
+				// move operation
+				if (isMoveOrCopy) {
+					// move: first copy and then delete the folder
+					delResult = delFolder(olderPath.toString());
+					return (copyResult && delResult) ? 1 : 0;
+				}
+				// copy operation
+				else {
+					return copyResult ? 1 : 0;
 				}
 			}
 		} catch (Exception e) {
@@ -336,6 +314,76 @@ public class DocumentUtil {
 			LOGGER.error("remove folder exception!", e);
 		}
 		return 0;
+	}
+
+	/**
+	 * 
+	 * get the server path
+	 * 
+	 * @return the server path
+	 * @author jerome
+	 */
+	public static String getApplicationPath() {
+		String catalinaHome = System.getProperty("catalina.home");
+		String serverPath = null;
+		if (!Validity.isEmpty(catalinaHome)) {
+			serverPath = SystemGlobals.getString(ConfigKeys.SERVER_PATH,
+					catalinaHome);
+		} else {
+			return null;
+		}
+		return serverPath;
+	}
+
+	/**
+	 * 
+	 * copy source file to the dest folder
+	 * 
+	 * @param sFile
+	 *            the source file
+	 * @param dFile
+	 *            the dest folder
+	 * @return success:1 failure:0
+	 * @author jerome
+	 */
+	private static boolean copyFile(File sFile, File dFile) {
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		try {
+			// read source file
+			fis = new FileInputStream(sFile);
+			fos = new FileOutputStream(new File(dFile, sFile.getName()));
+			byte[] buffer = new byte[1024];
+			int bytesum = 0;
+			int byteread = 0;
+			while ((byteread = fis.read(buffer)) != -1) {
+				bytesum += byteread;
+				LOGGER.debug("file length=" + bytesum);
+				fos.write(buffer, 0, byteread);
+			}
+			fos.flush();
+			return true;
+		} catch (Exception e) {
+			LOGGER.debug("copy the file exception!", e);
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					LOGGER.error("input stream close exception!", e);
+				}
+			}
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					LOGGER.error("output stream close exception!", e);
+				}
+			}
+		}
+
+		return false;
+
 	}
 
 	/**
@@ -505,25 +553,6 @@ public class DocumentUtil {
 	}
 
 	/**
-	 * 
-	 * get the server path
-	 * 
-	 * @return the server path
-	 * @author jerome
-	 */
-	public static String getApplicationPath() {
-		String catalinaHome = System.getProperty("catalina.home");
-		String serverPath = null;
-		if (!Validity.isEmpty(catalinaHome)) {
-			serverPath = SystemGlobals.getString(ConfigKeys.SERVER_PATH,
-					catalinaHome);
-		} else {
-			return null;
-		}
-		return serverPath;
-	}
-
-	/**
 	 * test method
 	 * 
 	 * @param args
@@ -557,15 +586,16 @@ public class DocumentUtil {
 		 * =renameFolder(folder,"ggggggg"); System.out.println(result);
 		 */
 
-		/*FileBean fileBean = new FileBean();
-		fileBean.setDirectory("D:\\test\\a");
-		fileBean.setFileName("haha.txt");
-
-		Folder folder = new Folder();
-		folder.setDirectory("D:\\test\\b");
-		folder.setFolderName("c");
-
-		Integer result = copyFile(fileBean, folder);
-		System.out.println(result);*/
+		/*
+		 * FileBean fileBean = new FileBean();
+		 * fileBean.setDirectory("D:\\test\\a");
+		 * fileBean.setFileName("haha.txt");
+		 * 
+		 * Folder folder = new Folder(); folder.setDirectory("D:\\test\\b");
+		 * folder.setFolderName("c");
+		 * 
+		 * Integer result = copyFile(fileBean, folder);
+		 * System.out.println(result);
+		 */
 	}
 }
