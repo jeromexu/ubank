@@ -400,7 +400,7 @@ public class FileServiceImpl implements FileService {
                 boolean same = isSameNameFile(folder, fileCopy.getFileName());
                 // copy disk file
                 int result = DocumentUtil.moveOrCopyFileTo(fileCopy, folder,
-                        false, same);
+                        false, "");
                 if (result != 1) {
                     logger.debug("copy disk file IO exception");
                     return false;
@@ -489,7 +489,7 @@ public class FileServiceImpl implements FileService {
             boolean same = isSameNameFile(folder, file.getFileName());
             // move disk file
             int result = DocumentUtil
-                    .moveOrCopyFileTo(file, folder, true, same);
+                    .moveOrCopyFileTo(file, folder, true, "");
             if (result != 1) {
                 logger.debug("Move disk file IO exception");
                 return false;
@@ -552,8 +552,8 @@ public class FileServiceImpl implements FileService {
             }
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("Database exception where tried to remove a file.", e);
+            EntityManagerUtil.rollback();
             return false;
         }
         finally {
@@ -599,8 +599,8 @@ public class FileServiceImpl implements FileService {
             }
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("update the database exception when rename a file", e);
+            EntityManagerUtil.rollback();
         }
         finally {
             EntityManagerUtil.closeEntityManager();

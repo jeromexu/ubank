@@ -154,9 +154,9 @@ public class FolderServiceImpl implements FolderService {
             return newFolder;
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("The database throw an  exception "
                     + "when create a folder. ", e);
+            EntityManagerUtil.rollback();
             return null;
         }
         finally {
@@ -187,9 +187,9 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.commit();
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("When try get user directory tree "
                     + "happened to thd database an exception", e);
+            EntityManagerUtil.rollback();
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -262,8 +262,8 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.commit();
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("happened to thd database an exception", e);
+            EntityManagerUtil.rollback();
             return null;
         }
         finally {
@@ -286,9 +286,7 @@ public class FolderServiceImpl implements FolderService {
             return false;
         }
         try {
-            EntityManagerUtil.begin();
             Folder folder = folderDao.find(folderId);
-            EntityManagerUtil.commit();
             if (!Constant.FOLDER_TYPE_CUSTOMER.equals(folder.getFolderType())) {
                 logger.debug("system Initial directoy can not delete");
                 throw new UBankException(
@@ -299,9 +297,6 @@ public class FolderServiceImpl implements FolderService {
         catch (Exception e) {
             logger.error("delete folder failed ", e);
             return false;
-        }
-        finally {
-            EntityManagerUtil.closeEntityManager();
         }
     }
 
@@ -326,12 +321,15 @@ public class FolderServiceImpl implements FolderService {
         Folder source = null;
         Folder target = null;
         try {
-            EntityManagerUtil.begin();
             source = folderDao.find(sourceFolderId);
             target = folderDao.find(targetFolderId);
-
-            int result = DocumentUtil.moveOrCopyFolderTo(source, target, false,
-                    false);
+            // if have same name folder
+            boolean same = isSameNameFolder(target, source.getFolderName());
+            if (same) {
+                String folderNewName = getNewName(target);
+                source.setFolderName(folderNewName);
+            }
+            int result = DocumentUtil.moveOrCopyFolderTo(source, target, false);
             if (result != 1) {
                 return false;
             }
@@ -341,18 +339,12 @@ public class FolderServiceImpl implements FolderService {
             else {
                 copyFolder(target, source, false);
             }
-            EntityManagerUtil.commit();
             return true;
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("database exception", e);
             return false;
         }
-        finally {
-            EntityManagerUtil.closeEntityManager();
-        }
-
     }
 
     /**
@@ -379,16 +371,13 @@ public class FolderServiceImpl implements FolderService {
             Folder target = folderDao.find(targetFolderId);
             target.getChildren().add(source);
             source.setParent(target);
-            int result = DocumentUtil.moveOrCopyFolderTo(source, target, false,
-                    false);
             source.setDirectory(getDiskPath(target));
+            boolean same = isSameNameFolder(target, source.getFolderName());
+            if (same) {
+                getNewName(source);
+            }
             folderDao.modify(target);
             folderDao.modify(source);
-            if (result != 1) {
-                EntityManagerUtil.rollback();
-                logger.debug("move disk file fail");
-                return false;
-            }
 
             // update all files Shared state and reset disk path (directory
             // property)
@@ -398,12 +387,18 @@ public class FolderServiceImpl implements FolderService {
             else {
                 resetChildrenDiskPathAndShare(source, false);
             }
+            int result = DocumentUtil.moveOrCopyFolderTo(source, target, true);
+            if (result != 1) {
+                EntityManagerUtil.rollback();
+                logger.debug("move disk file fail");
+                return false;
+            }
             EntityManagerUtil.commit();
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("When moving folder to specified directory ,"
                     + " the database throw an exception.", e);
+            EntityManagerUtil.rollback();
             return false;
         }
         finally {
@@ -527,7 +522,6 @@ public class FolderServiceImpl implements FolderService {
 
         try {
             EntityManagerUtil.begin();
-
             Folder folder = folderDao.find(folderId);
             // if old name equals new name
             if (newName.equals(folder.getFolderName())) {
@@ -546,8 +540,8 @@ public class FolderServiceImpl implements FolderService {
             return true;
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("database exception ,when folder rename .", e);
+            EntityManagerUtil.rollback();
             return false;
         }
         finally {
@@ -589,9 +583,9 @@ public class FolderServiceImpl implements FolderService {
                 }
             }
             catch (Exception e) {
-                EntityManagerUtil.rollback();
                 logger.error("update the database exception "
                         + "when delete a disk file .", e);
+                EntityManagerUtil.rollback();
                 // return false;
             }
             finally {
@@ -619,8 +613,8 @@ public class FolderServiceImpl implements FolderService {
             }
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("delete disk directory fail.", e);
+            EntityManagerUtil.rollback();
             return false;
         }
         finally {
@@ -655,9 +649,9 @@ public class FolderServiceImpl implements FolderService {
             return false;
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("When sharing a folder,database"
                     + " throw an exception .", e);
+            EntityManagerUtil.rollback();
             return false;
         }
         finally {
@@ -685,9 +679,9 @@ public class FolderServiceImpl implements FolderService {
             return true;
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("When cancel share a folder "
                     + ",database throw an exception", e);
+            EntityManagerUtil.rollback();
             return false;
         }
         finally {
@@ -916,9 +910,44 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.commit();
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("generate share tree exception", e);
+            EntityManagerUtil.rollback();
         }
         return shareRoot;
     }
+
+    private String getNewName(Folder oldFolder) {
+        if (oldFolder == null) {
+            return null;
+        }
+        int repeatCount = oldFolder.getRepeatCount();
+        String oldName = oldFolder.getFolderName();
+        StringBuilder newName = new StringBuilder(oldName);
+        newName.append("(").append(repeatCount + 1).append(")");
+        oldFolder.setRepeatCount(repeatCount + 1);
+        return newName.toString();
+    }
+
+    private static String getNewName(FileBean fileBean) {
+        if (fileBean == null) {
+            return null;
+        }
+        String oldName = fileBean.getFileName();
+        StringBuffer newName = new StringBuffer();
+        int repeatCount = fileBean.getRepeatCount();
+        int index = oldName.lastIndexOf('.');
+        if (index != -1) {
+            String prefix = oldName.substring(0, index);
+            String suffix = oldName.substring(index, oldName.length());
+            newName.append(prefix).append("(").append(repeatCount + 1).append(
+                    ")").append(suffix);
+        }
+        else {
+            newName.append(oldName).append("(").append(repeatCount + 1).append(
+                    ")");
+        }
+        fileBean.setRepeatCount(repeatCount + 1);
+        return newName.toString();
+    }
+
 }
