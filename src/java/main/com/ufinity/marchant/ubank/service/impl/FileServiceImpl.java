@@ -588,6 +588,9 @@ public class FileServiceImpl implements FileService {
         try {
             EntityManagerUtil.begin();
             FileBean file = fileDao.find(fileId);
+            if (newName.equals(file.getFileName())) {
+                return true;
+            }
             if (file != null) {
                 String fileName = file.getFileName();
                 FileBean sameNameOldFile = getSameNameOldFile(file.getFolder(),
