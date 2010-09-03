@@ -78,8 +78,8 @@ public class UploadServiceImpl implements UploadService {
      *            info of upload
      * @param item
      *            the FileItemStream
-     * @throws Exception
-     *             if have exception
+     * @throws UBankServiceException
+     *             if have UBankServiceException
      */
     public void uploadAndSaveDb(Long folderId, String folderDir, ProgressInfo pi, FileItemStream item)
             throws UBankServiceException {
