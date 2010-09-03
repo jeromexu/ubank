@@ -40,6 +40,7 @@ public interface Constant {
     String ATTR_EVENTPATH = "eventPath";
     String ATTR_FILESIZE = "fileSize";
     String ATTR_PUBLISHDATE = "publishDate";
+    String ATTR_FILE = "file";
 
     /** charset filter config */
     String ENABLE_FILTER = "true";
@@ -69,6 +70,8 @@ public interface Constant {
     /** the key for set session attribute */
     String SESSION_USER = "session_user";
 
+    String LOGIN_PAGE = "login.jsp";
+    String DOWNLOAD = "download.jsp";
     String HOME_HTML = "home.html";
     String HOME_PAGE = "home.jsp";
     String MAIN_PAGE = "main.jsp";
@@ -82,6 +85,7 @@ public interface Constant {
     public final String REGISTER_MSG = "register_msg";
 
     // user download action
+    String ACTION_SHOW_DOWNLOAD = "showDownload";
     public final String ACTION_DOWNLOAD = "download";
     // user register action
     public final String ACTION_REGISTER = "register";
