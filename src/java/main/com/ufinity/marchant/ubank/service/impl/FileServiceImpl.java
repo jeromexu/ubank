@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -401,12 +400,8 @@ public class FileServiceImpl implements FileService {
                 EntityManagerUtil.begin();
                 Folder folder = folderDao.find(targetFolderId);
                 // If there is a same name file in the target directory
-                FileBean sameNameOldFile = getSameNameOldFile(folder, fileCopy
-                        .getFileName());
-                String fileName = fileCopy.getFileName();
-                if (sameNameOldFile != null) {
-                    fileName = getNewName(sameNameOldFile);
-                }
+                String fileName = DocumentUtil.getNewName(fileCopy
+                        .getDirectory(), fileCopy.getFileName(), 0);
                 // copy disk file
                 int result = DocumentUtil.moveOrCopyFileTo(fileCopy, folder,
                         false, fileName);
@@ -414,7 +409,6 @@ public class FileServiceImpl implements FileService {
                     logger.debug("copy disk file IO exception");
                     return false;
                 }
-                fileCopy.setFileName(fileName);
 
                 // if target folder is shared directory
                 if (folder.getShare()) {
@@ -423,6 +417,7 @@ public class FileServiceImpl implements FileService {
                 else {
                     fileCopy.setShare(false);
                 }
+                fileCopy.setFileName(fileName);
                 fileCopy.setDirectory(getDiskPath(folder));
                 fileCopy.setFolder(folder);
                 fileCopy.setModifyTime(new Date());
@@ -440,7 +435,6 @@ public class FileServiceImpl implements FileService {
         finally {
             EntityManagerUtil.closeEntityManager();
         }
-
         return false;
     }
 
@@ -493,12 +487,9 @@ public class FileServiceImpl implements FileService {
                 return true;
             }
             // If there is a same name file in the target directory
-            FileBean sameNameOldFile = getSameNameOldFile(folder, file
-                    .getFileName());
-            String fileName = file.getFileName();
-            if (sameNameOldFile != null) {
-                fileName = getNewName(sameNameOldFile);
-            }
+            String fileName = DocumentUtil.getNewName(file.getDirectory(), file
+                    .getFileName(), 0);
+
             // move disk file
             int result = DocumentUtil.moveOrCopyFileTo(file, folder, true,
                     fileName);
@@ -513,6 +504,7 @@ public class FileServiceImpl implements FileService {
             else {
                 file.setShare(false);
             }
+            file.setFileName(fileName);
             file.setFolder(folder);
             file.setModifyTime(new Date());
             file.setDirectory(getDiskPath(folder));
@@ -588,16 +580,12 @@ public class FileServiceImpl implements FileService {
         try {
             EntityManagerUtil.begin();
             FileBean file = fileDao.find(fileId);
-            if (newName.equals(file.getFileName())) {
-                return true;
-            }
             if (file != null) {
-                String fileName = file.getFileName();
-                FileBean sameNameOldFile = getSameNameOldFile(file.getFolder(),
-                        newName);
-                if (sameNameOldFile != null) {
-                    fileName = getNewName(sameNameOldFile);
+                if (newName.equals(file.getFileName())) {
+                    return true;
                 }
+                String fileName = DocumentUtil.getNewName(file.getDirectory(),
+                        newName, 0);
                 int result = DocumentUtil.renameFile(file, fileName);
                 if (result != 1) {
                     logger.debug("rename disk file fail.");
@@ -647,84 +635,35 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
-     * Whether the same name with the current directory files
+     * get file
      * 
-     * @param folder
-     *            current directory
-     * @param name
-     *            name
-     * @return exist same name return this FileBean else return null
-     * @author bxji
-     */
-    private FileBean getSameNameOldFile(Folder folder, String name) {
-        if (folder == null || Validity.isNullAndEmpty(name)) {
-            return null;
-        }
-        Set<FileBean> files = folder.getFiles();
-        for (FileBean file : files) {
-            if (name.equals(file.getFileName())) {
-                return file;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * get a new name according to the original file name
-     * 
-     * @param oldFile
-     *            original exist fileBean
-     * @return a new name
-     * @author bxji
-     */
-    private static String getNewName(FileBean oldFile) {
-        if (oldFile == null) {
-            return null;
-        }
-        String oldName = oldFile.getFileName();
-        StringBuffer newName = new StringBuffer();
-        int repeatCount = oldFile.getRepeatCount();
-        int index = oldName.lastIndexOf('.');
-        if (index != -1) {
-            String prefix = oldName.substring(0, index);
-            String suffix = oldName.substring(index, oldName.length());
-            newName.append(prefix).append("(").append(repeatCount + 1).append(
-                    ")").append(suffix);
-        }
-        else {
-            newName.append(oldName).append("(").append(repeatCount + 1).append(
-                    ")");
-        }
-        oldFile.setRepeatCount(repeatCount + 1);
-        return newName.toString();
-    }
-
-    /**
-     * get file 
-     *
-     * @param fileId file id
+     * @param fileId
+     *            file id
      * @return FileBean
-     * @throws UBankServiceException occur exception, throw it 
+     * @throws UBankServiceException
+     *             occur exception, throw it
      * @author zdxue
      */
     public FileBean getFile(long fileId) throws UBankServiceException {
         logger.debug("fileId=" + fileId);
-        
-        FileBean file = null; 
-        try{
+
+        FileBean file = null;
+        try {
             EntityManagerUtil.begin();
-            
+
             file = fileDao.find(fileId);
             logger.debug("file=" + file);
-            
+
             EntityManagerUtil.commit();
-        }catch(Exception e) {
+        }
+        catch (Exception e) {
             logger.error("find file exception", e);
             throw new UBankServiceException("find file exception");
-        }finally {
+        }
+        finally {
             EntityManagerUtil.closeEntityManager();
         }
-         
+
         return file;
     }
 }

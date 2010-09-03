@@ -124,7 +124,6 @@ public class FolderServlet extends AbstractServlet {
             throws IOException {
         User user = getLoginUser(req);
         if (user == null) {
-            redirect(resp, Constant.HOME_HTML);
             return;
         }
         FolderNode treeRootNode = null;
@@ -150,7 +149,6 @@ public class FolderServlet extends AbstractServlet {
         catch (UBankException e) {
             logger.error("when try get user root directory, "
                     + "throw an exception:user id can not be null", e);
-            redirect(resp, Constant.ERROR_PAGE_500);
         }
     }
 
@@ -168,7 +166,6 @@ public class FolderServlet extends AbstractServlet {
             HttpServletResponse resp) throws IOException {
         User user = getLoginUser(req);
         if (user == null) {
-            redirect(resp, Constant.HOME_HTML);
             return;
         }
         String fid = req.getParameter(Constant.FOLDER_ID);
