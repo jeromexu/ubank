@@ -108,9 +108,10 @@ public class FileServiceImpl implements FileService {
             String publishDate, int pageNum, int pageSize)
             throws UBankException {
 
-        logger.debug("search condition - [fileName=" + fileName + " , fileSize=" + fileSize 
-                + " , publishDate=" + publishDate + " , pageNum=" + pageNum + " , pageSize=" + pageSize);
-        
+        logger.debug("search condition - [fileName=" + fileName
+                + " , fileSize=" + fileSize + " , publishDate=" + publishDate
+                + " , pageNum=" + pageNum + " , pageSize=" + pageSize);
+
         if (fileName == null) {
             fileName = Constant.FILENAME_EMPTY;
         }
@@ -140,10 +141,11 @@ public class FileServiceImpl implements FileService {
         Pager<FileBean> pager = null;
         try {
             EntityManagerUtil.begin();
-            
-            pager = fileDao.searchPaginatedForFile(pageNum, pageSize, condition);
+
+            pager = fileDao
+                    .searchPaginatedForFile(pageNum, pageSize, condition);
             logger.debug("pager records=" + pager.getPageRecords());
-            
+
             EntityManagerUtil.commit();
         }
         catch (Exception e) {
@@ -174,7 +176,7 @@ public class FileServiceImpl implements FileService {
     public DownloadResponse download(Long fileId, User user)
             throws UBankException {
         logger.debug("fileId=" + fileId + " , user=" + user);
-        
+
         DownloadResponse response = new DownloadResponse();
 
         if (Validity.isEmpty(fileId)) {
@@ -194,7 +196,7 @@ public class FileServiceImpl implements FileService {
         // find here in order to override the session user's opint
         user = userDao.find(user.getUserId());
         logger.debug("find user=" + user);
-        
+
         try {
             EntityManagerUtil.begin();
             FileBean fileBean = fileDao.find(fileId);
@@ -215,12 +217,14 @@ public class FileServiceImpl implements FileService {
             }
 
             Date downLoadTime = new Date();
-            DownLoadLog downloadLog = downloadLogDao.findDownLoadLog(user.getUserId(), fileBean.getFileId());
-            logger.debug("find downloadLog by userId and fileId = " + downloadLog);
-            
+            DownLoadLog downloadLog = downloadLogDao.findDownLoadLog(user
+                    .getUserId(), fileBean.getFileId());
+            logger.debug("find downloadLog by userId and fileId = "
+                    + downloadLog);
+
             int downloadPoint = SystemGlobals.getInt(ConfigKeys.DOWNLOAD_POINT);
             logger.debug("download need point = " + downloadPoint);
-            
+
             if (downloadLog == null) {
                 if (user.getPoint() < downloadPoint) {
                     response.setStatus(DownloadStatus.POINT_NOT_ENOUGH);
@@ -233,9 +237,9 @@ public class FileServiceImpl implements FileService {
                 entity.setUser(user);
                 entity.setFile(fileBean);
                 entity.setDownLoadTime(downLoadTime);
-                
+
                 logger.debug("new downloadlog that will add to DB =" + entity);
-                
+
                 downloadLogDao.add(entity);
             }
             else {
@@ -249,9 +253,9 @@ public class FileServiceImpl implements FileService {
             EntityManagerUtil.commit();
 
             response.setStatus(DownloadStatus.OK);
-            
+
             logger.debug("download response=" + response);
-            
+
             return response;
         }
         catch (Exception e) {
@@ -274,7 +278,7 @@ public class FileServiceImpl implements FileService {
      */
     private String getFileSizeConf(String fileSize) {
         logger.debug("fileSize=" + fileSize);
-        
+
         String fileSizeConf = "";
         if (Constant.FILE_SIZE_0.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_0);
@@ -291,9 +295,9 @@ public class FileServiceImpl implements FileService {
         else if (Constant.FILE_SIZE_4.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_4);
         }
-        
+
         logger.debug("fileSizeConf=" + fileSizeConf);
-        
+
         return fileSizeConf;
     }
 
@@ -308,9 +312,9 @@ public class FileServiceImpl implements FileService {
     private long getMinFileSize(String fileSize) {
         long minFileSize = StringUtil.parseInt(getFileSizeConf(fileSize).split(
                 Constant.FILE_SIZE_SEPARATOR)[0]);
-        
+
         logger.debug("MinFileSize=" + minFileSize);
-        
+
         return minFileSize;
     }
 
@@ -325,9 +329,9 @@ public class FileServiceImpl implements FileService {
     private long getMaxFileSize(String fileSize) {
         long maxFileSize = StringUtil.parseInt(getFileSizeConf(fileSize).split(
                 Constant.FILE_SIZE_SEPARATOR)[1]);
-        
+
         logger.debug("MaxFileSize=" + maxFileSize);
-        
+
         return maxFileSize;
     }
 
@@ -363,7 +367,7 @@ public class FileServiceImpl implements FileService {
         }
 
         logger.debug("date roll amount = " + amount);
-        
+
         if (amount == 1) {
             logger.info("amount == 1, return null");
             return null;
@@ -371,7 +375,7 @@ public class FileServiceImpl implements FileService {
 
         DateUtil.roll(cal, Calendar.DAY_OF_YEAR, amount);
         logger.debug("MaxModifyDate=" + cal.getTime());
-        
+
         return cal.getTime();
     }
 
@@ -397,17 +401,20 @@ public class FileServiceImpl implements FileService {
                 EntityManagerUtil.begin();
                 Folder folder = folderDao.find(targetFolderId);
                 // If there is a same name file in the target directory
-                boolean same = isSameNameFile(folder, fileCopy.getFileName());
+                FileBean sameNameFile = getSameNameOldFile(folder, fileCopy
+                        .getFileName());
+                String fileName = fileCopy.getFileName();
+                if (sameNameFile != null) {
+                    fileName = getNewName(sameNameFile);
+                }
                 // copy disk file
                 int result = DocumentUtil.moveOrCopyFileTo(fileCopy, folder,
-                        false, "");
+                        false, fileName);
                 if (result != 1) {
                     logger.debug("copy disk file IO exception");
                     return false;
                 }
-                if (same) {
-                    autoRename(fileCopy);
-                }
+                fileCopy.setFileName(fileName);
 
                 // if target folder is shared directory
                 if (folder.getShare()) {
@@ -486,16 +493,18 @@ public class FileServiceImpl implements FileService {
                 return true;
             }
             // If there is a same name file in the target directory
-            boolean same = isSameNameFile(folder, file.getFileName());
+            FileBean sameNameFile = getSameNameOldFile(folder, file
+                    .getFileName());
+            String fileName = file.getFileName();
+            if (sameNameFile != null) {
+                fileName = getNewName(sameNameFile);
+            }
             // move disk file
-            int result = DocumentUtil
-                    .moveOrCopyFileTo(file, folder, true, "");
+            int result = DocumentUtil.moveOrCopyFileTo(file, folder, true,
+                    fileName);
             if (result != 1) {
                 logger.debug("Move disk file IO exception");
                 return false;
-            }
-            if (same) {
-                autoRename(file);
             }
             // if target folder is shared directory
             if (folder.getShare()) {
@@ -580,19 +589,18 @@ public class FileServiceImpl implements FileService {
             EntityManagerUtil.begin();
             FileBean file = fileDao.find(fileId);
             if (file != null) {
-                int result = DocumentUtil.renameFile(file, newName);
+                String fileName = file.getFileName();
+                FileBean sameNameOldFile = getSameNameOldFile(file.getFolder(),
+                        newName);
+                if (sameNameOldFile != null) {
+                    fileName = getNewName(sameNameOldFile);
+                }
+                int result = DocumentUtil.renameFile(file, fileName);
                 if (result != 1) {
                     logger.debug("rename disk file fail.");
                     return false;
                 }
-                if (isSameNameFile(file.getFolder(), newName)) {
-                    file.setFileName(newName);
-                    autoRename(file);
-                }
-                else {
-                    file.setFileName(newName);
-                }
-
+                file.setFileName(fileName);
                 fileDao.modify(file);
                 EntityManagerUtil.commit();
                 return true;
@@ -645,43 +653,44 @@ public class FileServiceImpl implements FileService {
      * @return have same name return 'true' else return 'false'
      * @author bxji
      */
-    private boolean isSameNameFile(Folder folder, String name) {
+    private FileBean getSameNameOldFile(Folder folder, String name) {
         if (folder == null || Validity.isNullAndEmpty(name)) {
-            return false;
+            return null;
         }
         Set<FileBean> files = folder.getFiles();
         for (FileBean file : files) {
             if (name.equals(file.getFileName())) {
-                return true;
+                return file;
             }
         }
-        return false;
+        return null;
     }
 
     /**
-     * If the same name file in the directory , automatically add default suffix
+     * {method description}
      * 
-     * @param file
-     *            file object
-     * @return new name
-     * @author bxji
+     * @param oldFile
+     * @return  xx
      */
-    private String autoRename(FileBean file) {
-        if (file == null) {
-            return "";
+    private static String getNewName(FileBean oldFile) {
+        if (oldFile == null) {
+            return null;
         }
-        String oldName = file.getFileName();
-        StringBuilder newName = new StringBuilder();
+        String oldName = oldFile.getFileName();
+        StringBuffer newName = new StringBuffer();
+        int repeatCount = oldFile.getRepeatCount();
         int index = oldName.lastIndexOf('.');
         if (index != -1) {
             String prefix = oldName.substring(0, index);
             String suffix = oldName.substring(index, oldName.length());
-            newName.append(prefix).append(Constant.FILE_COPY).append(suffix);
+            newName.append(prefix).append("(").append(repeatCount + 1).append(
+                    ")").append(suffix);
         }
         else {
-            newName.append(oldName).append(Constant.FILE_COPY);
+            newName.append(oldName).append("(").append(repeatCount + 1).append(
+                    ")");
         }
-        file.setFileName(newName.toString());
+        oldFile.setRepeatCount(repeatCount + 1);
         return newName.toString();
     }
 
