@@ -135,6 +135,7 @@ public class UploadServiceImpl implements UploadService {
             Date now = new Date();
             fb.setCreateTime(now);
             fb.setModifyTime(now);
+            fb.setRepeatCount(0);
             
             fb.setDirectory(folderDir + File.separator + folderId);
             // kb
