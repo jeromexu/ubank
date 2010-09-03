@@ -46,7 +46,6 @@ public class Validity {
     public static final String SPECIAL_CHARACTER = "~!@#$%^&()-_=+]\\|:;\"\\'<,>?/";
 
     /**
-     * 
      * Check whether string s is null
      * 
      * @param s
@@ -58,7 +57,6 @@ public class Validity {
     }
 
     /**
-     * 
      * Check whether string s is not null
      * 
      * @param s
@@ -239,10 +237,9 @@ public class Validity {
     }
 
     /**
-     * Returns true if all characters in string s are numbers.
-     * 
-     * Accepts non-signed integers only. Does not accept floating point,
-     * exponential notation, etc.
+     * Returns true if all characters in string s are numbers. Accepts
+     * non-signed integers only. Does not accept floating point, exponential
+     * notation, etc.
      * 
      * @param s
      *            any String
@@ -269,13 +266,10 @@ public class Validity {
     }
 
     /**
-     * True if string s is an unsigned floating point(real) number.
-     * 
-     * Also returns true for unsigned integers. If you wish to distinguish
-     * between integers and floating point numbers, first call isInteger, then
-     * call isFloat.
-     * 
-     * Does not accept exponential notation.
+     * True if string s is an unsigned floating point(real) number. Also returns
+     * true for unsigned integers. If you wish to distinguish between integers
+     * and floating point numbers, first call isInteger, then call isFloat. Does
+     * not accept exponential notation.
      * 
      * @param s
      *            any String
@@ -301,10 +295,12 @@ public class Validity {
             if (c == DECIMALPOINTDELIMITER.charAt(0)) {
                 if (!seenDecimalPoint) {
                     seenDecimalPoint = true;
-                } else {
+                }
+                else {
                     return false;
                 }
-            } else {
+            }
+            else {
                 if (!isDigit(c))
                     return false;
             }
@@ -352,7 +348,7 @@ public class Validity {
     public static boolean isNumber(String s) {
         return s != null && s.matches("[0-9]+");
     }
-    
+
     /**
      * Validate include special
      * 
@@ -387,11 +383,12 @@ public class Validity {
         }
         return false;
     }
-    
+
     /**
-     * is name 
-     *
-     * @param name name
+     * is name
+     * 
+     * @param name
+     *            name
      * @return if matche return true, else return false
      * @author zdxue
      */
@@ -399,15 +396,30 @@ public class Validity {
         String regex = "[a-zA-Z0-9[\u4e00-\u9fa5]]+";
         return name != null && name.matches(regex);
     }
-    
+
     /**
-     * is CDN code 
-     *
-     * @param cdn cdn code
+     * is CDN code
+     * 
+     * @param cdn
+     *            cdn code
      * @return if matched return true
      * @author zdxue
      */
     public static boolean isCDN(String cdn) {
         return cdn != null && cdn.matches("[a-zA-Z0-9]+");
+    }
+
+    /**
+     * Check 'longObj' whether is not null or zero.
+     * 
+     * @param longObj
+     *            Long object
+     * @return return boolean value that after checked
+     */
+    public static boolean isNotNullOrZero(Long longObj) {
+        if (longObj == null || 0l == longObj) {
+            return false;
+        }
+        return true;
     }
 }
