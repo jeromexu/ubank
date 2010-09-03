@@ -23,7 +23,7 @@
                       hi , <a href="main.jsp"><c:out value="${session_user.userName}" escapeXml="true"/></a>
                     </c:when>
                     <c:otherwise>
-                      <a href="login.jsp">${u:getText('ubank.home.message.login')}</a>
+                      <a href="login.jsp">${u:getText('ubank.home.message.login')}</a>&nbsp;&nbsp;
                       <a href="register.jsp">${u:getText('ubank.home.message.register')}</a>
                     </c:otherwise>
                   </c:choose>

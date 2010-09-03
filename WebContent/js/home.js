@@ -41,18 +41,18 @@ function goPage(url) {
 	//window.open(url);  //open new page in new window
 }
 
-function login() {
+function login(msg1, msg2) {
 	var userName = $("#userName").val();
 	var pwd = $("#password").val();
 	
 	if($.trim(userName) == ''){
-		alert("请输入用户名");
+		alert(msg1);
 		$("#userName").focus();
 		return false;
 	}
 	
 	if(pwd.length == 0) {
-		alert("请输入密码");
+		alert(msg2);
 		$("#password").focus();
 		return false;
 	}
