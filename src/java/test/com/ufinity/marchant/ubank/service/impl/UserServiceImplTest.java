@@ -19,6 +19,7 @@ import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.UserService;
 
 /**
@@ -147,7 +148,12 @@ public class UserServiceImplTest {
 				
 			}
 		});
-		String msg = userService.doRegister(user);
+		String msg = null;
+		try {
+			msg = userService.doRegister(user);
+		} catch (UBankServiceException e) {
+			e.printStackTrace();
+		}
 		assertEquals(MessageResource.getText(MessageKeys.REGISTER_FAILURE), msg);
 		
 		
@@ -172,7 +178,13 @@ public class UserServiceImplTest {
 				
 			}
 		});
-		String message = userService.doRegister(member);
+		String message = null;
+		try {
+			message = userService.doRegister(member);
+		} catch (UBankServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assertEquals(MessageResource.getText(MessageKeys.REGISTER_SUCCESS), message);
 		context.assertIsSatisfied();
 	}

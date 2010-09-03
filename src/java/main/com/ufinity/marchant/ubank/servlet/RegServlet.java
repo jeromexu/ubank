@@ -12,6 +12,8 @@ import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
+import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UserService;
 
@@ -49,10 +51,17 @@ public class RegServlet extends AbstractServlet {
 
 		String method = parseActionName(request);
 		String rslt = Constant.ERROR_PAGE_500;
-		if (Constant.ACTION_REGISTER.equals(method)) {
-			rslt = register(request);
+		try {
+			if (Constant.ACTION_REGISTER.equals(method)) {
+				rslt = register(request);
+			}
+		} catch (UBankException e) {
+			logger.error("occur UBankException: user register.", e);
+			redirect(response, Constant.ERROR_PAGE_500);
+			return;
 		}
 		forward(request, response, rslt);
+
 	}
 
 	/**
@@ -64,42 +73,39 @@ public class RegServlet extends AbstractServlet {
 	 *            res
 	 * @author jerome
 	 */
-	private String register(HttpServletRequest request) {
-
-		try {
-			boolean isValidateCode = checkValidateCode(request);
-			if (!isValidateCode) {
-				// captcha code is not right
-				request.setAttribute(Constant.ATTR_ERROR_MSG,
-						getText(MessageKeys.CAPTCHA_ERR_MSG));
-			} else {
-				String userName = request
-						.getParameter(Constant.REQ_PARAM_USERNAME);
-				String pass = request.getParameter(Constant.REQ_PARAM_PASSWORD);
-				String repass = request
-						.getParameter(Constant.REQ_PARAM_REPASSWORD);
-				logger.debug("userName = " + userName + ",pass = " + pass
-						+ ",repass = " + repass);
-				String errorMsg = validateParam(request, userName, pass, repass);
-				if (errorMsg != null) {
-					return errorMsg;
-				}
-				User user = new User();
-				user.setUserName(userName);
-				user.setPassword(pass);
-				userService = ServiceFactory.createService(UserService.class);
-				String registerMsg = userService.doRegister(user);
-				if (MessageKeys.REGISTER_FAILURE.equals(registerMsg)) {
-					logger.debug(userName + " register failure!");
-				} else {
-					logger.debug(userName + " register success!");
-				}
-				request.setAttribute(Constant.REGISTER_MSG, registerMsg);
-			}
-		} catch (Exception e) {
-			logger.error("register exception message!", e);
+	private String register(HttpServletRequest request) throws UBankException {
+		
+		boolean isValidateCode = checkValidateCode(request);
+		if (!isValidateCode) {
+			// captcha code is not right
 			request.setAttribute(Constant.ATTR_ERROR_MSG,
-					getText(MessageKeys.REGISTER_EXCEPTION));
+					getText(MessageKeys.CAPTCHA_ERR_MSG));
+		} else {
+			String userName = request.getParameter(Constant.REQ_PARAM_USERNAME);
+			String pass = request.getParameter(Constant.REQ_PARAM_PASSWORD);
+			String repass = request.getParameter(Constant.REQ_PARAM_REPASSWORD);
+			logger.debug("userName = " + userName + ",pass = " + pass
+					+ ",repass = " + repass);
+			String errorMsg = validateParam(request, userName, pass, repass);
+			if (errorMsg != null) {
+				return errorMsg;
+			}
+			User user = new User();
+			user.setUserName(userName);
+			user.setPassword(pass);
+			String registerMsg = null;
+			try{
+				userService = ServiceFactory.createService(UserService.class);
+				registerMsg = userService.doRegister(user);
+			}catch(UBankServiceException e){
+				throw new UBankException("user register exception!");
+			}
+			if (MessageKeys.REGISTER_FAILURE.equals(registerMsg)) {
+				logger.debug(userName + " register failure!");
+			} else {
+				logger.debug(userName + " register success!");
+			}
+			request.setAttribute(Constant.REGISTER_MSG, registerMsg);
 		}
 		return Constant.REGISTER_PAGE;
 	}
@@ -138,7 +144,7 @@ public class RegServlet extends AbstractServlet {
 	 *            user's password
 	 * @param repass
 	 *            user's repassword
-	 * @return hava error message(view page) or not 
+	 * @return hava error message(view page) or not
 	 */
 	private String validateParam(HttpServletRequest request, String userName,
 			String pass, String repass) {

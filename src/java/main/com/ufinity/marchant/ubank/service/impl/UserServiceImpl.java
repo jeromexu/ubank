@@ -42,6 +42,7 @@ import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.UserService;
 
 /**
@@ -75,9 +76,10 @@ public class UserServiceImpl implements UserService {
 	 * @param user
 	 *            a person who do register
 	 * @return the number which register a user
+	 * @throws UBankServiceException if occur exception, then throw it
 	 * @author jerome
 	 */
-	public String doRegister(User user) {
+	public String doRegister(User user) throws UBankServiceException {
 		logger.debug("doRegister:param[user]=" + user);
 		try {
 
@@ -111,6 +113,8 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			logger.error("user register exception!", e);
 			EntityManagerUtil.rollback();
+			throw new UBankServiceException("user regiter service exception!");
+			
 		} finally {
 			EntityManagerUtil.closeEntityManager();
 		}

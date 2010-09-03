@@ -28,6 +28,7 @@ package com.ufinity.marchant.ubank.service;
 
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 
 /**
  * 
@@ -46,9 +47,10 @@ public interface UserService {
 	 * @param user
 	 *            a person who do register
 	 * @return return the message which register a user
+	 * @throws UBankServiceException if occur exception, then throw it
 	 * @author jerome
 	 */
-	public String doRegister(User user);
+	public String doRegister(User user) throws UBankServiceException;
 
 	/**
 	 * Get User by username and password
