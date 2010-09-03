@@ -26,7 +26,6 @@ package com.ufinity.marchant.ubank.service;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Pager;
-import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.model.DownloadResponse;
 
@@ -67,12 +66,12 @@ public interface FileService {
      *            the id of the file
      * @param user who will download
      * @return the response obj of download operation
-     * @throws UBankException
+     * @throws UBankServiceException
      *             the exception which do not get the file
      * @author jerome
      * @author modify by zdxue - refact the return type and method name
      */
-    public DownloadResponse download(Long fileId, User user) throws UBankException;
+    public DownloadResponse download(Long fileId, User user) throws UBankServiceException;
 
     /**
      * Copy file to the specified directory

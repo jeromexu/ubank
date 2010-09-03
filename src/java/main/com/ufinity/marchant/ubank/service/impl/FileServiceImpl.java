@@ -50,7 +50,6 @@ import com.ufinity.marchant.ubank.dao.DownLoadLogDao;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
-import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.model.DownloadResponse;
 import com.ufinity.marchant.ubank.model.DownloadStatus;
@@ -168,13 +167,13 @@ public class FileServiceImpl implements FileService {
      * @param user
      *            who will download
      * @return the response obj of download operation
-     * @throws UBankException
+     * @throws UBankServiceException
      *             the exception which do not get the file
      * @author jerome
      * @author modify by zdxue - refact the return type and method name
      */
     public DownloadResponse download(Long fileId, User user)
-            throws UBankException {
+            throws UBankServiceException {
         logger.debug("fileId=" + fileId + " , user=" + user);
 
         DownloadResponse response = new DownloadResponse();
@@ -261,7 +260,7 @@ public class FileServiceImpl implements FileService {
         catch (Exception e) {
             logger.error("get fileBean excepiton!", e);
             EntityManagerUtil.rollback();
-            throw new UBankException("get file exception by fileId!");
+            throw new UBankServiceException("get file exception by fileId!");
         }
         finally {
             EntityManagerUtil.closeEntityManager();

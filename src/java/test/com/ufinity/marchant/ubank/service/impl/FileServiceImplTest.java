@@ -16,7 +16,6 @@ import org.junit.Test;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.FileDao;
-import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.FileService;
 
@@ -148,9 +147,9 @@ public class FileServiceImplTest {
 		});
 		try {
 			assertEquals(null,fileService.download(fileId, null));
-		} catch (UBankException e) {
-			fail("get file error");
-		}
+		} catch (UBankServiceException e) {
+		    fail("get file error");
+        }
 		
 		final FileBean filebean = new FileBean();
 		filebean.setFileId(3L);
@@ -165,8 +164,8 @@ public class FileServiceImplTest {
 		});
 		try {
 			assertEquals(filebean.getFileId(),fileService.download(fileId, null).getFile().getFileId());
-		} catch (UBankException e) {
-			fail("get file error");
-		}
+		}catch (UBankServiceException e) {
+		    fail("get file error");
+        }
 	}
 }

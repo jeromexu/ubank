@@ -19,7 +19,6 @@ import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
-import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.UserService;
 
 /**
