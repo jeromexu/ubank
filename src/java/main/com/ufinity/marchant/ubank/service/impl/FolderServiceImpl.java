@@ -528,13 +528,11 @@ public class FolderServiceImpl implements FolderService {
             if (newName.equals(folder.getFolderName())) {
                 return true;
             }
-
+            folder.setFolderName(newName);
             // If there is a same name folder in the target directory
             if (isSameNameFolder(folder.getParent(), newName)) {
-                folder.setFolderName(newName + Constant.FOLDER_COPY);
-            }
-            else {
-                folder.setFolderName(newName);
+                String name = getNewName(folder.getParent());
+                folder.setFolderName(name);
             }
             folderDao.modify(folder);
             EntityManagerUtil.commit();
