@@ -390,12 +390,11 @@ public class FileServiceImpl implements FileService {
      * @author bxji
      */
     public boolean copyFileToFolder(Long targetFolderId, Long sourceFileId) {
-        if (targetFolderId == null || 0l == targetFolderId
-                || sourceFileId == null || 0l == sourceFileId) {
+        if (Validity.isNullOrZero(targetFolderId)
+                || Validity.isNullOrZero(sourceFileId)) {
             return false;
         }
         try {
-
             FileBean fileCopy = copyFile(sourceFileId);
             if (fileCopy != null) {
                 EntityManagerUtil.begin();
@@ -453,7 +452,7 @@ public class FileServiceImpl implements FileService {
      * @author bxji
      */
     private FileBean copyFile(Long fileId) {
-        if (fileId == null || 0l == fileId) {
+        if (Validity.isNullOrZero(fileId)) {
             return null;
         }
         FileBean copy = null;
@@ -480,8 +479,8 @@ public class FileServiceImpl implements FileService {
      * @author bxji
      */
     public boolean moveFileToFloder(Long targetFolderId, Long sourceFileId) {
-        if (targetFolderId == null || 0l == targetFolderId
-                || sourceFileId == null || 0l == sourceFileId) {
+        if (Validity.isNullOrZero(targetFolderId)
+                || Validity.isNullOrZero(sourceFileId)) {
             return false;
         }
         try {
@@ -541,7 +540,7 @@ public class FileServiceImpl implements FileService {
      * @author bxji
      */
     public boolean removeFile(Long fileId) {
-        if (fileId == null || 0l == fileId) {
+        if (Validity.isNullOrZero(fileId)) {
             return false;
         }
         try {
@@ -582,7 +581,7 @@ public class FileServiceImpl implements FileService {
      * @author bxji
      */
     public boolean renameFile(Long fileId, String newName) {
-        if (fileId == null || 0l == fileId || Validity.isNullAndEmpty(newName)) {
+        if (Validity.isNullOrZero(fileId) || Validity.isNullAndEmpty(newName)) {
             return false;
         }
         try {

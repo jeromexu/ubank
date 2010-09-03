@@ -100,8 +100,6 @@ public interface Constant {
     public final String FOLDER_TYPE_ROOT = "R";
     public final String FOLDER_TYPE_INIT = "I";
     public final String FOLDER_TYPE_CUSTOMER = "C";
-    public final String FILE_COPY = "_copy";
-    public final String FOLDER_COPY = "_copy";
 
     /** file search pagenum */
     String REQ_PARAM_PAGENUM = "pageNum";

@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
-import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.common.FileOrFolderJsonEntity;
 import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.common.JsonNode;
@@ -39,12 +38,10 @@ import com.ufinity.marchant.ubank.service.ServiceFactory;
 public class FolderServlet extends AbstractServlet {
     private static final long serialVersionUID = -8297805269743197486L;
     // Logger for this class
-    protected final Logger LOG = Logger.getInstance(FolderServlet.class);
+    private final Logger logger = Logger.getInstance(FolderServlet.class);
 
     FolderService folderService = null;
     FileService fileService = null;
-
-    private static final String SHOW_MAIN = "showMain";
 
     /**
      * Constructor for FolderServlet
@@ -68,15 +65,12 @@ public class FolderServlet extends AbstractServlet {
      *      javax.servlet.http.HttpServletResponse)
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException,UnsupportedEncodingException{
+            throws ServletException, IOException, UnsupportedEncodingException {
 
         String method = parseActionName(req);
         String rslt = Constant.ERROR_PAGE_500;
 
-        if (SHOW_MAIN.equals(method)) {
-            rslt = showMain(req, resp);
-        }
-        else if (Constant.SHOW_TREE.equals(method)) {
+        if (Constant.SHOW_TREE.equals(method)) {
             showTree(req, resp);
             return;
         }
@@ -112,28 +106,7 @@ public class FolderServlet extends AbstractServlet {
             cancelShare(req, resp);
             return;
         }
-
         forward(req, resp, rslt);
-    }
-
-    /**
-     * show main
-     * 
-     * @param req
-     *            request
-     * @param resp
-     *            response
-     * @return forward page
-     */
-    private String showMain(HttpServletRequest req, HttpServletResponse resp) {
-        // String username = req.getParameter(USERNAME);
-
-        EntityManagerUtil.begin();
-        // List<Folder> floders = folderDao.findAndProcessByUserName(username);
-
-        EntityManagerUtil.commit();
-
-        return "";
     }
 
     /**
@@ -145,15 +118,17 @@ public class FolderServlet extends AbstractServlet {
      *            response
      * @return forward page
      * @author bxji
+     * @throws IOException
      */
-    private void showTree(HttpServletRequest req, HttpServletResponse resp) {
-        User user = (User) req.getSession().getAttribute(Constant.SESSION_USER);
+    private void showTree(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
+        User user = getLoginUser(req);
         if (user == null) {
+            redirect(resp, Constant.HOME_HTML);
             return;
         }
         FolderNode treeRootNode = null;
         FolderNode shareRootNode = null;
-
         try {
             treeRootNode = folderService.getTreeRoot(user.getUserId());
             shareRootNode = folderService.getShareTree(user.getUserId());
@@ -173,8 +148,9 @@ public class FolderServlet extends AbstractServlet {
             returnResp(treeJson, resp);
         }
         catch (UBankException e) {
-            LOG.error("when try get user root directory, "
+            logger.error("when try get user root directory, "
                     + "throw an exception:user id can not be null", e);
+            redirect(resp, Constant.ERROR_PAGE_500);
         }
     }
 
@@ -186,9 +162,15 @@ public class FolderServlet extends AbstractServlet {
      * @param resp
      *            response
      * @author bxji
+     * @throws IOException
      */
     private void showFolderContent(HttpServletRequest req,
-            HttpServletResponse resp) {
+            HttpServletResponse resp) throws IOException {
+        User user = getLoginUser(req);
+        if (user == null) {
+            redirect(resp, Constant.HOME_HTML);
+            return;
+        }
         String fid = req.getParameter(Constant.FOLDER_ID);
         String layer = req.getParameter(Constant.FOLDER_LAYER);
         Long folderId = null;
@@ -201,11 +183,6 @@ public class FolderServlet extends AbstractServlet {
         }
         if (Validity.isNullAndEmpty(fid)) {
             // if request parameter folderid is null
-            User user = (User) req.getSession().getAttribute(
-                    Constant.SESSION_USER);
-            if (user == null) {
-                return;
-            }
             Folder folder = folderService.getRootFolder(user.getUserId());
             folderId = folder.getFolderId();
         }
@@ -233,12 +210,13 @@ public class FolderServlet extends AbstractServlet {
      * @param resp
      *            response
      * @author bxji
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
-    private void addFolder(HttpServletRequest req, HttpServletResponse resp) throws UnsupportedEncodingException {
+    private void addFolder(HttpServletRequest req, HttpServletResponse resp)
+            throws UnsupportedEncodingException {
         String folderId = req.getParameter(Constant.PARENT_ID);
         String folderName = req.getParameter(Constant.FOLDER_NAME);
-        folderName=URLDecoder.decode(folderName,"utf-8");
+        folderName = URLDecoder.decode(folderName, "utf-8");
         String userID = req.getParameter(Constant.USER_ID);
         String layerNumber = req.getParameter(Constant.FOLDER_LAYER);
 
@@ -250,7 +228,7 @@ public class FolderServlet extends AbstractServlet {
             Long layer = Long.parseLong(layerNumber);
             // user directory layer number must less than ten
             if (layer > 9l) {
-                LOG.debug("create new Folder failed, "
+                logger.debug("create new Folder failed, "
                         + "user directory layer number must less than ten.");
                 returnResp(result, resp);
             }
@@ -264,7 +242,7 @@ public class FolderServlet extends AbstractServlet {
                 }
             }
             catch (UBankException e) {
-                LOG.error("create folder fail", e);
+                logger.error("create folder fail", e);
             }
         }
         returnResp(result, resp);
@@ -303,7 +281,7 @@ public class FolderServlet extends AbstractServlet {
                 }
             }
             catch (Exception e) {
-                LOG.error("deltte file or folder fail", e);
+                logger.error("deltte file or folder fail", e);
             }
             returnResp(result, resp);
         }
@@ -331,7 +309,7 @@ public class FolderServlet extends AbstractServlet {
             }
         }
         catch (Exception e) {
-            LOG.error("share folder fail", e);
+            logger.error("share folder fail", e);
         }
         returnResp(result, resp);
     }
@@ -344,12 +322,13 @@ public class FolderServlet extends AbstractServlet {
      * @param resp
      *            response
      * @author bxji
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
-    private void rename(HttpServletRequest req, HttpServletResponse resp) throws UnsupportedEncodingException {
+    private void rename(HttpServletRequest req, HttpServletResponse resp)
+            throws UnsupportedEncodingException {
         String id = req.getParameter(Constant.FOLDER_OR_FILE_ID);
         String newName = req.getParameter(Constant.FOLDER_OR_FILE_NAME);
-        newName=URLDecoder.decode(newName,"utf-8");
+        newName = URLDecoder.decode(newName, "utf-8");
         String type = req.getParameter(Constant.DOCUMENT_TYPE);
         String result = Constant.REQUEST_RESULT_FAIL;
         if (Validity.isNullAndEmpty(id) || Validity.isNullAndEmpty(newName)
@@ -453,7 +432,7 @@ public class FolderServlet extends AbstractServlet {
             pw.flush();
         }
         catch (IOException e) {
-            LOG.error("return json string exception", e);
+            logger.error("return json string exception", e);
         }
     }
 
@@ -479,7 +458,7 @@ public class FolderServlet extends AbstractServlet {
             }
         }
         catch (Exception e) {
-            LOG.error("share folder fail", e);
+            logger.error("share folder fail", e);
         }
         returnResp(result, resp);
 

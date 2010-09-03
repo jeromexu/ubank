@@ -96,10 +96,10 @@ public class FolderServiceImpl implements FolderService {
      */
     public Folder addFolder(Long userId, Long parentId, String folderName,
             String folderType) throws UBankException {
-        if (userId == null || 0l == userId) {
+        if (Validity.isNullOrZero(userId)) {
             throw new UBankException("userId can not be empty");
         }
-        if (parentId == null || 0l == parentId
+        if (Validity.isNullOrZero(parentId)
                 || Validity.isNullAndEmpty(folderName)) {
             throw new UBankException(
                     "parentId can not be null and folderName can not be null or space String");
@@ -124,11 +124,11 @@ public class FolderServiceImpl implements FolderService {
             newFolder.setDirectory(getDiskPath(parentfolder));
             newFolder.setShare(false);
             newFolder.setUser(user);
-            parentfolder.getChildren().add(newFolder);
 
             // If there is a same name folder in the target directory
             if (isSameNameFolder(parentfolder, folderName)) {
-                newFolder.setFolderName(folderName + Constant.FOLDER_COPY);
+                String name = getNewName(parentfolder);
+                newFolder.setFolderName(name);
             }
             else {
                 newFolder.setFolderName(folderName);
@@ -175,7 +175,7 @@ public class FolderServiceImpl implements FolderService {
      *             throw Possible exception
      */
     public FolderNode getTreeRoot(Long userId) throws UBankException {
-        if (userId == null || 0l == userId) {
+        if (Validity.isNullOrZero(userId)) {
             throw new UBankException("userId can not be empty");
         }
         FolderNode rootNode = null;
@@ -208,7 +208,7 @@ public class FolderServiceImpl implements FolderService {
      */
     public List<FileOrFolderJsonEntity> getAllFromFolder(Long folderId,
             Long layer) {
-        if (folderId == null || 0l == folderId || layer == null || 0l == layer) {
+        if (Validity.isNullOrZero(folderId) || Validity.isNullOrZero(layer)) {
             return null;
         }
         Folder folder = null;
@@ -281,7 +281,7 @@ public class FolderServiceImpl implements FolderService {
      * @author bxji
      */
     public boolean delFolder(Long folderId) {
-        if (folderId == null || 0l == folderId) {
+        if (Validity.isNullOrZero(folderId)) {
             logger.debug("delete fail ,target folder id can not is null.");
             return false;
         }
@@ -312,8 +312,8 @@ public class FolderServiceImpl implements FolderService {
      * @author bxji
      */
     public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId) {
-        if (targetFolderId == null || 0l == targetFolderId
-                || sourceFolderId == null || 0l == sourceFolderId) {
+        if (Validity.isNullOrZero(targetFolderId)
+                || Validity.isNullOrZero(sourceFolderId)) {
             logger.debug("Folder replication fails, "
                     + "'targetFolderId' and 'sourceFolderId' can not be null.");
             return false;
@@ -359,8 +359,8 @@ public class FolderServiceImpl implements FolderService {
      * @author bxji
      */
     public boolean moveFolderTo(Long targetFolderId, Long sourceFolderId) {
-        if (targetFolderId == null || 0l == targetFolderId
-                || sourceFolderId == null || 0l == sourceFolderId) {
+        if (Validity.isNullOrZero(targetFolderId)
+                || Validity.isNullOrZero(sourceFolderId)) {
             logger.debug("Folder moved fails, "
                     + "'targetFolderId' and 'sourceFolderId' can not be null.");
             return false;
@@ -369,7 +369,7 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.begin();
             Folder source = folderDao.find(sourceFolderId);
             Folder target = folderDao.find(targetFolderId);
-            target.getChildren().add(source);
+            // target.getChildren().add(source);
             source.setParent(target);
             source.setDirectory(getDiskPath(target));
             boolean same = isSameNameFolder(target, source.getFolderName());
@@ -430,17 +430,14 @@ public class FolderServiceImpl implements FolderService {
             tempFolder = (Folder) BeanUtils.cloneBean(sourceFolder);
             // If there is a same name folder in the target directory
             if (isSameNameFolder(targetFolder, tempFolder.getFolderName())) {
-                tempFolder.setFolderName(tempFolder.getFolderName()
-                        + Constant.FOLDER_COPY);
+                tempFolder.setFolderName(getNewName(targetFolder));
             }
-
             tempFolder.setParent(targetFolder);
             tempFolder.setDirectory(getDiskPath(targetFolder));
             tempFolder.setFiles(new HashSet<FileBean>());
             tempFolder.setChildren(new HashSet<Folder>());
             tempFolder.setModifyTime(new Date());
             tempFolder.setFolderId(null);
-            targetFolder.getChildren().add(tempFolder);
 
             // update database
             try {
@@ -493,11 +490,9 @@ public class FolderServiceImpl implements FolderService {
         }
         // If the directory has a subdirectory, copy the entire directory
         Set<Folder> folders = sourceFolder.getChildren();
-        if (folders.size() > 0) {
-            for (Folder folder : folders) {
-                // Subfolders recursive copy
-                copyFolder(tempFolder, folder, share);
-            }
+        for (Folder folder : folders) {
+            // Subfolders recursive copy
+            copyFolder(tempFolder, folder, share);
         }
         return true;
     }
@@ -513,8 +508,7 @@ public class FolderServiceImpl implements FolderService {
      * @author bxji
      */
     public boolean renameFolder(Long folderId, String newName) {
-        if (folderId == null || 0l == folderId
-                || Validity.isNullAndEmpty(newName)) {
+        if (Validity.isNullOrZero(folderId) || Validity.isNullAndEmpty(newName)) {
             logger.debug("rename folder fail,"
                     + "target folder id can not be null"
                     + " and new name can not be null or space string");
@@ -528,12 +522,13 @@ public class FolderServiceImpl implements FolderService {
             if (newName.equals(folder.getFolderName())) {
                 return true;
             }
-            
+
             // If there is a same name folder in the target directory
             if (isSameNameFolder(folder.getParent(), newName)) {
                 String name = getNewName(folder.getParent());
                 folder.setFolderName(name);
-            }else {
+            }
+            else {
                 folder.setFolderName(newName);
             }
             folderDao.modify(folder);
@@ -634,7 +629,7 @@ public class FolderServiceImpl implements FolderService {
      * @author bxji
      */
     public boolean shareFolder(Long folderId) {
-        if (folderId == null || 0l == folderId) {
+        if (Validity.isNullOrZero(folderId)) {
             return false;
         }
         try {
@@ -669,7 +664,7 @@ public class FolderServiceImpl implements FolderService {
      * @author bxji
      */
     public boolean cancelShareFolder(Long folderId) {
-        if (folderId == null || 0l == folderId) {
+        if (Validity.isNullOrZero(folderId)) {
             return false;
         }
         try {
@@ -890,7 +885,7 @@ public class FolderServiceImpl implements FolderService {
      * @author bxji
      */
     public FolderNode getShareTree(Long userId) {
-        if (userId == null || 0l == userId) {
+        if (Validity.isNullOrZero(userId)) {
             return null;
         }
         List<Folder> shares = null;
