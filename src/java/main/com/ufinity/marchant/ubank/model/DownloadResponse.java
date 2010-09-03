@@ -52,4 +52,16 @@ public class DownloadResponse {
         this.file = file;
     }
 
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        if(file != null) {
+            sb.append("fileId=").append(file.getFileId()).append("fileName=").append(file.getFileName());
+        }
+        
+        if(status != null){
+            sb.append("status=" + status);
+        }
+        
+        return sb.toString();
+    }
 }

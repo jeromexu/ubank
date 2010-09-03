@@ -108,6 +108,9 @@ public class FileServiceImpl implements FileService {
             String publishDate, int pageNum, int pageSize)
             throws UBankException {
 
+        logger.debug("search condition - [fileName=" + fileName + " , fileSize=" + fileSize 
+                + " , publishDate=" + publishDate + " , pageNum=" + pageNum + " , pageSize=" + pageSize);
+        
         if (fileName == null) {
             fileName = Constant.FILENAME_EMPTY;
         }
@@ -137,8 +140,10 @@ public class FileServiceImpl implements FileService {
         Pager<FileBean> pager = null;
         try {
             EntityManagerUtil.begin();
-            pager = fileDao
-                    .searchPaginatedForFile(pageNum, pageSize, condition);
+            
+            pager = fileDao.searchPaginatedForFile(pageNum, pageSize, condition);
+            logger.debug("pager records=" + pager.getPageRecords());
+            
             EntityManagerUtil.commit();
         }
         catch (Exception e) {
@@ -168,46 +173,58 @@ public class FileServiceImpl implements FileService {
      */
     public DownloadResponse download(Long fileId, User user)
             throws UBankException {
+        logger.debug("fileId=" + fileId + " , user=" + user);
+        
         DownloadResponse response = new DownloadResponse();
 
         if (Validity.isEmpty(fileId)) {
             response.setFile(null);
             response.setStatus(DownloadStatus.FILE_NOT_EXIST);
+            logger.debug("download response=" + response);
             return response;
         }
 
         if (user == null || user.getUserId() == null) {
             response.setFile(null);
             response.setStatus(DownloadStatus.OTHER_ERROR);
+            logger.debug("download response=" + response);
             return response;
         }
 
         // find here in order to override the session user's opint
         user = userDao.find(user.getUserId());
-
+        logger.debug("find user=" + user);
+        
         try {
             EntityManagerUtil.begin();
             FileBean fileBean = fileDao.find(fileId);
+            logger.debug("find fileBean=" + fileBean);
             response.setFile(fileBean);
 
             if (fileBean == null) {
                 response.setStatus(DownloadStatus.FILE_NOT_EXIST);
+                logger.debug("download response=" + response);
                 return response;
             }
 
             if (user.getUserId().equals(
                     fileBean.getFolder().getUser().getUserId())) {
                 response.setStatus(DownloadStatus.OK);
+                logger.debug("download response=" + response);
                 return response;
             }
 
             Date downLoadTime = new Date();
-            DownLoadLog downloadLog = downloadLogDao.findDownLoadLog(user
-                    .getUserId(), fileBean.getFileId());
+            DownLoadLog downloadLog = downloadLogDao.findDownLoadLog(user.getUserId(), fileBean.getFileId());
+            logger.debug("find downloadLog by userId and fileId = " + downloadLog);
+            
             int downloadPoint = SystemGlobals.getInt(ConfigKeys.DOWNLOAD_POINT);
+            logger.debug("download need point = " + downloadPoint);
+            
             if (downloadLog == null) {
                 if (user.getPoint() < downloadPoint) {
                     response.setStatus(DownloadStatus.POINT_NOT_ENOUGH);
+                    logger.debug("download response=" + response);
                     return response;
                 }
 
@@ -216,6 +233,9 @@ public class FileServiceImpl implements FileService {
                 entity.setUser(user);
                 entity.setFile(fileBean);
                 entity.setDownLoadTime(downLoadTime);
+                
+                logger.debug("new downloadlog that will add to DB =" + entity);
+                
                 downloadLogDao.add(entity);
             }
             else {
@@ -229,6 +249,9 @@ public class FileServiceImpl implements FileService {
             EntityManagerUtil.commit();
 
             response.setStatus(DownloadStatus.OK);
+            
+            logger.debug("download response=" + response);
+            
             return response;
         }
         catch (Exception e) {
@@ -250,6 +273,8 @@ public class FileServiceImpl implements FileService {
      * @author zdxue
      */
     private String getFileSizeConf(String fileSize) {
+        logger.debug("fileSize=" + fileSize);
+        
         String fileSizeConf = "";
         if (Constant.FILE_SIZE_0.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_0);
@@ -266,6 +291,9 @@ public class FileServiceImpl implements FileService {
         else if (Constant.FILE_SIZE_4.equals(fileSize)) {
             fileSizeConf = SystemGlobals.getString(ConfigKeys.FILE_SIZE_4);
         }
+        
+        logger.debug("fileSizeConf=" + fileSizeConf);
+        
         return fileSizeConf;
     }
 
@@ -278,8 +306,12 @@ public class FileServiceImpl implements FileService {
      * @author zdxue
      */
     private long getMinFileSize(String fileSize) {
-        return StringUtil.parseInt(getFileSizeConf(fileSize).split(
+        long minFileSize = StringUtil.parseInt(getFileSizeConf(fileSize).split(
                 Constant.FILE_SIZE_SEPARATOR)[0]);
+        
+        logger.debug("MinFileSize=" + minFileSize);
+        
+        return minFileSize;
     }
 
     /**
@@ -291,8 +323,12 @@ public class FileServiceImpl implements FileService {
      * @author zdxue
      */
     private long getMaxFileSize(String fileSize) {
-        return StringUtil.parseInt(getFileSizeConf(fileSize).split(
+        long maxFileSize = StringUtil.parseInt(getFileSizeConf(fileSize).split(
                 Constant.FILE_SIZE_SEPARATOR)[1]);
+        
+        logger.debug("MaxFileSize=" + maxFileSize);
+        
+        return maxFileSize;
     }
 
     /**
@@ -326,11 +362,16 @@ public class FileServiceImpl implements FileService {
             amount = SystemGlobals.getInt(ConfigKeys.FILE_PUBLISHDATE_5);
         }
 
+        logger.debug("date roll amount = " + amount);
+        
         if (amount == 1) {
+            logger.info("amount == 1, return null");
             return null;
         }
 
         DateUtil.roll(cal, Calendar.DAY_OF_YEAR, amount);
+        logger.debug("MaxModifyDate=" + cal.getTime());
+        
         return cal.getTime();
     }
 

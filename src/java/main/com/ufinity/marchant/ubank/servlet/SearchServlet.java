@@ -68,6 +68,8 @@ public class SearchServlet extends AbstractServlet {
 
         String method = parseActionName(req);
         String rslt = Constant.ERROR_PAGE_404;
+        
+        logger.debug("method=" + method + " , rslt=" + rslt);
 
         try{
             if (Constant.ACTION_SEARCH.equals(method)) {
@@ -79,6 +81,8 @@ public class SearchServlet extends AbstractServlet {
             return;
         }
 
+        logger.debug("rslt=" + rslt);
+        
         forward(req, resp, rslt);
     }
 

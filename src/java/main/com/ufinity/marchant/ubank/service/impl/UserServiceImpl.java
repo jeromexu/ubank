@@ -132,14 +132,19 @@ public class UserServiceImpl implements UserService {
 	 * @author zdxue
 	 */
 	public User getUser(String username, String password) throws UBankException {
+	    logger.debug("username=" + username + " , password=" + password);
+	    
 		User user = null;
 		try {
 			EntityManagerUtil.begin();
+			
 			user = userDao.findUser(username, password);
+			logger.debug("userDao find user " + user);
+			
 			EntityManagerUtil.commit();
 		} catch (Exception e) {
 			// not need rollback
-			logger.error("get user error", e);
+			logger.error("get user exception", e);
 		} finally {
 			EntityManagerUtil.closeEntityManager();
 		}
