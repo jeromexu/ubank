@@ -416,7 +416,7 @@ public class Validity {
      *            Long object
      * @return return boolean value that after checked
      */
-    public static boolean isNotNullOrZero(Long longObj) {
+    public static boolean isNullOrZero(Long longObj) {
         if (longObj == null || 0l == longObj) {
             return false;
         }
