@@ -323,6 +323,55 @@ public class DocumentUtil {
 	}
 
 	/**
+	 * get disk file name
+	 * 
+	 * @param realDir
+	 *            dir name
+	 * @param fileName
+	 *            file name
+	 * @param index
+	 *            repeat index
+	 * @return file
+	 */
+	public String getNewName(String realDir, String fileName, int index) {
+
+		try {
+			StringBuffer newName = new StringBuffer();
+			if (index != 0) {
+				if (fileName.lastIndexOf(".") != -1) {
+					String prefix = fileName.substring(0, index);
+					String suffix = fileName
+							.substring(index, fileName.length());
+					newName.append(prefix).append("(").append(index)
+							.append(")").append(suffix);
+				} else {
+					newName.append(fileName).append("(").append(index).append(
+							")");
+				}
+			} else {
+				newName.append(fileName);
+			}
+			String serverPath = getApplicationPath();
+			File file = null;
+			if (serverPath != null) {
+				file = new File(serverPath + realDir + FILE_SYSTEM_SEPARATOR
+						+ newName.toString());
+			} else {
+				return null;
+			}
+			if (file.exists()) {
+				index++;
+				return getNewName(realDir, fileName, index);
+			} else {
+				return file.getName();
+			}
+		} catch (Exception e) {
+			LOGGER.error("get disk file name exception!", e);
+		}
+		return null;
+	}
+
+	/**
 	 * 
 	 * get the server path
 	 * 
