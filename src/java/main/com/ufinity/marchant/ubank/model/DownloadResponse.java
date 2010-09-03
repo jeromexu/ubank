@@ -52,6 +52,9 @@ public class DownloadResponse {
         this.file = file;
     }
 
+    /**
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         if(file != null) {
