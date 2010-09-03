@@ -2,6 +2,8 @@ package com.ufinity.marchant.ubank.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +68,7 @@ public class FolderServlet extends AbstractServlet {
      *      javax.servlet.http.HttpServletResponse)
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+            throws ServletException, IOException,UnsupportedEncodingException{
 
         String method = parseActionName(req);
         String rslt = Constant.ERROR_PAGE_500;
@@ -231,10 +233,12 @@ public class FolderServlet extends AbstractServlet {
      * @param resp
      *            response
      * @author bxji
+     * @throws UnsupportedEncodingException 
      */
-    private void addFolder(HttpServletRequest req, HttpServletResponse resp) {
+    private void addFolder(HttpServletRequest req, HttpServletResponse resp) throws UnsupportedEncodingException {
         String folderId = req.getParameter(Constant.PARENT_ID);
         String folderName = req.getParameter(Constant.FOLDER_NAME);
+        folderName=URLDecoder.decode(folderName,"utf-8");
         String userID = req.getParameter(Constant.USER_ID);
         String layerNumber = req.getParameter(Constant.FOLDER_LAYER);
 
@@ -340,10 +344,12 @@ public class FolderServlet extends AbstractServlet {
      * @param resp
      *            response
      * @author bxji
+     * @throws UnsupportedEncodingException 
      */
-    private void rename(HttpServletRequest req, HttpServletResponse resp) {
+    private void rename(HttpServletRequest req, HttpServletResponse resp) throws UnsupportedEncodingException {
         String id = req.getParameter(Constant.FOLDER_OR_FILE_ID);
         String newName = req.getParameter(Constant.FOLDER_OR_FILE_NAME);
+        newName=URLDecoder.decode(newName,"utf-8");
         String type = req.getParameter(Constant.DOCUMENT_TYPE);
         String result = Constant.REQUEST_RESULT_FAIL;
         if (Validity.isNullAndEmpty(id) || Validity.isNullAndEmpty(newName)

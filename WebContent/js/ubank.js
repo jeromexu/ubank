@@ -208,7 +208,7 @@ function showContent(param) {
 										var url = '/ubank/portal/addFolder.do';
 										$.get(url, {
 													'parentId' : parentId,
-													'folderName' : name,
+													'folderName' : encodeURI(name),
 													'userId' : userId,
 													'layer' : layer
 												}, function(data) {
@@ -395,7 +395,7 @@ function showContent(param) {
 
 											$.get(url, {
 														'id' : id,
-														'name' : name,
+														'name' : encodeURI(name),
 														'type' : type,
 														'parentId' : parentId
 													}, function(data) {
