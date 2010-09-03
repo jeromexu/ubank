@@ -75,13 +75,13 @@ public class UserServiceImpl implements UserService {
 	 * @param user
 	 *            a person who do register
 	 * @return the number which register a user
-	 * @throws UBankServiceException if occur exception, then throw it
+	 * @throws UBankServiceException
+	 *             if occur exception, then throw it
 	 * @author jerome
 	 */
 	public String doRegister(User user) throws UBankServiceException {
 		logger.debug("doRegister:param[user]=" + user);
 		try {
-
 			String userName = null;
 			if (user != null) {
 				userName = user.getUserName();
@@ -91,12 +91,13 @@ public class UserServiceImpl implements UserService {
 			// query current user exist or not
 			User queryUser = userDao.findUserByName(userName);
 			if (queryUser == null) {
-				EntityManagerUtil.begin();
+
 				user.setCreateTime(new Date());
 				user.setOverSize(SystemGlobals
 						.getInt(ConfigKeys.DEFAULT_USER_SPACE_SIZE));
 				user.setPoint(SystemGlobals
 						.getInt(ConfigKeys.USER_DEFAULT_POINT));
+				EntityManagerUtil.begin();
 				userDao.add(user);
 				logger.debug("add user success!" + user);
 				// init user dir space
@@ -109,11 +110,13 @@ public class UserServiceImpl implements UserService {
 						: MessageKeys.REGISTER_FAILURE;
 			}
 			logger.debug("doRegister complete!");
+
 		} catch (Exception e) {
 			logger.error("user register exception!", e);
-			EntityManagerUtil.rollback();
+			if(EntityManagerUtil.isActive()){
+				EntityManagerUtil.rollback();
+			}
 			throw new UBankServiceException("user regiter service exception!");
-			
 		} finally {
 			EntityManagerUtil.closeEntityManager();
 		}
@@ -134,15 +137,15 @@ public class UserServiceImpl implements UserService {
      * @author zdxue
      */
 	public User getUser(String username, String password) throws UBankServiceException {
-	    logger.debug("username=" + username + " , password=" + password);
-	    
+		logger.debug("username=" + username + " , password=" + password);
+
 		User user = null;
 		try {
 			EntityManagerUtil.begin();
-			
+
 			user = userDao.findUser(username, password);
 			logger.debug("userDao find user " + user);
-			
+
 			EntityManagerUtil.commit();
 		} catch (Exception e) {
 			// not need rollback
@@ -203,7 +206,7 @@ public class UserServiceImpl implements UserService {
 				if (!baseFile.exists()) {
 					baseFile.mkdir();
 				}
-				
+
 				Folder folder = new Folder();
 				folder.setFolderName(String.valueOf(userId));
 				Date date = new Date();
@@ -289,7 +292,7 @@ public class UserServiceImpl implements UserService {
 				+ folderName);
 		boolean result = false;
 		try {
-			
+
 			Folder folder = new Folder();
 			folder.setFolderName(folderName);
 			Date date = new Date();
