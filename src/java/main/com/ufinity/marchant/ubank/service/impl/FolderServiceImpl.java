@@ -374,7 +374,8 @@ public class FolderServiceImpl implements FolderService {
             source.setDirectory(getDiskPath(target));
             boolean same = isSameNameFolder(target, source.getFolderName());
             if (same) {
-                getNewName(source);
+                String folderNewName = getNewName(target);
+                source.setFolderName(folderNewName);
             }
             folderDao.modify(target);
             folderDao.modify(source);
@@ -389,8 +390,8 @@ public class FolderServiceImpl implements FolderService {
             }
             int result = DocumentUtil.moveOrCopyFolderTo(source, target, true);
             if (result != 1) {
-                EntityManagerUtil.rollback();
                 logger.debug("move disk file fail");
+                EntityManagerUtil.rollback();
                 return false;
             }
             EntityManagerUtil.commit();
@@ -449,9 +450,9 @@ public class FolderServiceImpl implements FolderService {
                 EntityManagerUtil.commit();
             }
             catch (Exception e) {
-                EntityManagerUtil.rollback();
                 logger.error("An exception when copying a directory "
                         + "to update the database. ", e);
+                EntityManagerUtil.rollback();
                 return false;
             }
             finally {
@@ -475,9 +476,9 @@ public class FolderServiceImpl implements FolderService {
                         EntityManagerUtil.commit();
                     }
                     catch (Exception e) {
-                        EntityManagerUtil.rollback();
                         logger.error("An exception when copying a file"
                                 + " add to the database", e);
+                        EntityManagerUtil.rollback();
                         // return false;
                     }
                     finally {
@@ -916,6 +917,14 @@ public class FolderServiceImpl implements FolderService {
         return shareRoot;
     }
 
+    /**
+     * get a new name according to the original folder name
+     * 
+     * @param oldFile
+     *            original exist folder
+     * @return a new name
+     * @author bxji
+     */
     private String getNewName(Folder oldFolder) {
         if (oldFolder == null) {
             return null;
@@ -927,27 +936,4 @@ public class FolderServiceImpl implements FolderService {
         oldFolder.setRepeatCount(repeatCount + 1);
         return newName.toString();
     }
-
-    private static String getNewName(FileBean fileBean) {
-        if (fileBean == null) {
-            return null;
-        }
-        String oldName = fileBean.getFileName();
-        StringBuffer newName = new StringBuffer();
-        int repeatCount = fileBean.getRepeatCount();
-        int index = oldName.lastIndexOf('.');
-        if (index != -1) {
-            String prefix = oldName.substring(0, index);
-            String suffix = oldName.substring(index, oldName.length());
-            newName.append(prefix).append("(").append(repeatCount + 1).append(
-                    ")").append(suffix);
-        }
-        else {
-            newName.append(oldName).append("(").append(repeatCount + 1).append(
-                    ")");
-        }
-        fileBean.setRepeatCount(repeatCount + 1);
-        return newName.toString();
-    }
-
 }

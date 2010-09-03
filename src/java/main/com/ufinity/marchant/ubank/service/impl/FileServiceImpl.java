@@ -401,11 +401,11 @@ public class FileServiceImpl implements FileService {
                 EntityManagerUtil.begin();
                 Folder folder = folderDao.find(targetFolderId);
                 // If there is a same name file in the target directory
-                FileBean sameNameFile = getSameNameOldFile(folder, fileCopy
+                FileBean sameNameOldFile = getSameNameOldFile(folder, fileCopy
                         .getFileName());
                 String fileName = fileCopy.getFileName();
-                if (sameNameFile != null) {
-                    fileName = getNewName(sameNameFile);
+                if (sameNameOldFile != null) {
+                    fileName = getNewName(sameNameOldFile);
                 }
                 // copy disk file
                 int result = DocumentUtil.moveOrCopyFileTo(fileCopy, folder,
@@ -493,11 +493,11 @@ public class FileServiceImpl implements FileService {
                 return true;
             }
             // If there is a same name file in the target directory
-            FileBean sameNameFile = getSameNameOldFile(folder, file
+            FileBean sameNameOldFile = getSameNameOldFile(folder, file
                     .getFileName());
             String fileName = file.getFileName();
-            if (sameNameFile != null) {
-                fileName = getNewName(sameNameFile);
+            if (sameNameOldFile != null) {
+                fileName = getNewName(sameNameOldFile);
             }
             // move disk file
             int result = DocumentUtil.moveOrCopyFileTo(file, folder, true,
@@ -650,7 +650,7 @@ public class FileServiceImpl implements FileService {
      *            current directory
      * @param name
      *            name
-     * @return have same name return 'true' else return 'false'
+     * @return exist same name return this FileBean else return null
      * @author bxji
      */
     private FileBean getSameNameOldFile(Folder folder, String name) {
@@ -667,10 +667,12 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
-     * {method description}
+     * get a new name according to the original file name
      * 
      * @param oldFile
-     * @return  xx
+     *            original exist fileBean
+     * @return a new name
+     * @author bxji
      */
     private static String getNewName(FileBean oldFile) {
         if (oldFile == null) {
@@ -693,5 +695,4 @@ public class FileServiceImpl implements FileService {
         oldFile.setRepeatCount(repeatCount + 1);
         return newName.toString();
     }
-
 }
