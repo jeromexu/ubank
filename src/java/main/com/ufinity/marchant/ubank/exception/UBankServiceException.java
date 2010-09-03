@@ -1,10 +1,10 @@
 //
-// Copyright (c) 2000-2004 Ufinity. All Rights Reserved.
+// Copyright (c) 2000-2009 Ufinity. All Rights Reserved.
 //
 // This software is the confidential and proprietary information of
 // Ufinity
 //
-// Original author: Liming
+// Original author:
 //
 // UFINITY MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF
 // THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -23,30 +23,31 @@
 // SPECIFICALLY DISCLAIMS ANY EXPRESS OR IMPLIED WARRANTY OF FITNESS FOR
 // HIGH RISK ACTIVITIES.
 //
-
 package com.ufinity.marchant.ubank.exception;
 
 /**
  * 
- * @author WenQiang Wu
- * @version Aug 18, 2010
+ * @author liujun
+ * @version 1.0 - 2010-09-03
  */
-public class UBankException extends Exception {
-
-    private static final long serialVersionUID = 8302777766409876550L;
+public class UBankServiceException extends Exception {
 
     /**
      * 
-     * @param expDecription
      */
-    public UBankException(String desc) {
-        super(desc);
+    private static final long serialVersionUID = 8212559725410066800L;
+
+    /**
+     * @param message
+     */
+    public UBankServiceException(String message) {
+        super(message);
     }
 
     /**
      * @param cause
      */
-    public UBankException(Throwable cause) {
+    public UBankServiceException(Throwable cause) {
         super(cause);
     }
 
@@ -54,7 +55,8 @@ public class UBankException extends Exception {
      * @param message
      * @param cause
      */
-    public UBankException(String message, Throwable cause) {
+    public UBankServiceException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }

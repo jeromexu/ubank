@@ -46,7 +46,8 @@ import com.ufinity.marchant.ubank.common.JsonUtil;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
-import com.ufinity.marchant.ubank.exception.DbException;
+import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UploadService;
@@ -297,10 +298,10 @@ public class FileUploadServlet extends AbstractServlet {
      * @param user 
      *            login user
      * @return error msg if have
-     * @throws DbException 
-     *            if has db exception
+     * @throws UBankException 
+     *            if has exception
      */
-    private String validateUpload(long fileSize,long currentFolderId, User user) throws DbException{
+    private String validateUpload(long fileSize,long currentFolderId, User user) throws UBankException{
         if(user == null){
             logger.warn("Upload file user is not login.");
             return getText(MessageKeys.UPLOAD_NOT_LOGIN);
@@ -320,7 +321,13 @@ public class FileUploadServlet extends AbstractServlet {
             return getText(MessageKeys.UPLOAD_NOT_ALLOW);
         }
         
-        long totalFileSize = uploadService.getTotalFileSize(user.getUserId());
+        long totalFileSize = 0;
+        try {
+            totalFileSize = uploadService.getTotalFileSize(user.getUserId());
+        } catch (UBankServiceException e) {
+            throw new UBankException(e);
+        }
+        
         long currentSize = fileSize/1000 + totalFileSize;
         if((user.getOverSize()*1000) < currentSize){
             logger.warn("Used up all the space.");

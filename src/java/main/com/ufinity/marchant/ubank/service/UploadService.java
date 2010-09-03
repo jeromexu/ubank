@@ -25,7 +25,7 @@ package com.ufinity.marchant.ubank.service;
 
 import org.apache.commons.fileupload.FileItemStream;
 
-import com.ufinity.marchant.ubank.exception.DbException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
 
 /**
@@ -45,11 +45,11 @@ public interface UploadService {
      *            info of upload
      * @param item
      *            the FileItemStream
-     * @throws Exception
-     *             if have exception
+     * @throws UBankServiceException
+     *             if have UBankServiceException
      */
     public void uploadAndSaveDb(Long folderId, String folderDir,
-            ProgressInfo pi, FileItemStream item) throws Exception;
+            ProgressInfo pi, FileItemStream item) throws UBankServiceException;
 
     /**
      * get folder dir with id
@@ -57,21 +57,21 @@ public interface UploadService {
      * @param folderId
      *            folder id
      * @return folder dir
-     * @throws DbException
-     *             if db have exception
+     * @throws UBankServiceException
+     *             if db have UBankServiceException
      */
-    public String getFolderDir(Long folderId) throws DbException;
+    public String getFolderDir(Long folderId) throws UBankServiceException;
     
     /**
      * get all file size by user id
      * 
      * @param userId
      *            user id
-     * @throws DbException
-     *             if has DbException
+     * @throws UBankServiceException
+     *             if has UBankServiceException
      * @return total size
      */
-    public long getTotalFileSize(Long userId) throws DbException;
+    public long getTotalFileSize(Long userId) throws UBankServiceException;
     
     /**
      * user add point

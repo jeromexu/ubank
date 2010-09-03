@@ -79,13 +79,13 @@ public class UploadListener implements ProgressListener {
         pi.setTotalSize(pContentLength);
         pi.setCurrentTime(System.currentTimeMillis());
         
-        if (pContentLength == -1) {
-            System.out.println("So far, " + pBytesRead
-                    + " bytes have been read.");
-        } else {
-            System.out.println("So far, " + pBytesRead + " of "
-                    + pContentLength + " bytes have been read.");
-        }
+//        if (pContentLength == -1) {
+//            System.out.println("So far, " + pBytesRead
+//                    + " bytes have been read.");
+//        } else {
+//            System.out.println("So far, " + pBytesRead + " of "
+//                    + pContentLength + " bytes have been read.");
+//        }
     }
 
 }

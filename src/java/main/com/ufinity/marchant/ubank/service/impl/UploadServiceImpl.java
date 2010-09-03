@@ -39,12 +39,14 @@ import org.apache.log4j.Logger;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
+import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.DbException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.UploadService;
 import com.ufinity.marchant.ubank.upload.ProgressInfo;
 import com.ufinity.marchant.ubank.upload.UploadConstant;
@@ -80,8 +82,8 @@ public class UploadServiceImpl implements UploadService {
      *             if have exception
      */
     public void uploadAndSaveDb(Long folderId, String folderDir, ProgressInfo pi, FileItemStream item)
-            throws Exception {
-        if (folderId == null || folderId == 0) {
+            throws UBankServiceException {
+        if (Validity.isNullOrZero(folderId)) {
             logger.warn("current folder or folder is null.");
             return;
         }
@@ -100,7 +102,7 @@ public class UploadServiceImpl implements UploadService {
         try {
             fldName = item.getFieldName();
             String fileFullName = item.getName();
-            if (fileFullName == null || "".equals(fileFullName.trim())) {
+            if(Validity.isNullAndEmpty(fileFullName)){
                 return;
             }
             
@@ -149,8 +151,10 @@ public class UploadServiceImpl implements UploadService {
                     file.delete();
                 }
             }
-            throw e;
-        } finally {
+            throw new UBankServiceException(e);
+        } catch (Exception e) {
+            throw new UBankServiceException(e);
+        }finally {
             try {
                 if (bStream != null) {
                     bStream.close();
@@ -225,22 +229,22 @@ public class UploadServiceImpl implements UploadService {
      * 
      * @param folderId
      *            folder id
-     * @throws DbException
-     *             if has DbException
+     * @throws UBankServiceException
+     *             if has UBankServiceException
      * @return folder dir
      */
-    public String getFolderDir(Long folderId) throws DbException {
+    public String getFolderDir(Long folderId) throws UBankServiceException {
         try {
             EntityManagerUtil.begin();
             folderDao = DaoFactory.createDao(FolderDao.class);
             Folder folder = folderDao.find(folderId);
             if(folder == null){
-                throw new DbException("Upload folder is null.");
+                throw new UBankServiceException("Upload folder is null.");
             }
             EntityManagerUtil.commit();
             return folder.getDirectory();
         } catch (RuntimeException e) {
-            throw new DbException(e);
+            throw new UBankServiceException(e);
         } finally {
             EntityManagerUtil.closeEntityManager();
         }
@@ -251,11 +255,11 @@ public class UploadServiceImpl implements UploadService {
      * 
      * @param userId
      *            user id
-     * @throws DbException
-     *             if has DbException
+     * @throws UBankServiceException
+     *             if has UBankServiceException
      * @return total size
      */
-    public long getTotalFileSize(Long userId) throws DbException {
+    public long getTotalFileSize(Long userId) throws UBankServiceException {
         try {
             EntityManagerUtil.begin();
             fileDao = DaoFactory.createDao(FileDao.class);
@@ -267,7 +271,7 @@ public class UploadServiceImpl implements UploadService {
             EntityManagerUtil.commit();
             return size;
         } catch (RuntimeException e) {
-            throw new DbException(e);
+            throw new UBankServiceException(e);
         } finally {
             EntityManagerUtil.closeEntityManager();
         }
