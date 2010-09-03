@@ -41,7 +41,7 @@ import com.ufinity.marchant.ubank.dao.FolderDao;
  */
 public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
         FolderDao {
-    
+
     /**
      * this method is find folder collection according user id and share, if
      * share is null, query all folder, else according share's value.
@@ -59,9 +59,9 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
                 + " , share:" + share + "}");
         StringBuffer sqlQuery = new StringBuffer();
         String sqlQueryStart = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,"
-                + "a.FOLDER_TYPE,a.MODIFIED_TIME,a.SHARE,a.USER_ID,a.PARENT_ID FROM U_FOLDER a "
+                + "a.FOLDER_TYPE,a.MODIFIED_TIME,a.SHARE,a.USER_ID,a.PARENT_ID,a.REPEAT_COUNT FROM U_FOLDER a "
                 + "LEFT JOIN U_FOLDER b on a.PARENT_ID = b.PARENT_ID WHERE a.USER_ID = :userId ";
-        
+
         String sqlQueryEnd = "ORDER BY a.PARENT_ID , a.CREATE_TIME DESC";
         String sqlQueryAppend = " AND a.share = :share ";
 
@@ -79,8 +79,8 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
                     userId).setParameter("share", share);
         }
 
-        logger.debug("Method: findFolderListByUserId, SQL:{" + sqlQuery.toString()
-                + "}");
+        logger.debug("Method: findFolderListByUserId, SQL:{"
+                + sqlQuery.toString() + "}");
         return query.getResultList();
     }
 
