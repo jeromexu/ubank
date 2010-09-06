@@ -192,8 +192,9 @@ public class FileServiceImpl implements FileService {
             return response;
         }
 
-        //because of the param user be passed from servlet(its the session user)
-        //so find here in order to override the session user's point
+        // because of the param user be passed from servlet(its the session
+        // user)
+        // so find here in order to override the session user's point
         user = userDao.find(user.getUserId());
         logger.debug("find user=" + user);
 
@@ -400,8 +401,8 @@ public class FileServiceImpl implements FileService {
                 EntityManagerUtil.begin();
                 Folder folder = folderDao.find(targetFolderId);
                 // If there is a same name file in the target directory
-                String fileName = DocumentUtil.getNewName(
-                        folder.getDirectory(), fileCopy.getFileName(), 0);
+                String fileName = DocumentUtil.getNewName(getDiskPath(folder
+                        .getParent()), fileCopy.getFileName(), 0);
                 // copy disk file
                 int result = DocumentUtil.moveOrCopyFileTo(fileCopy, folder,
                         false, fileName);
@@ -489,8 +490,8 @@ public class FileServiceImpl implements FileService {
                 return true;
             }
             // If there is a same name file in the target directory
-            String fileName = DocumentUtil.getNewName(folder.getDirectory(), file
-                    .getFileName(), 0);
+            String fileName = DocumentUtil.getNewName(getDiskPath(folder
+                    .getParent()), file.getFileName(), 0);
 
             // move disk file
             int result = DocumentUtil.moveOrCopyFileTo(file, folder, true,
