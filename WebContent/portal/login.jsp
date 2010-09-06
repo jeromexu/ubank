@@ -20,6 +20,7 @@
   <center>
     
     <div class="loginDiv">
+    <h1>欢迎您的登陆</h1>
       <form action="login.do" method="post" id="loginForm">
         <c:if test="${not empty param.eventPath}">
           <c:set var="eventPath" value="${param.eventPath}" />
