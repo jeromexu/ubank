@@ -206,13 +206,11 @@ function showContent(param) {
 										'warning');
 								return;
 							}
-//							var userId = currTreeNode.attributes.uid;
-//							var parentId = currTreeNode.id;
+							var parentId = currTreeNode.id;
 							var url = '/ubank/portal/addFolder.do';
 							$.get(url, {
-//										'parentId' : parentId,
+										'parentId' : parentId,
 										'folderName' : encodeURI(name),
-//										'userId' : userId,
 										'layer' : layer
 									}, function(data) {
 										if (data == 'success') {
