@@ -21,6 +21,10 @@
     
     <div class="loginDiv">
     <h1>欢迎您的登陆</h1>
+     <c:if test="${not empty error_msg}">
+      <span title="${error_msg}"><font color="red">${error_msg}</font></span>
+    </c:if>
+    
       <form action="login.do" method="post" id="loginForm">
         <c:if test="${not empty param.eventPath}">
           <c:set var="eventPath" value="${param.eventPath}" />
@@ -35,10 +39,6 @@
      </form>                      
     </div>
     
-    <c:if test="${not empty error_msg}">
-      <span title="${error_msg}"><font color="red">${error_msg}</font></span>
-    </c:if>
-  
   </center>
 </body>
 
