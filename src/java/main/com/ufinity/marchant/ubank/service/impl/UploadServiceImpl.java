@@ -84,12 +84,10 @@ public class UploadServiceImpl implements UploadService {
     public void uploadAndSaveDb(Long folderId, String folderDir, ProgressInfo pi, FileItemStream item)
             throws UBankServiceException {
         if (Validity.isNullOrZero(folderId)) {
-            logger.warn("current folder or folder is null.");
-            return;
+            throw new UBankServiceException("current folder id is zero or is null");
         }
         if (item == null) {
-            logger.warn("FileItem is null. will return");
-            return;
+            throw new UBankServiceException("FileItem is null. will return");
         }
 
         String fldName = "";
@@ -103,7 +101,7 @@ public class UploadServiceImpl implements UploadService {
             fldName = item.getFieldName();
             String fileFullName = item.getName();
             if(Validity.isNullAndEmpty(fileFullName)){
-                return;
+                throw new UBankServiceException("File name is null");
             }
             
             fileFullName = checkFileName(fileFullName);
