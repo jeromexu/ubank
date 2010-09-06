@@ -222,6 +222,10 @@ public class DocumentUtil {
 					olderPath.append(serverPath).append(FOLDER_DIRECTORY)
 							.append(FILE_SYSTEM_SEPARATOR).append(FOLDERNAME);
 				}
+				File oldFile = new File(olderPath.toString());
+				if (!oldFile.exists()) {
+					return 0;
+				}
 				StringBuffer newPath = new StringBuffer();
 				if (newFolderDirecotry.endsWith(FILE_SYSTEM_SEPARATOR)) {
 					newPath.append(serverPath).append(newFolderDirecotry)
@@ -233,11 +237,6 @@ public class DocumentUtil {
 				}
 				LOGGER.debug("olderPath=" + olderPath + ", newPath=" + newPath);
 				newPath.append(FILE_SYSTEM_SEPARATOR).append(FOLDERNAME);
-				File oldFile = new File(olderPath.toString());
-				if (!oldFile.exists()) {
-					return 0;
-				}
-
 				// copy the folder
 				copyResult = copyFolder(olderPath.toString(), newPath
 						.toString());
@@ -326,7 +325,7 @@ public class DocumentUtil {
 	 * get disk file name
 	 * 
 	 * @param realDir
-	 *            dir name
+	 *            dest dir name
 	 * @param fileName
 	 *            file name
 	 * @param index
@@ -339,9 +338,10 @@ public class DocumentUtil {
 			StringBuffer newName = new StringBuffer();
 			if (index != 0) {
 				if (fileName.lastIndexOf(".") != -1) {
-					String prefix = fileName.substring(0, index);
-					String suffix = fileName
-							.substring(index, fileName.length());
+					String prefix = fileName.substring(0, fileName
+							.lastIndexOf("."));
+					String suffix = fileName.substring(fileName
+							.lastIndexOf("."), fileName.length());
 					newName.append(prefix).append("(").append(index)
 							.append(")").append(suffix);
 				} else {
