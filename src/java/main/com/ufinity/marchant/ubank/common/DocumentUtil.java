@@ -349,9 +349,12 @@ public class DocumentUtil {
 	 *            file name
 	 * @param index
 	 *            repeat index
+	 * @param isFolderOrFile
+	 *            folder:true file:false
 	 * @return file
 	 */
-	public static String getNewName(String realDir, String fileName, int index) {
+	public static String getNewName(String realDir, String fileName, int index,
+			boolean isFolderOrFile) {
 
 		try {
 			StringBuffer newName = new StringBuffer();
@@ -373,19 +376,21 @@ public class DocumentUtil {
 			String serverPath = getApplicationPath();
 			File file = null;
 			if (serverPath != null) {
-				file = new File(serverPath + realDir + FILE_SYSTEM_SEPARATOR
-						+ newName.toString());
-			} else {
-				return null;
-			}
-			if (file.exists()) {
-				index++;
-				return getNewName(realDir, fileName, index);
-			} else {
-				return file.getName();
+				if (isFolderOrFile) {
+					file = new File(serverPath + realDir);
+				} else {
+					file = new File(serverPath + realDir
+							+ FILE_SYSTEM_SEPARATOR + newName.toString());
+				}
+				if (file.exists()) {
+					index++;
+					return getNewName(realDir, fileName, index, isFolderOrFile);
+				} else {
+					return file.getName();
+				}
 			}
 		} catch (Exception e) {
-			LOGGER.error("get disk file name exception!", e);
+			LOGGER.error("get disk folder or file name exception!", e);
 		}
 		return null;
 	}
