@@ -379,7 +379,7 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.begin();
             Folder source = folderDao.find(sourceFolderId);
             Folder target = folderDao.find(targetFolderId);
-            Folder oldParent = source.getParent();
+            String oldDir = source.getDirectory();
             source.setParent(target);
             source.setDirectory(getDiskPath(target));
             Folder sameOldFolder = getSameNameFolder(target, source
@@ -388,7 +388,6 @@ public class FolderServiceImpl implements FolderService {
                 String folderNewName = getNewName(sameOldFolder);
                 source.setFolderName(folderNewName);
             }
-            folderDao.modify(target);
             folderDao.modify(source);
 
             // update all files Shared state and reset disk path (directory
@@ -400,7 +399,7 @@ public class FolderServiceImpl implements FolderService {
                 resetChildrenDiskPathAndShare(source, false);
             }
             // Restore directory structure
-            source.setParent(oldParent);
+            source.setDirectory(oldDir);
             int result = DocumentUtil.moveOrCopyFolderTo(source, target, true);
             if (result != 1) {
                 logger.debug("move disk file fail");
@@ -409,6 +408,7 @@ public class FolderServiceImpl implements FolderService {
                 }
                 return false;
             }
+            source.setDirectory(getDiskPath(target));
             EntityManagerUtil.commit();
         }
         catch (Exception e) {
