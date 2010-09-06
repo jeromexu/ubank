@@ -32,7 +32,7 @@ import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.FileOrFolderJsonEntity;
 import com.ufinity.marchant.ubank.common.FolderNode;
-import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 
 /**
  * {description of method or object}
@@ -54,12 +54,12 @@ public interface FolderService {
      * @param user
      *            current user
      * @return return a folder object
-     * @throws UBankException
+     * @throws UBankServiceException
      *             throw Possible exception
      * @author bxji
      */
     public Folder addFolder(User user, Long parentId, String folderName,
-            String FolderType) throws UBankException;
+            String FolderType) throws UBankServiceException;
 
     /**
      * this method get a user directory tree
@@ -67,11 +67,11 @@ public interface FolderService {
      * @param userId
      *            User id identification
      * @return return this user directory tree Struct
-     * @throws UBankException
+     * @throws UBankServiceException
      *             throw Possible exception
      * @author bxji
      */
-    public FolderNode getTreeRoot(Long userId) throws UBankException;
+    public FolderNode getTreeRoot(Long userId) throws UBankServiceException;
 
     /**
      * Get all files and sub-folders under specified directory,return
@@ -94,8 +94,10 @@ public interface FolderService {
      *            folder identification
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             system Initial directoy can not delete exception
      */
-    public boolean delFolder(Long folderId);
+    public boolean delFolder(Long folderId) throws UBankServiceException;
 
     /**
      * Move all the contents of the source directory to the destination folder,
@@ -120,8 +122,9 @@ public interface FolderService {
      *            source Folder object identification
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException 
      */
-    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId);
+    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId) throws UBankServiceException;
 
     /**
      * This method is used to rename a folder
@@ -142,8 +145,10 @@ public interface FolderService {
      *            target folder object id
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             root directory can not share exception
      */
-    public boolean shareFolder(Long folderId);
+    public boolean shareFolder(Long folderId) throws UBankServiceException;
 
     /**
      * this method is cancel share a directory operation

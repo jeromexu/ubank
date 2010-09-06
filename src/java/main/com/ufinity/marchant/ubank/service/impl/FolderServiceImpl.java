@@ -26,6 +26,7 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -50,7 +51,7 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
-import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.FolderService;
 
 /**
@@ -86,18 +87,18 @@ public class FolderServiceImpl implements FolderService {
      * @param user
      *            current user
      * @return return a folder object
-     * @throws UBankException
+     * @throws UBankServiceException
      *             throw Possible exception
      * @author bxji
      */
     public Folder addFolder(User user, Long parentId, String folderName,
-            String folderType) throws UBankException {
+            String folderType) throws UBankServiceException {
         if (user == null) {
-            throw new UBankException("user can not be empty");
+            throw new UBankServiceException("user can not be empty");
         }
         if (Validity.isNullOrZero(parentId)
                 || Validity.isNullAndEmpty(folderName)) {
-            throw new UBankException(
+            throw new UBankServiceException(
                     "parentId can not be null and folderName can not be null or space String");
         }
         try {
@@ -106,7 +107,7 @@ public class FolderServiceImpl implements FolderService {
             if (parentfolder.getParent() == null) {
                 logger
                         .debug("can not create new folder under the root directory");
-                throw new UBankException(
+                throw new UBankServiceException(
                         "can not create new folder under the root directory");
             }
             Date date = new Date();
@@ -122,9 +123,10 @@ public class FolderServiceImpl implements FolderService {
             newFolder.setRepeatCount(0);
 
             // If there is a same name folder in the target directory
-            if (isSameNameFolder(parentfolder, folderName)) {
-                String name = getNewName(parentfolder);
-                newFolder.setFolderName(name);
+            Folder sameOldFolder = getSameNameFolder(parentfolder, folderName);
+            if (sameOldFolder != null) {
+                String newName = getNewName(sameOldFolder);
+                newFolder.setFolderName(newName);
             }
             else {
                 newFolder.setFolderName(folderName);
@@ -169,12 +171,12 @@ public class FolderServiceImpl implements FolderService {
      *            User id identification
      * @return return this user directory tree Struct
      * @author bxji
-     * @throws UBankException
+     * @throws UBankServiceException
      *             throw Possible exception
      */
-    public FolderNode getTreeRoot(Long userId) throws UBankException {
+    public FolderNode getTreeRoot(Long userId) throws UBankServiceException {
         if (Validity.isNullOrZero(userId)) {
-            throw new UBankException("userId can not be empty");
+            throw new UBankServiceException("userId can not be empty");
         }
         FolderNode rootNode = null;
         try {
@@ -279,26 +281,42 @@ public class FolderServiceImpl implements FolderService {
      * 
      * @param folderId
      *            folder identification
-     * @return success return true else return false
+     * @return success return true else return false * @throws
+     * @throws UBankServiceException
+     *             system Initial directoy can not delete exception
      * @author bxji
      */
-    public boolean delFolder(Long folderId) {
+    public boolean delFolder(Long folderId) throws UBankServiceException {
         if (Validity.isNullOrZero(folderId)) {
             logger.debug("delete fail ,target folder id can not is null.");
             return false;
         }
         try {
+            EntityManagerUtil.begin();
             Folder folder = folderDao.find(folderId);
             if (!Constant.FOLDER_TYPE_CUSTOMER.equals(folder.getFolderType())) {
                 logger.debug("system Initial directoy can not delete");
-                throw new UBankException(
+                throw new UBankServiceException(
                         "system Initial directoy can not delete");
             }
-            return delFolder(folder);
+            folderDao.delete(folder);
+            int result = DocumentUtil.removeFolder(folder);
+            if (result != 1) {
+                EntityManagerUtil.rollback();
+                return false;
+            }
+            EntityManagerUtil.commit();
+            return true;
         }
         catch (Exception e) {
             logger.error("delete folder failed ", e);
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
             return false;
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
         }
     }
 
@@ -322,31 +340,21 @@ public class FolderServiceImpl implements FolderService {
         }
         Folder source = null;
         Folder target = null;
-        try {
-            source = folderDao.find(sourceFolderId);
-            target = folderDao.find(targetFolderId);
-            // if have same name folder
-            boolean same = isSameNameFolder(target, source.getFolderName());
-            if (same) {
-                String folderNewName = getNewName(target);
-                source.setFolderName(folderNewName);
-            }
-            int result = DocumentUtil.moveOrCopyFolderTo(source, target, false);
-            if (result != 1) {
-                return false;
-            }
-            if (target.getShare()) {
-                copyFolder(target, source, true);
-            }
-            else {
-                copyFolder(target, source, false);
-            }
-            return true;
-        }
-        catch (Exception e) {
-            logger.error("database exception", e);
+        source = folderDao.find(sourceFolderId);
+        target = folderDao.find(targetFolderId);
+        boolean result = false;
+
+        if (target.equals(source.getParent())) {
+            logger.debug("Can not be copied to the original folder.");
             return false;
         }
+        if (target.getShare()) {
+            result = copyFolder(target, source, true);
+        }
+        else {
+            result = copyFolder(target, source, false);
+        }
+        return result;
     }
 
     /**
@@ -371,12 +379,13 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.begin();
             Folder source = folderDao.find(sourceFolderId);
             Folder target = folderDao.find(targetFolderId);
-            // target.getChildren().add(source);
+            Folder oldParent = source.getParent();
             source.setParent(target);
             source.setDirectory(getDiskPath(target));
-            boolean same = isSameNameFolder(target, source.getFolderName());
-            if (same) {
-                String folderNewName = getNewName(target);
+            Folder sameOldFolder = getSameNameFolder(target, source
+                    .getFolderName());
+            if (sameOldFolder != null) {
+                String folderNewName = getNewName(sameOldFolder);
                 source.setFolderName(folderNewName);
             }
             folderDao.modify(target);
@@ -390,6 +399,8 @@ public class FolderServiceImpl implements FolderService {
             else {
                 resetChildrenDiskPathAndShare(source, false);
             }
+            // Restore directory structure
+            source.setParent(oldParent);
             int result = DocumentUtil.moveOrCopyFolderTo(source, target, true);
             if (result != 1) {
                 logger.debug("move disk file fail");
@@ -435,8 +446,11 @@ public class FolderServiceImpl implements FolderService {
         try {
             tempFolder = (Folder) BeanUtils.cloneBean(sourceFolder);
             // If there is a same name folder in the target directory
-            if (isSameNameFolder(targetFolder, tempFolder.getFolderName())) {
-                tempFolder.setFolderName(getNewName(targetFolder));
+            Folder sameNameOldFolder = getSameNameFolder(targetFolder,
+                    tempFolder.getFolderName());
+            if (sameNameOldFolder != null) {
+                String newName = getNewName(sameNameOldFolder);
+                tempFolder.setFolderName(newName);
             }
             tempFolder.setParent(targetFolder);
             tempFolder.setDirectory(getDiskPath(targetFolder));
@@ -449,7 +463,10 @@ public class FolderServiceImpl implements FolderService {
             try {
                 EntityManagerUtil.begin();
                 folderDao.add(tempFolder);
-                folderDao.modify(targetFolder);
+                int result = DocumentUtil.addNewFolder(tempFolder);
+                if (result != 1) {
+                    EntityManagerUtil.rollback();
+                }
                 EntityManagerUtil.commit();
             }
             catch (Exception e) {
@@ -467,30 +484,33 @@ public class FolderServiceImpl implements FolderService {
             // If there are some files in the directory,
             // copy the documents and save to database
             Set<FileBean> files = sourceFolder.getFiles();
-            if (files.size() > 0) {
-                for (FileBean file : files) {
-                    try {
-                        EntityManagerUtil.begin();
-                        FileBean copy = (FileBean) BeanUtils.cloneBean(file);
-                        copy.setFolder(tempFolder);
-                        copy.setDirectory(getDiskPath(tempFolder));
-                        copy.setModifyTime(new Date());
-                        copy.setShare(share);
-                        copy.setFileId(null);
-                        fileDao.add(copy);
-                        EntityManagerUtil.commit();
+            for (FileBean file : files) {
+                try {
+                    EntityManagerUtil.begin();
+                    FileBean copy = (FileBean) BeanUtils.cloneBean(file);
+                    copy.setFolder(tempFolder);
+                    copy.setDirectory(getDiskPath(tempFolder));
+                    copy.setModifyTime(new Date());
+                    copy.setShare(share);
+                    copy.setFileId(null);
+                    fileDao.add(copy);
+                    int result = DocumentUtil.moveOrCopyFileTo(copy,
+                            targetFolder, false, copy.getFileName());
+                    if (result != 1) {
+                        EntityManagerUtil.rollback();
                     }
-                    catch (Exception e) {
-                        logger.error("An exception when copying a file"
-                                + " add to the database", e);
-                        if (EntityManagerUtil.isActive()) {
-                            EntityManagerUtil.rollback();
-                        }
-                        // return false;
+                    EntityManagerUtil.commit();
+                }
+                catch (Exception e) {
+                    logger.error("An exception when copying a file"
+                            + " add to the database", e);
+                    if (EntityManagerUtil.isActive()) {
+                        EntityManagerUtil.rollback();
                     }
-                    finally {
-                        EntityManagerUtil.closeEntityManager();
-                    }
+                    return false;
+                }
+                finally {
+                    EntityManagerUtil.closeEntityManager();
                 }
             }
         }
@@ -534,8 +554,10 @@ public class FolderServiceImpl implements FolderService {
             }
 
             // If there is a same name folder in the target directory
-            if (isSameNameFolder(folder.getParent(), newName)) {
-                String name = getNewName(folder.getParent());
+            Folder sameOldFolder = getSameNameFolder(folder.getParent(),
+                    newName);
+            if (sameOldFolder != null) {
+                String name = getNewName(sameOldFolder);
                 folder.setFolderName(name);
             }
             else {
@@ -643,14 +665,19 @@ public class FolderServiceImpl implements FolderService {
      *            target folder object id
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             root directory can not share exception
      */
-    public boolean shareFolder(Long folderId) {
+    public boolean shareFolder(Long folderId) throws UBankServiceException {
         if (Validity.isNullOrZero(folderId)) {
             return false;
         }
         try {
             EntityManagerUtil.begin();
             Folder folder = folderDao.find(folderId);
+            if (Constant.FOLDER_TYPE_ROOT.equals(folder.getFolderType())) {
+                throw new UBankServiceException("root directory can not share.");
+            }
             folder.setShare(true);
             folderDao.modify(folder);
             if (shareOrCanceAllFiles(folder, true)) {
@@ -825,24 +852,25 @@ public class FolderServiceImpl implements FolderService {
      *            current directory
      * @param name
      *            folder name
-     * @return have same name return 'true' else return 'false'
-     * @throws UBankException
+     * @return exist same name return this folder else return null
+     * @throws UBankServiceException
      *             if folder is null or name is nul throw exception
      * @author bxji
      */
-    private boolean isSameNameFolder(Folder folder, String name)
-            throws UBankException {
+    private Folder getSameNameFolder(Folder folder, String name)
+            throws UBankServiceException {
         if (folder == null || Validity.isNullAndEmpty(name)) {
             logger.debug("target folder can not be null");
-            throw new UBankException("target folder and name can not be null.");
+            throw new UBankServiceException(
+                    "target folder and name can not be null.");
         }
         Set<Folder> children = folder.getChildren();
         for (Folder child : children) {
             if (name.equals(child.getFolderName())) {
-                return true;
+                return child;
             }
         }
-        return false;
+        return null;
     }
 
     /**

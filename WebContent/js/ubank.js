@@ -12,9 +12,11 @@ function dirTree() {
 	$('#dirTree').tree({
 				url : '/ubank/portal/showTree.do',
 				onClick : function(node) {
-					currTreeNode = node;
-					showContent(node.id);
-					setFolderId(node.id);
+					if (node.text != '共享文件夹') {
+						currTreeNode = node;
+						showContent(node.id);
+						setFolderId(node.id);
+					}
 				}
 			});
 };
@@ -229,7 +231,7 @@ function showContent(param) {
 			iconCls : 'icon-remove',
 			handler : function() {
 				var record = $('#test').datagrid('getSelected');
-				var result = executeChecking(currTreeNode, record);
+				var result = executeCheck(currTreeNode, record);
 				if (result) {
 					var url = '/ubank/portal/delFolderOrFile.do';
 					$.messager.confirm('Warning', 'Are you sure  ?',
@@ -278,7 +280,8 @@ function showContent(param) {
 					$.messager.alert('提示 ', '文件不能共享，请选择文件夹', 'info');
 					return;
 				}
-				var result = executeChecking(currTreeNode, record);
+
+				var result = checkRoot(currTreeNode, record);
 				if (result) {
 					var url = '/ubank/portal/shareFolder.do';
 					var id;
@@ -316,7 +319,7 @@ function showContent(param) {
 					$.messager.alert('提示 ', '文件不会被共享，请选择文件夹', 'info');
 					return;
 				}
-				var result = executeChecking(currTreeNode, record);
+				var result = checkRoot(currTreeNode, record);
 				if (result) {
 					var url = '/ubank/portal/cancelShare.do';
 					var id;
@@ -368,7 +371,7 @@ function showContent(param) {
 			iconCls : 'icon-redo',
 			handler : function() {
 				var record = $('#test').datagrid('getSelected');
-				var result = executeChecking(currTreeNode, record);
+				var result = executeCheck(currTreeNode, record);
 				if (result) {
 					var url = '/ubank/portal/rename.do';
 					$.messager.prompt('重命名', '新名称：', function(name) {
@@ -411,7 +414,7 @@ function showContent(param) {
 			iconCls : 'icon-cut',
 			handler : function() {
 				var record = $('#test').datagrid('getSelected');
-				var result = executeChecking(currTreeNode, record);
+				var result = executeCheck(currTreeNode, record);
 				if (result) {
 					$('#moveTo').dialog('open');
 					$('#tt1').tree({
@@ -424,7 +427,7 @@ function showContent(param) {
 			iconCls : 'icon-edit',
 			handler : function() {
 				var record = $('#test').datagrid('getSelected');
-				var result = executeChecking(currTreeNode, record);
+				var result = executeCheck(currTreeNode, record);
 				if (result) {
 					$('#copyTo').dialog('open');
 					$('#tt3').tree({
@@ -452,7 +455,7 @@ function returnResult(status) {
 			});
 }
 
-function executeChecking(node, record) {
+function executeCheck(node, record) {
 	if (node == null && record == null) {
 		$.messager.alert('提示 ', '请选择要操作的对象', 'info');
 		return false;
@@ -471,9 +474,21 @@ function executeChecking(node, record) {
 	return true;
 }
 
+function checkRoot(node, record) {
+	if (node == null && record == null) {
+		$.messager.alert('提示 ', '请选择要操作的对象', 'info');
+		return false;
+	}
+	if (record == null && node != null && node.attributes.type == 'R') {
+		$.messager.alert('提示 ', '不能对系统根目录进行此操作!', 'info');
+		return false;
+	}
+	return true;
+}
+
 function setFolderId(folderId) {
 	$.get("setCurrentFolder.do?currentFolderId=" + folderId);
 }
-function trim(str) { //删除左右两端的空格 
+function trim(str) { // 删除左右两端的空格
 	return str.replace(/(^\s*)|(\s*$)/g, "");
 }

@@ -27,7 +27,6 @@
 package com.ufinity.marchant.ubank.common;
 
 import com.ufinity.marchant.ubank.bean.Folder;
-import com.ufinity.marchant.ubank.exception.UBankException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -167,8 +166,6 @@ public class FolderNode {
      *            FolderNode set
      * @param node
      *            a folderNOde
-     * @throws UBankException
-     *             throw exception when nodes is null
      */
     private static void addToTree(Map<Long, FolderNode> nodes, FolderNode node) {
         if (node == null) {

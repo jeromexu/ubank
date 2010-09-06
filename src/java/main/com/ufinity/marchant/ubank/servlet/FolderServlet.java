@@ -24,7 +24,7 @@ import com.ufinity.marchant.ubank.common.NodeUtil;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
-import com.ufinity.marchant.ubank.exception.UBankException;
+import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
@@ -146,7 +146,7 @@ public class FolderServlet extends AbstractServlet {
             String treeJson = JsonUtil.object2json(nodes);
             returnResp(treeJson, resp);
         }
-        catch (UBankException e) {
+        catch (UBankServiceException e) {
             logger.error("when try get user root directory, "
                     + "throw an exception:user id can not be null", e);
         }
@@ -216,6 +216,7 @@ public class FolderServlet extends AbstractServlet {
         String folderName = req.getParameter(Constant.FOLDER_NAME);
         folderName = URLDecoder.decode(folderName, "utf-8");
         String layerNumber = req.getParameter(Constant.FOLDER_LAYER);
+
         String result = Constant.REQUEST_RESULT_FAIL;
         if (!Validity.isNullAndEmpty(folderName)
                 && !Validity.isNullOrZero(folderId)
@@ -234,7 +235,7 @@ public class FolderServlet extends AbstractServlet {
                     result = Constant.REQUEST_RESULT_SUCCESS;
                 }
             }
-            catch (UBankException e) {
+            catch (UBankServiceException e) {
                 logger.error("create folder fail", e);
             }
         }
@@ -401,8 +402,14 @@ public class FolderServlet extends AbstractServlet {
             }
         }
         else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
-            if (folderService.copyFolderTo(folderId, fId)) {
-                result = Constant.REQUEST_RESULT_SUCCESS;
+            try {
+                if (folderService.copyFolderTo(folderId, fId)) {
+                    result = Constant.REQUEST_RESULT_SUCCESS;
+                }
+            }
+            catch (UBankServiceException e) {
+                
+                e.printStackTrace();
             }
         }
         returnResp(result, resp);
