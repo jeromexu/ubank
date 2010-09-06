@@ -26,7 +26,6 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.service.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -131,7 +130,6 @@ public class FolderServiceImpl implements FolderService {
             else {
                 newFolder.setFolderName(folderName);
             }
-
             // set Folder type ,default is user directory
             newFolder.setFolderType(Constant.FOLDER_TYPE_CUSTOMER);
             if (!Validity.isNullAndEmpty(folderType)) {
