@@ -4,161 +4,171 @@ home page stylesheet
 author zdxue
 
 */
-body{
-margin:0;
-padding:0;
-font-family:Arial;
-	
-}
-a:link{
-	color:#666;
-	text-decoration: none;	
-}
-a:hover{
-	color:#aaa;
-	text-decoration: underline;	
-}
-.mainDiv{
-   	margin-left:200px;
-	background-color:black;
-	width:1000px;
+body {
+	margin: 0;
+	padding: 0;
+	font-family: Arial;
 }
 
-
-.topDiv{
-	background-color:#78B4F0;
-	width:1000px;
-	height:100px;
-	float:left;
-}
-.topDiv h2{
-	font-size:26px;
-	color:#eee;
-	font-weight:bold;	
-	padding-left:20px;
+a:link {
+	color: #666;
+	text-decoration: none;
 }
 
-.leftDiv{
-	background-color:#D0DEE9;
-	width:1000px;
-	height:800px;
-	float:left;
-}
-.main_Div{
-	background-color:#D0DEE9;
-	width:1200px;
-	height:800px;
+a:hover {
+	color: #aaa;
+	text-decoration: underline;
 }
 
-.rightDiv{
-	background-color:#D0DEE9;
+.mainDiv {
+	margin-left: 200px;
+	background-color: black;
+	width: 1000px;
+}
+
+.topDiv {
+	background-color: #78B4F0;
+	width: 1000px;
+	height: 100px;
+	float: left;
+}
+
+.topDiv h2 {
+	font-size: 26px;
+	color: #eee;
+	font-weight: bold;
+	padding-left: 20px;
+}
+
+.leftDiv {
+	background-color: #D0DEE9;
+	width: 1000px;
+	height: 800px;
+	float: left;
+}
+
+.main_Div {
+	background-color: #D0DEE9;
+	width: 1200px;
+	height: 800px;
+}
+
+.main_Div_l {
+	background-color: #D0DEE9;
+	width: 1000px;
+	height: 800px;
+	float: left;
+}
+
+.rightDiv {
+	background-color: #D0DEE9;
 	/*border-left: 1px solid white;*/
-	width:300px;
-	height:800px;
-	float:left;
+	width: 300px;
+	height: 800px;
+	float: left;
 }
 
-.footDiv{
-	background-color:#78B4F0;
-	width:1000px;
-	height:50px;
-	float:left;
+.footDiv {
+	background-color: #78B4F0;
+	width: 1000px;
+	height: 50px;
+	float: left;
 }
 
-.loginDiv{
-	background-color:#D0DEE9;
-	margin-top:200px;
-	margin-left:10px;
-	width:280px;
-	height:150px;
+.loginDiv {
+	background-color: #D0DEE9;
+	margin-top: 200px;
+	margin-left: 10px;
+	width: 280px;
+	height: 150px;
 }
 
-.username_clz{
-	margin-top:20px;
-	margin-left:20px;
-	width:160px;
-	height:21px;
+.username_clz {
+	margin-top: 20px;
+	margin-left: 20px;
+	width: 160px;
+	height: 21px;
 }
 
-.password_clz{
-	margin-top:10px;
-	margin-left:20px;
-	width:160px;
-	height:21px;
+.password_clz {
+	margin-top: 10px;
+	margin-left: 20px;
+	width: 160px;
+	height: 21px;
 }
 
-.login_btn{
-	margin-top:10px;
-	margin-left:30px;
-	width:80px;
-	height:26px;
+.login_btn {
+	margin-top: 10px;
+	margin-left: 30px;
+	width: 80px;
+	height: 26px;
 }
 
-.register_btn{
-	margin-top:10px;
-	margin-left:15px;
-	width:80px;
-	height:26px;
+.register_btn {
+	margin-top: 10px;
+	margin-left: 15px;
+	width: 80px;
+	height: 26px;
 }
 
-.search_div{
-	background-color:#D0DEE9;
-	margin-top:50px;
-	margin-left:200px;
-	width:600px;
-	height:50px;
+.search_div {
+	background-color: #D0DEE9;
+	margin-top: 50px;
+	margin-left: 200px;
+	width: 600px;
+	height: 50px;
 }
 
-.resultset_div{
-	background-color:white;
-	margin-top:10px;
-	margin-left:100px;
-	width:800px;
-	height:600px;
+.resultset_div {
+	background-color: white;
+	margin-top: 10px;
+	margin-left: 100px;
+	width: 800px;
+	height: 600px;
 }
 
-.pagination_div{
-	background-color:white;
-	margin-top:10px;
-	margin-left:140px;
-	width:600px;
-	height:20px;
+.pagination_div {
+	background-color: white;
+	margin-top: 10px;
+	margin-left: 140px;
+	width: 600px;
+	height: 20px;
 }
 
-.file_size_select{
-	margin-top:15px;
-	margin-left:10px;
-	width:160px;
-	height:26px;
+.file_size_select {
+	margin-top: 15px;
+	margin-left: 10px;
+	width: 160px;
+	height: 26px;
 }
 
-.file_range_select{
-	margin-top:15px;
-	margin-left:5px;
-	width:160px;
-	height:26px;
+.file_range_select {
+	margin-top: 15px;
+	margin-left: 5px;
+	width: 160px;
+	height: 26px;
 }
 
-.file_name_ipt{
-	margin-top:15px;
-	margin-left:5px;
-	width:120px;
-	height:22px;
+.file_name_ipt {
+	margin-top: 15px;
+	margin-left: 5px;
+	width: 120px;
+	height: 22px;
 }
 
-.search_btn{
-	margin-top:15px;
-	margin-left:5px;
-	width:80px;
-	height:26px;
+.search_btn {
+	margin-top: 15px;
+	margin-left: 5px;
+	width: 80px;
+	height: 26px;
 }
 
-.errorMsgDiv{
-	margin-top:4px;
-	margin-left:500px;
-	background-color:#D2B4F0;
-	width:auto;
-	height:22px;
+.errorMsgDiv {
+	margin-top: 4px;
+	margin-left: 500px;
+	background-color: #D2B4F0;
+	width: auto;
+	height: 22px;
 	line-height: 22px;
 	text-align: center;
 	display: inline-table;
@@ -188,7 +198,7 @@ a:hover{
 }
 
 .errorTimeout {
-	color:red;
+	color: red;
 	width: 795px;
 	height: 500px;
 	overflow: hidden;
@@ -204,8 +214,8 @@ a:hover{
 }
 
 .errorDiv {
-	margin-left:450px;
-	margin-top:200px;
+	margin-left: 450px;
+	margin-top: 200px;
 	background-color: #78B4F0;
 	width: 500px;
 	height: 96px;
@@ -213,31 +223,34 @@ a:hover{
 	text-align: center;
 	line-height: 98px;
 	color: red;
-	
 }
 
-.th_title{
-background-color:#44cc88;color:#fff;
-font-weight:bold;
-height:30px;
-line-height:30px;
-
+.th_title {
+	background-color: #44cc88;
+	color: #fff;
+	font-weight: bold;
+	height: 30px;
 }
 
-.pointer{
-cursor: pointer;
+.pointer {
+	cursor: pointer;
 }
 
 .loginAndRegDiv {
 	margin-left: 860px;
 }
 
-.loginAndRegDiv a{
+.loginAndRegDiv a {
 	font: 18px solid gray;
 	text-decoration: none;
 }
 
-.loginAndRegDiv a:hover{
+.loginAndRegDiv a:hover {
 	color: Black;
 	font: bold 18px solid;
+}
+
+.loginMainContent{
+ margin:0 auto;
+width:1000px;
 }

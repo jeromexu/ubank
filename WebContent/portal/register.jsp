@@ -10,13 +10,13 @@
 <link href="../css/home.css" rel="stylesheet" type="text/css"></link>
 </head>
 <body>
-
-<div class="mainDiv">
+<div class="loginMainContent">
 <div class="topDiv">
 <h2>UBank</h2>
 </div>
-<div class="main_Div">
-<div align="right"><a href="${contextPath}/portal/home.html">登陆</a> | <a href="${contextPath}/portal/register.jsp">注册</a></div>
+<div class="main_Div_l">
+<div align="right"><a href="${contextPath}/portal/home.html">登陆</a>
+| <a href="${contextPath}/portal/register.jsp">注册</a></div>
 <div style="text-align: center;">
 <h1 style="color: #555;">注册</h1>
 </div>
@@ -25,49 +25,48 @@
 				${u:getText(register_msg) }
 </c:if> <c:if test="${not empty error_msg }">
 				${error_msg}
-</c:if> 
-<c:if test="${register_msg eq 'user.exist' || register_msg eq '' || register_msg eq null}">
-<form action="${contextPath}/portal/register.do" method="post"
-	id="userFomr" name="userFomr" onsubmit="return checkUserForm();">
-<table width="380px" height="220px">
-	<tbody>
-		<tr>
-			<th>帐 号：</th>
-			<td align="left"><input type="text" id="userName"
-				name="userName" /></td>
-		</tr>
+</c:if> <c:if
+	test="${register_msg eq 'user.exist' || register_msg eq '' || register_msg eq null}">
+	<form action="${contextPath}/portal/register.do" method="post"
+		id="userFomr" name="userFomr" onsubmit="return checkUserForm();">
+	<table width="380px" height="220px">
+		<tbody>
+			<tr>
+				<th>帐 号：</th>
+				<td align="left"><input type="text" id="userName"
+					name="userName" /></td>
+			</tr>
 
-		<tr>
-			<th>密 码：</th>
-			<td align="left"><input type="password" id="password"
-				name="password" /></td>
-		</tr>
+			<tr>
+				<th>密 码：</th>
+				<td align="left"><input type="password" id="password"
+					name="password" /></td>
+			</tr>
 
-		<tr>
-			<th>重复密码：</th>
-			<td align="left"><input type="password" id="repassword"
-				name="repassword" /></td>
-		</tr>
+			<tr>
+				<th>重复密码：</th>
+				<td align="left"><input type="password" id="repassword"
+					name="repassword" /></td>
+			</tr>
 
-		<tr>
-			<th>验 证 码：</th>
-			<td align="left"><input id="captchaCode" name="captchaCode"
-				title="输入验证码"/> <img id="validateImg" name="validateImg"
-				src="${contextPath}/jcaptcha"
-				style="display: block; margin-bottom: 5px; margin-top: 5px;">
-			<a href="javascript:;"
-				onclick="validateImg.src='${contextPath}/jcaptcha?now='+ new Date().getTime()">看不清</a>
-			</td>
-		</tr>
-		<tr>
-			<th colspan="2" align="left"><input id="regsubmit" type="submit"
-				name="regsubmit" value="注册" /></th>
-		</tr>
-	</tbody>
-</table>
-</form>
-</c:if>
-</div>
+			<tr>
+				<th>验 证 码：</th>
+				<td align="left"><input id="captchaCode" name="captchaCode"
+					title="输入验证码" /> <img id="validateImg" name="validateImg"
+					src="${contextPath}/jcaptcha"
+					style="display: block; margin-bottom: 5px; margin-top: 5px;">
+				<a href="javascript:;"
+					onclick="validateImg.src='${contextPath}/jcaptcha?now='+ new Date().getTime()">看不清</a>
+				</td>
+			</tr>
+			<tr>
+				<th colspan="2" align="left"><input id="regsubmit"
+					type="submit" name="regsubmit" value="注册" /></th>
+			</tr>
+		</tbody>
+	</table>
+	</form>
+</c:if></div>
 
 <script type="text/javascript">
 	function checkUserForm() {
@@ -104,8 +103,7 @@
 		}
 	}
 </script></div>
-</div>
 <div class="footDiv"></div>
-
+</div>
 </body>
 </html>
