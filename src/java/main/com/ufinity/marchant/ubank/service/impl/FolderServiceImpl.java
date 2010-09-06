@@ -152,7 +152,9 @@ public class FolderServiceImpl implements FolderService {
         catch (Exception e) {
             logger.error("The database throw an  exception "
                     + "when create a folder. ", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
             return null;
         }
         finally {
@@ -185,7 +187,9 @@ public class FolderServiceImpl implements FolderService {
         catch (Exception e) {
             logger.error("When try get user directory tree "
                     + "happened to thd database an exception", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -259,7 +263,9 @@ public class FolderServiceImpl implements FolderService {
         }
         catch (Exception e) {
             logger.error("happened to thd database an exception", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
             return null;
         }
         finally {
@@ -387,7 +393,9 @@ public class FolderServiceImpl implements FolderService {
             int result = DocumentUtil.moveOrCopyFolderTo(source, target, true);
             if (result != 1) {
                 logger.debug("move disk file fail");
-                EntityManagerUtil.rollback();
+                if (EntityManagerUtil.isActive()) {
+                    EntityManagerUtil.rollback();
+                }
                 return false;
             }
             EntityManagerUtil.commit();
@@ -395,7 +403,9 @@ public class FolderServiceImpl implements FolderService {
         catch (Exception e) {
             logger.error("When moving folder to specified directory ,"
                     + " the database throw an exception.", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
             return false;
         }
         finally {
@@ -445,7 +455,9 @@ public class FolderServiceImpl implements FolderService {
             catch (Exception e) {
                 logger.error("An exception when copying a directory "
                         + "to update the database. ", e);
-                EntityManagerUtil.rollback();
+                if (EntityManagerUtil.isActive()) {
+                    EntityManagerUtil.rollback();
+                }
                 return false;
             }
             finally {
@@ -471,7 +483,9 @@ public class FolderServiceImpl implements FolderService {
                     catch (Exception e) {
                         logger.error("An exception when copying a file"
                                 + " add to the database", e);
-                        EntityManagerUtil.rollback();
+                        if (EntityManagerUtil.isActive()) {
+                            EntityManagerUtil.rollback();
+                        }
                         // return false;
                     }
                     finally {
@@ -533,7 +547,9 @@ public class FolderServiceImpl implements FolderService {
         }
         catch (Exception e) {
             logger.error("database exception ,when folder rename .", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
             return false;
         }
         finally {
@@ -577,7 +593,9 @@ public class FolderServiceImpl implements FolderService {
             catch (Exception e) {
                 logger.error("update the database exception "
                         + "when delete a disk file .", e);
-                EntityManagerUtil.rollback();
+                if (EntityManagerUtil.isActive()) {
+                    EntityManagerUtil.rollback();
+                }
                 // return false;
             }
             finally {
@@ -606,7 +624,9 @@ public class FolderServiceImpl implements FolderService {
         }
         catch (Exception e) {
             logger.error("delete disk directory fail.", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
             return false;
         }
         finally {
@@ -643,7 +663,9 @@ public class FolderServiceImpl implements FolderService {
         catch (Exception e) {
             logger.error("When sharing a folder,database"
                     + " throw an exception .", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
             return false;
         }
         finally {
@@ -673,7 +695,9 @@ public class FolderServiceImpl implements FolderService {
         catch (Exception e) {
             logger.error("When cancel share a folder "
                     + ",database throw an exception", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
             return false;
         }
         finally {
@@ -863,8 +887,10 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.commit();
         }
         catch (Exception e) {
-            EntityManagerUtil.rollback();
             logger.error("get user root folder the database exception ", e);
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -903,7 +929,9 @@ public class FolderServiceImpl implements FolderService {
         }
         catch (Exception e) {
             logger.error("generate share tree exception", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
         }
         return shareRoot;
     }

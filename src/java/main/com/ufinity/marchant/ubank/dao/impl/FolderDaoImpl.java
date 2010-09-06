@@ -35,7 +35,6 @@ import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 
 /**
- * 
  * @author WenQiang Wu
  * @version Aug 18, 2010
  */
@@ -72,7 +71,8 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
             query = EntityManagerUtil.getEntityManager().createNativeQuery(
                     sqlQuery.toString(), Folder.class).setParameter("userId",
                     userId);
-        } else {
+        }
+        else {
             sqlQuery.append(sqlQueryAppend).append(sqlQueryEnd);
             query = EntityManagerUtil.getEntityManager().createNativeQuery(
                     sqlQuery.toString(), Folder.class).setParameter("userId",
@@ -85,7 +85,6 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
     }
 
     /**
-     * 
      * @param userId
      * @return Folder
      * @author skyqiang

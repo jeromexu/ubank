@@ -429,7 +429,9 @@ public class FileServiceImpl implements FileService {
         }
         catch (Exception e) {
             logger.error("Update the file  database exception ", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -515,7 +517,9 @@ public class FileServiceImpl implements FileService {
         catch (Exception e) {
             logger.error("Database operation exception "
                     + "when moving a file. ", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
             return false;
         }
         finally {
@@ -553,7 +557,9 @@ public class FileServiceImpl implements FileService {
         }
         catch (Exception e) {
             logger.error("Database exception where tried to remove a file.", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
             return false;
         }
         finally {
@@ -598,7 +604,9 @@ public class FileServiceImpl implements FileService {
         }
         catch (Exception e) {
             logger.error("update the database exception when rename a file", e);
-            EntityManagerUtil.rollback();
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
         }
         finally {
             EntityManagerUtil.closeEntityManager();
