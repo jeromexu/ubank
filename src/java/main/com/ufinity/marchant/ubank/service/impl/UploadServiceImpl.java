@@ -70,10 +70,8 @@ public class UploadServiceImpl implements UploadService {
     /**
      * upload file and save to db
      * 
-     * @param folderId
-     *            current folder id
-     * @param folderDir
-     *            current folder dir   
+     * @param currentFolder
+     *            current folder
      * @param pi
      *            info of upload
      * @param item
@@ -81,8 +79,15 @@ public class UploadServiceImpl implements UploadService {
      * @throws UBankServiceException
      *             if have UBankServiceException
      */
-    public void uploadAndSaveDb(Long folderId, String folderDir, ProgressInfo pi, FileItemStream item)
+    public void uploadAndSaveDb(Folder currentFolder, ProgressInfo pi, FileItemStream item)
             throws UBankServiceException {
+        if(currentFolder == null){
+            throw new UBankServiceException("current folder is null");
+        }
+        
+        Long folderId = currentFolder.getFolderId();
+        String folderDir = currentFolder.getDirectory();
+        
         if (Validity.isNullOrZero(folderId)) {
             throw new UBankServiceException("current folder id is zero or is null");
         }
@@ -136,6 +141,7 @@ public class UploadServiceImpl implements UploadService {
             fb.setCreateTime(now);
             fb.setModifyTime(now);
             fb.setRepeatCount(0);
+            fb.setShare(currentFolder.getShare());
             
             fb.setDirectory(folderDir + File.separator + folderId);
             // kb
@@ -229,18 +235,16 @@ public class UploadServiceImpl implements UploadService {
      *            folder id
      * @throws UBankServiceException
      *             if has UBankServiceException
-     * @return folder dir
+     * @return folder
      */
-    public String getFolderDir(Long folderId) throws UBankServiceException {
+    public Folder getFolder(Long folderId) throws UBankServiceException {
         try {
             EntityManagerUtil.begin();
             folderDao = DaoFactory.createDao(FolderDao.class);
             Folder folder = folderDao.find(folderId);
-            if(folder == null){
-                throw new UBankServiceException("Upload folder is null.");
-            }
             EntityManagerUtil.commit();
-            return folder.getDirectory();
+            
+            return folder;
         } catch (RuntimeException e) {
             throw new UBankServiceException(e);
         } finally {

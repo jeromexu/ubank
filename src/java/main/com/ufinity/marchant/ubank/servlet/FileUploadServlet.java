@@ -265,13 +265,13 @@ public class FileUploadServlet extends AbstractServlet {
                 FileItemIterator items = upload.getItemIterator(request);
                 
                 //get folder
-                String currentFolderDir = uploadService.getFolderDir(currentFolderId);
+                Folder folder = uploadService.getFolder(currentFolderId);
                 
                 while (items.hasNext()) {
                     FileItemStream item = items.next();
                     String fieldName = item.getFieldName();
                         request.getSession().setAttribute(UploadConstant.PROGRESS_INFO + fieldName, pi);
-                        uploadService.uploadAndSaveDb(currentFolderId, currentFolderDir, pi, item);
+                        uploadService.uploadAndSaveDb(folder, pi, item);
                         uploadService.addPoint(user.getUserId());
                 }
                 
