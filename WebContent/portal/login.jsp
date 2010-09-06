@@ -20,8 +20,10 @@
   <center>
     
     <div class="loginDiv">
-    <h1>欢迎您的登陆</h1>
-     <c:if test="${not empty error_msg}">
+    
+    <h1>${u:getText('welcome.login') }</h1>
+    
+    <c:if test="${not empty error_msg}">
       <span title="${error_msg}"><font color="red">${error_msg}</font></span>
     </c:if>
     
