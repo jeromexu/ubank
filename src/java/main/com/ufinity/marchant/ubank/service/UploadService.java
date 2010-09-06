@@ -40,7 +40,7 @@ public interface UploadService {
     /**
      * upload file and save to db
      * 
-     * @param Folder
+     * @param folder
      *            current folder 
      * @param pi
      *            info of upload
