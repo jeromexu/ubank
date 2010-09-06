@@ -402,14 +402,8 @@ public class FolderServlet extends AbstractServlet {
             }
         }
         else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
-            try {
-                if (folderService.copyFolderTo(folderId, fId)) {
-                    result = Constant.REQUEST_RESULT_SUCCESS;
-                }
-            }
-            catch (UBankServiceException e) {
-                
-                e.printStackTrace();
+            if (folderService.copyFolderTo(folderId, fId)) {
+                result = Constant.REQUEST_RESULT_SUCCESS;
             }
         }
         returnResp(result, resp);
