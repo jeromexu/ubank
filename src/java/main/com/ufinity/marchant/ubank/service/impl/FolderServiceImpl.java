@@ -50,7 +50,6 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
-import com.ufinity.marchant.ubank.exception.DbException;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FolderService;
 
@@ -803,15 +802,15 @@ public class FolderServiceImpl implements FolderService {
      * @param name
      *            folder name
      * @return have same name return 'true' else return 'false'
-     * @throws DbException
+     * @throws UBankException
      *             if folder is null or name is nul throw exception
      * @author bxji
      */
     private boolean isSameNameFolder(Folder folder, String name)
-            throws DbException {
+            throws UBankException {
         if (folder == null || Validity.isNullAndEmpty(name)) {
             logger.debug("target folder can not be null");
-            throw new DbException("target folder and name can not be null.");
+            throw new UBankException("target folder and name can not be null.");
         }
         Set<Folder> children = folder.getChildren();
         for (Folder child : children) {
