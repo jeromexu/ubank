@@ -402,7 +402,7 @@ public class FileServiceImpl implements FileService {
                 Folder folder = folderDao.find(targetFolderId);
                 // If there is a same name file in the target directory
                 String fileName = DocumentUtil.getNewName(getDiskPath(folder),
-                        fileCopy.getFileName(), 0);
+                        fileCopy.getFileName(), false);
                 // copy disk file
                 int result = DocumentUtil.moveOrCopyFileTo(fileCopy, folder,
                         false, fileName);
@@ -490,7 +490,8 @@ public class FileServiceImpl implements FileService {
                 return true;
             }
             // If there is a same name file in the target directory
-            String fileName = DocumentUtil.getNewName(getDiskPath(folder), file.getFileName(), 0);
+            String fileName = DocumentUtil.getNewName(getDiskPath(folder), file
+                    .getFileName(), 0, false);
 
             // move disk file
             int result = DocumentUtil.moveOrCopyFileTo(file, folder, true,
@@ -591,7 +592,7 @@ public class FileServiceImpl implements FileService {
                     return true;
                 }
                 String fileName = DocumentUtil.getNewName(file.getDirectory(),
-                        newName, 0);
+                        newName, false);
                 int result = DocumentUtil.renameFile(file, fileName);
                 if (result != 1) {
                     logger.debug("rename disk file fail.");
@@ -674,5 +675,5 @@ public class FileServiceImpl implements FileService {
 
         return file;
     }
-    
+
 }
