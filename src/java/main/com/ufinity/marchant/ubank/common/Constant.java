@@ -154,5 +154,7 @@ public interface Constant {
 
     // file size
     public static final String FILE_SIZE_UNIT_KB = "KB";
+    // folder Maximum layer
+    public static final Long FOLDER_MAX_LAYER = 9l;
 
 }

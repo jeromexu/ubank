@@ -28,6 +28,7 @@ import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
+import com.ufinity.marchant.ubank.upload.UploadConstant;
 
 /**
  * Folder Servlet used to operation folder
@@ -143,7 +144,6 @@ public class FolderServlet extends AbstractServlet {
             JsonNode[] nodes = { jsonTree, jsonShare };
 
             String treeJson = JsonUtil.object2json(nodes);
-            System.out.println(treeJson);
             returnResp(treeJson, resp);
         }
         catch (UBankException e) {
@@ -194,7 +194,6 @@ public class FolderServlet extends AbstractServlet {
             result.put("total", josnEntitys.size());
             result.put("rows", josnEntitys);
             String jsonStr = JsonUtil.object2json(result);
-            System.out.println(jsonStr);
             returnResp(jsonStr, resp);
         }
     }
@@ -211,29 +210,26 @@ public class FolderServlet extends AbstractServlet {
      */
     private void addFolder(HttpServletRequest req, HttpServletResponse resp)
             throws UnsupportedEncodingException {
-        String folderId = req.getParameter(Constant.PARENT_ID);
+        User user = getLoginUser(req);
+        Long folderId = (Long) req.getSession().getAttribute(
+                UploadConstant.CURRENT_FOLDER_ID);
         String folderName = req.getParameter(Constant.FOLDER_NAME);
         folderName = URLDecoder.decode(folderName, "utf-8");
-        String userID = req.getParameter(Constant.USER_ID);
         String layerNumber = req.getParameter(Constant.FOLDER_LAYER);
-
         String result = Constant.REQUEST_RESULT_FAIL;
         if (!Validity.isNullAndEmpty(folderName)
-                && !Validity.isNullAndEmpty(folderId)
-                && !Validity.isNullAndEmpty(userID)
-                && !Validity.isNullAndEmpty(layerNumber)) {
+                && !Validity.isNullOrZero(folderId)
+                && !Validity.isNullAndEmpty(layerNumber) && user != null) {
             Long layer = Long.parseLong(layerNumber);
             // user directory layer number must less than ten
-            if (layer > 9l) {
+            if (layer > Constant.FOLDER_MAX_LAYER) {
                 logger.debug("create new Folder failed, "
                         + "user directory layer number must less than ten.");
                 returnResp(result, resp);
             }
-            Long pid = Long.parseLong(folderId);
-            Long uid = Long.parseLong(userID);
             try {
-                Folder folder = folderService.addFolder(uid, pid, folderName,
-                        null);
+                Folder folder = folderService.addFolder(user, folderId,
+                        folderName, null);
                 if (folder != null) {
                     result = Constant.REQUEST_RESULT_SUCCESS;
                 }

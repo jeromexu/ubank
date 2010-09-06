@@ -29,6 +29,7 @@ package com.ufinity.marchant.ubank.service;
 import java.util.List;
 
 import com.ufinity.marchant.ubank.bean.Folder;
+import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.FileOrFolderJsonEntity;
 import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.exception.UBankException;
@@ -50,14 +51,14 @@ public interface FolderService {
      *            default folder for the user to add
      * @param parentId
      *            parent foler 'folderId'
-     * @param userId
-     *            user ID identification
+     * @param user
+     *            current user
      * @return return a folder object
      * @throws UBankException
      *             throw Possible exception
      * @author bxji
      */
-    public Folder addFolder(Long userId, Long parentId, String folderName,
+    public Folder addFolder(User user, Long parentId, String folderName,
             String FolderType) throws UBankException;
 
     /**

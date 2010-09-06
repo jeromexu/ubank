@@ -418,8 +418,8 @@ public class Validity {
      */
     public static boolean isNullOrZero(Long longObj) {
         if (longObj == null || 0l == longObj) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 }

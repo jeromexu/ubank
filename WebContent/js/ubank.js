@@ -187,257 +187,254 @@ function showContent(param) {
 		singleSelect : true,
 
 		toolbar : [{
-					text : '新建目录',
-					iconCls : 'icon-add',
-					handler : function() {
-						if (!currTreeNode
-								|| currTreeNode.attributes.type == 'R') {
-							$.messager.alert('提示', '根目录下能创建子目录!', 'warning');
-							return;
-						}
-						var layer = currTreeNode.attributes.layer;
-						if (layer > 9) {
-							$.messager.alert('提示', '最大目录层数不能超过 10 层!',
-									'warning');
-							return;
-						}
-						$.messager.prompt('新建文件夹', '新建文件夹名称：', function(name) {
-									if (name) {
-										var userId = currTreeNode.attributes.uid;
-										var parentId = currTreeNode.id;
-										var url = '/ubank/portal/addFolder.do';
-										$.get(url, {
-													'parentId' : parentId,
-													'folderName' : encodeURI(name),
-													'userId' : userId,
-													'layer' : layer
-												}, function(data) {
-													if (data == 'success') {
-														returnResult(true);
-														reload();
-														showContent(parentId);
-													} else {
-														returnResult(false);
-													}
-												});
+			text : '新建目录',
+			iconCls : 'icon-add',
+			handler : function() {
+				if (!currTreeNode || currTreeNode.attributes.type == 'R') {
+					$.messager.alert('提示', '根目录下能创建子目录!', 'warning');
+					return;
+				}
+				var layer = currTreeNode.attributes.layer;
+				if (layer > 9) {
+					$.messager.alert('提示', '最大目录层数不能超过 10 层!', 'warning');
+					return;
+				}
+				$.messager.prompt('新建文件夹', '新建文件夹名称：', function(name) {
+
+							if (trim(name).length == 0) {
+								$.messager.alert('提示', '名称不能这空，或空字符串!',
+										'warning');
+								return;
+							}
+//							var userId = currTreeNode.attributes.uid;
+//							var parentId = currTreeNode.id;
+							var url = '/ubank/portal/addFolder.do';
+							$.get(url, {
+//										'parentId' : parentId,
+										'folderName' : encodeURI(name),
+//										'userId' : userId,
+										'layer' : layer
+									}, function(data) {
+										if (data == 'success') {
+											returnResult(true);
+											reload();
+											showContent(parentId);
+										} else {
+											returnResult(false);
+										}
+									});
+						});
+
+			}
+		}, {
+			text : '删除',
+			iconCls : 'icon-remove',
+			handler : function() {
+				var record = $('#test').datagrid('getSelected');
+				var result = executeChecking(currTreeNode, record);
+				if (result) {
+					var url = '/ubank/portal/delFolderOrFile.do';
+					$.messager.confirm('Warning', 'Are you sure  ?',
+							function(r) {
+								if (r) {
+									var id;
+									var pid;
+									var type = 'file';
+									if (record) {
+										id = record.id;
+										pid = record.pid;
+										if (record.type == '文件夹') {
+											type = 'folder';
+										}
+									} else {
+										id = currTreeNode.id;
+										pid = currTreeNode.pid;
+										type = 'folder';
 									}
-								});
+									$.get(url, {
+												'id' : id,
+												'type' : type
+											}, function(data) {
 
-					}
-				}, {
-					text : '删除',
-					iconCls : 'icon-remove',
-					handler : function() {
-						var record = $('#test').datagrid('getSelected');
-						var result = executeChecking(currTreeNode, record);
-						if (result) {
-							var url = '/ubank/portal/delFolderOrFile.do';
-							$.messager.confirm('Warning', 'Are you sure  ?',
-									function(r) {
-										if (r) {
-											var id;
-											var pid;
-											var type = 'file';
-											if (record) {
-												id = record.id;
-												pid = record.pid;
-												if (record.type == '文件夹') {
-													type = 'folder';
+												if (data == 'success') {
+													returnResult(true);
+													if (record == null) {
+														reload();
+													}
+													showContent(pid);
+												} else {
+													returnResult(false);
 												}
-											} else {
-												id = currTreeNode.id;
-												pid = currTreeNode.pid;
-												type = 'folder';
-											}
-											$.get(url, {
-														'id' : id,
-														'type' : type
-													}, function(data) {
+											});
+								}
+							});
+				}
+			}
 
-														if (data == 'success') {
-															returnResult(true);
-															if (record == null) {
-																reload();
-															}
-															showContent(pid);
-														} else {
-															returnResult(false);
-														}
-													});
-										}
-									});
-						}
+		}, {
+			text : '共享目录',
+			iconCls : 'icon-share',
+			handler : function() {
+				var record = $('#test').datagrid('getSelected');
+				if (record != null && record.type != '文件夹') {
+					$.messager.alert('提示 ', '文件不能共享，请选择文件夹', 'info');
+					return;
+				}
+				var result = executeChecking(currTreeNode, record);
+				if (result) {
+					var url = '/ubank/portal/shareFolder.do';
+					var id;
+					var folderName;
+					if (record) {
+						id = record.id;
+						folderName = record.name;
+					} else {
+						id = currTreeNode.id;
+						folderName = currTreeNode.text;
 					}
-
-				}, {
-					text : '共享目录',
-					iconCls : 'icon-share',
-					handler : function() {
-						var record = $('#test').datagrid('getSelected');
-						if (record != null && record.type != '文件夹') {
-							$.messager.alert('提示 ', '文件不能共享，请选择文件夹', 'info');
-							return;
-						}
-						var result = executeChecking(currTreeNode, record);
-						if (result) {
-							var url = '/ubank/portal/shareFolder.do';
-							var id;
-							var folderName;
-							if (record) {
-								id = record.id;
-								folderName = record.name;
-							} else {
-								id = currTreeNode.id;
-								folderName = currTreeNode.text;
-							}
-							$.messager.confirm('My Title', '你确定要共享“'
-											+ folderName + '”文件夹吗？',
-									function(r) {
-										if (r) {
-											$.get(url, {
-														'folderId' : id
-													}, function(data) {
-														if (data == 'success') {
-															returnResult(true);
-															reload();
-														} else {
-															returnResult(false);
-														}
-													});
-										}
-									});
-						}
-					}
-				}, {
-					text : '取消共享',
-					iconCls : 'icon-share',
-					handler : function() {
-						var record = $('#test').datagrid('getSelected');
-						if (record != null && record.type != '文件夹') {
-							$.messager.alert('提示 ', '文件不会被共享，请选择文件夹', 'info');
-							return;
-						}
-						var result = executeChecking(currTreeNode, record);
-						if (result) {
-							var url = '/ubank/portal/cancelShare.do';
-							var id;
-							var folderName;
-							if (record) {
-								id = record.id;
-								folderName = record.name;
-							} else {
-								id = currTreeNode.id;
-								folderName = currTreeNode.text;
-							}
-							$.messager.confirm('My Title', '你确定要取消“'
-											+ folderName + '”文件夹共享吗？',
-									function(r) {
-										if (r) {
-											$.get(url, {
-														'folderId' : id
-													}, function(data) {
-														if (data == 'success') {
-															returnResult(true);
-															reload();
-														} else {
-															returnResult(false);
-														}
-													});
-										}
-									});
-						}
-					}
-				}, '-', {
-					text : '上传文件',
-					iconCls : 'icon-undo',
-					handler : function() {
-						var wHeight = 350;
-						var wWidth = 450;
-						var top = (window.screen.height - wHeight) / 2;
-						var left = (window.screen.width - wWidth) / 2;
-						if (newWindow == undefined || newWindow.closed) {
-							newWindow = window.open('fileUpload.jsp',
-									'uploadwindow', 'top='
-											+ (window.screen.height - wHeight)
-											/ 2 + ',left='
-											+ (window.screen.width - wWidth)
-											/ 2 + ',width=' + wWidth
-											+ ',height=' + wHeight
-											+ ',location=no, scrollbars=yes');
-						} else {
-							alert("Upload window is already open!");
-						}
-					}
-				}, {
-					text : '重命名',
-					iconCls : 'icon-redo',
-					handler : function() {
-						var record = $('#test').datagrid('getSelected');
-						var result = executeChecking(currTreeNode, record);
-						if (result) {
-							var url = '/ubank/portal/rename.do';
-							$.messager.prompt('重命名', '新名称：', function(name) {
-										if (name) {
-											var id;
-											var type = 'file';
-											var parentId;
-											if (record) {
-												id = record.id;
-												parentId = record.pid
-												if (record.type == '文件夹') {
-													type = 'folder';
+					$.messager.confirm('My Title', '你确定要共享“' + folderName
+									+ '”文件夹吗？', function(r) {
+								if (r) {
+									$.get(url, {
+												'folderId' : id
+											}, function(data) {
+												if (data == 'success') {
+													returnResult(true);
+													reload();
+												} else {
+													returnResult(false);
 												}
-											} else {
-												id = currTreeNode.id;
-												type = 'folder';
-												parentId = id;
-											}
-
-											$.get(url, {
-														'id' : id,
-														'name' : encodeURI(name),
-														'type' : type,
-														'parentId' : parentId
-													}, function(data) {
-														if (data == 'success') {
-															returnResult(true);
-															reload();
-															showContent(parentId);
-														} else {
-															returnResult(false);
-														}
-													});
+											});
+								}
+							});
+				}
+			}
+		}, {
+			text : '取消共享',
+			iconCls : 'icon-share',
+			handler : function() {
+				var record = $('#test').datagrid('getSelected');
+				if (record != null && record.type != '文件夹') {
+					$.messager.alert('提示 ', '文件不会被共享，请选择文件夹', 'info');
+					return;
+				}
+				var result = executeChecking(currTreeNode, record);
+				if (result) {
+					var url = '/ubank/portal/cancelShare.do';
+					var id;
+					var folderName;
+					if (record) {
+						id = record.id;
+						folderName = record.name;
+					} else {
+						id = currTreeNode.id;
+						folderName = currTreeNode.text;
+					}
+					$.messager.confirm('My Title', '你确定要取消“' + folderName
+									+ '”文件夹共享吗？', function(r) {
+								if (r) {
+									$.get(url, {
+												'folderId' : id
+											}, function(data) {
+												if (data == 'success') {
+													returnResult(true);
+													reload();
+												} else {
+													returnResult(false);
+												}
+											});
+								}
+							});
+				}
+			}
+		}, '-', {
+			text : '上传文件',
+			iconCls : 'icon-undo',
+			handler : function() {
+				var wHeight = 350;
+				var wWidth = 450;
+				var top = (window.screen.height - wHeight) / 2;
+				var left = (window.screen.width - wWidth) / 2;
+				if (newWindow == undefined || newWindow.closed) {
+					newWindow = window.open('fileUpload.jsp', 'uploadwindow',
+							'top=' + (window.screen.height - wHeight) / 2
+									+ ',left=' + (window.screen.width - wWidth)
+									/ 2 + ',width=' + wWidth + ',height='
+									+ wHeight + ',location=no, scrollbars=yes');
+				} else {
+					alert("Upload window is already open!");
+				}
+			}
+		}, {
+			text : '重命名',
+			iconCls : 'icon-redo',
+			handler : function() {
+				var record = $('#test').datagrid('getSelected');
+				var result = executeChecking(currTreeNode, record);
+				if (result) {
+					var url = '/ubank/portal/rename.do';
+					$.messager.prompt('重命名', '新名称：', function(name) {
+								if (name) {
+									var id;
+									var type = 'file';
+									var parentId;
+									if (record) {
+										id = record.id;
+										parentId = record.pid
+										if (record.type == '文件夹') {
+											type = 'folder';
 										}
-									});
-						}
-					}
-				}, {
-					text : '移动到...',
-					iconCls : 'icon-cut',
-					handler : function() {
-						var record = $('#test').datagrid('getSelected');
-						var result = executeChecking(currTreeNode, record);
-						if (result) {
-							$('#moveTo').dialog('open');
-							$('#tt1').tree({
-										url : '/ubank/portal/showTree.do'
-									});
-						}
-					}
-				}, {
-					text : '复制到...',
-					iconCls : 'icon-edit',
-					handler : function() {
-						var record = $('#test').datagrid('getSelected');
-						var result = executeChecking(currTreeNode, record);
-						if (result) {
-							$('#copyTo').dialog('open');
-							$('#tt3').tree({
-										url : '/ubank/portal/showTree.do'
-									});
-						}
-					}
-				}],
+									} else {
+										id = currTreeNode.id;
+										type = 'folder';
+										parentId = id;
+									}
+
+									$.get(url, {
+												'id' : id,
+												'name' : encodeURI(name),
+												'type' : type,
+												'parentId' : parentId
+											}, function(data) {
+												if (data == 'success') {
+													returnResult(true);
+													reload();
+													showContent(parentId);
+												} else {
+													returnResult(false);
+												}
+											});
+								}
+							});
+				}
+			}
+		}, {
+			text : '移动到...',
+			iconCls : 'icon-cut',
+			handler : function() {
+				var record = $('#test').datagrid('getSelected');
+				var result = executeChecking(currTreeNode, record);
+				if (result) {
+					$('#moveTo').dialog('open');
+					$('#tt1').tree({
+								url : '/ubank/portal/showTree.do'
+							});
+				}
+			}
+		}, {
+			text : '复制到...',
+			iconCls : 'icon-edit',
+			handler : function() {
+				var record = $('#test').datagrid('getSelected');
+				var result = executeChecking(currTreeNode, record);
+				if (result) {
+					$('#copyTo').dialog('open');
+					$('#tt3').tree({
+								url : '/ubank/portal/showTree.do'
+							});
+				}
+			}
+		}],
 		onSortColumn : function(sort, order) {
 			alert(sort + ":" + order);
 		}
@@ -478,4 +475,7 @@ function executeChecking(node, record) {
 
 function setFolderId(folderId) {
 	$.get("setCurrentFolder.do?currentFolderId=" + folderId);
+}
+function trim(str) { //删除左右两端的空格 
+	return str.replace(/(^\s*)|(\s*$)/g, "");
 }

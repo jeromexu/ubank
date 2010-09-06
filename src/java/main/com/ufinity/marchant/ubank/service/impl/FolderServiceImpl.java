@@ -50,7 +50,6 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
-import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.DbException;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.service.FolderService;
@@ -64,7 +63,6 @@ import com.ufinity.marchant.ubank.service.FolderService;
 public class FolderServiceImpl implements FolderService {
     private FileDao fileDao;
     private FolderDao folderDao;
-    private UserDao userDao;
 
     // Logger for this class
     protected final Logger logger = Logger.getInstance(FolderServiceImpl.class);
@@ -75,7 +73,6 @@ public class FolderServiceImpl implements FolderService {
     public FolderServiceImpl() {
         folderDao = DaoFactory.createDao(FolderDao.class);
         fileDao = DaoFactory.createDao(FileDao.class);
-        userDao = DaoFactory.createDao(UserDao.class);
     }
 
     /**
@@ -87,17 +84,17 @@ public class FolderServiceImpl implements FolderService {
      *            default folder for the user directory
      * @param parentId
      *            parent foler 'folderId'
-     * @param userId
-     *            user ID identification
+     * @param user
+     *            current user
      * @return return a folder object
      * @throws UBankException
      *             throw Possible exception
      * @author bxji
      */
-    public Folder addFolder(Long userId, Long parentId, String folderName,
+    public Folder addFolder(User user, Long parentId, String folderName,
             String folderType) throws UBankException {
-        if (Validity.isNullOrZero(userId)) {
-            throw new UBankException("userId can not be empty");
+        if (user == null) {
+            throw new UBankException("user can not be empty");
         }
         if (Validity.isNullOrZero(parentId)
                 || Validity.isNullAndEmpty(folderName)) {
@@ -106,7 +103,6 @@ public class FolderServiceImpl implements FolderService {
         }
         try {
             EntityManagerUtil.begin();
-            User user = userDao.find(userId);
             Folder parentfolder = folderDao.find(parentId);
             if (parentfolder.getParent() == null) {
                 logger
