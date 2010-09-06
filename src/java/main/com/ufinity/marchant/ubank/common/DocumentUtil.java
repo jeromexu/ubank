@@ -365,7 +365,7 @@ public class DocumentUtil {
 	 *            repeat index
 	 * @return file
 	 */
-	public static String getNewName(String realDir, String fileName, int index) {
+	private static String getNewName(String realDir, String fileName, int index) {
 
 		try {
 			StringBuffer newName = new StringBuffer();
