@@ -153,6 +153,23 @@
 		<filter-name>i18nFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+  
+    <filter>
+      <filter-name>securityFilter</filter-name>
+      <filter-class>com.ufinity.marchant.ubank.filter.SecurityFilter</filter-class>
+      <init-param>
+        <param-name>needCheckedPaths</param-name>
+        <param-value>.jsp , .do</param-value>
+      </init-param>
+      <init-param>
+        <param-name>exceptPaths</param-name>
+        <param-value>login.jsp , login.do , logout.do</param-value>
+      </init-param>
+    </filter>
+    <filter-mapping>
+      <filter-name>securityFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
 	<error-page>
 		<error-code>404</error-code>
@@ -170,5 +187,9 @@
 		<exception-type>java.lang.Exception</exception-type>
 		<location>/common/500.jsp</location>
 	</error-page>
+    <error-page>
+      <exception-type>com.ufinity.marchant.ubank.exception.NoAuthorizationException</exception-type>
+      <location>/portal/login.jsp</location>
+    </error-page>
 
 </web-app>
