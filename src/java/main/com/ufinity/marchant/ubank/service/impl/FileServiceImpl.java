@@ -170,7 +170,7 @@ public class FileServiceImpl implements FileService {
      * @throws UBankServiceException
      *             the exception which do not get the file
      * @author jerome
-     * @author modify by zdxue - refact the return type and method name
+     * @author modify by zdxue - refact and add process the point
      */
     public DownloadResponse download(Long fileId, User user)
             throws UBankServiceException {
@@ -192,7 +192,8 @@ public class FileServiceImpl implements FileService {
             return response;
         }
 
-        // find here in order to override the session user's opint
+        //because of the param user be passed from servlet(its the session user)
+        //so find here in order to override the session user's point
         user = userDao.find(user.getUserId());
         logger.debug("find user=" + user);
 

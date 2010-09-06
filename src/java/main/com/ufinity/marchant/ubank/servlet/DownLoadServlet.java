@@ -115,9 +115,10 @@ public class DownLoadServlet extends AbstractServlet {
      * @param request
      *            download file
      * @param response
-     * @author jerome
      * @throws IOException 
-     * @throws UBankException 
+     * @throws UBankException
+     * @author jerome 
+     * @author modify by zdxue (about DownloadResponse) 
      */
     private String download(HttpServletRequest request,
             HttpServletResponse response) throws UBankException {
@@ -179,7 +180,8 @@ public class DownLoadServlet extends AbstractServlet {
      * @param outPut
      * @return
      * @throws IOException
-     * @author zdxue
+     * @author jerome 
+     * @author modify by zdxue (when construct FileOutputStream exception, throw out, no need to set HTTP header) 
      */
     private String download(File file, FileBean fileBean, HttpServletRequest request, 
             HttpServletResponse response) throws IOException {
