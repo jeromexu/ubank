@@ -401,8 +401,8 @@ public class FileServiceImpl implements FileService {
                 EntityManagerUtil.begin();
                 Folder folder = folderDao.find(targetFolderId);
                 // If there is a same name file in the target directory
-                String fileName = DocumentUtil.getNewName(getDiskPath(folder
-                        .getParent()), fileCopy.getFileName(), 0);
+                String fileName = DocumentUtil.getNewName(getDiskPath(folder),
+                        fileCopy.getFileName(), 0);
                 // copy disk file
                 int result = DocumentUtil.moveOrCopyFileTo(fileCopy, folder,
                         false, fileName);
@@ -490,8 +490,7 @@ public class FileServiceImpl implements FileService {
                 return true;
             }
             // If there is a same name file in the target directory
-            String fileName = DocumentUtil.getNewName(getDiskPath(folder
-                    .getParent()), file.getFileName(), 0);
+            String fileName = DocumentUtil.getNewName(getDiskPath(folder), file.getFileName(), 0);
 
             // move disk file
             int result = DocumentUtil.moveOrCopyFileTo(file, folder, true,
