@@ -32,24 +32,24 @@ public class DocumentUtil {
 			.getInstance(DocumentUtil.class);
 
 	/**
-     * Check a FileBean is exist or not
-     * 
-     * @param fileBean
-     *            FileBean obj
-     * @return if exist return true
-     * @author zdxue
-     */
-    public static boolean exist(FileBean fileBean) {
-        if (fileBean == null)
-            return false;
+	 * Check a FileBean is exist or not
+	 * 
+	 * @param fileBean
+	 *            FileBean obj
+	 * @return if exist return true
+	 * @author zdxue
+	 */
+	public static boolean exist(FileBean fileBean) {
+		if (fileBean == null)
+			return false;
 
-        StringBuffer fullPath = new StringBuffer();
-        fullPath.append(getApplicationPath()).append(fileBean.getDirectory())
-                .append(File.separatorChar).append(fileBean.getFileName());
+		StringBuffer fullPath = new StringBuffer();
+		fullPath.append(getApplicationPath()).append(fileBean.getDirectory())
+				.append(File.separatorChar).append(fileBean.getFileName());
 
-        return new File(fullPath.toString()).exists();
-    }
-	
+		return new File(fullPath.toString()).exists();
+	}
+
 	/**
 	 * add the real file in disk by the FILE object
 	 * 
@@ -338,6 +338,23 @@ public class DocumentUtil {
 			LOGGER.error("remove folder exception!", e);
 		}
 		return 0;
+	}
+
+	/**
+	 * 
+	 * get disk new file name
+	 * 
+	 * @param realDir
+	 *            file directory
+	 * @param fileName
+	 *            file name
+	 * @param isFolderOrFile
+	 *            file flag folder:true file:false
+	 * @return the new file name
+	 */
+	public static String getNewName(String realDir, String fileName,
+			boolean isFolderOrFile) {
+		return getNewName(realDir,fileName,0,isFolderOrFile);
 	}
 
 	/**
