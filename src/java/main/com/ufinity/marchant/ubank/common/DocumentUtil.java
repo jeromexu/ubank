@@ -348,13 +348,10 @@ public class DocumentUtil {
 	 *            file directory
 	 * @param fileName
 	 *            file name
-	 * @param isFolderOrFile
-	 *            file flag folder:true file:false
 	 * @return the new file name
 	 */
-	public static String getNewName(String realDir, String fileName,
-			boolean isFolderOrFile) {
-		return getNewName(realDir,fileName,0,isFolderOrFile);
+	public static String getNewName(String realDir, String fileName) {
+		return getNewName(realDir, fileName, 0);
 	}
 
 	/**
@@ -366,12 +363,9 @@ public class DocumentUtil {
 	 *            file name
 	 * @param index
 	 *            repeat index
-	 * @param isFolderOrFile
-	 *            folder:true file:false
 	 * @return file
 	 */
-	public static String getNewName(String realDir, String fileName, int index,
-			boolean isFolderOrFile) {
+	public static String getNewName(String realDir, String fileName, int index) {
 
 		try {
 			StringBuffer newName = new StringBuffer();
@@ -393,21 +387,17 @@ public class DocumentUtil {
 			String serverPath = getApplicationPath();
 			File file = null;
 			if (serverPath != null) {
-				if (isFolderOrFile) {
-					file = new File(serverPath + realDir);
-				} else {
-					file = new File(serverPath + realDir
-							+ FILE_SYSTEM_SEPARATOR + newName.toString());
-				}
+				file = new File(serverPath + realDir + FILE_SYSTEM_SEPARATOR
+						+ newName.toString());
 				if (file.exists()) {
 					index++;
-					return getNewName(realDir, fileName, index, isFolderOrFile);
+					return getNewName(realDir, fileName, index);
 				} else {
 					return file.getName();
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.error("get disk folder or file name exception!", e);
+			LOGGER.error("get disk file name exception!", e);
 		}
 		return null;
 	}
