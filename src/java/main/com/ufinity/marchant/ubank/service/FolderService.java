@@ -122,9 +122,8 @@ public interface FolderService {
      *            source Folder object identification
      * @return success return true else return false
      * @author bxji
-     * @throws UBankServiceException 
      */
-    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId) throws UBankServiceException;
+    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId);
 
     /**
      * This method is used to rename a folder
