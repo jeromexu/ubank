@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
+import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DocumentUtil;
 import com.ufinity.marchant.ubank.common.Logger;
@@ -23,6 +24,7 @@ import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.model.DownloadResponse;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
+import com.ufinity.marchant.ubank.service.UserService;
 
 /**
  * 
@@ -37,9 +39,6 @@ public class DownLoadServlet extends AbstractServlet {
     private static final long serialVersionUID = 1L;
     // Logger for this class
     protected final Logger logger = Logger.getInstance(RegServlet.class);
-
-    // file service business logic instance
-    private FileService fileService = null;
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -94,8 +93,16 @@ public class DownLoadServlet extends AbstractServlet {
         logger.debug("fileId=" + fileId);
 
         FileService fileService = ServiceFactory.createService(FileService.class);
+        UserService userService = ServiceFactory.createService(UserService.class);
+        
         FileBean file = null;
+        User user = null;
         try {
+            if(checkLogin(request)){
+                user = userService.getUserByUserName(getLoginUser(request).getUserName());
+                logger.debug("get user=" + user);
+            }
+            
             file = fileService.getFile(fileId);
             logger.debug("file=" + file);
         } catch (UBankServiceException e) {
@@ -105,6 +112,7 @@ public class DownLoadServlet extends AbstractServlet {
 
         request.setAttribute(Constant.ATTR_FILE, file);
         request.setAttribute(Constant.ATTR_EVENTPATH, request.getServletPath()+"?"+request.getQueryString());
+        request.setAttribute(Constant.ATTR_USER, user);
         return Constant.DOWNLOAD;
     }
 
@@ -136,7 +144,12 @@ public class DownLoadServlet extends AbstractServlet {
             } else {
                 return Constant.ERROR_PAGE_500;
             }
-            fileService = ServiceFactory.createService(FileService.class);
+            FileService fileService = ServiceFactory.createService(FileService.class);
+            UserService userService = ServiceFactory.createService(UserService.class);
+            
+            User user = userService.getUserByUserName(getLoginUser(request).getUserName());
+            logger.debug("get user=" + user);
+            request.setAttribute(Constant.ATTR_USER, user);
 
             File file = null;
 
