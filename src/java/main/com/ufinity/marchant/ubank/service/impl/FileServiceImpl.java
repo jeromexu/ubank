@@ -204,7 +204,7 @@ public class FileServiceImpl implements FileService {
             logger.debug("find fileBean=" + fileBean);
             response.setFile(fileBean);
 
-            if (fileBean == null) {
+            if (fileBean == null || !DocumentUtil.exist(fileBean)) {
                 response.setStatus(DownloadStatus.FILE_NOT_EXIST);
                 logger.debug("download response=" + response);
                 return response;
@@ -674,4 +674,5 @@ public class FileServiceImpl implements FileService {
 
         return file;
     }
+    
 }
