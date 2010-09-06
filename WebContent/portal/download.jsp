@@ -8,6 +8,7 @@
   <script type="text/javascript" src="../js/jquery-1.2.6.js"></script>
   <script type="text/javascript" src="../js/alias-tablesorter.js"></script>
   <script type="text/javascript" src="../js/home.js"></script>
+  <link href="../css/home.css" rel="stylesheet" type="text/css">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>${file.fileName }</title>
 </head>
@@ -25,7 +26,7 @@
       </tr>
     </table>
     
-    <table>
+    <table width="800" height="50">
       <tr>
         <td width="260" class="th_title pointer">${u:getText('ubank.home.thead.filename')}</td>
         <td width="100" class="th_title pointer">${u:getText('ubank.home.thead.filesize')}</td>
@@ -55,9 +56,21 @@
           <c:set var="pointNotEnough" value="${u:getText('download.point.notenough')}" />
           <c:set var="mustLogin" value="${u:getText('must.login')}" />
               
-          <a onclick="download('${confirmMsg}' , '${pointNotEnough}' , '${mustLogin}' , ${isLogin} , 'download.do?id=${file.fileId}&eventPath=${eventPath}', '${eventPath}')" href="javascript:void(0);">
-            <img style="border: medium none;" alt="" src="${contextPath}/imgs/download_icon.png">
+          <a class="downloadBtn" onclick="download('${confirmMsg}' , '${pointNotEnough}' , '${mustLogin}' , ${isLogin} , 'download.do?id=${file.fileId}&eventPath=${eventPath}', '${eventPath}', ${req_user.point}, ${needPoint })" href="javascript:void(0);">
+            ${u:getText('ubank.download.button') }
           </a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+           <c:choose>
+            <c:when test="${empty req_user}">
+              <a href="login.jsp?&eventPath=${eventPath}">${u:getText('ubank.download.unlogin')}</a>
+            </c:when>
+            <c:otherwise>
+              ${u:getText('ubank.download.current.point')}: ${req_user.point }
+            </c:otherwise>
+           </c:choose>
         </td>
       </tr>
     </table>

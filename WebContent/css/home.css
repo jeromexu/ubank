@@ -254,3 +254,13 @@ a:hover {
  margin:0 auto;
 width:1000px;
 }
+
+.downloadBtn {
+	background-image: url("../imgs/download_icon.png");
+	width: 113px;
+	height: 31px;
+	display: block;
+	text-align: center;
+	line-height: 31px;
+	font: 22 solid bold;
+}
