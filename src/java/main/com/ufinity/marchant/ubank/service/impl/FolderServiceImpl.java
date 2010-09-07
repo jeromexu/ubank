@@ -595,6 +595,7 @@ public class FolderServiceImpl implements FolderService {
      * @return success return true else return false
      * @author bxji
      */
+    @SuppressWarnings("unused")
     private boolean delFolder(Folder targetFolder) {
         if (targetFolder == null) {
             return true;
