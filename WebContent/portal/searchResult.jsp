@@ -34,9 +34,18 @@
       </c:forEach>
     </c:when>
     <c:otherwise>
-      <tr align="center">
-        <td colspan="5"><font color="red" size="2">${u:getText("message.sharefile.search.result.empty")}</font></td>
-      </tr>
+      <c:choose>
+        <c:when test="${not empty error_msg}">
+           <tr align="center">
+            <td colspan="5"><font color="red" size="2">${error_msg}</font></td>
+          </tr>
+        </c:when>
+        <c:otherwise>
+          <tr align="center">
+            <td colspan="5"><font color="red" size="2">${u:getText("message.sharefile.search.result.empty")}</font></td>
+          </tr>
+        </c:otherwise>
+      </c:choose>
     </c:otherwise>
   </c:choose>
 
