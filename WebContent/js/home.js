@@ -71,19 +71,33 @@ function submit(form_id) {
 	document.getElementById(form_id).submit();
 }
 
-function search() {
+var searchRegex = /^[\u4e00-\u9fa5|a-zA-Z0-9|_\\.-]{0,20}$/;
+
+function search(msg) {
 	var url = 'search.do';
 	var rnd = new Date();
-	var data = "fileSize=" + $("#fileSize").val() + "&publishDate=" + $("#publishDate").val() + "&fileName=" + $("#fileNameId").val() + "&rnd=" + rnd;
+	var fileName = $("#fileNameId").val();
 	
+	if(!searchRegex.test(fileName)){
+		alert(msg);
+		return false;
+	}
+	
+	var data = "fileSize=" + $("#fileSize").val() + "&publishDate=" + $("#publishDate").val() + "&fileName=" + fileName + "&rnd=" + rnd;
 	ajaxRequest(url, data);
 }
 
-function searchForPager(pageNum, url) {
+function searchForPager(pageNum, url, msg) {
 	var url = 'search.do';
 	var rnd = new Date();
-	var data = "fileSize=" + $("#hidFileSize").val() + "&publishDate=" + $("#hidPublishDate").val() + "&fileName=" + $("#hidFileName").val() + "&pageNum=" + pageNum + "&rnd=" + rnd;
+	var fileName = $("#hidFileName").val();
+
+	if(!searchRegex.test(fileName)){
+		alert(msg);
+		return false;
+	}
 	
+	var data = "fileSize=" + $("#hidFileSize").val() + "&publishDate=" + $("#hidPublishDate").val() + "&fileName=" + fileName + "&pageNum=" + pageNum + "&rnd=" + rnd;
 	ajaxRequest(url, data);
 }
 

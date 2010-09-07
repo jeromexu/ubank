@@ -10,7 +10,7 @@
   <script type="text/javascript" src="../js/home.js"></script>
   <link href="../css/home.css" rel="stylesheet" type="text/css">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>UBank 网络硬盘---登陆</title>
+  <title>${u:getText('ubank.home.message.title')}</title>
 </head>
 
 <body bgcolor="#D0DEE9">
@@ -35,10 +35,17 @@
         
         <input type="hidden" name="eventPath" id="eventPath" value="${eventPath}">
                 
-        ${u:getText('ubank.home.login.username.ipt')}:<input class="username_clz" type="text" name="userName" maxlength="50" id="userName"><br>
-        ${u:getText('ubank.home.login.password.ipt')}:<input class="password_clz" type="password" name="password" maxlength="50" id="password"><br>
-        <input class="login_btn" type="button" onclick="return login('${u:getText('ubank.login.must.enter.username')}', '${u:getText('ubank.login.must.enter.password')}')"  id="loginBtn" value=${u:getText('ubank.home.login.login.btn')} />
-        <input class="register_btn" type="button" onclick="goPage('register.jsp')" value=${u:getText('ubank.home.login.register.btn')} />
+        <c:set var="userNameLabel" value="${u:getText('ubank.home.login.username.ipt')}" />
+        <c:set var="passwordLabel" value="${u:getText('ubank.home.login.password.ipt')}" />
+        <c:set var="usernameEmpty" value="${u:getText('ubank.login.must.enter.username')}" />
+        <c:set var="passwordEmpty" value="${u:getText('ubank.login.must.enter.password')}" />
+        <c:set var="loginBtnText" value="${u:getText('ubank.home.login.login.btn')}" />
+        <c:set var="registerBtnText" value="${u:getText('ubank.home.login.register.btn')}" />
+                
+        ${userNameLabel}:<input class="username_clz" type="text" name="userName" maxlength="50" id="userName"><br>
+        ${passwordLabel}:<input class="password_clz" type="password" name="password" maxlength="50" id="password"><br>
+        <input class="login_btn" type="button" onclick="return login('${usernameEmpty}', '${passwordEmpty}')"  id="loginBtn" value=${loginBtnText} />
+        <input class="register_btn" type="button" onclick="goPage('register.jsp')" value=${registerBtnText} />
      </form>                      
     </div>
     

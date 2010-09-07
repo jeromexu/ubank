@@ -36,8 +36,9 @@
 	    } else {
 	%>
   
-	<input type="button" id="first" value="${u:getText('ubank.pager.button.first')}" onclick="searchForPager('1','${postToUrl }');" />
-	<input type="button" id="previous" value="${u:getText('ubank.pager.button.prev')}" onclick="searchForPager('${pageNum-1}','${postToUrl }');" />
+    <c:set var="alertMsg" value="${u:getText('search.invalid.input')}" />
+	<input type="button" id="first" value="${u:getText('ubank.pager.button.first')}" onclick="return searchForPager('1','${postToUrl }', '${alertMsg}');" />
+	<input type="button" id="previous" value="${u:getText('ubank.pager.button.prev')}" onclick="return searchForPager('${pageNum-1}','${postToUrl }', '${alertMsg}');" />
 	
   <%
 	    }
@@ -58,7 +59,7 @@
 	%>
 
 
-	<a href="javascript:void(0);" onclick="searchForPager('<%=i%>','${postToUrl }');"><%=i%></a>
+	<a href="javascript:void(0);" onclick="return searchForPager('<%=i%>','${postToUrl }', '${alertMsg}');"><%=i%></a>
 
 	<%
 	    }
@@ -77,8 +78,8 @@
 	    } else {
 	%>
   
-	<input type="button" id="next" value="${u:getText('ubank.pager.button.next')}" onclick="searchForPager('${pageNum+1}','${postToUrl }');" />
-	<input type="button" id="last" value="${u:getText('ubank.pager.button.last')}" onclick="searchForPager('${pageCount}','${postToUrl }');" />
+	<input type="button" id="next" value="${u:getText('ubank.pager.button.next')}" onclick="return searchForPager('${pageNum+1}','${postToUrl }', '${alertMsg}');" />
+	<input type="button" id="last" value="${u:getText('ubank.pager.button.last')}" onclick="return searchForPager('${pageCount}','${postToUrl }', '${alertMsg}');" />
 	
     <%
 	    }

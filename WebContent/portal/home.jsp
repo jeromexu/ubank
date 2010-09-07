@@ -50,10 +50,13 @@
 							<option value="4">${u:getText('ubank.home.search.pubdate.4') }</option>
 							<option value="5">${u:getText('ubank.home.search.pubdate.5') }</option>
 						</select>
+
+                        <c:set var="searchInputVal" value="${u:getText('ubank.home.search.input')}" />
+                        <c:set var="searchBtnText" value="${u:getText('ubank.home.search.button')}" />
+                        <c:set var="searchConditionInvalid" value="${u:getText('search.invalid.input')}" />
 						
-						<input class="file_name_ipt" id="fileNameId" type="text" name="fileName" maxlength="50" value="${u:getText('ubank.home.search.input')}" onfocus="clearInput(this.id, '${u:getText('ubank.home.search.input')}')" onblur="resetInput(this.id, '${u:getText('ubank.home.search.input')}')">
-						
-						<input class="search_btn" type="button" value="${u:getText('ubank.home.search.button')}" onclick="search()" id="searchBtn">
+						<input class="file_name_ipt" id="fileNameId" type="text" name="fileName" maxlength="50" value="${searchInputVal}" onfocus="clearInput(this.id, '${searchInputVal}')" onblur="resetInput(this.id, '${searchInputVal}')">
+						<input class="search_btn" type="button" value="${searchBtnText}" onclick="return search('${searchConditionInvalid}');" id="searchBtn">
 				</div>
 				
 				<div class="resultset_div" id="searchResultDiv">
