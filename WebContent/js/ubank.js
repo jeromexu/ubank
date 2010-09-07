@@ -94,6 +94,10 @@ $(function() {
 					iconCls : 'icon-ok',
 					handler : function() {
 						var node = $('#tt3').tree('getSelected');
+						if (!node) {
+							$.messager.alert('提示 ', '你没有选择操作的目录', 'info');
+							return;
+						}
 						if (node) {
 							if (node.attributes.type == 'R') {
 								$.messager.alert('提示 ', '不能复制到根目录下!', 'info');
@@ -105,22 +109,29 @@ $(function() {
 								return;
 							}
 							var record = $('#test').datagrid('getSelected');
-
 							var url = '/ubank/portal/copyTo.do';
-							var parentId = node.id;
+							var targetId = node.id;
 							var id;
 							var type = 'file';
+							var pid;
 							if (record) {
 								id = record.id;
+								pid = record.pid
 								if (record.type == '文件夹') {
 									type = 'folder';
 								}
 							} else {
 								id = currTreeNode.id;
+								pid = currTreeNode.attributes.pid;
 								type = 'folder';
 							}
+							if (id == targetId || pid == targetId) {
+								$.messager
+										.alert('提示 ', '不能复制到自身及所在父亲目录下!', 'info');
+								return;
+							}
 							$.get(url, {
-										'parentId' : parentId,
+										'parentId' : targetId,
 										'id' : id,
 										'type' : type
 									}, function(data) {
@@ -280,7 +291,6 @@ function showContent(param) {
 					$.messager.alert('提示 ', '文件不能共享，请选择文件夹', 'info');
 					return;
 				}
-
 				var result = checkRoot(currTreeNode, record);
 				if (result) {
 					var url = '/ubank/portal/shareFolder.do';
@@ -332,7 +342,7 @@ function showContent(param) {
 						folderName = currTreeNode.text;
 					}
 					$.messager.confirm('My Title', '你确定要取消“' + folderName
-									+ '”文件夹共享吗？', function(r) {
+									+ '”及子文件夹的共享吗？', function(r) {
 								if (r) {
 									$.get(url, {
 												'folderId' : id
@@ -446,7 +456,7 @@ function showContent(param) {
 function returnResult(status) {
 	var message = '操作成功！';
 	if (!status) {
-		message = '操作失败！';
+		message = '操作失败:' + status;
 	}
 	$.messager.show({
 				title : '回执',

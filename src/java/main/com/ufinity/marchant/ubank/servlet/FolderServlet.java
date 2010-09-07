@@ -216,8 +216,11 @@ public class FolderServlet extends AbstractServlet {
         String folderName = req.getParameter(Constant.FOLDER_NAME);
         folderName = URLDecoder.decode(folderName, "utf-8");
         String layerNumber = req.getParameter(Constant.FOLDER_LAYER);
-
         String result = Constant.REQUEST_RESULT_FAIL;
+        if (Validity.isSpecial(folderName)) {
+            result = SystemGlobals.getString("");
+        }
+
         if (!Validity.isNullAndEmpty(folderName)
                 && !Validity.isNullOrZero(folderId)
                 && !Validity.isNullAndEmpty(layerNumber) && user != null) {

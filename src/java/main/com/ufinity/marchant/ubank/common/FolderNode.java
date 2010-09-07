@@ -84,10 +84,11 @@ public class FolderNode {
         Set<Folder> children = folder.getChildren();
         for (Folder child : children) {
             temp = generateFolderTree(child);
+            if (temp != null) {
+                node.getSubNodes().add(temp);
+            }
         }
-        if (temp != null) {
-            node.getSubNodes().add(temp);
-        }
+
         return node;
     }
 

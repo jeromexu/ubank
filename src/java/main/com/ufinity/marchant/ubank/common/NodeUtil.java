@@ -57,6 +57,7 @@ public class NodeUtil {
         jsonNode.getAttributes().put("uid", folderNode.getUserId() + "");
         jsonNode.getAttributes().put("type", folderNode.getFolderType());
         jsonNode.getAttributes().put("layer", folderNode.getLayer() + "");
+        jsonNode.getAttributes().put("pid", folderNode.getParentId() + "");
         if (folderNode.getParentId() == null || 0l == folderNode.getParentId()) {
             jsonNode.setState("open");
         }

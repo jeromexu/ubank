@@ -341,6 +341,10 @@ public class FolderServiceImpl implements FolderService {
         source = folderDao.find(sourceFolderId);
         target = folderDao.find(targetFolderId);
         boolean result = false;
+        // if source folder and target folder is the same directory
+        if(target.equals(source)){
+            
+        }
 
         if (target.equals(source.getParent())) {
             logger.debug("Can not be copied to the original folder.");
