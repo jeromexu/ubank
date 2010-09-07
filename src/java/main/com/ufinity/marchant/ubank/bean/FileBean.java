@@ -240,7 +240,7 @@ public class FileBean implements Serializable {
     /**
      * @return the downLoadLogs
      */
-    @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "file")
+    @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.EAGER, mappedBy = "file")
     public Set<DownLoadLog> getDownLoadLogs() {
         return downLoadLogs;
     }
