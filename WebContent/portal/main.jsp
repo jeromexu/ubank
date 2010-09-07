@@ -24,6 +24,7 @@
 <div style="white-space:normal;float:right;width:450px;" id = "userPoint">${session_user.point}
 </div>
 </div>
+</div>
 </h2>
 <div region="west" split="true" title="网络硬盘"
 	style="width: 150px; padding: 10px;">
