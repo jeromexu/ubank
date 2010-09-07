@@ -24,6 +24,7 @@ import com.ufinity.marchant.ubank.common.NodeUtil;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
+import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.FileService;
@@ -220,7 +221,7 @@ public class FolderServlet extends AbstractServlet {
         String result = Constant.REQUEST_RESULT_FAIL;
         // is name contain special char
         if (Validity.isSpecial(folderName)) {
-            result = SystemGlobals.getString(
+            result = MessageResource.getText(
                     MessageKeys.CAN_NOT_CONTAIN_SPECIAL_CHAR,
                     Validity.SPECIAL_CHARACTER);
         }
@@ -336,7 +337,7 @@ public class FolderServlet extends AbstractServlet {
         String result = Constant.REQUEST_RESULT_FAIL;
         // is name contain special char
         if (Validity.isSpecial(newName)) {
-            result = SystemGlobals.getString(
+            result = MessageResource.getText(
                     MessageKeys.CAN_NOT_CONTAIN_SPECIAL_CHAR,
                     Validity.SPECIAL_CHARACTER);
         }

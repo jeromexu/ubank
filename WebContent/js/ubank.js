@@ -126,8 +126,8 @@ $(function() {
 								type = 'folder';
 							}
 							if (id == targetId || pid == targetId) {
-								$.messager
-										.alert('提示 ', '不能复制到自身及所在父亲目录下!', 'info');
+								$.messager.alert('提示 ', '不能复制到自身及所在父亲目录下!',
+										'info');
 								return;
 							}
 							$.get(url, {
@@ -227,11 +227,11 @@ function showContent(param) {
 										'layer' : layer
 									}, function(data) {
 										if (data == 'success') {
-											returnResult(true);
+											returnResult(true, "");
 											reload();
 											showContent(parentId);
 										} else {
-											returnResult(false);
+											returnResult(false, data);
 										}
 									});
 						});
@@ -408,11 +408,11 @@ function showContent(param) {
 												'parentId' : parentId
 											}, function(data) {
 												if (data == 'success') {
-													returnResult(true);
+													returnResult(true, '');
 													reload();
 													showContent(parentId);
 												} else {
-													returnResult(false);
+													returnResult(false, data);
 												}
 											});
 								}
@@ -447,10 +447,10 @@ function showContent(param) {
 			}
 		}],
 		onSortColumn : function(sort, order) {
-			alert(sort + ":" + order+"---");
-		}
-		,onDblClickRow:function(rowIndex, rowData){
-			if(rowData.type=='文件夹'){
+			alert(sort + ":" + order + "---");
+		},
+		onDblClickRow : function(rowIndex, rowData) {
+			if (rowData.type == '文件夹') {
 				showContent(rowData.id);
 			}
 		}
@@ -458,10 +458,10 @@ function showContent(param) {
 	$('#test').datagrid('clearSelections');
 };
 
-function returnResult(status) {
+function returnResult(status, data) {
 	var message = '操作成功！';
 	if (!status) {
-		message = '操作失败:' + status;
+		message = '操作失败:' + data;
 	}
 	$.messager.show({
 				title : '回执',
