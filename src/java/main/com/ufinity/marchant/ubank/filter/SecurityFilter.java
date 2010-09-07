@@ -108,8 +108,9 @@ public class SecurityFilter implements Filter {
 	 * @author zdxue
 	 */
 	private boolean urlPatternValidate(String url, List<String> urlPatternList) {
-	    if(url == null || urlPatternList == null)
+	    if(url == null || urlPatternList == null){
 	        return false;
+	    }
 	    
 	    for(String regex : urlPatternList) {
 	        if(url.contains(regex)) {

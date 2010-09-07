@@ -42,8 +42,9 @@ public class CollectionUtil {
      * @author zdxue
      */
     public static List<String> add(List<String> list, String[] array) {
-        if (list == null || array == null)
+        if (list == null || array == null) {
             return list;
+        }
 
         for (String str : array) {
             if(str != null) {
