@@ -195,6 +195,15 @@ function showContent(param) {
 					title : '修改时间',
 					width : 200,
 					align : 'right'
+				}, {
+					field : 'opt',
+					title : 'Operation',
+					width : 100,
+					align : 'center',
+					rowspan : 2,
+					formatter : function(value, rec) {
+						return '<span style="color:red">Edit Delete</span>';
+					}
 				}]],
 		rownumbers : false,
 		singleSelect : true,
