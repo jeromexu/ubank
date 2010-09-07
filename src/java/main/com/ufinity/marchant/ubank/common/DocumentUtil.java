@@ -534,6 +534,8 @@ public class DocumentUtil {
 					LOGGER.error("output stream close exception!", e);
 				}
 			}
+			// recover all the occupancy object so that all the resource release
+			System.gc();
 		}
 		return false;
 	}
