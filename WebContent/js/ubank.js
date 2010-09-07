@@ -170,7 +170,7 @@ function showContent(param) {
 		nowrap : false,
 		striped : true,
 		url : reqUrl,
-		sortName : 'type',
+		sortName : 'modTime',
 		sortOrder : 'desc',
 		idField : 'id',
 		frozenColumns : [[{
@@ -447,7 +447,12 @@ function showContent(param) {
 			}
 		}],
 		onSortColumn : function(sort, order) {
-			alert(sort + ":" + order);
+			alert(sort + ":" + order+"---");
+		}
+		,onDblClickRow:function(rowIndex, rowData){
+			if(rowData.type=='文件夹'){
+				showContent(rowData.id);
+			}
 		}
 	});
 	$('#test').datagrid('clearSelections');
