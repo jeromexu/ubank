@@ -135,6 +135,7 @@
 			}
 			
 			function doUpload(){
+				$("#uploadbutton").hide();
 				isUpload = true;
 				for(tag in uploadTag){
 					var tagUpload = uploadTag[tag];
@@ -214,7 +215,6 @@
 				$("#uploadedFiles"+filedName).html("");
 				$("#progressBarText"+filedName).show();
 				$("#progressBarBoxContent"+filedName).show();
-				$("#uploadbutton").hide();
 			}
 			
 			function controlUpload(filedName){
