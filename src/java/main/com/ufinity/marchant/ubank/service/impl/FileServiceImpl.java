@@ -111,15 +111,15 @@ public class FileServiceImpl implements FileService {
                 + " , fileSize=" + fileSize + " , publishDate=" + publishDate
                 + " , pageNum=" + pageNum + " , pageSize=" + pageSize);
 
-        if (fileName == null) {
+        if (Validity.isEmpty(fileName)) {
             fileName = Constant.FILENAME_EMPTY;
         }
 
-        if (fileSize == null) {
+        if (Validity.isEmpty(fileSize)) {
             fileSize = Constant.FILE_SIZE_0;
         }
 
-        if (publishDate == null) {
+        if (Validity.isEmpty(publishDate)) {
             publishDate = Constant.FILE_PUBLISHDATE_0;
         }
 
