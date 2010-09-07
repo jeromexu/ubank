@@ -78,7 +78,7 @@
 		<input type="button" id="closebutton" onclick="closeWindow();"
 				value="关闭" />
 		
-		<input type="hidden" name="addPoint" id="addPoint" value=${u:getValue('upload.default.point')}>
+		<input type="hidden" name="addPoint" id="addPoint" value=${u:getValue('upload.default.point')} />
 				
 		<script type="text/javascript">
 			var index = 1;
@@ -236,7 +236,7 @@
 			}  
 			
 			function refreshPoint(){
-				var point = ${session_user.point};
+				var point = $("#userPoint", opener.document).html();
 				var addPoint = $("#addPoint").attr("value");
 				var pointNum=new Number(point);
 				var addPointNum=new Number(addPoint);
