@@ -16,7 +16,7 @@
 <h2>UBank</h2>
 </div>
 <div class="main_Div_l">
-<div align="right"><a href="${contextPath}/portal/home.html">登陆</a>
+<div align="right"><a href="${contextPath}/portal/login.jsp">登录</a>
 | <a href="${contextPath}/portal/register.jsp">注册</a></div>
 <div style="text-align: center;">
 <h1 style="color: #555;">注册</h1>
