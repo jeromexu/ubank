@@ -501,8 +501,8 @@ public class FolderServiceImpl implements FolderService {
                     copy.setShare(share);
                     copy.setFileId(null);
                     fileDao.add(copy);
-                    int result = DocumentUtil.moveOrCopyFileTo(copy,
-                            targetFolder, false, copy.getFileName());
+                    int result = DocumentUtil.moveOrCopyFileTo(file,
+                            tempFolder, false, copy.getFileName());
                     if (result != 1) {
                         EntityManagerUtil.rollback();
                     }
