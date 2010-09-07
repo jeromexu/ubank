@@ -24,7 +24,7 @@
 <div style="white-space:normal;float:right;width:450px;" id = "userPoint">${session_user.point}
 </div>
 </div>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="home.jsp">共享文件下载</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="home.html">共享文件下载</a>
 </div>
 </h2>
 <div region="west" split="true" title="网络硬盘"
