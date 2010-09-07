@@ -23,6 +23,7 @@ import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.NodeUtil;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
+import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.FileService;
@@ -217,29 +218,34 @@ public class FolderServlet extends AbstractServlet {
         folderName = URLDecoder.decode(folderName, "utf-8");
         String layerNumber = req.getParameter(Constant.FOLDER_LAYER);
         String result = Constant.REQUEST_RESULT_FAIL;
+        // is name contain special char
         if (Validity.isSpecial(folderName)) {
-            result = SystemGlobals.getString("");
+            result = SystemGlobals.getString(
+                    MessageKeys.CAN_NOT_CONTAIN_SPECIAL_CHAR,
+                    Validity.SPECIAL_CHARACTER);
         }
-
-        if (!Validity.isNullAndEmpty(folderName)
-                && !Validity.isNullOrZero(folderId)
-                && !Validity.isNullAndEmpty(layerNumber) && user != null) {
-            Long layer = Long.parseLong(layerNumber);
-            // user directory layer number must less than ten
-            if (layer > Constant.FOLDER_MAX_LAYER) {
-                logger.debug("create new Folder failed, "
-                        + "user directory layer number must less than ten.");
-                returnResp(result, resp);
-            }
-            try {
-                Folder folder = folderService.addFolder(user, folderId,
-                        folderName, null);
-                if (folder != null) {
-                    result = Constant.REQUEST_RESULT_SUCCESS;
+        else {
+            if (!Validity.isNullAndEmpty(folderName)
+                    && !Validity.isNullOrZero(folderId)
+                    && !Validity.isNullAndEmpty(layerNumber) && user != null) {
+                Long layer = Long.parseLong(layerNumber);
+                // user directory layer number must less than ten
+                if (layer > Constant.FOLDER_MAX_LAYER) {
+                    logger
+                            .debug("create new Folder failed, "
+                                    + "user directory layer number must less than ten.");
+                    returnResp(result, resp);
                 }
-            }
-            catch (UBankServiceException e) {
-                logger.error("create folder fail", e);
+                try {
+                    Folder folder = folderService.addFolder(user, folderId,
+                            folderName, null);
+                    if (folder != null) {
+                        result = Constant.REQUEST_RESULT_SUCCESS;
+                    }
+                }
+                catch (UBankServiceException e) {
+                    logger.error("create folder fail", e);
+                }
             }
         }
         returnResp(result, resp);
@@ -328,19 +334,27 @@ public class FolderServlet extends AbstractServlet {
         newName = URLDecoder.decode(newName, "utf-8");
         String type = req.getParameter(Constant.DOCUMENT_TYPE);
         String result = Constant.REQUEST_RESULT_FAIL;
-        if (Validity.isNullAndEmpty(id) || Validity.isNullAndEmpty(newName)
-                || Validity.isNullAndEmpty(type)) {
-            return;
+        // is name contain special char
+        if (Validity.isSpecial(newName)) {
+            result = SystemGlobals.getString(
+                    MessageKeys.CAN_NOT_CONTAIN_SPECIAL_CHAR,
+                    Validity.SPECIAL_CHARACTER);
         }
-        Long fId = Long.parseLong(id);
-        if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
-            if (fileService.renameFile(fId, newName)) {
-                result = Constant.REQUEST_RESULT_SUCCESS;
+        else {
+            if (Validity.isNullAndEmpty(id) || Validity.isNullAndEmpty(newName)
+                    || Validity.isNullAndEmpty(type)) {
+                return;
             }
-        }
-        else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
-            if (folderService.renameFolder(fId, newName)) {
-                result = Constant.REQUEST_RESULT_SUCCESS;
+            Long fId = Long.parseLong(id);
+            if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
+                if (fileService.renameFile(fId, newName)) {
+                    result = Constant.REQUEST_RESULT_SUCCESS;
+                }
+            }
+            else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
+                if (folderService.renameFolder(fId, newName)) {
+                    result = Constant.REQUEST_RESULT_SUCCESS;
+                }
             }
         }
         returnResp(result, resp);
