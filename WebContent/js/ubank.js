@@ -160,7 +160,7 @@ function reload() {
 	$('#dirTree').tree('reload');
 }
 
-function showContent(param,sortBy,sortType) {
+function showContent(param, sortBy, sortType) {
 	var sortColumn = sortBy;
 	var sortColType = sortType;
 	if (sortColumn == undefined) {
@@ -170,11 +170,11 @@ function showContent(param,sortBy,sortType) {
 		sortColType = "desc";
 	}
 	reqUrl = '/ubank/portal/showFolderContent.do?folderId=';
-	if (param!=undefined&&param != null) {
+	if (param != undefined && param != null) {
 		reqUrl = reqUrl + param;
 	}
-	if(sortBy!=undefined&&sortColType!=undefined){
-		reqUrl=reqUrl+"&sortBy="+sortColumn+"&sortType="+sortColType;
+	if (sortBy != undefined && sortColType != undefined) {
+		reqUrl = reqUrl + "&sortBy=" + sortColumn + "&sortType=" + sortColType;
 	}
 	$('#test').datagrid({
 		height : 570,
@@ -215,7 +215,10 @@ function showContent(param,sortBy,sortType) {
 					align : 'center',
 					rowspan : 2,
 					formatter : function(value, rec) {
-						return '<span style="color:red">Edit Delete</span>';
+						if (rec.type != '文件夹') {
+							return ('<a target="_blank" href="download.do?id='
+									+ rec.id + '">下载</a>');
+						}
 					}
 				}]],
 		rownumbers : false,
@@ -529,3 +532,4 @@ function setFolderId(folderId) {
 function trim(str) { // 删除左右两端的空格
 	return str.replace(/(^\s*)|(\s*$)/g, "");
 }
+
