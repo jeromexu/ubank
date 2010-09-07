@@ -273,6 +273,10 @@ public class FileUploadServlet extends AbstractServlet {
                         request.getSession().setAttribute(UploadConstant.PROGRESS_INFO + fieldName, pi);
                         uploadService.uploadAndSaveDb(folder, pi, item);
                         uploadService.addPoint(user.getUserId());
+                        
+                        User loginUser = (User)request.getSession().getAttribute(Constant.SESSION_USER);
+                        loginUser.setPoint(loginUser.getPoint() + 1);
+                        request.getSession().setAttribute(Constant.SESSION_USER, loginUser);
                 }
                 
                 pi.setCurrentTime(System.currentTimeMillis());
@@ -301,7 +305,7 @@ public class FileUploadServlet extends AbstractServlet {
      * @throws UBankException 
      *            if has exception
      */
-    private String validateUpload(long fileSize,long currentFolderId, User user) throws UBankException{
+    private String validateUpload(long fileSize,Long currentFolderId, User user) throws UBankException{
         if(user == null){
             logger.warn("Upload file user is not login.");
             return getText(MessageKeys.UPLOAD_NOT_LOGIN);
@@ -313,6 +317,11 @@ public class FileUploadServlet extends AbstractServlet {
             String[] params = {fileSize / (1024 * 1024)+"MB",sizeMax+"MB"};
             logger.warn("Upload files size is to big");
             return getText(MessageKeys.UPLOAD_SIZE_MAX, params);
+        }
+        
+        if(currentFolderId == null){
+            logger.warn("Current folder is null.");
+            return getText(MessageKeys.UPLOAD_NOT_ALLOW);
         }
         
         Folder folder = folderService.getRootFolder(user.getUserId());

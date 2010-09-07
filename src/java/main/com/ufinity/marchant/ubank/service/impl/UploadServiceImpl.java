@@ -146,7 +146,6 @@ public class UploadServiceImpl implements UploadService {
             fb.setDirectory(folderDir + File.separator + folderId);
             // kb
             fb.setSize(bStreamLen / 1024);
-            fb.setShare(false);
             this.saveFile(fb);
         } catch (DbException e) {
             // remove files
