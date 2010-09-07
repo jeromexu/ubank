@@ -34,7 +34,9 @@ import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.common.StringUtil;
+import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
+import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
@@ -109,8 +111,14 @@ public class SearchServlet extends AbstractServlet {
                 + " , publishDate=" + publishDate + " , pageNumber="
                 + pageNumber + " , pageNum=" + pageNum + " , pageSize="+pageSize);
 
+        String searchRegex = "[\u4e00-\u9fa5|a-zA-Z0-9|_\\.-]{0,20}";
+        if(Validity.isNotEmpty(fileName) && !fileName.matches(searchRegex)) {
+            req.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.SEARCH_CONDITION_MSG));
+            return Constant.SEARCH_RESULT_PAGE;
+        }
+        
         FileService fileService = ServiceFactory.createService(FileService.class);
-
+        
         Pager<FileBean> filePager = null;
         try{
             filePager = fileService.searchShareFiles(fileName, fileSize,publishDate, pageNum, pageSize);

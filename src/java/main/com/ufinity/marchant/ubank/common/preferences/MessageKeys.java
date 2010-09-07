@@ -77,4 +77,5 @@ public class MessageKeys {
     // Server error message
     public static final String CAN_NOT_CONTAIN_SPECIAL_CHAR = "can.not.contain.special.char";
 
+    public static final String SEARCH_CONDITION_MSG = "search.invalid.input";
 }
