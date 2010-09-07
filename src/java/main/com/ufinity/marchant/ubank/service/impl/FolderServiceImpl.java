@@ -342,14 +342,14 @@ public class FolderServiceImpl implements FolderService {
         target = folderDao.find(targetFolderId);
         boolean result = false;
         // if source folder and target folder is the same directory
-        if(target.equals(source)){
-            
-        }
-
-        if (target.equals(source.getParent())) {
-            logger.debug("Can not be copied to the original folder.");
+        // or source is subdirectory of the target
+        if (isSelfOrChild(target, source) || target.equals(source.getParent())) {
+            logger
+                    .debug("Can not be copied to the original folder or own parent folder.");
+            // throw new UBankServiceException("");
             return false;
         }
+
         if (target.getShare()) {
             result = copyFolder(target, source, true);
         }
@@ -381,6 +381,11 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.begin();
             Folder source = folderDao.find(sourceFolderId);
             Folder target = folderDao.find(targetFolderId);
+            // if move to self and own subfolder
+            if (isSelfOrChild(target, source)) {
+                logger.debug("Can not move a folder to the original folder.");
+                return false;
+            }
             String oldDir = source.getDirectory();
             source.setParent(target);
             source.setDirectory(getDiskPath(target));
@@ -984,5 +989,31 @@ public class FolderServiceImpl implements FolderService {
         newName.append("(").append(repeatCount + 1).append(")");
         oldFolder.setRepeatCount(repeatCount + 1);
         return newName.toString();
+    }
+
+    /**
+     * Check if the specified folder in a given tree
+     * 
+     * @param root
+     *            the tree root
+     * @param checkObj
+     *            The object being inspected
+     * @return if be return 'ture' else return 'flase'
+     */
+    private boolean isSelfOrChild(Folder root, Folder checkObj) {
+        if (root == null || checkObj == null) {
+            return false;
+        }
+        if (checkObj.getFolderId().equals(root.getFolderId())) {
+            return true;
+        }
+        Set<Folder> children = root.getChildren();
+        for (Folder child : children) {
+            if (checkObj.getFolderId().equals(child.getFolderId())) {
+                return true;
+            }
+            return isSelfOrChild(child, checkObj);
+        }
+        return false;
     }
 }
