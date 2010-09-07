@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/taglib/taglibs.jinc" %>
+
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -75,6 +77,8 @@
 				
 		<input type="button" id="closebutton" onclick="closeWindow();"
 				value="关闭" />
+		
+		<input type="hidden" name="addPoint" id="addPoint" value=${u:getValue('upload.default.point')}>
 				
 		<script type="text/javascript">
 			var index = 1;
@@ -198,6 +202,7 @@
 				  		 $("#progressBarBoxContent"+filedName).attr("style","width:"+ parseInt(100 * 3.5) + "px");
 				  		 $("#progressBarBoxContent"+filedName).append('<br><font color="red"><b>文件上传已完毕</b></font><br/>');
 				  		 window.opener.showContent(${currentFolderId});
+				  		 refreshPoint();
 				  	}
 				}
 			}
@@ -230,6 +235,13 @@
 			   window.close();  
 			}  
 			
+			function refreshPoint(){
+				var point = ${session_user.point};
+				var addPoint = $("#addPoint").attr("value");
+				var pointNum=new Number(point);
+				var addPointNum=new Number(addPoint);
+				$("#userPoint", opener.document).html(pointNum+addPointNum);
+			}
 		</script>
 	</body>
 </html>
