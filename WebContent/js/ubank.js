@@ -160,10 +160,21 @@ function reload() {
 	$('#dirTree').tree('reload');
 }
 
-function showContent(param) {
+function showContent(param,sortBy,sortType) {
+	var sortColumn = sortBy;
+	var sortColType = sortType;
+	if (sortColumn == undefined) {
+		sortColumn = "modTime";
+	}
+	if (sortColType == undefined) {
+		sortColType = "desc";
+	}
 	reqUrl = '/ubank/portal/showFolderContent.do?folderId=';
-	if (param != null) {
+	if (param!=undefined&&param != null) {
 		reqUrl = reqUrl + param;
+	}
+	if(sortBy!=undefined&&sortColType!=undefined){
+		reqUrl=reqUrl+"&sortBy="+sortColumn+"&sortType="+sortColType;
 	}
 	$('#test').datagrid({
 		height : 570,
@@ -183,7 +194,8 @@ function showContent(param) {
 					field : 'size',
 					title : '大小',
 					width : 120,
-					align : 'right'
+					align : 'right',
+					sortable : true
 				}, {
 					field : 'type',
 					title : '类型',
@@ -194,7 +206,8 @@ function showContent(param) {
 					field : 'modTime',
 					title : '修改时间',
 					width : 200,
-					align : 'right'
+					align : 'right',
+					sortable : true
 				}, {
 					field : 'opt',
 					title : 'Operation',
@@ -456,7 +469,7 @@ function showContent(param) {
 			}
 		}],
 		onSortColumn : function(sort, order) {
-			alert(sort + ":" + order + "---");
+			showContent(param, sort, order);
 		},
 		onDblClickRow : function(rowIndex, rowData) {
 			if (rowData.type == '文件夹') {

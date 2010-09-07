@@ -139,7 +139,6 @@ public class FolderServlet extends AbstractServlet {
                     .getString(ConfigKeys.ROOT_NAME));
             shareRootNode.setFolderName(SystemGlobals
                     .getString(ConfigKeys.SHARE_ROOT_NAME));
-
             JsonNode jsonTree = NodeUtil.copyFolderNodeToJsonNode(treeRootNode);
             JsonNode jsonShare = NodeUtil
                     .copyFolderNodeToJsonNode(shareRootNode);
@@ -172,6 +171,10 @@ public class FolderServlet extends AbstractServlet {
         }
         String fid = req.getParameter(Constant.FOLDER_ID);
         String layer = req.getParameter(Constant.FOLDER_LAYER);
+        
+        String sortBy=req.getParameter("sortBy");
+        String sortType=req.getParameter("sortType");
+
         Long folderId = null;
         Long layerNumber = null;
         if (Validity.isNullAndEmpty(layer)) {
@@ -190,7 +193,9 @@ public class FolderServlet extends AbstractServlet {
         }
         List<FileOrFolderJsonEntity> josnEntitys = null;
         josnEntitys = folderService.getAllFromFolder(folderId, layerNumber);
-
+        if(null!=sortBy&&sortType!=null){
+        	josnEntitys=NodeUtil.sortJsonObjs(josnEntitys,sortBy,sortType);
+        }
         if (josnEntitys != null) {
             Map<String, Object> result = new HashMap<String, Object>();
             result.put("total", josnEntitys.size());

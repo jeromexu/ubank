@@ -25,37 +25,53 @@ package com.ufinity.marchant.ubank.common;
 
 /**
  * StringUtil
- *
+ * 
  * @version 1.0 - 2010-8-23
- * @author zdxue     
+ * @author zdxue
  */
 public class StringUtil {
 
-    /**
-     * Parse string to int,  if parse occur exception, then return default value 
-     *
-     * @param s string
-     * @param defVal if parse occur exception, then return default value
-     * @return int value
-     * @author zdxue
-     */
-    public static int parseInt(String s, int defVal) {
-        try{
-            return Integer.parseInt(s);
-        }catch(Exception e) {
-            return defVal;
-        }
-    }
-    
-    /**
-     * Parse string to int , if occur exception , then return 0
-     *
-     * @param s string
-     * @return int value, if parse occur exception, then return default value
-     * @author zdxue
-     */
-    public static int parseInt(String s) {
-        return parseInt(s, 0);
-    }
-}
+	/**
+	 * Parse string to int, if parse occur exception, then return default value
+	 * 
+	 * @param s
+	 *            string
+	 * @param defVal
+	 *            if parse occur exception, then return default value
+	 * @return int value
+	 * @author zdxue
+	 */
+	public static int parseInt(String s, int defVal) {
+		try {
+			return Integer.parseInt(s);
+		} catch (Exception e) {
+			return defVal;
+		}
+	}
 
+	/**
+	 * Parse string to int , if occur exception , then return 0
+	 * 
+	 * @param s
+	 *            string
+	 * @return int value, if parse occur exception, then return default value
+	 * @author zdxue
+	 */
+	public static int parseInt(String s) {
+		return parseInt(s, 0);
+	}
+
+	/**
+	 * upper the first char of the source
+	 * 
+	 * @param source
+	 * @return String converted str
+	 * @author yonghui
+	 */
+	public static String makeFirstCharUpper(String source) {
+		if (null == source || source.trim().length() == 0) {
+			return null;
+		}
+		return (source.charAt(0) + "").toUpperCase() + source.substring(1);
+	}
+}

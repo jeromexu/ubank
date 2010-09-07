@@ -26,6 +26,7 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common;
 
+import java.applet.AudioClip;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,67 +39,91 @@ import com.ufinity.marchant.ubank.bean.Folder;
  * @version 2010-8-23
  */
 public class NodeUtil {
-    /**
-     * this method copy folderNode property to JsonNode and return this JsonNode
-     * 
-     * @param folderNode
-     *            FolderNode
-     * @return return copied JsonNode
-     * @author bxji
-     */
-    public static JsonNode copyFolderNodeToJsonNode(FolderNode folderNode) {
-        if (folderNode == null) {
-            return null;
-        }
-        JsonNode jsonNode = new JsonNode();
-        List<JsonNode> children = null;
-        jsonNode.setId(folderNode.getFolderId());
-        jsonNode.setState("closed");
-        jsonNode.getAttributes().put("uid", folderNode.getUserId() + "");
-        jsonNode.getAttributes().put("type", folderNode.getFolderType());
-        jsonNode.getAttributes().put("layer", folderNode.getLayer() + "");
-        jsonNode.getAttributes().put("pid", folderNode.getParentId() + "");
-        if (folderNode.getParentId() == null || 0l == folderNode.getParentId()) {
-            jsonNode.setState("open");
-        }
-        jsonNode.setText(folderNode.getFolderName());
-        List<FolderNode> subNodes = folderNode.getSubNodes();
-        if (subNodes.size() > 0) {
-            children = new ArrayList<JsonNode>();
-            JsonNode nodeTemp = null;
+	/**
+	 * this method copy folderNode property to JsonNode and return this JsonNode
+	 * 
+	 * @param folderNode
+	 *            FolderNode
+	 * @return return copied JsonNode
+	 * @author bxji
+	 */
+	public static JsonNode copyFolderNodeToJsonNode(FolderNode folderNode) {
+		if (folderNode == null) {
+			return null;
+		}
+		JsonNode jsonNode = new JsonNode();
+		List<JsonNode> children = null;
+		jsonNode.setId(folderNode.getFolderId());
+		jsonNode.setState("closed");
+		jsonNode.getAttributes().put("uid", folderNode.getUserId() + "");
+		jsonNode.getAttributes().put("type", folderNode.getFolderType());
+		jsonNode.getAttributes().put("layer", folderNode.getLayer() + "");
+		jsonNode.getAttributes().put("pid", folderNode.getParentId() + "");
+		if (folderNode.getParentId() == null || 0l == folderNode.getParentId()) {
+			jsonNode.setState("open");
+		}
+		jsonNode.setText(folderNode.getFolderName());
+		List<FolderNode> subNodes = folderNode.getSubNodes();
+		if (subNodes.size() > 0) {
+			children = new ArrayList<JsonNode>();
+			JsonNode nodeTemp = null;
 
-            for (int i = 0; i < subNodes.size(); i++) {
-                nodeTemp = copyFolderNodeToJsonNode(subNodes.get(i));
-                children.add(nodeTemp);
-            }
-            jsonNode.setChildren(children);
-        }
-        return jsonNode;
-    };
+			for (int i = 0; i < subNodes.size(); i++) {
+				nodeTemp = copyFolderNodeToJsonNode(subNodes.get(i));
+				children.add(nodeTemp);
+			}
+			jsonNode.setChildren(children);
+		}
+		return jsonNode;
+	};
 
-    /**
-     * get target folder layer
-     * 
-     * @param folder
-     *            target folder
-     * @return the layer that in directory tree
-     * @author bxji
-     */
-    public static Long getLayer(Folder folder) {
-        if (folder == null) {
-            return 0l;
-        }
-        Long layer = 0l;
-        Folder temp = folder;
-        while (true) {
-            if (temp.getParent() != null) {
-                layer++;
-                temp = temp.getParent();
-            }
-            else {
-                return layer;
-            }
-        }
-    }
+	/**
+	 * get target folder layer
+	 * 
+	 * @param folder
+	 *            target folder
+	 * @return the layer that in directory tree
+	 * @author bxji
+	 */
+	public static Long getLayer(Folder folder) {
+		if (folder == null) {
+			return 0l;
+		}
+		Long layer = 0l;
+		Folder temp = folder;
+		while (true) {
+			if (temp.getParent() != null) {
+				layer++;
+				temp = temp.getParent();
+			} else {
+				return layer;
+			}
+		}
+	}
+
+	/**
+	 * sort the json entity by given sort conditions
+	 * 
+	 * @param entitys
+	 *            targeted list
+	 * @param sortBy
+	 *            sort by what
+	 * @param sortType
+	 *            sort type: asc ,desc
+	 * @return List<FileOrFolderJsonEntity>
+	 * @author yonghui
+	 */
+	public static List<FileOrFolderJsonEntity> sortJsonObjs(
+			List<FileOrFolderJsonEntity> entitys, String sortBy, String sortType) {
+		if (null == entitys || entitys.size() == 0) {
+			return null;
+		}
+		if (sortBy == null || sortType == null) {
+			return entitys;
+		}
+		CollectionUtil.getSortedList(entitys, sortBy, sortType);
+		return entitys;
+
+	}
 
 }

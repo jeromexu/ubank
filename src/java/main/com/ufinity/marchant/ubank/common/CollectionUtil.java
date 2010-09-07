@@ -23,6 +23,10 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -33,27 +37,98 @@ import java.util.List;
  */
 public class CollectionUtil {
 
-    /**
-     * Add a String array to the String List
-     * 
-     * @param list list of String
-     * @param array array of String
-     * @return list of String
-     * @author zdxue
-     */
-    public static List<String> add(List<String> list, String[] array) {
-        if (list == null || array == null) {
-            return list;
-        }
+	/**
+	 * Add a String array to the String List
+	 * 
+	 * @param list
+	 *            list of String
+	 * @param array
+	 *            array of String
+	 * @return list of String
+	 * @author zdxue
+	 */
+	public static List<String> add(List<String> list, String[] array) {
+		if (list == null || array == null) {
+			return list;
+		}
 
-        for (String str : array) {
-            if(str != null) {
-                list.add(str.trim());                
-            }else{
-                list.add(str);
-            }
-        }
+		for (String str : array) {
+			if (str != null) {
+				list.add(str.trim());
+			} else {
+				list.add(str);
+			}
+		}
 
-        return list;
-    }
+		return list;
+	}
+
+	/**
+	 * sort the given list by property
+	 * 
+	 * @param list
+	 *            targeted list
+	 * @param prop
+	 *            the property of the element in list
+	 * @param sortType
+	 * 				the way of sort:asc ,desc           
+	 * @author yonghui
+	 */
+	public static void getSortedList(List<FileOrFolderJsonEntity> list,
+			String prop,String sortType) {
+
+		if (null == prop||null==sortType) {
+			return;
+		}
+		final String sortWay=sortType;
+		final String property = StringUtil.makeFirstCharUpper(prop);
+		try {
+			Collections.sort(list, new Comparator<FileOrFolderJsonEntity>() {
+				String name = "get" + property;
+				Method method = FileOrFolderJsonEntity.class.getMethod(name,
+						new Class[] {});
+
+				public int compare(FileOrFolderJsonEntity a,
+						FileOrFolderJsonEntity b) {
+					if (a == null || b == null) {
+						return 0;
+					} else {
+						int flag = 0;
+						try {
+							Object as = method.invoke(a, new Object[] {});
+							Object bs = method.invoke(b, new Object[] {});
+							if (as == null && bs == null)
+								return 0;
+							else if (as == null)
+								return -1;
+							else if (bs == null)
+								return 1;
+							else {
+								if (as instanceof String) {
+									String va = (String) as;
+									String vb = (String) bs;
+									if(sortWay.equals("asc")){
+										flag = va.compareTo(vb);
+									}else{
+										flag = vb.compareTo(va);
+									}
+								}
+							}
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							e.printStackTrace();
+						}
+						return flag;
+					}
+				}
+			});
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			return;
+		}
+	}
+
 }
