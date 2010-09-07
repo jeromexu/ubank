@@ -167,13 +167,9 @@ public class DocumentUtil {
 	public static Integer moveOrCopyFileTo(FileBean fileBean, Folder folder,
 			boolean isMoveOrCopy, String newName) {
 		try {
-			if (fileBean != null) {
+			if (fileBean != null && folder != null) {
 				FILENAME = fileBean.getFileName();
 				FILE_DIRECTORY = fileBean.getDirectory();
-			} else {
-				return 0;
-			}
-			if (folder != null) {
 				FOLDERNAME = String.valueOf(folder.getFolderId());
 				FOLDER_DIRECTORY = folder.getDirectory();
 			} else {
@@ -215,15 +211,11 @@ public class DocumentUtil {
 	public static int moveOrCopyFolderTo(Folder folder, Folder newFolder,
 			boolean isMoveOrCopy) {
 		try {
-			if (folder != null) {
-				FOLDERNAME = String.valueOf(folder.getFolderId());
-				FOLDER_DIRECTORY = folder.getDirectory();
-			} else {
-				return 0;
-			}
 			String newFolderName = null;
 			String newFolderDirecotry = null;
-			if (newFolder != null) {
+			if (folder != null && newFolder != null) {
+				FOLDERNAME = String.valueOf(folder.getFolderId());
+				FOLDER_DIRECTORY = folder.getDirectory();
 				newFolderName = String.valueOf(newFolder.getFolderId());
 				newFolderDirecotry = newFolder.getDirectory();
 			} else {
@@ -576,10 +568,7 @@ public class DocumentUtil {
 	 */
 	private static void delAllFile(String path) {
 		File file = new File(path);
-		if (!file.exists()) {
-			return;
-		}
-		if (!file.isDirectory()) {
+		if (!file.exists() && !file.isDirectory()) {
 			return;
 		}
 		String[] tempList = file.list();
