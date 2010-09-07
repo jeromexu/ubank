@@ -164,7 +164,8 @@
       <init-param>
         <param-name>exceptPaths</param-name>
         <param-value>
-            login.jsp , login.do , register.jsp , register.do , showDownload.do , search.do , logout.do , 
+            login.jsp , login.do , register.jsp , register.do , showDownload.do , search.do , logout.do ,
+            fileUpload.jsp ,  
             403.jsp , 404.jsp , 500.jsp , error.jsp
         </param-value>
       </init-param>
