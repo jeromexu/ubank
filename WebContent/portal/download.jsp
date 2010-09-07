@@ -5,6 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+  <link rel="shortcut icon" href="../favicon.ico">
   <script type="text/javascript" src="../js/jquery-1.2.6.js"></script>
   <script type="text/javascript" src="../js/alias-tablesorter.js"></script>
   <script type="text/javascript" src="../js/home.js"></script>
@@ -55,8 +56,11 @@
           <c:set var="confirmMsg" value="${u:getTextWithParams('download.msg', params)}" />
           <c:set var="pointNotEnough" value="${u:getText('download.point.notenough')}" />
           <c:set var="mustLogin" value="${u:getText('must.login')}" />
-              
-          <a class="downloadBtn" onclick="download('${confirmMsg}' , '${pointNotEnough}' , '${mustLogin}' , ${isLogin} , 'download.do?id=${file.fileId}&eventPath=${eventPath}', '${eventPath}', ${req_user.point}, ${needPoint })" href="javascript:void(0);">
+          <c:set var="userPoint" value="0" />
+          <c:if test="${not empty req_user.point}">
+            <c:set var="userPoint" value="${req_user.point}" />
+          </c:if>
+          <a class="downloadBtn" onclick="download('${confirmMsg}' , '${pointNotEnough}' , '${mustLogin}' , ${isLogin} , 'download.do?id=${file.fileId}&eventPath=${eventPath}', '${eventPath}', ${userPoint}, ${needPoint })" href="javascript:void(0);">
             ${u:getText('ubank.download.button') }
           </a>
         </td>

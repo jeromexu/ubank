@@ -163,7 +163,7 @@
       </init-param>
       <init-param>
         <param-name>exceptPaths</param-name>
-        <param-value>login.jsp , login.do , register.jsp , register.do , showDownload.do , logout.do</param-value>
+        <param-value>login.jsp , login.do , register.jsp , register.do , showDownload.do , search.do , logout.do</param-value>
       </init-param>
     </filter>
     <filter-mapping>
