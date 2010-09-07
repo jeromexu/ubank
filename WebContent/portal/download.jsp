@@ -66,7 +66,7 @@
         </td>
       </tr>
       <tr>
-        <td>
+        <td align="left">
            <c:choose>
             <c:when test="${empty req_user}">
               <a href="login.jsp?&eventPath=${eventPath}">${u:getText('ubank.download.unlogin')}</a>
