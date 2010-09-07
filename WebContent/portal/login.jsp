@@ -10,7 +10,7 @@
   <script type="text/javascript" src="../js/home.js"></script>
   <link href="../css/home.css" rel="stylesheet" type="text/css">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Login</title>
+  <title>UBank 网络硬盘---登陆</title>
 </head>
 
 <body bgcolor="#D0DEE9">

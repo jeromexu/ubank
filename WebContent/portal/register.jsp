@@ -7,7 +7,7 @@
 <head>
 <link rel="shortcut icon" href="../favicon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>UBank --- 注册</title>
+<title>UBank 网络硬盘--- 注册</title>
 <link href="../css/home.css" rel="stylesheet" type="text/css"></link>
 </head>
 <body>

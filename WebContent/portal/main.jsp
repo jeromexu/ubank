@@ -4,7 +4,7 @@
 <head>
 <link rel="shortcut icon" href="../favicon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>UBank 网络硬盘 </title>
 <link rel="stylesheet" type="text/css"
 	href="../css/themes/default/easyui.css">
 <link rel="stylesheet" type="text/css" href="../css/themes/icon.css">

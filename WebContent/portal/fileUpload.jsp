@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>Multiple Files Upload</title>
+		<title>上传文件</title>
 		<link rel="stylesheet" type="text/css"
 			href="../css/themes/default/easyui.css">
 		<link rel="stylesheet" type="text/css" href="../css/themes/icon.css">
