@@ -140,7 +140,7 @@ $(function() {
 											reload();
 											showContent(parentId);
 										} else {
-											returnResult(false);
+											returnResult(false, data);
 										}
 									});
 						}
@@ -210,7 +210,7 @@ function showContent(param, sortBy, sortType) {
 					sortable : true
 				}, {
 					field : 'opt',
-					title : 'Operation',
+					title : '下载',
 					width : 100,
 					align : 'center',
 					rowspan : 2,

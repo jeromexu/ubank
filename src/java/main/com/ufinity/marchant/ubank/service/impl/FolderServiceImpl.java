@@ -343,7 +343,7 @@ public class FolderServiceImpl implements FolderService {
         boolean result = false;
         // if source folder and target folder is the same directory
         // or source is subdirectory of the target
-        if (isSelfOrChild(target, source) || target.equals(source.getParent())) {
+        if (isSelfOrChild(source, target) || target.equals(source.getParent())) {
             logger
                     .debug("Can not be copied to the original folder or own parent folder.");
             // throw new UBankServiceException("");
@@ -382,7 +382,7 @@ public class FolderServiceImpl implements FolderService {
             Folder source = folderDao.find(sourceFolderId);
             Folder target = folderDao.find(targetFolderId);
             // if move to self and own subfolder
-            if (isSelfOrChild(target, source)) {
+            if (isSelfOrChild(source, target)) {
                 logger.debug("Can not move a folder to the original folder.");
                 return false;
             }
