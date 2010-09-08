@@ -23,6 +23,8 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common;
 
+import java.io.File;
+
 /**
  * Constants for ubank system
  * 
@@ -156,5 +158,7 @@ public interface Constant {
     public static final String FILE_SIZE_UNIT_KB = "KB";
     // folder Maximum layer
     public static final Long FOLDER_MAX_LAYER = 9l;
+    // file system separator
+    public static final String FILE_SYSTEM_SEPARATOR = File.separator;
 
 }

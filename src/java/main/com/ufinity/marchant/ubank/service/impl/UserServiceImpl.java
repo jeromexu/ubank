@@ -32,6 +32,7 @@ import java.util.Date;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
+import com.ufinity.marchant.ubank.common.DocumentUtil;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
@@ -183,7 +184,7 @@ public class UserServiceImpl implements UserService {
 
 		logger.debug("initUserDir:param[userId]=" + userId);
 		try {
-			String serverPath = getApplicationPath();
+			String serverPath = DocumentUtil.getApplicationPath();
 			logger.debug("get the server path: " + serverPath);
 			if (!Validity.isEmpty(serverPath)) {
 				File baseFile = new File(serverPath);
@@ -248,26 +249,7 @@ public class UserServiceImpl implements UserService {
 
 		return false;
 	}
-
-	/**
-	 * 
-	 * get the server path
-	 * 
-	 * @return the server path
-	 * @author jerome
-	 */
-	private String getApplicationPath() {
-		String catalinaHome = System.getProperty("catalina.home");
-		String serverPath = null;
-		if (!Validity.isEmpty(catalinaHome)) {
-			serverPath = SystemGlobals.getString(ConfigKeys.SERVER_PATH,
-					catalinaHome);
-		} else {
-			return null;
-		}
-		return serverPath;
-	}
-
+	
 	/**
 	 * 
 	 * make user's dir for each user
