@@ -8,6 +8,7 @@
 <link rel="shortcut icon" href="../favicon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>UBank 网络硬盘--- 注册</title>
+ <script type="text/javascript" src="../js/jquery-1.2.6.js"></script>
 <link href="../css/home.css" rel="stylesheet" type="text/css"></link>
 </head>
 <body>
@@ -35,7 +36,7 @@
 			<tr>
 				<th>帐 号：</th>
 				<td align="left"><input type="text" id="userName"
-					name="userName" /></td>
+					name="userName" value="${userName}"/></td>
 			</tr>
 
 			<tr>
@@ -71,16 +72,16 @@
 
 <script type="text/javascript">
 	function checkUserForm() {
-		var userName = document.getElementById("userName").value;
-		if (userName == '' || userName.length == 0) {
-			alert("请输入用户名！");
+		var userName = $("#userName").val();
+		if ($.trim(userName) == '' || $.trim(userName).length == 0) {
+			alert("请输入用户名!");
 			return false;
-		} else if (userName.length > 20) {
-			alert("用户名过长！");
+		} else if ($.trim(userName).length > 30) {
+			alert("用户名过长!");
 			return false;
 		}
-		var password = document.getElementById("password").value;
-		var password2 = document.getElementById("repassword").value;
+		var password = $("#password").val();
+		var password2 = $("#repassword").val();
 		if (password.replace(/ /g, "") == "") {
 			alert("请输入密码");
 			return false;
@@ -97,7 +98,7 @@
 			alert("两次输入的密码不一致");
 			return false;
 		}
-		var captchaCode = document.getElementById("captchaCode").value;
+		var captchaCode = $("#captchaCode").val();
 		if (captchaCode == '' || captchaCode.length == 0) {
 			alert("验证码不能为空！");
 			return false;
