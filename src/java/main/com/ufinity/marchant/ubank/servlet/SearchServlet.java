@@ -111,7 +111,7 @@ public class SearchServlet extends AbstractServlet {
                 + " , publishDate=" + publishDate + " , pageNumber="
                 + pageNumber + " , pageNum=" + pageNum + " , pageSize="+pageSize);
 
-        String searchRegex = "[\u4e00-\u9fa5|a-zA-Z0-9|_\\.-|\\s]{0,50}";
+        String searchRegex = "[\u4e00-\u9fa5|\\w|\\.|-|\\s]{0,50}";
         if(Validity.isNotEmpty(fileName) && !fileName.matches(searchRegex)) {
             req.setAttribute(Constant.ATTR_ERROR_MSG, getText(MessageKeys.SEARCH_CONDITION_MSG));
             return Constant.SEARCH_RESULT_PAGE;
