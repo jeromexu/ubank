@@ -39,9 +39,9 @@ import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
-import com.ufinity.marchant.ubank.model.Pager;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * Search Servlet

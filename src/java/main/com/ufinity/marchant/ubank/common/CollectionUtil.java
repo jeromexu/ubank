@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.ufinity.marchant.ubank.model.FileOrFolderJsonEntity;
+import com.ufinity.marchant.ubank.vo.FileOrFolderJsonEntity;
 
 /**
  * CollectionUtil

@@ -41,7 +41,7 @@ import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.dao.GenericDao;
-import com.ufinity.marchant.ubank.model.Pager;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * 

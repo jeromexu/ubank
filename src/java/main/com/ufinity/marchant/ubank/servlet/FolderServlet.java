@@ -24,13 +24,13 @@ import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
-import com.ufinity.marchant.ubank.model.FileOrFolderJsonEntity;
-import com.ufinity.marchant.ubank.model.FolderNode;
-import com.ufinity.marchant.ubank.model.JsonNode;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.upload.UploadConstant;
+import com.ufinity.marchant.ubank.vo.FileOrFolderJsonEntity;
+import com.ufinity.marchant.ubank.vo.FolderNode;
+import com.ufinity.marchant.ubank.vo.JsonNode;
 
 /**
  * Folder Servlet used to operation folder

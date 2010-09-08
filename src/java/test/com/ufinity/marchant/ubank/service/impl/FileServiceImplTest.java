@@ -16,8 +16,8 @@ import org.junit.Test;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
-import com.ufinity.marchant.ubank.model.Pager;
 import com.ufinity.marchant.ubank.service.FileService;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * FileServiceImplTest

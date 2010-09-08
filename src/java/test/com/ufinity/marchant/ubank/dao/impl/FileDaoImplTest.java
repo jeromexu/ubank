@@ -49,7 +49,7 @@ import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
-import com.ufinity.marchant.ubank.model.Pager;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * @author WenQiang Wu
