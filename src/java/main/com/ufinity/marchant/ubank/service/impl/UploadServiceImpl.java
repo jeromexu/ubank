@@ -314,7 +314,6 @@ public class UploadServiceImpl implements UploadService {
             fileDao.add(fb);
             EntityManagerUtil.commit();
         } catch (RuntimeException e) {
-            EntityManagerUtil.rollback();
             throw new DbException(e);
         } finally {
             EntityManagerUtil.closeEntityManager();

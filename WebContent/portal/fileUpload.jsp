@@ -173,7 +173,7 @@
 			    }
 			    
 			    $("#uploadedFiles"+filedName).html(uploadInfo.uploadedFiles);
-			    $("#progressBarText"+filedName).html('花费时间: <b>' + secondsElapsed + '</b> 秒;平局速度: <b>' + speed + 'KB/s</b><br/>上传 <b>' + uploadInfo.curFileName + '.. [' + progressPercent + '%]</b>');
+			    $("#progressBarText"+filedName).html('花费时间: <b>' + secondsElapsed + '</b> 秒;平均速度: <b>' + speed + 'KB/s</b><br/>上传 <b>' + uploadInfo.curFileName + '.. [' + progressPercent + '%]</b>');
 			    $("#progressBarBoxContent"+filedName).attr("style","width:"+ parseInt(progressPercent * 3.5) + "px");
 			    
 			    if(uploadInfo.errorMsg){
