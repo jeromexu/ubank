@@ -261,7 +261,9 @@ public class FileServiceImpl implements FileService {
         }
         catch (Exception e) {
             logger.error("get fileBean excepiton!", e);
-            EntityManagerUtil.rollback();
+            if(EntityManagerUtil.isActive()){
+                EntityManagerUtil.rollback();                
+            }
             throw new UBankServiceException("get file exception by fileId!");
         }
         finally {
