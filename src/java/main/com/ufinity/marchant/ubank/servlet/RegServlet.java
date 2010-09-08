@@ -75,17 +75,20 @@ public class RegServlet extends AbstractServlet {
 	 */
 	private String register(HttpServletRequest request) throws UBankException {
 		
+		String userName = request.getParameter(Constant.REQ_PARAM_USERNAME);
+		String pass = request.getParameter(Constant.REQ_PARAM_PASSWORD);
+		String repass = request.getParameter(Constant.REQ_PARAM_REPASSWORD);
+		
+		logger.debug("userName = " + userName + ",pass = " + pass
+				+ ",repass = " + repass);
+		// check the captcha code
 		boolean isValidateCode = checkValidateCode(request);
 		if (!isValidateCode) {
 			// captcha code is not right
 			request.setAttribute(Constant.ATTR_ERROR_MSG,
 					getText(MessageKeys.CAPTCHA_ERR_MSG));
 		} else {
-			String userName = request.getParameter(Constant.REQ_PARAM_USERNAME);
-			String pass = request.getParameter(Constant.REQ_PARAM_PASSWORD);
-			String repass = request.getParameter(Constant.REQ_PARAM_REPASSWORD);
-			logger.debug("userName = " + userName + ",pass = " + pass
-					+ ",repass = " + repass);
+			// check the input param
 			String errorMsg = validateParam(request, userName, pass, repass);
 			if (errorMsg != null) {
 				return errorMsg;
@@ -94,10 +97,10 @@ public class RegServlet extends AbstractServlet {
 			user.setUserName(userName);
 			user.setPassword(pass);
 			String registerMsg = null;
-			try{
+			try {
 				userService = ServiceFactory.createService(UserService.class);
 				registerMsg = userService.doRegister(user);
-			}catch(UBankServiceException e){
+			} catch (UBankServiceException e) {
 				throw new UBankException("user register exception!");
 			}
 			if (MessageKeys.REGISTER_FAILURE.equals(registerMsg)) {
@@ -107,6 +110,7 @@ public class RegServlet extends AbstractServlet {
 			}
 			request.setAttribute(Constant.REGISTER_MSG, registerMsg);
 		}
+		request.setAttribute(Constant.REQ_PARAM_USERNAME, userName);
 		return Constant.REGISTER_PAGE;
 	}
 
@@ -149,13 +153,15 @@ public class RegServlet extends AbstractServlet {
 	private String validateParam(HttpServletRequest request, String userName,
 			String pass, String repass) {
 		if (Validity.isNullAndEmpty(userName)
-				&& !(Validity.isLessLength(userName, Constant.USERNAME_LENGTH))) {
+				|| !(Validity.isLessLength(userName, Constant.USERNAME_LENGTH))
+				|| Validity.isSpecial(userName)) {
 			request.setAttribute(Constant.ATTR_ERROR_MSG,
 					getText(MessageKeys.USERNAME_ERR_MSG));
 			return Constant.REGISTER_PAGE;
 		}
 		if (Validity.isNullAndEmpty(pass)
-				&& !(Validity.isLessLength(pass, Constant.PASSWORD_LENGTH))) {
+				|| !(Validity.isLessLength(pass, Constant.PASSWORD_LENGTH))
+				|| Validity.isSpecial(pass)) {
 			request.setAttribute(Constant.ATTR_ERROR_MSG,
 					getText(MessageKeys.PASS_ERR_MSG));
 			return Constant.REGISTER_PAGE;

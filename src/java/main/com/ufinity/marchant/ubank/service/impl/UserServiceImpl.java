@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
 
 		} catch (Exception e) {
 			logger.error("user register exception!", e);
-			if(EntityManagerUtil.isActive()){
+			if (EntityManagerUtil.isActive()) {
 				EntityManagerUtil.rollback();
 			}
 			throw new UBankServiceException("user regiter service exception!");
@@ -127,17 +127,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-     * Get User by username and password
-     * 
-     * @param username
-     *            user's name
-     * @param password
-     *            user's password
-     * @return User obj
-     * @throws UBankServiceException if occur exception, then throw it
-     * @author zdxue
-     */
-	public User getUser(String username, String password) throws UBankServiceException {
+	 * Get User by username and password
+	 * 
+	 * @param username
+	 *            user's name
+	 * @param password
+	 *            user's password
+	 * @return User obj
+	 * @throws UBankServiceException
+	 *             if occur exception, then throw it
+	 * @author zdxue
+	 */
+	public User getUser(String username, String password)
+			throws UBankServiceException {
 		logger.debug("username=" + username + " , password=" + password);
 
 		User user = null;
@@ -194,6 +196,7 @@ public class UserServiceImpl implements UserService {
 				StringBuffer sb = new StringBuffer(serverPath);
 				baseFile = new File(
 						sb
+								.append(Constant.FILE_SYSTEM_SEPARATOR)
 								.append(
 										SystemGlobals
 												.getString(ConfigKeys.USER_SPACE_ROOT_DIR))
@@ -202,8 +205,8 @@ public class UserServiceImpl implements UserService {
 					baseFile.mkdir();
 				}
 				// root folder for each user
-				baseFile = new File(sb.append(File.separator).append(userId)
-						.toString());
+				baseFile = new File(sb.append(Constant.FILE_SYSTEM_SEPARATOR)
+						.append(userId).toString());
 				if (!baseFile.exists()) {
 					baseFile.mkdir();
 				}
@@ -249,7 +252,7 @@ public class UserServiceImpl implements UserService {
 
 		return false;
 	}
-	
+
 	/**
 	 * 
 	 * make user's dir for each user
@@ -284,7 +287,7 @@ public class UserServiceImpl implements UserService {
 			folder.setShare(false);
 			folder.setDirectory(SystemGlobals
 					.getString(ConfigKeys.USER_SPACE_ROOT_DIR)
-					+ "/" + userId);
+					+ Constant.FILE_SYSTEM_SEPARATOR + userId);
 
 			Folder parentFolder = new Folder();
 			parentFolder.setFolderId(parent.getFolderId());
@@ -300,11 +303,12 @@ public class UserServiceImpl implements UserService {
 
 			if (SystemGlobals.getString(ConfigKeys.MY_FILE_NAME).equals(
 					folderName)) {
-				baseFile = new File(sb.append(File.separator).append(
-						String.valueOf(folder.getFolderId())).toString());
+				baseFile = new File(sb.append(Constant.FILE_SYSTEM_SEPARATOR)
+						.append(String.valueOf(folder.getFolderId()))
+						.toString());
 			} else {
-				sb.replace(sb.lastIndexOf(File.separator) + 1, sb.length(),
-						String.valueOf(folder.getFolderId()));
+				sb.replace(sb.lastIndexOf(Constant.FILE_SYSTEM_SEPARATOR) + 1,
+						sb.length(), String.valueOf(folder.getFolderId()));
 				baseFile = new File(sb.toString());
 			}
 			if (!baseFile.exists()) {

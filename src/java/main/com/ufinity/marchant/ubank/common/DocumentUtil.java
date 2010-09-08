@@ -343,6 +343,7 @@ public class DocumentUtil {
 		if (!Validity.isEmpty(catalinaHome)) {
 			serverPath = SystemGlobals.getString(ConfigKeys.SERVER_PATH,
 					catalinaHome);
+			serverPath = serverPath + Constant.FILE_SYSTEM_SEPARATOR;
 		}
 		return serverPath;
 	}
