@@ -87,10 +87,12 @@ public class RegServlet extends AbstractServlet {
 			// captcha code is not right
 			request.setAttribute(Constant.ATTR_ERROR_MSG,
 					getText(MessageKeys.CAPTCHA_ERR_MSG));
+			request.setAttribute(Constant.REQ_PARAM_USERNAME, userName);
 		} else {
 			// check the input param
 			String errorMsg = validateParam(request, userName, pass, repass);
 			if (errorMsg != null) {
+				request.setAttribute(Constant.REQ_PARAM_USERNAME, userName);
 				return errorMsg;
 			}
 			User user = new User();
@@ -110,7 +112,6 @@ public class RegServlet extends AbstractServlet {
 			}
 			request.setAttribute(Constant.REGISTER_MSG, registerMsg);
 		}
-		request.setAttribute(Constant.REQ_PARAM_USERNAME, userName);
 		return Constant.REGISTER_PAGE;
 	}
 
