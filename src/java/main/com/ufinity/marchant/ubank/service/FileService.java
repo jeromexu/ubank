@@ -25,9 +25,9 @@ package com.ufinity.marchant.ubank.service;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.bean.User;
-import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
-import com.ufinity.marchant.ubank.model.DownloadResponse;
+import com.ufinity.marchant.ubank.vo.DownloadResponse;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * File Service

@@ -45,11 +45,11 @@ import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.DateUtil;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
-import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * @author WenQiang Wu

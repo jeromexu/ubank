@@ -41,8 +41,6 @@ import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.DateUtil;
 import com.ufinity.marchant.ubank.common.DocumentUtil;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
-import com.ufinity.marchant.ubank.common.FileOrFolderJsonEntity;
-import com.ufinity.marchant.ubank.common.FolderNode;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
@@ -52,6 +50,8 @@ import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.FolderService;
+import com.ufinity.marchant.ubank.vo.FileOrFolderJsonEntity;
+import com.ufinity.marchant.ubank.vo.FolderNode;
 
 /**
  * FolderService Implement

@@ -15,9 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.common.Constant;
-import com.ufinity.marchant.ubank.common.FileOrFolderJsonEntity;
-import com.ufinity.marchant.ubank.common.FolderNode;
-import com.ufinity.marchant.ubank.common.JsonNode;
 import com.ufinity.marchant.ubank.common.JsonUtil;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.NodeUtil;
@@ -31,6 +28,9 @@ import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.FolderService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.upload.UploadConstant;
+import com.ufinity.marchant.ubank.vo.FileOrFolderJsonEntity;
+import com.ufinity.marchant.ubank.vo.FolderNode;
+import com.ufinity.marchant.ubank.vo.JsonNode;
 
 /**
  * Folder Servlet used to operation folder

@@ -39,9 +39,9 @@ import org.hibernate.criterion.Projections;
 
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.common.Logger;
-import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.dao.GenericDao;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * 

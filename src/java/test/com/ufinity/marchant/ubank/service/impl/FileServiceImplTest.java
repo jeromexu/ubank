@@ -14,10 +14,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
-import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
 import com.ufinity.marchant.ubank.service.FileService;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * FileServiceImplTest

@@ -36,8 +36,8 @@ import org.hibernate.criterion.Restrictions;
 import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
-import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.dao.FileDao;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * 

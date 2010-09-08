@@ -40,7 +40,6 @@ import com.ufinity.marchant.ubank.common.DateUtil;
 import com.ufinity.marchant.ubank.common.DocumentUtil;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.common.Logger;
-import com.ufinity.marchant.ubank.common.Pager;
 import com.ufinity.marchant.ubank.common.StringUtil;
 import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
@@ -51,9 +50,10 @@ import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
-import com.ufinity.marchant.ubank.model.DownloadResponse;
-import com.ufinity.marchant.ubank.model.DownloadStatus;
 import com.ufinity.marchant.ubank.service.FileService;
+import com.ufinity.marchant.ubank.vo.DownloadResponse;
+import com.ufinity.marchant.ubank.vo.DownloadStatus;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * FileService implements

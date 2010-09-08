@@ -29,7 +29,7 @@ package com.ufinity.marchant.ubank.dao;
 import java.util.Map;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
-import com.ufinity.marchant.ubank.common.Pager;
+import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * 
