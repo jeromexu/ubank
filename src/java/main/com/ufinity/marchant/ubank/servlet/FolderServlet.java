@@ -45,7 +45,8 @@ public class FolderServlet extends AbstractServlet {
 
     FolderService folderService = null;
     FileService fileService = null;
-
+    private static String SIZE="size";
+    private static String ASC="asc";
     /**
      * Constructor for FolderServlet
      */
@@ -195,6 +196,8 @@ public class FolderServlet extends AbstractServlet {
         josnEntitys = folderService.getAllFromFolder(folderId, layerNumber);
         if(null!=sortBy&&sortType!=null){
         	josnEntitys=NodeUtil.sortJsonObjs(josnEntitys,sortBy,sortType);
+        }else{
+        	josnEntitys=NodeUtil.sortJsonObjs(josnEntitys,SIZE,ASC);
         }
         if (josnEntitys != null) {
             Map<String, Object> result = new HashMap<String, Object>();

@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import com.ufinity.marchant.ubank.vo.FileOrFolderJsonEntity;
@@ -73,16 +74,19 @@ public class CollectionUtil {
 	 * @param prop
 	 *            the property of the element in list
 	 * @param sortType
-	 * 				the way of sort:asc ,desc           
+	 *            the way of sort:asc ,desc
 	 * @author yonghui
 	 */
 	public static void getSortedList(List<FileOrFolderJsonEntity> list,
-			String prop,String sortType) {
+			String prop, String sortType) {
 
-		if (null == prop||null==sortType) {
+		if (null == prop || null == sortType) {
 			return;
 		}
-		final String sortWay=sortType;
+		if (null == list || list.size() == 0) {
+			return;
+		}
+		final String sortWay = sortType;
 		final String property = StringUtil.makeFirstCharUpper(prop);
 		try {
 			Collections.sort(list, new Comparator<FileOrFolderJsonEntity>() {
@@ -109,13 +113,50 @@ public class CollectionUtil {
 								if (as instanceof String) {
 									String va = (String) as;
 									String vb = (String) bs;
-									if(sortWay.equals("asc")){
+									if (sortWay.equals("asc")) {
 										flag = va.compareTo(vb);
-									}else{
+									} else {
 										flag = vb.compareTo(va);
 									}
 								}
+								if (as instanceof Date) {
+									Date va = (Date) as;
+									Date vb = (Date) bs;
+									if (sortWay.equals("asc")) {
+										if (va.before(vb)) {
+											return -1;
+										} else {
+											return 1;
+										}
+									} else {
+										if (va.before(vb)) {
+											return 1;
+										} else {
+											return -1;
+										}
+									}
+								}
+								if (as instanceof Integer) {
+									int ai = (Integer) as;
+									int bi = (Integer) bs;
+									if (sortWay.equals("asc")) {
+										if (ai >= bi) {
+											return 1;
+										} else {
+											return -1;
+										}
+									} else {
+										if (ai >= bi) {
+											return -1;
+										} else {
+											return 1;
+										}
+									}
+
+								}
+
 							}
+
 						} catch (IllegalArgumentException e) {
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {
