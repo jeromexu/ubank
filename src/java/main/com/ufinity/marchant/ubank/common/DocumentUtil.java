@@ -176,13 +176,13 @@ public class DocumentUtil {
 				return 0;
 			}
 			File sFile = createFile(FILE_DIRECTORY, FILENAME);
-			File dFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
-			if (!dFile.exists()) {
-				dFile.mkdirs();
-			}
 			// source file exists
 			if (!sFile.exists()) {
 				return 0;
+			}
+			File dFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
+			if (!dFile.exists()) {
+				dFile.mkdirs();
 			}
 			dFile = new File(dFile, newName);
 			// copy the file
