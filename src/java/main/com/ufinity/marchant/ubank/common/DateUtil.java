@@ -43,7 +43,7 @@ public class DateUtil {
 
     /**
      * format Date to String <br>
-     * Note: if Date is null or occur exception, then return null
+     * Note: if Date is null or occur exception, then return empty string
      * 
      * @param date
      *            Date obj
