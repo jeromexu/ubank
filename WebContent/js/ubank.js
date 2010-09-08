@@ -1,6 +1,7 @@
 // upload window
 var newWindow;
 var currTreeNode;
+var navigations = new Array();
 
 $(function() {
 			// 初始用户目录树
@@ -10,15 +11,16 @@ $(function() {
 
 function dirTree() {
 	$('#dirTree').tree({
-				url : '/ubank/portal/showTree.do',
-				onClick : function(node) {
-					if (node.text != '共享文件夹') {
-						currTreeNode = node;
-						showContent(node.id);
-						setFolderId(node.id);
-					}
-				}
-			});
+		url : '/ubank/portal/showTree.do',
+		onClick : function(node) {
+			if (node.text != '共享文件夹') {
+				currTreeNode = node;
+				showContent(node.id, null, null, node.text,
+						node.attributes.layer);
+				setFolderId(node.id);
+			}
+		}
+	});
 };
 
 $(function() {
@@ -160,7 +162,7 @@ function reload() {
 	$('#dirTree').tree('reload');
 }
 
-function showContent(param, sortBy, sortType) {
+function showContent(folderId, sortBy, sortType, nodeName, layerNumber) {
 	var sortColumn = sortBy;
 	var sortColType = sortType;
 	if (sortColumn == undefined) {
@@ -170,8 +172,8 @@ function showContent(param, sortBy, sortType) {
 		sortColType = "desc";
 	}
 	reqUrl = '/ubank/portal/showFolderContent.do?folderId=';
-	if (param != undefined && param != null) {
-		reqUrl = reqUrl + param;
+	if (folderId != undefined && folderId != null) {
+		reqUrl = reqUrl + folderId;
 	}
 	if (sortBy != undefined && sortColType != undefined) {
 		reqUrl = reqUrl + "&sortBy=" + sortColumn + "&sortType=" + sortColType;
@@ -476,11 +478,13 @@ function showContent(param, sortBy, sortType) {
 		},
 		onDblClickRow : function(rowIndex, rowData) {
 			if (rowData.type == '文件夹') {
-				showContent(rowData.id);
+
+				showContent(rowData.id, null, null, rowData.name, rowData.layer);
 			}
 		}
 	});
 	$('#test').datagrid('clearSelections');
+	generateNavigation(folderId, nodeName, layerNumber);
 };
 
 function returnResult(status, data) {
@@ -533,3 +537,34 @@ function trim(str) { // 删除左右两端的空格
 	return str.replace(/(^\s*)|(\s*$)/g, "");
 }
 
+function generateNavigation(folderId, nodeName, layerNumber) {
+	var layer = 0
+	var fid = 0;
+	var name = '我的网盘';
+	if (folderId != undefined && folderId != null) {
+		fid = folderId;
+		if (layerNumber != undefined && layerNumber != null) {
+			layer = layerNumber;
+		}
+	}
+	if (nodeName != undefined && nodeName != null) {
+		name = nodeName;
+	}
+	var length = navigations.length;
+	for (var i = length; i > layer; i--) {
+		navigations[i] = null;
+	}
+	var navigation = {
+		text : name,
+		id : fid
+	};
+	navigations[layer] = navigation;
+	var naviStr = '网络硬盘';
+	for (var i = 0; i <= layer; i++) {
+		naviStr = naviStr + ' > ' + '<a href="#" onclick="showContent('
+				+ navigations[i].id + ', null, null,' + i + ' ,' + '\''
+				+ navigations[i].text + '\'' + ')">' + navigations[i].text
+				+ '</a>';
+	}
+	$("div.panel-title").eq(1).html(naviStr);
+}

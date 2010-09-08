@@ -415,7 +415,6 @@ public class FolderServiceImpl implements FolderService {
                 }
                 return false;
             }
-            source.setDirectory(getDiskPath(target));
             EntityManagerUtil.commit();
         }
         catch (Exception e) {

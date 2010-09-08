@@ -4,7 +4,7 @@
 <head>
 <link rel="shortcut icon" href="../favicon.ico">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>UBank 网络硬盘 </title>
+<title>UBank 网络硬盘</title>
 <link rel="stylesheet" type="text/css"
 	href="../css/themes/default/easyui.css">
 <link rel="stylesheet" type="text/css" href="../css/themes/icon.css">
@@ -18,10 +18,10 @@
 <div region="north" border="false"
 	style="height: 60px; background: #78B4F0;">
 <h2 style="font-size: 20px; font-weight: bolder; font-family: Arial;">
-&nbsp;&nbsp;UBank <a href="logout.do">退出</a>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="home.html">共享文件下载</a>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id="point">积分:</a>
-<a id = "userPoint">${session_user.point}</a>
+&nbsp;&nbsp;UBank <a href="logout.do">退出</a> &nbsp;&nbsp;&nbsp;&nbsp;<a
+	href="home.html">共享文件下载</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id="point">积分:</a> <a
+	id="userPoint">${session_user.point}</a>
 </div>
 </h2>
 <div region="west" split="true" title="网络硬盘"
@@ -29,8 +29,7 @@
 
 <ul id="dirTree"></ul>
 </div>
-<div region="center" title="网络硬盘 > 
-			<a href='#'>我的网盘</a>">
+<div  region="center" title="网络硬盘">
 <div style="">
 <table id="test"></table>
 </div>
