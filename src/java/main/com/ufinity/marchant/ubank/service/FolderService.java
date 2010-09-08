@@ -31,8 +31,8 @@ import java.util.List;
 import com.ufinity.marchant.ubank.bean.Folder;
 import com.ufinity.marchant.ubank.bean.User;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
-import com.ufinity.marchant.ubank.vo.FileOrFolderJsonEntity;
-import com.ufinity.marchant.ubank.vo.FolderNode;
+import com.ufinity.marchant.ubank.model.FileOrFolderJsonEntity;
+import com.ufinity.marchant.ubank.model.FolderNode;
 
 /**
  * {description of method or object}

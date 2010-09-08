@@ -31,9 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ufinity.marchant.ubank.bean.Folder;
-import com.ufinity.marchant.ubank.vo.FileOrFolderJsonEntity;
-import com.ufinity.marchant.ubank.vo.FolderNode;
-import com.ufinity.marchant.ubank.vo.JsonNode;
+import com.ufinity.marchant.ubank.model.FileOrFolderJsonEntity;
+import com.ufinity.marchant.ubank.model.FolderNode;
+import com.ufinity.marchant.ubank.model.JsonNode;
 
 /**
  * this is JsonData util class

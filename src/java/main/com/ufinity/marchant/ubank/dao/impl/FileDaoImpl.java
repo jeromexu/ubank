@@ -37,7 +37,7 @@ import com.ufinity.marchant.ubank.bean.FileBean;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.EntityManagerUtil;
 import com.ufinity.marchant.ubank.dao.FileDao;
-import com.ufinity.marchant.ubank.vo.Pager;
+import com.ufinity.marchant.ubank.model.Pager;
 
 /**
  * 

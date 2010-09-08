@@ -50,10 +50,10 @@ import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.dao.UserDao;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
+import com.ufinity.marchant.ubank.model.DownloadResponse;
+import com.ufinity.marchant.ubank.model.DownloadStatus;
+import com.ufinity.marchant.ubank.model.Pager;
 import com.ufinity.marchant.ubank.service.FileService;
-import com.ufinity.marchant.ubank.vo.DownloadResponse;
-import com.ufinity.marchant.ubank.vo.DownloadStatus;
-import com.ufinity.marchant.ubank.vo.Pager;
 
 /**
  * FileService implements

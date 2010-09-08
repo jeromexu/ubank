@@ -49,9 +49,9 @@ import com.ufinity.marchant.ubank.dao.DaoFactory;
 import com.ufinity.marchant.ubank.dao.FileDao;
 import com.ufinity.marchant.ubank.dao.FolderDao;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
+import com.ufinity.marchant.ubank.model.FileOrFolderJsonEntity;
+import com.ufinity.marchant.ubank.model.FolderNode;
 import com.ufinity.marchant.ubank.service.FolderService;
-import com.ufinity.marchant.ubank.vo.FileOrFolderJsonEntity;
-import com.ufinity.marchant.ubank.vo.FolderNode;
 
 /**
  * FolderService Implement

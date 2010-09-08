@@ -21,10 +21,10 @@ import com.ufinity.marchant.ubank.common.Validity;
 import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
 import com.ufinity.marchant.ubank.exception.UBankException;
 import com.ufinity.marchant.ubank.exception.UBankServiceException;
+import com.ufinity.marchant.ubank.model.DownloadResponse;
 import com.ufinity.marchant.ubank.service.FileService;
 import com.ufinity.marchant.ubank.service.ServiceFactory;
 import com.ufinity.marchant.ubank.service.UserService;
-import com.ufinity.marchant.ubank.vo.DownloadResponse;
 
 /**
  * 
