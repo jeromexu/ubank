@@ -71,7 +71,8 @@ function submit(form_id) {
 	document.getElementById(form_id).submit();
 }
 
-var searchRegex = /^[\u4e00-\u9fa5|a-zA-Z0-9|_\\.-|\s]{0,50}$/;
+//var searchRegex = /^[\u4e00-\u9fa5|a-zA-Z0-9|_\\.-|\s]{0,50}$/;
+var searchRegex = /^[\u4e00-\u9fa5|\w|\\.|-|\s]{0,50}$/;
 
 function search(msg) {
 	var url = 'search.do';
