@@ -325,6 +325,7 @@ public class DocumentUtil {
 	 * @param fileName
 	 *            file name
 	 * @return the new file name
+	 * @author jerome
 	 */
 	public static String getNewName(String realDir, String fileName) {
 		return getNewName(realDir, fileName, 0);
@@ -357,6 +358,7 @@ public class DocumentUtil {
 	 * @param index
 	 *            repeat index
 	 * @return file
+	 * @author jerome
 	 */
 	private static String getNewName(String realDir, String fileName, int index) {
 
