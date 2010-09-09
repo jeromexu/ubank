@@ -15,7 +15,7 @@ function dirTree() {
 		onClick : function(node) {
 			if (node.text != '共享文件夹') {
 				currTreeNode = node;
-				showContent(node.id, null, null, node.text,
+				showContent(node.id, undefined, undefined, node.text,
 						node.attributes.layer);
 				setFolderId(node.id);
 			}
@@ -479,12 +479,12 @@ function showContent(folderId, sortBy, sortType, nodeName, layerNumber) {
 		onDblClickRow : function(rowIndex, rowData) {
 			if (rowData.type == '文件夹') {
 
-				showContent(rowData.id, null, null, rowData.name, rowData.layer);
+				showContent(rowData.id, undefined, undefined, rowData.name, rowData.layer);
 			}
 		}
 	});
 	$('#test').datagrid('clearSelections');
-//	generateNavigation(folderId, nodeName, layerNumber);
+	generateNavigation(folderId, nodeName, layerNumber);
 };
 
 function returnResult(status, data) {
