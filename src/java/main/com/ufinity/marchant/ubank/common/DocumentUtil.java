@@ -269,11 +269,9 @@ public class DocumentUtil {
 				FILENAME = fileBean.getFileName();
 				FILE_DIRECTORY = fileBean.getDirectory();
 				File baseFile = createFile(FILE_DIRECTORY, FILENAME);
-				boolean result = false;
 				if (baseFile.exists()) {
-					result = baseFile.delete();
+					return baseFile.delete() ? 1 : 0;
 				}
-				return result ? 1 : 0;
 			}
 		} catch (Exception e) {
 			LOGGER.error("remove file exception!", e);
@@ -307,13 +305,10 @@ public class DocumentUtil {
 								FOLDERNAME);
 					}
 					File baseFile = new File(path.toString());
-					boolean result = false;
 					if (baseFile.exists()) {
-						result = delFolder(path.toString());
+						return delFolder(path.toString()) ? 1 : 0;
 					}
-					return result ? 1 : 0;
 				}
-
 			}
 		} catch (Exception e) {
 			LOGGER.error("remove folder exception!", e);
@@ -415,8 +410,10 @@ public class DocumentUtil {
 		BufferedWriter bw = null;
 		try {
 			// read source file
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(sFile),"GBK")) ;
-			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dFile)));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(
+					sFile), "GBK"));
+			bw = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(dFile)));
 			String hasRead = null;
 			while ((hasRead = br.readLine()) != null) {
 				bw.write(hasRead);
@@ -424,7 +421,7 @@ public class DocumentUtil {
 			bw.flush();
 			return true;
 		} catch (Exception e) {
-			LOGGER.debug("copy the file exception!", e);
+			LOGGER.error("copy the file exception!", e);
 		} finally {
 			if (br != null) {
 				try {
@@ -465,7 +462,7 @@ public class DocumentUtil {
 			if (!oldPathFile.exists()) {
 				return false;
 			}
-			// if new  file not exist and create the new file
+			// if new file not exist and create the new file
 			File newPathFile = new File(newPath);
 			if (!newPathFile.exists()) {
 				newPathFile.mkdir();
@@ -484,7 +481,7 @@ public class DocumentUtil {
 				}
 				// file operation
 				if (temp.isFile()) {
-					copyFile(temp, new File(newPathFile,temp.getName()));
+					copyFile(temp, new File(newPathFile, temp.getName()));
 				}
 				// folder operaction
 				if (temp.isDirectory()) {
@@ -528,14 +525,14 @@ public class DocumentUtil {
 	private static boolean delFolder(String folderPath) {
 		try {
 			// delete all files of the folder
-			delAllFile(folderPath);
+			boolean delResult = delAllFile(folderPath);
 			File myFilePath = new File(folderPath);
 			// delete the empty folder
-			return myFilePath.delete();
+			return (delResult && myFilePath.delete());
 		} catch (Exception e) {
 			LOGGER.debug("delete file exception", e);
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -545,37 +542,41 @@ public class DocumentUtil {
 	 *            String the folder path for example c:/hello
 	 * @author jerome
 	 */
-	private static void delAllFile(String path) {
-		File file = new File(path);
-		if (!file.exists() && !file.isDirectory()) {
-			return;
-		}
-		String[] tempList = file.list();
-		if (tempList == null) {
-			return;
-		}
-		File tempFile = null;
-		for (int i = 0; i < tempList.length; i++) {
-			if (path.endsWith(Constant.FILE_SYSTEM_SEPARATOR)) {
-				tempFile = new File(path + tempList[i]);
-			} else {
-				tempFile = new File(path + Constant.FILE_SYSTEM_SEPARATOR
-						+ tempList[i]);
+	private static boolean delAllFile(String path) {
+		try {
+			File file = new File(path);
+			if (!file.exists() && !file.isDirectory()) {
+				return false;
 			}
-			if (tempFile.isFile()) {
-				try {
+			String[] tempList = file.list();
+			if (tempList == null) {
+				return false;
+			}
+			File tempFile = null;
+			for (int i = 0; i < tempList.length; i++) {
+				if (path.endsWith(Constant.FILE_SYSTEM_SEPARATOR)) {
+					tempFile = new File(path + tempList[i]);
+				} else {
+					tempFile = new File(path + Constant.FILE_SYSTEM_SEPARATOR
+							+ tempList[i]);
+				}
+				if (tempFile.isFile()) {
 					tempFile.delete();
-				} catch (Exception e) {
-					e.printStackTrace();
+				}
+				if (tempFile.isDirectory()) {
+					// first delete the folder's child folder
+					delAllFile(path + Constant.FILE_SYSTEM_SEPARATOR
+							+ tempList[i]);
+					// delete the empty folder
+					delFolder(path + Constant.FILE_SYSTEM_SEPARATOR
+							+ tempList[i]);
 				}
 			}
-			if (tempFile.isDirectory()) {
-				// first delete the folder's child folder
-				delAllFile(path + Constant.FILE_SYSTEM_SEPARATOR + tempList[i]);
-				// delete the empty folder
-				delFolder(path + Constant.FILE_SYSTEM_SEPARATOR + tempList[i]);
-			}
+			return true;
+		} catch (Exception e) {
+			LOGGER.error("delete all file exception", e);
 		}
+		return false;
 	}
 
 	/**
@@ -595,12 +596,10 @@ public class DocumentUtil {
 		StringBuffer sb = new StringBuffer();
 		if (serverPath != null) {
 			if (folderPath.endsWith(Constant.FILE_SYSTEM_SEPARATOR)) {
-				file = new File(sb.append(serverPath).append(
-						Constant.FILE_SYSTEM_SEPARATOR).append(folderPath)
+				file = new File(sb.append(serverPath).append(folderPath)
 						.append(folderName).toString());
 			} else {
-				file = new File(sb.append(serverPath).append(
-						Constant.FILE_SYSTEM_SEPARATOR).append(folderPath)
+				file = new File(sb.append(serverPath).append(folderPath)
 						.append(Constant.FILE_SYSTEM_SEPARATOR).append(
 								folderName).toString());
 			}
