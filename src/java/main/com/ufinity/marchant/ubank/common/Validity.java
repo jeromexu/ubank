@@ -360,7 +360,7 @@ public class Validity {
         int index = -1;
         for (int i = 0; i < s.length(); i++) {
             index = SPECIAL_CHARACTER.indexOf(s.charAt(i));
-            if (index > 0) {
+            if (index >= 0) {
                 return true;
             }
         }
