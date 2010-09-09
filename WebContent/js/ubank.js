@@ -568,6 +568,5 @@ function generateNavigation(folderId) {
 	$('#dirTree').tree('select', nodeDom);
 	$('#dirTree').tree('expand', nodeDom);
 	currTreeNode = $('#dirTree').tree('getSelected');
-	alert(currTreeNode);
 
 }
