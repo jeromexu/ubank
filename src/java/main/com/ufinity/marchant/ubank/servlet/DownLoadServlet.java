@@ -38,7 +38,7 @@ public class DownLoadServlet extends AbstractServlet {
 
     private static final long serialVersionUID = 1L;
     // Logger for this class
-    protected final Logger logger = Logger.getInstance(RegServlet.class);
+    protected final Logger logger = Logger.getInstance(DownLoadServlet.class);
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
