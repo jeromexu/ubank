@@ -83,7 +83,8 @@ public class StringUtil {
      * Process filename as follow : 
      * <ul>
      *  <li>fileName contains chinese character</li>
-     *  <li>fileName contains space character</li>
+     *  <li>fileName contains space character: in this case, 
+     *  while use firefox to download, its will cut off the fileName at space char.</li>
      * </ul>
      *
      * 
