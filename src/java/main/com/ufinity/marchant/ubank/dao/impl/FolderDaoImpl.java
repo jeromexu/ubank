@@ -57,7 +57,7 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
         logger.debug("Method: findFolderListByUserId, Param:{userId: " + userId
                 + " , share:" + share + "}");
         StringBuffer sqlQuery = new StringBuffer();
-        String sqlQueryStart = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,a.F_SHARE"
+        String sqlQueryStart = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,a.F_SHARE,"
                 + "a.FOLDER_TYPE,a.MODIFIED_TIME,a.SHARE,a.USER_ID,a.PARENT_ID,a.REPEAT_COUNT FROM U_FOLDER a "
                 + "LEFT JOIN U_FOLDER b on a.PARENT_ID = b.PARENT_ID WHERE a.USER_ID = :userId ";
 
