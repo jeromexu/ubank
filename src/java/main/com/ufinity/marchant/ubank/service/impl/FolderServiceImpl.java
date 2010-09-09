@@ -861,7 +861,7 @@ public class FolderServiceImpl implements FolderService {
         Folder folder = null;
         try {
             EntityManagerUtil.begin();
-            folder = folderDao.findRootRolderByUserId(userId);
+            folder = folderDao.findRootFolderByUserId(userId);
             EntityManagerUtil.commit();
         }
         catch (Exception e) {
@@ -896,7 +896,7 @@ public class FolderServiceImpl implements FolderService {
         try {
             EntityManagerUtil.begin();
             shares = folderDao.findFolderListByUserId(userId, true);
-            root = folderDao.findRootRolderByUserId(userId);
+            root = folderDao.findRootFolderByUserId(userId);
 
             List<FolderNode> nodes = new ArrayList<FolderNode>();
             for (Folder folder : shares) {

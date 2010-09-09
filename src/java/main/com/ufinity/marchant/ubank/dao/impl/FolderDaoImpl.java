@@ -57,7 +57,7 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
         logger.debug("Method: findFolderListByUserId, Param:{userId: " + userId
                 + " , share:" + share + "}");
         StringBuffer sqlQuery = new StringBuffer();
-        String sqlQueryStart = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,"
+        String sqlQueryStart = "SELECT DISTINCT a.FOLDER_ID,a.CREATE_TIME,a.DIRECTORY,a.FOLDER_NAME,a.F_SHARE"
                 + "a.FOLDER_TYPE,a.MODIFIED_TIME,a.SHARE,a.USER_ID,a.PARENT_ID,a.REPEAT_COUNT FROM U_FOLDER a "
                 + "LEFT JOIN U_FOLDER b on a.PARENT_ID = b.PARENT_ID WHERE a.USER_ID = :userId ";
 
@@ -71,8 +71,7 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
             query = EntityManagerUtil.getEntityManager().createNativeQuery(
                     sqlQuery.toString(), Folder.class).setParameter("userId",
                     userId);
-        }
-        else {
+        } else {
             sqlQuery.append(sqlQueryAppend).append(sqlQueryEnd);
             query = EntityManagerUtil.getEntityManager().createNativeQuery(
                     sqlQuery.toString(), Folder.class).setParameter("userId",
@@ -85,16 +84,40 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
     }
 
     /**
+     * this method is find root folder collection according user id
+     * 
      * @param userId
-     * @return Folder
+     *            user's id
+     * @return Folder root folder
      * @author skyqiang
      */
-    public Folder findRootRolderByUserId(Long userId) {
+    public Folder findRootFolderByUserId(Long userId) {
         logger.debug("Method: findRootRolderByUserId, Param:{userId: " + userId
                 + "}");
 
         return (Folder) EntityManagerUtil.getEntityManager().createNamedQuery(
-                "Folder.findRootRolderByUserId").setParameter("userId", userId)
+                "Folder.findRootFolderByUserId").setParameter("userId", userId)
                 .getSingleResult();
+    }
+
+    /**
+     * this method is update fshare according directory
+     * 
+     * @param fShare
+     *            folder's fshare
+     * @param directory
+     *            folder's directory
+     * @author skyqiang
+     */
+    public void updateFShareByDirectory(Boolean fShare, String directory) {
+        logger.debug("Method: findRootRolderByUserId, Param:{fShare: " + fShare
+                + " , directory: " + directory + "}");
+
+        String sqlQuery = "UPDATE U_FOLDER f SET f.F_SHARE=:fShare WHERE LOCATE(:directory,f.DIRECTORY)";
+        logger.debug("Method: updateFShareByDirectory, SQL:{" + sqlQuery + "}");
+
+        EntityManagerUtil.getEntityManager().createNativeQuery(sqlQuery)
+                .setParameter("fShare", fShare).setParameter("directory",
+                        directory).executeUpdate();
     }
 }

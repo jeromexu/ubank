@@ -54,7 +54,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "U_FOLDER")
-@NamedQueries( { @NamedQuery(name = "Folder.findRootRolderByUserId", query = "SELECT f FROM Folder AS f WHERE f.parent is null AND f.user.userId=:userId") })
+@NamedQueries( { @NamedQuery(name = "Folder.findRootFolderByUserId", query = "SELECT f FROM Folder AS f WHERE f.parent is null AND f.user.userId=:userId") })
 public class Folder implements Serializable {
 
     /**
@@ -68,6 +68,7 @@ public class Folder implements Serializable {
     private Date modifyTime;
     private String directory;
     private Boolean share;
+    private Boolean fShare;
     private String folderType;
     private int repeatCount;
 
@@ -162,6 +163,22 @@ public class Folder implements Serializable {
     }
 
     /**
+     * @return the fShare
+     */
+    @Column(name = "F_SHARE", columnDefinition = "bool default false")
+    public Boolean getFShare() {
+        return fShare;
+    }
+
+    /**
+     * @param share
+     *            the fShare to set
+     */
+    public void setFShare(Boolean share) {
+        fShare = share;
+    }
+
+    /**
      * @return the share
      */
     @Column(name = "SHARE", nullable = false, columnDefinition = "bool default false")
@@ -202,7 +219,8 @@ public class Folder implements Serializable {
     }
 
     /**
-     * @param repeatCount the repeatCount to set
+     * @param repeatCount
+     *            the repeatCount to set
      */
     public void setRepeatCount(int repeatCount) {
         this.repeatCount = repeatCount;

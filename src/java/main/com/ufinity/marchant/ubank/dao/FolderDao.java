@@ -47,7 +47,7 @@ public interface FolderDao extends GenericDao<Folder, Long> {
      *            folder share or not
      * @return List<Folder> folder's collection
      * @author skyqiang
-     */                 
+     */
     public List<Folder> findFolderListByUserId(Long userId, Boolean share);
 
     /**
@@ -58,5 +58,16 @@ public interface FolderDao extends GenericDao<Folder, Long> {
      * @return Folder root folder
      * @author skyqiang
      */
-    public Folder findRootRolderByUserId(Long userId);
+    public Folder findRootFolderByUserId(Long userId);
+
+    /**
+     * this method is update fshare according directory
+     * 
+     * @param fShare
+     *            folder's fshare
+     * @param directory
+     *            folder's directory
+     * @author skyqiang
+     */
+    public void updateFShareByDirectory(Boolean fShare, String directory);
 }
