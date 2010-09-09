@@ -111,7 +111,7 @@ public class FolderServiceImpl implements FolderService {
             }
             Date date = new Date();
 
-            // create new folder object and set value
+            // create new folder object and set it's value
             Folder newFolder = new Folder();
             newFolder.setParent(parentfolder);
             newFolder.setCreateTime(date);
@@ -120,6 +120,7 @@ public class FolderServiceImpl implements FolderService {
             newFolder.setShare(false);
             newFolder.setUser(user);
             newFolder.setRepeatCount(0);
+            newFolder.setFShare(parentfolder.getFShare());
 
             // If there is a same name folder in the target directory
             Folder sameOldFolder = getSameNameFolder(parentfolder, folderName);
@@ -461,7 +462,7 @@ public class FolderServiceImpl implements FolderService {
      *             dd
      */
     private boolean copyFolder(Folder targetFolder, Folder sourceFolder,
-            boolean share) throws Exception {
+            boolean fShare) throws Exception {
         if (targetFolder == null || sourceFolder == null) {
             logger.debug("Folder replication fails, "
                     + "'targetFolder' and 'sourceFolder' can not be null.");
@@ -482,6 +483,8 @@ public class FolderServiceImpl implements FolderService {
         tempFolder.setChildren(new HashSet<Folder>());
         tempFolder.setModifyTime(new Date());
         tempFolder.setFolderId(null);
+        tempFolder.setShare(false);
+        tempFolder.setFShare(targetFolder.getFShare());
 
         // update database
         try {
@@ -516,7 +519,6 @@ public class FolderServiceImpl implements FolderService {
                 copy.setFolder(tempFolder);
                 copy.setDirectory(getDiskPath(tempFolder));
                 copy.setModifyTime(new Date());
-                copy.setShare(share);
                 copy.setFileId(null);
                 fileDao.add(copy);
                 int result = DocumentUtil.moveOrCopyFileTo(file, tempFolder,
@@ -543,7 +545,7 @@ public class FolderServiceImpl implements FolderService {
         Set<Folder> folders = sourceFolder.getChildren();
         for (Folder folder : folders) {
             // Subfolders recursive copy
-            copyFolder(tempFolder, folder, share);
+            copyFolder(tempFolder, folder, fShare);
         }
         return true;
     }
@@ -624,26 +626,21 @@ public class FolderServiceImpl implements FolderService {
                 throw new UBankServiceException("root directory can not share.");
             }
             folder.setShare(true);
-            folderDao.modify(folder);
-            if (shareOrCanceAllFiles(folder, true)) {
-                EntityManagerUtil.commit();
-                return true;
-            }
-            EntityManagerUtil.rollback();
-            return false;
+            setFolderFShare(folder, true);
+            EntityManagerUtil.commit();
+            return true;
         }
         catch (Exception e) {
-            logger.error("When sharing a folder,database"
-                    + " throw an exception .", e);
+            logger.error("When sharing a folder exception .", e);
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
-            throw new UBankServiceException("shaer folder database exception.",
-                    e);
+            throw new UBankServiceException("shaer folder exception.", e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
         }
+
     }
 
     /**
@@ -664,7 +661,17 @@ public class FolderServiceImpl implements FolderService {
         try {
             EntityManagerUtil.begin();
             Folder folder = folderDao.find(folderId);
-            cancelShareFolder(folder);
+            if (!folder.getShare()) {
+                return false;
+            }
+            folder.setShare(false);
+            boolean fShare = folder.getParent().getFShare();
+            if (!fShare) {
+                setFolderFShare(folder, fShare);
+            }
+            else {
+                folderDao.modify(folder);
+            }
             EntityManagerUtil.commit();
             return true;
         }
@@ -693,6 +700,7 @@ public class FolderServiceImpl implements FolderService {
      * @return success return true else return false
      * @author bxji
      */
+    @SuppressWarnings("unused")
     private boolean shareOrCanceAllFiles(Folder folder, boolean share) {
         if (folder == null) {
             return false;
@@ -718,11 +726,13 @@ public class FolderServiceImpl implements FolderService {
      * @return success return true else return false
      * @author bxji
      */
-    private void cancelShareFolder(Folder folder) {
+    @SuppressWarnings("unused")
+    private void cancelShareFolder(Folder folder, boolean fShare) {
         if (folder == null) {
             return;
         }
         folder.setShare(false);
+        folder.setFShare(fShare);
         folderDao.modify(folder);
         Set<FileBean> files = folder.getFiles();
         for (FileBean file : files) {
@@ -732,7 +742,7 @@ public class FolderServiceImpl implements FolderService {
         }
         Set<Folder> children = folder.getChildren();
         for (Folder child : children) {
-            cancelShareFolder(child);
+            cancelShareFolder(child, fShare);
         }
     }
 
@@ -768,12 +778,12 @@ public class FolderServiceImpl implements FolderService {
      * 
      * @param folder
      *            target directory
-     * @param share
+     * @param fShare
      *            share status
      * @return success return true else return false
      * @author bxji
      */
-    private void resetChildrenDiskPathAndShare(Folder folder, boolean share) {
+    private void resetChildrenDiskPathAndShare(Folder folder, boolean fShare) {
         if (folder == null) {
             return;
         }
@@ -783,13 +793,14 @@ public class FolderServiceImpl implements FolderService {
         for (Folder child : children) {
             child.setModifyTime(date);
             child.setDirectory(path);
+            child.setShare(false);
+            child.setFShare(fShare);
             folderDao.modify(child);
-            resetChildrenDiskPathAndShare(child, share);
+            resetChildrenDiskPathAndShare(child, fShare);
         }
         Set<FileBean> files = folder.getFiles();
         for (FileBean file : files) {
             file.setModifyTime(date);
-            file.setShare(share);
             file.setDirectory(path);
             fileDao.modify(file);
         }
@@ -945,6 +956,7 @@ public class FolderServiceImpl implements FolderService {
      * @param checkObj
      *            The object being inspected
      * @return if be return 'ture' else return 'flase'
+     * @author bxji
      */
     private boolean isSelfOrChild(Folder root, Folder checkObj) {
         if (root == null || checkObj == null) {
@@ -961,5 +973,21 @@ public class FolderServiceImpl implements FolderService {
             return isSelfOrChild(child, checkObj);
         }
         return false;
+    }
+
+    /**
+     * set fshare property of folder and it's subfolder
+     * 
+     * @param folder
+     *            folder
+     * @author bxji
+     */
+    private void setFolderFShare(Folder folder, boolean fShare) {
+        folder.setFShare(fShare);
+        folderDao.modify(folder);
+        Set<Folder> children = folder.getChildren();
+        for (Folder child : children) {
+            setFolderFShare(child, fShare);
+        }
     }
 }
