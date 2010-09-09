@@ -23,6 +23,10 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common;
 
+import java.io.UnsupportedEncodingException;
+
+import org.apache.commons.codec.binary.Base64;
+
 /**
  * StringUtil
  * 
@@ -31,47 +35,76 @@ package com.ufinity.marchant.ubank.common;
  */
 public class StringUtil {
 
-	/**
-	 * Parse string to int, if parse occur exception, then return default value
-	 * 
-	 * @param s
-	 *            string
-	 * @param defVal
-	 *            if parse occur exception, then return default value
-	 * @return int value
-	 * @author zdxue
-	 */
-	public static int parseInt(String s, int defVal) {
-		try {
-			return Integer.parseInt(s);
-		} catch (Exception e) {
-			return defVal;
-		}
-	}
+    /**
+     * Parse string to int, if parse occur exception, then return default value
+     * 
+     * @param s
+     *            string
+     * @param defVal
+     *            if parse occur exception, then return default value
+     * @return int value
+     * @author zdxue
+     */
+    public static int parseInt(String s, int defVal) {
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception e) {
+            return defVal;
+        }
+    }
 
-	/**
-	 * Parse string to int , if occur exception , then return 0
-	 * 
-	 * @param s
-	 *            string
-	 * @return int value, if parse occur exception, then return default value
-	 * @author zdxue
-	 */
-	public static int parseInt(String s) {
-		return parseInt(s, 0);
-	}
+    /**
+     * Parse string to int , if occur exception , then return 0
+     * 
+     * @param s
+     *            string
+     * @return int value, if parse occur exception, then return default value
+     * @author zdxue
+     */
+    public static int parseInt(String s) {
+        return parseInt(s, 0);
+    }
 
-	/**
-	 * upper the first char of the source
-	 * 
-	 * @param source
-	 * @return String converted str
-	 * @author yonghui
-	 */
-	public static String makeFirstCharUpper(String source) {
-		if (null == source || source.trim().length() == 0) {
-			return null;
-		}
-		return (source.charAt(0) + "").toUpperCase() + source.substring(1);
-	}
+    /**
+     * upper the first char of the source
+     * 
+     * @param source
+     * @return String converted str
+     * @author yonghui
+     */
+    public static String makeFirstCharUpper(String source) {
+        if (null == source || source.trim().length() == 0) {
+            return null;
+        }
+        return (source.charAt(0) + "").toUpperCase() + source.substring(1);
+    }
+
+    /**
+     * Process filename as follow : 
+     * <ul>
+     *  <li>fileName contains chinese character</li>
+     *  <li>fileName contains space character</li>
+     * </ul>
+     *
+     * 
+     * @param fileName fileName
+     * @param agent agent from request
+     * @return needed fileName, if fileName empty return empty string
+     * @throws UnsupportedEncodingException if charset not supported, throw it
+     * @author zdxue
+     */
+    public static String processFileName(String fileName, String agent)
+            throws UnsupportedEncodingException {
+        if (Validity.isEmpty(fileName)) {
+            return "";
+        }
+
+        if (null != agent && agent.indexOf("MSIE") != -1) {
+            fileName = new String(fileName.getBytes("GBK"), "ISO-8859-1");
+        } else if (null != agent && agent.indexOf("Mozilla") != -1) {
+            fileName = "=?UTF-8?B?" + (new String(Base64.encodeBase64(fileName.getBytes("UTF-8")))) + "?=";
+        }
+
+        return fileName;
+    }
 }

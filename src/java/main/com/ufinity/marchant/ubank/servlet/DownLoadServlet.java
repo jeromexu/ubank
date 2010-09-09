@@ -215,8 +215,10 @@ public class DownLoadServlet extends AbstractServlet {
             response.setContentType("text/html; charset=UTF-8");
             response.setContentType("application/x-msdownload");
             response.setContentLength((int) file.length());
-            response.setHeader("Content-Disposition", "attachment;filename=" + 
-                    new String(fileBean.getFileName().replaceAll("\\s+", "_").getBytes("gb2312"), "iso-8859-1"));
+            
+            String agent = (String)request.getHeader("user-agent");
+            String fileName = StringUtil.processFileName(fileBean.getFileName(), agent);
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
 
             outPut = response.getOutputStream();
             while (k < file.length()) {
