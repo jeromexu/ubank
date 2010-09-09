@@ -1009,7 +1009,7 @@ a.s-btn-plain-active .s-btn-downarrow{
 	background:#fafafa;
 }
 .tree-node-selected{
-	background:#FBEC88;
+	font-weight:bolder;
 }
 .validatebox-invalid{
 	background:#FFFFEE url('images/validatebox_warning.png') no-repeat right 1px;

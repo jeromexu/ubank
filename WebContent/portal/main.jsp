@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css"
 	href="../css/themes/default/easyui.css">
 <link rel="stylesheet" type="text/css" href="../css/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="../css/home.css">
 <script type="text/javascript" src="../js/jquery-1.2.6.js"></script>
 <script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="../js/ubank.js"></script>
@@ -18,10 +19,14 @@
 <div region="north" border="false"
 	style="height: 60px; background: #78B4F0;">
 <h2 style="font-size: 20px; font-weight: bolder; font-family: Arial;">
-&nbsp;&nbsp;UBank <a href="logout.do">退出</a> &nbsp;&nbsp;&nbsp;&nbsp;<a
-	href="home.html">共享文件下载</a>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id="point">积分:</a> <a
-	id="userPoint">${session_user.point}</a>
+	<span style="float:right;margin-right:15px;">
+	
+	<a
+	href="home.html" style="text-decoration: underline;color:green;font-size:15px;">共享文件下载</a>
+	
+<a id="point" style="margin-left:200px;">积分:</a> <a
+	id="userPoint">${session_user.point}</a></span>
+&nbsp;&nbsp;UBank <a href="logout.do">退出</a> &nbsp;&nbsp;&nbsp;&nbsp;
 </div>
 </h2>
 <div region="west" split="true" title="网络硬盘"
