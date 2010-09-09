@@ -46,10 +46,12 @@ public interface UploadService {
      *            info of upload
      * @param item
      *            the FileItemStream
+     * @param fileSize
+     *            the fileSize
      * @throws UBankServiceException
      *             if have UBankServiceException
      */
-    public void uploadAndSaveDb(Folder folder, ProgressInfo pi, FileItemStream item) throws UBankServiceException;
+    public void uploadAndSaveDb(Folder folder, ProgressInfo pi, FileItemStream item, long fileSize) throws UBankServiceException;
 
     /**
      * get folder dir with id

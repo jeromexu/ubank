@@ -57,8 +57,7 @@ public class UploadListener implements ProgressListener {
      */
     public void update(long pBytesRead, long pContentLength, int pItems) {
         try {
-            //TODO remove
-            Thread.sleep(10);
+            Thread.sleep(1);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

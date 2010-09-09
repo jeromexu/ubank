@@ -164,7 +164,6 @@ public class FileUploadServlet extends AbstractServlet {
      */
     private void getUploadInfo(HttpServletRequest request,
             HttpServletResponse response) {
-        // System.out.println("getUploadInfo.........");
         String filedName = request.getParameter(UploadConstant.FILED_NAME);
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
                 UploadConstant.PROGRESS_INFO + filedName);
@@ -182,7 +181,6 @@ public class FileUploadServlet extends AbstractServlet {
      *            request
      */
     private void pause(HttpServletRequest request) {
-        // System.out.println("pause~~~~~~~~~~~~~~~~~");
         String filedName = request.getParameter(UploadConstant.FILED_NAME);
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
                 UploadConstant.PROGRESS_INFO + filedName);
@@ -200,7 +198,6 @@ public class FileUploadServlet extends AbstractServlet {
      *            request
      */
     private void continueUpload(HttpServletRequest request) {
-        // System.out.println("continue upload~~~~~~~~~~~~~~~~~");
         String filedName = request.getParameter(UploadConstant.FILED_NAME);
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
                 UploadConstant.PROGRESS_INFO + filedName);
@@ -242,12 +239,12 @@ public class FileUploadServlet extends AbstractServlet {
             if (isMultipart) {
                 User user = (User)request.getSession().getAttribute(Constant.SESSION_USER);
                 Long currentFolderId = (Long)request.getSession().getAttribute(UploadConstant.CURRENT_FOLDER_ID);
-                long filesSize = request.getContentLength() - UploadConstant.HTTP_REDUNDANT_LENGTH;
+                long fileSize = request.getContentLength() - UploadConstant.HTTP_REDUNDANT_LENGTH;
                 //innt service
                 uploadService = ServiceFactory.createService(UploadService.class);
                 folderService = ServiceFactory.createService(FolderService.class);
                 
-                String errorMsg = validateUpload(filesSize,currentFolderId,user);
+                String errorMsg = validateUpload(fileSize,currentFolderId,user);
                 if(errorMsg != null){
                     responseClientMsg(response,errorMsg);
                     return;
@@ -271,7 +268,7 @@ public class FileUploadServlet extends AbstractServlet {
                     FileItemStream item = items.next();
                     String fieldName = item.getFieldName();
                         request.getSession().setAttribute(UploadConstant.PROGRESS_INFO + fieldName, pi);
-                        uploadService.uploadAndSaveDb(folder, pi, item);
+                        uploadService.uploadAndSaveDb(folder, pi, item, fileSize);
                         uploadService.addPoint(user.getUserId());
                         
                         User loginUser = (User)request.getSession().getAttribute(Constant.SESSION_USER);
@@ -280,7 +277,7 @@ public class FileUploadServlet extends AbstractServlet {
                 }
                 
                 pi.setCurrentTime(System.currentTimeMillis());
-                pi.setBytesRead(filesSize);
+                pi.setBytesRead(fileSize);
                 pi.setCompleted(true);
             }
         } catch (Exception e) {

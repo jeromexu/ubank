@@ -59,4 +59,7 @@ public interface UploadConstant {
     
     //default add point
     String UPLOAD_DEFAULT_POINT = "upload.default.point";
+    
+    //upload buffer size
+    int BUFFER_SIZE = 8 * 1024;
 }

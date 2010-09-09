@@ -24,16 +24,14 @@
 package com.ufinity.marchant.ubank.service.impl;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.util.Streams;
 import org.apache.log4j.Logger;
 
 import com.ufinity.marchant.ubank.bean.FileBean;
@@ -64,7 +62,7 @@ public class UploadServiceImpl implements UploadService {
     private FileDao fileDao;
 
     private FolderDao folderDao;
-    
+
     private UserDao userDao;
 
     /**
@@ -76,59 +74,54 @@ public class UploadServiceImpl implements UploadService {
      *            info of upload
      * @param item
      *            the FileItemStream
+     * @param fileSize
+     *            the fileSize
      * @throws UBankServiceException
      *             if have UBankServiceException
      */
-    public void uploadAndSaveDb(Folder currentFolder, ProgressInfo pi, FileItemStream item)
-            throws UBankServiceException {
-        if(currentFolder == null){
+    public void uploadAndSaveDb(Folder currentFolder, ProgressInfo pi,
+            FileItemStream item, long fileSize) throws UBankServiceException {
+        if (currentFolder == null) {
             throw new UBankServiceException("current folder is null");
         }
-        
+
         Long folderId = currentFolder.getFolderId();
-        String folderDir = currentFolder.getDirectory();
-        
+
         if (Validity.isNullOrZero(folderId)) {
-            throw new UBankServiceException("current folder id is zero or is null");
+            throw new UBankServiceException(
+                    "current folder id is zero or is null");
         }
         if (item == null) {
             throw new UBankServiceException("FileItem is null. will return");
         }
 
         String fldName = "";
-        BufferedInputStream stream = null;
-        OutputStream out = null;
-        ByteArrayOutputStream bStream = null;
-        List<File> createFiles = new ArrayList<File>();
+        File file = null;
+        String folderDir = currentFolder.getDirectory();
         String realDir = getRealFolderDir(folderDir, folderId);
 
         try {
             fldName = item.getFieldName();
             String fileFullName = item.getName();
-            if(Validity.isNullAndEmpty(fileFullName)){
+            if (Validity.isNullAndEmpty(fileFullName)) {
                 throw new UBankServiceException("File name is null");
             }
-            
+
             fileFullName = checkFileName(fileFullName);
+
+            String name = getFileName(fileFullName);
+            String type = getFileType(fileFullName);
+
             pi.setCurFileName(fileFullName);
             pi.setUploadedFiles(pi.getUploadedFiles() + "<b>" + fileFullName
                     + "</b><br/>");
 
-            stream = new BufferedInputStream(item.openStream());
-            bStream = new ByteArrayOutputStream();
-            long bStreamLen = Streams.copy(stream, bStream, true);
+            file = getUploadFile(realDir, name, type, 0);
 
-            String name = getFileName(fileFullName);
-            String type = getFileType(fileFullName);
-            
-            File file = getUploadFile(realDir, name, type, 0);
-            
-            out = new FileOutputStream(file);
-            bStream.writeTo(out);
-            createFiles.add(file);
+            this.writeFile(file, item.openStream());
 
             logger.debug("Upload fldName :" + fldName
-                    + ",just was uploaded len:" + bStreamLen);
+                    + ",just was uploaded len:" + fileSize);
 
             Folder folder = new Folder();
             folder.setFolderId(folderId);
@@ -142,48 +135,71 @@ public class UploadServiceImpl implements UploadService {
             fb.setModifyTime(now);
             fb.setRepeatCount(0);
             fb.setShare(currentFolder.getShare());
-            
             fb.setDirectory(folderDir + File.separator + folderId);
             // kb
-            fb.setSize(bStreamLen / 1024);
+            fb.setSize(fileSize / 1024);
+
             this.saveFile(fb);
-        } catch (DbException e) {
-            // remove files
-            for (File file : createFiles) {
-                if (file.exists()) {
-                    file.delete();
-                }
+        } catch (Exception e) {
+            // remove file
+            if (file !=null && file.exists()) {
+                file.delete();
             }
             throw new UBankServiceException(e);
-        } catch (Exception e) {
-            throw new UBankServiceException(e);
-        }finally {
+        }
+    }
+
+    /**
+     * write file with buffer
+     * 
+     * @param file
+     *            write file
+     * @param is
+     *            input stream
+     * @throws IOException
+     *             if has IOException
+     */
+    private void writeFile(File file, InputStream is) throws IOException {
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        try {
+            bos = new BufferedOutputStream(new FileOutputStream(file));
+            bis = new BufferedInputStream(is);
+
+            byte[] buffer = new byte[UploadConstant.BUFFER_SIZE];
+            int len = 0;
+            while ((len = bis.read(buffer)) > 0) {
+                bos.write(buffer, 0, len);
+            }
+            bos.flush();
+        } finally {
             try {
-                if (bStream != null) {
-                    bStream.close();
+                if (bis != null) {
+                    bis.close();
                 }
-                if (out != null) {
-                    out.close();
+                if (bos != null) {
+                    bos.close();
                 }
             } catch (Exception e) {
             }
         }
     }
-    
+
     /**
      * check file name with ie and firefox
      * 
-     * @param fileName file name
+     * @param fileName
+     *            file name
      * @return file name
      */
-    private String checkFileName(String fileName){
+    private String checkFileName(String fileName) {
         String separator = File.separator;
-        if(fileName.contains(separator)){
-            fileName = fileName.substring(fileName.lastIndexOf(separator)+1);
+        if (fileName.contains(separator)) {
+            fileName = fileName.substring(fileName.lastIndexOf(separator) + 1);
         }
         return fileName;
     }
-    
+
     /**
      * get real folder dir
      * 
@@ -191,9 +207,11 @@ public class UploadServiceImpl implements UploadService {
      * @param folderId
      * @return
      */
-    private String getRealFolderDir(String folderDir, Long folderId){
-        String objectPath = SystemGlobals.getString(UploadConstant.UBANK_PATH, new String[]{System.getProperty("catalina.home")});
-        String dir = objectPath + folderDir + File.separator  + folderId + File.separator;
+    private String getRealFolderDir(String folderDir, Long folderId) {
+        String objectPath = SystemGlobals.getString(UploadConstant.UBANK_PATH,
+                new String[] { System.getProperty("catalina.home") });
+        String dir = objectPath + folderDir + File.separator + folderId
+                + File.separator;
         return dir;
     }
 
@@ -212,11 +230,12 @@ public class UploadServiceImpl implements UploadService {
         }
         return fileName.substring(i + 1);
     }
-    
+
     /**
      * get file name
      * 
-     * @param fileFullName file full name
+     * @param fileFullName
+     *            file full name
      * @return file name
      */
     private String getFileName(String fileFullName) {
@@ -242,7 +261,7 @@ public class UploadServiceImpl implements UploadService {
             folderDao = DaoFactory.createDao(FolderDao.class);
             Folder folder = folderDao.find(folderId);
             EntityManagerUtil.commit();
-            
+
             return folder;
         } catch (RuntimeException e) {
             throw new UBankServiceException(e);
@@ -250,7 +269,7 @@ public class UploadServiceImpl implements UploadService {
             EntityManagerUtil.closeEntityManager();
         }
     }
-    
+
     /**
      * get all file size by user id
      * 
@@ -266,7 +285,7 @@ public class UploadServiceImpl implements UploadService {
             fileDao = DaoFactory.createDao(FileDao.class);
             Long size = fileDao.findTotalSizeWithFileByUser(userId);
             logger.debug("Total size of user:" + userId + " is " + size);
-            if(size == null){
+            if (size == null) {
                 return 0;
             }
             EntityManagerUtil.commit();
@@ -277,7 +296,7 @@ public class UploadServiceImpl implements UploadService {
             EntityManagerUtil.closeEntityManager();
         }
     }
-    
+
     /**
      * user add point
      * 
@@ -288,11 +307,12 @@ public class UploadServiceImpl implements UploadService {
         try {
             EntityManagerUtil.begin();
             userDao = DaoFactory.createDao(UserDao.class);
-            int point = SystemGlobals.getInt(UploadConstant.UPLOAD_DEFAULT_POINT);
+            int point = SystemGlobals
+                    .getInt(UploadConstant.UPLOAD_DEFAULT_POINT);
             userDao.modifyPointByUserId(userId, point);
             EntityManagerUtil.commit();
         } catch (RuntimeException e) {
-            //Ignore
+            // Ignore
             logger.warn("user add point has exception", e);
         } finally {
             EntityManagerUtil.closeEntityManager();
@@ -319,31 +339,36 @@ public class UploadServiceImpl implements UploadService {
             EntityManagerUtil.closeEntityManager();
         }
     }
-    
+
     /**
      * get upload file
      * 
-     * @param realDir dir
-     * @param name file name
-     * @param type file type
-     * @param index repeat index
+     * @param realDir
+     *            dir
+     * @param name
+     *            file name
+     * @param type
+     *            file type
+     * @param index
+     *            repeat index
      * @return file
      */
-    private File getUploadFile(String realDir, String name, String type, int index){
+    private File getUploadFile(String realDir, String name, String type,
+            int index) {
         String newName = name;
-        
-        if(index != 0){
+
+        if (index != 0) {
             newName = name + "(" + index + ")";
         }
-        if(!type.equals("")){
-            newName = newName + "." +type;
+        if (!type.equals("")) {
+            newName = newName + "." + type;
         }
-       
+
         File file = new File(realDir + newName);
         if (file.exists()) {
             index++;
             return getUploadFile(realDir, name, type, index);
-        }else{
+        } else {
             logger.debug("Upload path is :" + realDir + name + type);
             return file;
         }
