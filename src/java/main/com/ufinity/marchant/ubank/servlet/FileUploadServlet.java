@@ -168,7 +168,15 @@ public class FileUploadServlet extends AbstractServlet {
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
                 UploadConstant.PROGRESS_INFO + filedName);
         if (pi != null) {
-            String json = JsonUtil.bean2json(pi);
+            String json = "";
+            if(pi.isInit()){
+                json = JsonUtil.bean2json(pi);
+            }
+            
+            if(!pi.isInProgress()){
+                pi.setInit(false);
+            }
+            
             responseClient(response, json);
         }
     }
@@ -267,13 +275,13 @@ public class FileUploadServlet extends AbstractServlet {
                 while (items.hasNext()) {
                     FileItemStream item = items.next();
                     String fieldName = item.getFieldName();
-                        request.getSession().setAttribute(UploadConstant.PROGRESS_INFO + fieldName, pi);
-                        uploadService.uploadAndSaveDb(folder, pi, item, fileSize);
-                        uploadService.addPoint(user.getUserId());
-                        
-                        User loginUser = (User)request.getSession().getAttribute(Constant.SESSION_USER);
-                        loginUser.setPoint(loginUser.getPoint() + 1);
-                        request.getSession().setAttribute(Constant.SESSION_USER, loginUser);
+                    request.getSession().setAttribute(UploadConstant.PROGRESS_INFO + fieldName, pi);
+                    uploadService.uploadAndSaveDb(folder, pi, item, fileSize);
+                    uploadService.addPoint(user.getUserId());
+                    
+                    User loginUser = (User)request.getSession().getAttribute(Constant.SESSION_USER);
+                    loginUser.setPoint(loginUser.getPoint() + 1);
+                    request.getSession().setAttribute(Constant.SESSION_USER, loginUser);
                 }
                 
                 pi.setCurrentTime(System.currentTimeMillis());

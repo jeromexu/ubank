@@ -35,6 +35,8 @@ package com.ufinity.marchant.ubank.upload;
  * @since 2010-8-20
  */
 public class ProgressInfo {
+    private boolean init = true;
+    
     private long totalSize = 0;
 
     private long bytesRead = 0;
@@ -162,5 +164,13 @@ public class ProgressInfo {
 
     public void setUploadedFiles(String uploadedFiles) {
         this.uploadedFiles = uploadedFiles;
+    }
+
+    public boolean isInit() {
+        return init;
+    }
+
+    public void setInit(boolean init) {
+        this.init = init;
     }
 }

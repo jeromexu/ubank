@@ -156,7 +156,9 @@
   						url: "getInfo.do?filedName="+filedName+"&d="+new Date(),
 						dataType: "json",
 						success: function(json){
-						  updateProgress(json,filedName);
+						  if(json != null){
+						  	updateProgress(json,filedName);
+						  }
 						}
 					})
 				}
