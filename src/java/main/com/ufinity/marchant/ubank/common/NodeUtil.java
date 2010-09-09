@@ -119,7 +119,7 @@ public class NodeUtil {
 	public static List<FileOrFolderJsonEntity> sortJsonObjs(
 			List<FileOrFolderJsonEntity> entitys, String sortBy, String sortType) {
 		if (null == entitys || entitys.size() == 0) {
-			return null;
+			return entitys;
 		}
 		if (sortBy == null || sortType == null) {
 			return entitys;
