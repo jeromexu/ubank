@@ -19,7 +19,7 @@
 <div region="north" border="false"
 	style="height: 60px; background: #78B4F0;">
 <h2 style="font-size: 20px; font-weight: bolder; font-family: Arial;">
-	<span style="float:right;margin-right:15px;">
+	<span style="float:right;margin-right:35px;">
 	
 	<a
 	href="home.html" style="text-decoration: underline;color:green;font-size:15px;">共享文件下载</a>
