@@ -76,8 +76,8 @@
 		if ($.trim(userName) == '' || $.trim(userName).length == 0) {
 			alert("请输入用户名!");
 			return false;
-		} else if ($.trim(userName).length > 30) {
-			alert("用户名过长!");
+		} else if ($.trim(userName).length < 4 || $.trim(userName).length > 30) {
+			alert("用户名长度不合法!");
 			return false;
 		}
 		var password = $("#password").val();
