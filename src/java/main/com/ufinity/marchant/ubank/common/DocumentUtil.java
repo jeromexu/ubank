@@ -69,11 +69,10 @@ public class DocumentUtil {
 				FOLDERNAME = String.valueOf(folder.getFolderId());
 				FOLDER_DIRECTORY = folder.getDirectory();
 				File baseFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
-				boolean result = true;
 				if (!baseFile.exists()) {
-					result = baseFile.mkdir();
+					return baseFile.mkdir() ? 1 : 0;
 				}
-				return result ? 1 : 0;
+				
 			}
 		} catch (Exception e) {
 			LOGGER.error("add new folder exception!", e);
@@ -98,11 +97,9 @@ public class DocumentUtil {
 				FILE_DIRECTORY = fileBean.getDirectory();
 				File sFile = createFile(FILE_DIRECTORY, FILENAME);
 				File dFile = createFile(FILE_DIRECTORY, newName);
-				boolean result = false;
 				if (sFile.exists()) {
-					result = sFile.renameTo(dFile);
+					return sFile.renameTo(dFile) ? 1 : 0;
 				}
-				return result ? 1 : 0;
 			}
 		} catch (Exception e) {
 			LOGGER.error("rename file exception!", e);
@@ -203,8 +200,6 @@ public class DocumentUtil {
 				newFolderName = String.valueOf(newFolder.getFolderId());
 				newFolderDirecotry = newFolder.getDirectory();
 				String serverPath = getApplicationPath();
-				boolean delResult = false;
-				boolean copyResult = false;
 				if (serverPath != null) {
 					StringBuffer olderPath = new StringBuffer();
 					if (FOLDER_DIRECTORY
@@ -235,12 +230,12 @@ public class DocumentUtil {
 					newPath.append(Constant.FILE_SYSTEM_SEPARATOR).append(
 							FOLDERNAME);
 					// copy the folder
-					copyResult = copyFolder(olderPath.toString(), newPath
+					boolean copyResult = copyFolder(olderPath.toString(), newPath
 							.toString());
 					// move operation
 					if (isMoveOrCopy) {
 						// move: first copy and then delete the folder
-						delResult = delFolder(olderPath.toString());
+						boolean delResult = delFolder(olderPath.toString());
 						return (copyResult && delResult) ? 1 : 0;
 					}
 					// copy operation
