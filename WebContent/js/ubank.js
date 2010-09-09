@@ -542,6 +542,7 @@ function generateNavigation(folderId) {
 	if (folderId != undefined && folderId != null) {
 		fid = folderId;
 	}
+	var nodeDom = $("#" + fid);
 	navigations.length = 0;
 	var i = 0;
 	while (true) {
@@ -564,4 +565,7 @@ function generateNavigation(folderId) {
 				+ navigations[i].id + ')")>' + navigations[i].text + '</a>';
 	}
 	$("div.panel-title").eq(1).html(naviStr);
+	$('#dirTree').tree('select', nodeDom);
+	$('#dirTree').tree('expand', nodeDom);
+
 }
