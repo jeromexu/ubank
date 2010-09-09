@@ -323,12 +323,19 @@ function showContent(folderId, sortBy, sortType) {
 					var url = '/ubank/portal/shareFolder.do';
 					var id;
 					var folderName;
+					var share = 'true';
 					if (record) {
 						id = record.id;
 						folderName = record.name;
+						share = record.share;
 					} else {
 						id = currTreeNode.id;
 						folderName = currTreeNode.text;
+						share = currTreeNode.attributes.share;
+					}
+					if (share == 'true') {
+						$.messager.alert('提示 ', '该文件夹已经被共享', 'info');
+						return;
 					}
 					$.messager.confirm('My Title', '你确定要共享“' + folderName
 									+ '”文件夹吗？', function(r) {
@@ -361,12 +368,19 @@ function showContent(folderId, sortBy, sortType) {
 					var url = '/ubank/portal/cancelShare.do';
 					var id;
 					var folderName;
+					var share = 'false';
 					if (record) {
 						id = record.id;
 						folderName = record.name;
+						share = record.share;
 					} else {
 						id = currTreeNode.id;
 						folderName = currTreeNode.text;
+						share = currTreeNode.attributes.share;
+					}
+					if (share == 'false') {
+						$.messager.alert('提示 ', '该文件夹没有独立共享，不必取消共享', 'info');
+						return;
 					}
 					$.messager.confirm('My Title', '你确定要取消“' + folderName
 									+ '”及子文件夹的共享吗？', function(r) {

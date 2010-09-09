@@ -253,6 +253,7 @@ public class FolderServiceImpl implements FolderService {
                     jsonEntity.setDir(child.getDirectory());
                     jsonEntity.setType(SystemGlobals
                             .getString(ConfigKeys.DOCUMENT_TYPE_FOLDER));
+                    jsonEntity.setShare(child.getShare());
                     if (Constant.FOLDER_TYPE_CUSTOMER.equals(child
                             .getFolderType())) {
                         jsonEntity.setInit(false);
@@ -625,8 +626,12 @@ public class FolderServiceImpl implements FolderService {
             if (Constant.FOLDER_TYPE_ROOT.equals(folder.getFolderType())) {
                 throw new UBankServiceException("root directory can not share.");
             }
+            if (folder.getShare()) {
+                return true;
+            }
             folder.setShare(true);
-            setFolderFShare(folder, true);
+            folderDao.updateFShareByDirectory(true, folder.getDirectory());
+            folderDao.modify(folder);
             EntityManagerUtil.commit();
             return true;
         }
@@ -662,16 +667,12 @@ public class FolderServiceImpl implements FolderService {
             EntityManagerUtil.begin();
             Folder folder = folderDao.find(folderId);
             if (!folder.getShare()) {
-                return false;
+                return true;
             }
             folder.setShare(false);
             boolean fShare = folder.getParent().getFShare();
-            if (!fShare) {
-                setFolderFShare(folder, fShare);
-            }
-            else {
-                folderDao.modify(folder);
-            }
+            folderDao.updateFShareByDirectory(fShare, folder.getDirectory());
+            folderDao.modify(folder);
             EntityManagerUtil.commit();
             return true;
         }
@@ -982,6 +983,7 @@ public class FolderServiceImpl implements FolderService {
      *            folder
      * @author bxji
      */
+    @SuppressWarnings("unused")
     private void setFolderFShare(Folder folder, boolean fShare) {
         folder.setFShare(fShare);
         folderDao.modify(folder);

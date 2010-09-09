@@ -43,7 +43,27 @@ public class FileOrFolderJsonEntity {
     private String dir;
     private String size;
     private boolean init;
+    private boolean share;
     private Long layer;
+
+    /**
+     * the getter method of share
+     * 
+     * @return the share
+     */
+    public boolean isShare() {
+        return share;
+    }
+
+    /**
+     * the setter method of the share
+     * 
+     * @param share
+     *            the share to set
+     */
+    public void setShare(boolean share) {
+        this.share = share;
+    }
 
     /**
      * the getter method of layer
