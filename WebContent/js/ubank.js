@@ -567,5 +567,7 @@ function generateNavigation(folderId) {
 	$("div.panel-title").eq(1).html(naviStr);
 	$('#dirTree').tree('select', nodeDom);
 	$('#dirTree').tree('expand', nodeDom);
+	currTreeNode = $('#dirTree').tree('getSelected');
+	alert(currTreeNode);
 
 }
