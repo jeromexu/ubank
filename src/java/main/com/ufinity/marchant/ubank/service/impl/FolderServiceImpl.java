@@ -745,21 +745,21 @@ public class FolderServiceImpl implements FolderService {
      * @author bxji
      */
     private String getDiskPath(Folder parentFolder) {
-        String currentPath = "";
+        StringBuilder currentPath = new StringBuilder();
         if (parentFolder == null) {
-            return currentPath;
+            return currentPath.toString();
         }
         String parentPath = parentFolder.getDirectory();
-        if (parentPath.length() > 0) {
-            char c = parentPath.charAt(parentPath.length() - 1);
-            if ('\\' == c || '/' == c) {
-                currentPath = parentPath + parentFolder.getFolderId();
-            }
-            else {
-                currentPath = parentPath + "/" + parentFolder.getFolderId();
-            }
+        if (parentPath.endsWith(Constant.FILE_SYSTEM_SEPARATOR)) {
+            currentPath.append(parentPath).append(parentFolder.getFolderId());
         }
-        return currentPath;
+        else {
+            currentPath.append(parentPath).append(
+                    Constant.FILE_SYSTEM_SEPARATOR).append(
+                    parentFolder.getFolderId());
+        }
+        return currentPath.toString();
+
     }
 
     /**
