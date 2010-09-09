@@ -11,16 +11,16 @@ $(function() {
 
 function dirTree() {
 	$('#dirTree').tree({
-		url : '/ubank/portal/showTree.do',
-		onClick : function(node) {
-			if (node.text != '共享文件夹') {
-				currTreeNode = node;
-				showContent(node.id, undefined, undefined, node.text,
-						node.attributes.layer);
-				setFolderId(node.id);
-			}
-		}
-	});
+				url : '/ubank/portal/showTree.do',
+				onClick : function(node) {
+					if (node.text != '共享文件夹') {
+						var target = node.target;
+						currTreeNode = node;
+						showContent(node.id);
+						setFolderId(node.id);
+					}
+				}
+			});
 };
 
 $(function() {
@@ -162,7 +162,7 @@ function reload() {
 	$('#dirTree').tree('reload');
 }
 
-function showContent(folderId, sortBy, sortType, nodeName, layerNumber) {
+function showContent(folderId, sortBy, sortType) {
 	var sortColumn = sortBy;
 	var sortColType = sortType;
 	if (sortColumn == undefined) {
@@ -479,18 +479,18 @@ function showContent(folderId, sortBy, sortType, nodeName, layerNumber) {
 		onDblClickRow : function(rowIndex, rowData) {
 			if (rowData.type == '文件夹') {
 
-				showContent(rowData.id, undefined, undefined, rowData.name, rowData.layer);
+				showContent(rowData.id);
 			}
 		}
 	});
 	$('#test').datagrid('clearSelections');
-	generateNavigation(folderId, nodeName, layerNumber);
+	generateNavigation(folderId);
 };
 
 function returnResult(status, data) {
 	var message = '操作成功！';
 	if (!status) {
-		message = '操作失败:' + data;
+		message = '请求失败:' + data;
 	}
 	$.messager.show({
 				title : '回执',
@@ -537,34 +537,31 @@ function trim(str) { // 删除左右两端的空格
 	return str.replace(/(^\s*)|(\s*$)/g, "");
 }
 
-function generateNavigation(folderId, nodeName, layerNumber) {
-	var layer = 0
+function generateNavigation(folderId) {
 	var fid = 0;
-	var name = '我的网盘';
 	if (folderId != undefined && folderId != null) {
 		fid = folderId;
-		if (layerNumber != undefined && layerNumber != null) {
-			layer = layerNumber;
+	}
+	navigations.length = 0;
+	var i = 0;
+	while (true) {
+		var name = $("#" + fid + ">span").filter(".tree-title").html();
+		var navigation = {
+			text : name,
+			id : fid
+		};
+		navigations[i] = navigation;
+		var fid = $("#" + fid).attr("pid");
+		i++;
+		if (fid == null) {
+			break;
 		}
 	}
-	if (nodeName != undefined && nodeName != null) {
-		name = nodeName;
-	}
 	var length = navigations.length;
-	for (var i = length; i > layer; i--) {
-		navigations[i] = null;
-	}
-	var navigation = {
-		text : name,
-		id : fid
-	};
-	navigations[layer] = navigation;
-	var naviStr = '网络硬盘';
-	for (var i = 0; i <= layer; i++) {
+	var naviStr = '网络硬盘 > <a href="#" onclick="showContent()">我的网盘</a>';
+	for (var i = length - 3; i >= 0; i--) {
 		naviStr = naviStr + ' > ' + '<a href="#" onclick="showContent('
-				+ navigations[i].id + ', null, null,' + i + ' ,' + '\''
-				+ navigations[i].text + '\'' + ')">' + navigations[i].text
-				+ '</a>';
+				+ navigations[i].id + ')")>' + navigations[i].text + '</a>';
 	}
 	$("div.panel-title").eq(1).html(naviStr);
 }
