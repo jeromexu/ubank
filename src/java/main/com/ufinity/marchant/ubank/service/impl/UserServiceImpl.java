@@ -285,7 +285,7 @@ public class UserServiceImpl implements UserService {
 			folder.setModifyTime(date);
 			folder.setFolderType(Constant.FOLDER_TYPE_INIT);
 			folder.setShare(false);
-			folder.setDirectory(SystemGlobals
+			folder.setDirectory(Constant.FILE_SYSTEM_SEPARATOR + SystemGlobals
 					.getString(ConfigKeys.USER_SPACE_ROOT_DIR)
 					+ Constant.FILE_SYSTEM_SEPARATOR + userId);
 
