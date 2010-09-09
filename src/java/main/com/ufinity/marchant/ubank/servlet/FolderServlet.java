@@ -45,8 +45,9 @@ public class FolderServlet extends AbstractServlet {
 
     FolderService folderService = null;
     FileService fileService = null;
-    private static String SIZE="size";
-    private static String ASC="asc";
+    private static String SIZE = "size";
+    private static String ASC = "asc";
+
     /**
      * Constructor for FolderServlet
      */
@@ -124,8 +125,7 @@ public class FolderServlet extends AbstractServlet {
      * @author bxji
      * @throws IOException
      */
-    private void showTree(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
+    private void showTree(HttpServletRequest req, HttpServletResponse resp) {
         User user = getLoginUser(req);
         if (user == null) {
             return;
@@ -165,16 +165,16 @@ public class FolderServlet extends AbstractServlet {
      * @throws IOException
      */
     private void showFolderContent(HttpServletRequest req,
-            HttpServletResponse resp) throws IOException {
+            HttpServletResponse resp) {
         User user = getLoginUser(req);
         if (user == null) {
             return;
         }
         String fid = req.getParameter(Constant.FOLDER_ID);
         String layer = req.getParameter(Constant.FOLDER_LAYER);
-        
-        String sortBy=req.getParameter("sortBy");
-        String sortType=req.getParameter("sortType");
+
+        String sortBy = req.getParameter("sortBy");
+        String sortType = req.getParameter("sortType");
 
         Long folderId = null;
         Long layerNumber = null;
@@ -193,11 +193,17 @@ public class FolderServlet extends AbstractServlet {
             folderId = Long.parseLong(fid);
         }
         List<FileOrFolderJsonEntity> josnEntitys = null;
-        josnEntitys = folderService.getAllFromFolder(folderId, layerNumber);
-        if(null!=sortBy&&sortType!=null){
-        	josnEntitys=NodeUtil.sortJsonObjs(josnEntitys,sortBy,sortType);
-        }else{
-        	josnEntitys=NodeUtil.sortJsonObjs(josnEntitys,SIZE,ASC);
+        try {
+            josnEntitys = folderService.getAllFromFolder(folderId, layerNumber);
+        }
+        catch (UBankServiceException e) {
+            logger.error("show folder content serve layer exception.", e);
+        }
+        if (null != sortBy && sortType != null) {
+            josnEntitys = NodeUtil.sortJsonObjs(josnEntitys, sortBy, sortType);
+        }
+        else {
+            josnEntitys = NodeUtil.sortJsonObjs(josnEntitys, SIZE, ASC);
         }
         if (josnEntitys != null) {
             Map<String, Object> result = new HashMap<String, Object>();
@@ -226,35 +232,37 @@ public class FolderServlet extends AbstractServlet {
         String folderName = req.getParameter(Constant.FOLDER_NAME);
         folderName = URLDecoder.decode(folderName, "utf-8");
         String layerNumber = req.getParameter(Constant.FOLDER_LAYER);
-        String result = Constant.REQUEST_RESULT_FAIL;
-        // is name contain special char
-        if (Validity.isSpecial(folderName)) {
-            result = MessageResource.getText(
-                    MessageKeys.CAN_NOT_CONTAIN_SPECIAL_CHAR,
-                    Validity.SPECIAL_CHARACTER);
-        }
-        else {
-            if (!Validity.isNullAndEmpty(folderName)
-                    && !Validity.isNullOrZero(folderId)
-                    && !Validity.isNullAndEmpty(layerNumber) && user != null) {
-                Long layer = Long.parseLong(layerNumber);
-                // user directory layer number must less than ten
-                if (layer > Constant.FOLDER_MAX_LAYER) {
-                    logger
-                            .debug("create new Folder failed, "
-                                    + "user directory layer number must less than ten.");
-                    returnResp(result, resp);
+        String result = MessageResource.getText(MessageKeys.ADD_FOLDER_FAIL);
+        if (!Validity.isNullAndEmpty(folderName)
+                && !Validity.isNullOrZero(folderId)
+                && !Validity.isNullAndEmpty(layerNumber) && user != null) {
+            // is name contain special char
+            if (Validity.isSpecial(folderName)) {
+                result = MessageResource.getText(
+                        MessageKeys.CAN_NOT_CONTAIN_SPECIAL_CHAR,
+                        Validity.SPECIAL_CHARACTER);
+                returnResp(result, resp);
+                return;
+            }
+            // user directory layer number must less than ten
+            Long layer = Long.parseLong(layerNumber);
+            if (layer > Constant.FOLDER_MAX_LAYER) {
+                logger.debug("create new Folder failed, "
+                        + "user directory layer number must less than ten.");
+                result = MessageResource
+                        .getText(MessageKeys.FOLDER_LAYER_LIMIT);
+                returnResp(result, resp);
+                return;
+            }
+            try {
+                Folder folder = folderService.addFolder(user, folderId,
+                        folderName, null);
+                if (folder != null) {
+                    result = Constant.REQUEST_RESULT_SUCCESS;
                 }
-                try {
-                    Folder folder = folderService.addFolder(user, folderId,
-                            folderName, null);
-                    if (folder != null) {
-                        result = Constant.REQUEST_RESULT_SUCCESS;
-                    }
-                }
-                catch (UBankServiceException e) {
-                    logger.error("create folder fail", e);
-                }
+            }
+            catch (UBankServiceException e) {
+                logger.error("create folder fail", e);
             }
         }
         returnResp(result, resp);
@@ -273,11 +281,10 @@ public class FolderServlet extends AbstractServlet {
             HttpServletResponse resp) {
         String id = req.getParameter(Constant.FOLDER_OR_FILE_ID);
         String type = req.getParameter(Constant.DOCUMENT_TYPE);
-        String result = Constant.REQUEST_RESULT_FAIL;
+        String result = MessageResource.getText(MessageKeys.DELETE_FAIL);
 
         if (!Validity.isNullAndEmpty(id) && !Validity.isNullAndEmpty(type)) {
             Long docId = Long.parseLong(id);
-
             try {
                 // if this is file that deleted
                 if (Constant.DOCUMENT_TYPE_FILE.equals(type)) {
@@ -310,7 +317,7 @@ public class FolderServlet extends AbstractServlet {
      */
     private void shareFolder(HttpServletRequest req, HttpServletResponse resp) {
         String id = req.getParameter(Constant.FOLDER_ID);
-        String result = Constant.REQUEST_RESULT_FAIL;
+        String result = MessageResource.getText(MessageKeys.SHARE_FOLDER_FAIL);
         if (Validity.isNullAndEmpty(id)) {
             return;
         }
@@ -342,28 +349,32 @@ public class FolderServlet extends AbstractServlet {
         String newName = req.getParameter(Constant.FOLDER_OR_FILE_NAME);
         newName = URLDecoder.decode(newName, "utf-8");
         String type = req.getParameter(Constant.DOCUMENT_TYPE);
-        String result = Constant.REQUEST_RESULT_FAIL;
+        String result = MessageResource.getText(MessageKeys.RENAME_FAIL);
         // is name contain special char
         if (Validity.isSpecial(newName)) {
             result = MessageResource.getText(
                     MessageKeys.CAN_NOT_CONTAIN_SPECIAL_CHAR,
                     Validity.SPECIAL_CHARACTER);
+            returnResp(result, resp);
+            return;
         }
-        else {
-            if (Validity.isNullAndEmpty(id) || Validity.isNullAndEmpty(newName)
-                    || Validity.isNullAndEmpty(type)) {
-                return;
-            }
+        if (!Validity.isNullAndEmpty(id) && !Validity.isNullAndEmpty(newName)
+                && !Validity.isNullAndEmpty(type)) {
             Long fId = Long.parseLong(id);
-            if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
-                if (fileService.renameFile(fId, newName)) {
-                    result = Constant.REQUEST_RESULT_SUCCESS;
+            try {
+                if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
+                    if (fileService.renameFile(fId, newName)) {
+                        result = Constant.REQUEST_RESULT_SUCCESS;
+                    }
+                }
+                else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
+                    if (folderService.renameFolder(fId, newName)) {
+                        result = Constant.REQUEST_RESULT_SUCCESS;
+                    }
                 }
             }
-            else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
-                if (folderService.renameFolder(fId, newName)) {
-                    result = Constant.REQUEST_RESULT_SUCCESS;
-                }
+            catch (UBankServiceException e) {
+                logger.error("rename request serve layer exception. ", e);
             }
         }
         returnResp(result, resp);
@@ -382,21 +393,27 @@ public class FolderServlet extends AbstractServlet {
         String id = req.getParameter(Constant.FOLDER_OR_FILE_ID);
         String parentId = req.getParameter(Constant.PARENT_ID);
         String type = req.getParameter(Constant.DOCUMENT_TYPE);
-        String result = Constant.REQUEST_RESULT_FAIL;
-        if (Validity.isNullAndEmpty(id) || Validity.isNullAndEmpty(parentId)
-                || Validity.isNullAndEmpty(type)) {
-            return;
-        }
-        Long fId = Long.parseLong(id);
-        Long folderId = Long.parseLong(parentId);
-        if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
-            if (fileService.moveFileToFloder(folderId, fId)) {
-                result = Constant.REQUEST_RESULT_SUCCESS;
+        String result = MessageResource.getText(MessageKeys.MOVE_FAIL);
+        if (!Validity.isNullAndEmpty(id) && !Validity.isNullAndEmpty(parentId)
+                && !Validity.isNullAndEmpty(type)) {
+            Long fId = Long.parseLong(id);
+            Long folderId = Long.parseLong(parentId);
+            try {
+                if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
+                    if (fileService.moveFileToFloder(folderId, fId)) {
+                        result = Constant.REQUEST_RESULT_SUCCESS;
+                    }
+                }
+                else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
+
+                    if (folderService.moveFolderTo(folderId, fId)) {
+                        result = Constant.REQUEST_RESULT_SUCCESS;
+                    }
+                }
+
             }
-        }
-        else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
-            if (folderService.moveFolderTo(folderId, fId)) {
-                result = Constant.REQUEST_RESULT_SUCCESS;
+            catch (UBankServiceException e) {
+                logger.error("move file or folder serve layer exception", e);
             }
         }
         returnResp(result, resp);
@@ -415,21 +432,25 @@ public class FolderServlet extends AbstractServlet {
         String id = req.getParameter(Constant.FOLDER_OR_FILE_ID);
         String parentId = req.getParameter(Constant.PARENT_ID);
         String type = req.getParameter(Constant.DOCUMENT_TYPE);
-        String result = Constant.REQUEST_RESULT_FAIL;
-        if (Validity.isNullAndEmpty(id) || Validity.isNullAndEmpty(parentId)
-                || Validity.isNullAndEmpty(type)) {
-            return;
-        }
-        Long fId = Long.parseLong(id);
-        Long folderId = Long.parseLong(parentId);
-        if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
-            if (fileService.copyFileToFolder(folderId, fId)) {
-                result = Constant.REQUEST_RESULT_SUCCESS;
+        String result = MessageResource.getText(MessageKeys.COPY_FAIL);
+        if (!Validity.isNullAndEmpty(id) && !Validity.isNullAndEmpty(parentId)
+                && !Validity.isNullAndEmpty(type)) {
+            Long fId = Long.parseLong(id);
+            Long folderId = Long.parseLong(parentId);
+            try {
+                if (Constant.DOCUMENT_TYPE_FILE.equals(type.trim())) {
+                    if (fileService.copyFileToFolder(folderId, fId)) {
+                        result = Constant.REQUEST_RESULT_SUCCESS;
+                    }
+                }
+                else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
+                    if (folderService.copyFolderTo(folderId, fId)) {
+                        result = Constant.REQUEST_RESULT_SUCCESS;
+                    }
+                }
             }
-        }
-        else if (Constant.DOCUMENT_TYPE_FOLDER.equals(type.trim())) {
-            if (folderService.copyFolderTo(folderId, fId)) {
-                result = Constant.REQUEST_RESULT_SUCCESS;
+            catch (Exception e) {
+                logger.error("copy file or folder serve layer exception", e);
             }
         }
         returnResp(result, resp);
@@ -467,20 +488,18 @@ public class FolderServlet extends AbstractServlet {
      */
     private void cancelShare(HttpServletRequest req, HttpServletResponse resp) {
         String id = req.getParameter(Constant.FOLDER_ID);
-        String result = Constant.REQUEST_RESULT_FAIL;
-        if (Validity.isNullAndEmpty(id)) {
-            return;
-        }
-        Long folderId = Long.parseLong(id);
-        try {
-            if (folderService.cancelShareFolder(folderId)) {
-                result = Constant.REQUEST_RESULT_SUCCESS;
+        String result = MessageResource.getText(MessageKeys.CANCEL_SHARE_FAIL);
+        if (!Validity.isNullAndEmpty(id)) {
+            Long folderId = Long.parseLong(id);
+            try {
+                if (folderService.cancelShareFolder(folderId)) {
+                    result = Constant.REQUEST_RESULT_SUCCESS;
+                }
+            }
+            catch (Exception e) {
+                logger.error("cancel share folder fail", e);
             }
         }
-        catch (Exception e) {
-            logger.error("share folder fail", e);
-        }
         returnResp(result, resp);
-
     }
 }

@@ -76,6 +76,16 @@ public class MessageKeys {
 
     // Server error message
     public static final String CAN_NOT_CONTAIN_SPECIAL_CHAR = "can.not.contain.special.char";
+    public static final String ADD_FOLDER_FAIL = "add.folder.fail";
+    public static final String DELETE_FAIL = "del.fail";
+    public static final String SHARE_FOLDER_FAIL = "share.folder.fail";
+    public static final String RENAME_FAIL = "rename.fail";
+    public static final String FOLDER_LAYER_LIMIT = "folder.layer.limit";
+    public static final String MOVE_FAIL = "move.fail";
+    public static final String COPY_FAIL = "copy.fail";
+    public static final String CANCEL_SHARE_FAIL = "cancel.share.fail";
+    
+
 
     public static final String SEARCH_CONDITION_MSG = "search.invalid.input";
 }

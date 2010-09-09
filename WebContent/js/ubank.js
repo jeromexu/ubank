@@ -484,7 +484,7 @@ function showContent(folderId, sortBy, sortType, nodeName, layerNumber) {
 		}
 	});
 	$('#test').datagrid('clearSelections');
-	generateNavigation(folderId, nodeName, layerNumber);
+//	generateNavigation(folderId, nodeName, layerNumber);
 };
 
 function returnResult(status, data) {

@@ -155,7 +155,7 @@ public class FolderServiceImpl implements FolderService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
-            return null;
+            throw new UBankServiceException("add new folder fail.", e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -190,6 +190,8 @@ public class FolderServiceImpl implements FolderService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
+            throw new UBankServiceException("get user's directory tree fail.",
+                    e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -205,14 +207,16 @@ public class FolderServiceImpl implements FolderService {
      *            specified folder id
      * @return FileOrFolderJsonEntity list
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
     public List<FileOrFolderJsonEntity> getAllFromFolder(Long folderId,
-            Long layer) {
+            Long layer) throws UBankServiceException {
+        List<FileOrFolderJsonEntity> jsonEntitys = new ArrayList<FileOrFolderJsonEntity>();
         if (Validity.isNullOrZero(folderId) || Validity.isNullOrZero(layer)) {
-            return null;
+            return jsonEntitys;
         }
         Folder folder = null;
-        List<FileOrFolderJsonEntity> jsonEntitys = new ArrayList<FileOrFolderJsonEntity>();
         try {
             EntityManagerUtil.begin();
             folder = folderDao.find(folderId);
@@ -266,7 +270,8 @@ public class FolderServiceImpl implements FolderService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
-            return null;
+            throw new UBankServiceException("get user's directory tree fail.",
+                    e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -311,7 +316,7 @@ public class FolderServiceImpl implements FolderService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
-            return false;
+            throw new UBankServiceException("delete folder exception.", e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -328,35 +333,44 @@ public class FolderServiceImpl implements FolderService {
      *            source Folder object identification
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId) {
+    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId)
+            throws UBankServiceException {
         if (Validity.isNullOrZero(targetFolderId)
                 || Validity.isNullOrZero(sourceFolderId)) {
             logger.debug("Folder replication fails, "
                     + "'targetFolderId' and 'sourceFolderId' can not be null.");
             return false;
         }
-        Folder source = null;
-        Folder target = null;
-        source = folderDao.find(sourceFolderId);
-        target = folderDao.find(targetFolderId);
-        boolean result = false;
-        // if source folder and target folder is the same directory
-        // or source is subdirectory of the target
-        if (isSelfOrChild(source, target) || target.equals(source.getParent())) {
-            logger
-                    .debug("Can not be copied to the original folder or own parent folder.");
-            // throw new UBankServiceException("");
-            return false;
+        try {
+            Folder source = null;
+            Folder target = null;
+            source = folderDao.find(sourceFolderId);
+            target = folderDao.find(targetFolderId);
+            boolean result = false;
+            // if source folder and target folder is the same directory
+            // or source is subdirectory of the target
+            if (isSelfOrChild(source, target)
+                    || target.equals(source.getParent())) {
+                logger
+                        .debug("Can not be copied to the original folder or own parent folder.");
+                // throw new UBankServiceException("");
+                return false;
+            }
+            if (target.getShare()) {
+                result = copyFolder(target, source, true);
+            }
+            else {
+                result = copyFolder(target, source, false);
+            }
+            return result;
         }
-
-        if (target.getShare()) {
-            result = copyFolder(target, source, true);
+        catch (Exception e) {
+            logger.error("delete folder exception.", e);
+            throw new UBankServiceException("delete folder exception.", e);
         }
-        else {
-            result = copyFolder(target, source, false);
-        }
-        return result;
     }
 
     /**
@@ -369,8 +383,11 @@ public class FolderServiceImpl implements FolderService {
      *            source Folder object identification
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean moveFolderTo(Long targetFolderId, Long sourceFolderId) {
+    public boolean moveFolderTo(Long targetFolderId, Long sourceFolderId)
+            throws UBankServiceException {
         if (Validity.isNullOrZero(targetFolderId)
                 || Validity.isNullOrZero(sourceFolderId)) {
             logger.debug("Folder moved fails, "
@@ -423,7 +440,7 @@ public class FolderServiceImpl implements FolderService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
-            return false;
+            throw new UBankServiceException("move folder exception.", e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -440,89 +457,87 @@ public class FolderServiceImpl implements FolderService {
      *            source folder
      * @return success return true else return false
      * @author bxji
+     * @throws Exception
+     *             dd
      */
     private boolean copyFolder(Folder targetFolder, Folder sourceFolder,
-            boolean share) {
+            boolean share) throws Exception {
         if (targetFolder == null || sourceFolder == null) {
             logger.debug("Folder replication fails, "
                     + "'targetFolder' and 'sourceFolder' can not be null.");
             return false;
         }
         Folder tempFolder = null;
-        try {
-            tempFolder = (Folder) BeanUtils.cloneBean(sourceFolder);
-            // If there is a same name folder in the target directory
-            Folder sameNameOldFolder = getSameNameFolder(targetFolder,
-                    tempFolder.getFolderName());
-            if (sameNameOldFolder != null) {
-                String newName = getNewName(sameNameOldFolder);
-                tempFolder.setFolderName(newName);
-            }
-            tempFolder.setParent(targetFolder);
-            tempFolder.setDirectory(getDiskPath(targetFolder));
-            tempFolder.setFiles(new HashSet<FileBean>());
-            tempFolder.setChildren(new HashSet<Folder>());
-            tempFolder.setModifyTime(new Date());
-            tempFolder.setFolderId(null);
+        tempFolder = (Folder) BeanUtils.cloneBean(sourceFolder);
+        // If there is a same name folder in the target directory
+        Folder sameNameOldFolder = getSameNameFolder(targetFolder, tempFolder
+                .getFolderName());
+        if (sameNameOldFolder != null) {
+            String newName = getNewName(sameNameOldFolder);
+            tempFolder.setFolderName(newName);
+        }
+        tempFolder.setParent(targetFolder);
+        tempFolder.setDirectory(getDiskPath(targetFolder));
+        tempFolder.setFiles(new HashSet<FileBean>());
+        tempFolder.setChildren(new HashSet<Folder>());
+        tempFolder.setModifyTime(new Date());
+        tempFolder.setFolderId(null);
 
-            // update database
+        // update database
+        try {
+            EntityManagerUtil.begin();
+            folderDao.add(tempFolder);
+            int result = DocumentUtil.addNewFolder(tempFolder);
+            if (result != 1) {
+                EntityManagerUtil.rollback();
+            }
+            EntityManagerUtil.commit();
+        }
+        catch (Exception e) {
+            logger.error("An exception when copying a directory "
+                    + "to update the database. ", e);
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
+            }
+            throw new UBankServiceException("copy folder database exception.",
+                    e);
+        }
+        finally {
+            EntityManagerUtil.closeEntityManager();
+        }
+
+        // If there are some files in the directory,
+        // copy the documents and save to database
+        Set<FileBean> files = sourceFolder.getFiles();
+        for (FileBean file : files) {
             try {
                 EntityManagerUtil.begin();
-                folderDao.add(tempFolder);
-                int result = DocumentUtil.addNewFolder(tempFolder);
+                FileBean copy = (FileBean) BeanUtils.cloneBean(file);
+                copy.setFolder(tempFolder);
+                copy.setDirectory(getDiskPath(tempFolder));
+                copy.setModifyTime(new Date());
+                copy.setShare(share);
+                copy.setFileId(null);
+                fileDao.add(copy);
+                int result = DocumentUtil.moveOrCopyFileTo(file, tempFolder,
+                        false, copy.getFileName());
                 if (result != 1) {
                     EntityManagerUtil.rollback();
                 }
                 EntityManagerUtil.commit();
             }
             catch (Exception e) {
-                logger.error("An exception when copying a directory "
-                        + "to update the database. ", e);
+                logger.error("An exception when copying a file"
+                        + " add to the database", e);
                 if (EntityManagerUtil.isActive()) {
                     EntityManagerUtil.rollback();
                 }
-                return false;
+                throw new UBankServiceException(
+                        "copy file database exception.", e);
             }
             finally {
                 EntityManagerUtil.closeEntityManager();
             }
-
-            // If there are some files in the directory,
-            // copy the documents and save to database
-            Set<FileBean> files = sourceFolder.getFiles();
-            for (FileBean file : files) {
-                try {
-                    EntityManagerUtil.begin();
-                    FileBean copy = (FileBean) BeanUtils.cloneBean(file);
-                    copy.setFolder(tempFolder);
-                    copy.setDirectory(getDiskPath(tempFolder));
-                    copy.setModifyTime(new Date());
-                    copy.setShare(share);
-                    copy.setFileId(null);
-                    fileDao.add(copy);
-                    int result = DocumentUtil.moveOrCopyFileTo(file,
-                            tempFolder, false, copy.getFileName());
-                    if (result != 1) {
-                        EntityManagerUtil.rollback();
-                    }
-                    EntityManagerUtil.commit();
-                }
-                catch (Exception e) {
-                    logger.error("An exception when copying a file"
-                            + " add to the database", e);
-                    if (EntityManagerUtil.isActive()) {
-                        EntityManagerUtil.rollback();
-                    }
-                    return false;
-                }
-                finally {
-                    EntityManagerUtil.closeEntityManager();
-                }
-            }
-        }
-        catch (Exception e) {
-            logger.error("An exception when copying a 'Folder' bean object", e);
-            return false;
         }
         // If the directory has a subdirectory, copy the entire directory
         Set<Folder> folders = sourceFolder.getChildren();
@@ -542,15 +557,17 @@ public class FolderServiceImpl implements FolderService {
      *            new name
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean renameFolder(Long folderId, String newName) {
+    public boolean renameFolder(Long folderId, String newName)
+            throws UBankServiceException {
         if (Validity.isNullOrZero(folderId) || Validity.isNullAndEmpty(newName)) {
             logger.debug("rename folder fail,"
                     + "target folder id can not be null"
                     + " and new name can not be null or space string");
             return false;
         }
-
         try {
             EntityManagerUtil.begin();
             Folder folder = folderDao.find(folderId);
@@ -578,91 +595,12 @@ public class FolderServiceImpl implements FolderService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
-            return false;
+            throw new UBankServiceException(
+                    "rename folder database exception.", e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
         }
-    }
-
-    /**
-     * Remove all the contents of the specified directory from the disk and the
-     * database
-     * 
-     * @param targetFolder
-     *            the specified directory
-     * @return success return true else return false
-     * @author bxji
-     */
-    @SuppressWarnings("unused")
-    private boolean delFolder(Folder targetFolder) {
-        if (targetFolder == null) {
-            return true;
-        }
-        Set<FileBean> files = targetFolder.getFiles();
-        Set<Folder> folders = targetFolder.getChildren();
-        // delete all files
-        for (FileBean file : files) {
-            try {
-                EntityManagerUtil.begin();
-                fileDao.delete(file);
-                int result = DocumentUtil.removeFile(file);
-                // if disk file delete fail, return 'false'
-                if (result != 1) {
-                    EntityManagerUtil.rollback();
-                    logger.debug("delete disk file fail, file name:"
-                            + file.getDirectory() + file.getFileName());
-                    // return false;
-                }
-                else {
-                    EntityManagerUtil.commit();
-
-                }
-            }
-            catch (Exception e) {
-                logger.error("update the database exception "
-                        + "when delete a disk file .", e);
-                if (EntityManagerUtil.isActive()) {
-                    EntityManagerUtil.rollback();
-                }
-                // return false;
-            }
-            finally {
-                EntityManagerUtil.closeEntityManager();
-            }
-        }
-        // delete all folders
-        for (Folder folder : folders) {
-            delFolder(folder);
-        }
-        try {
-            EntityManagerUtil.begin();
-            folderDao.delete(targetFolder);
-            int result = DocumentUtil.removeFolder(targetFolder);
-            // if disk file delete fail, return 'false'
-            if (result != 1) {
-                EntityManagerUtil.rollback();
-                logger.debug("delete disk folder fail, file name:"
-                        + targetFolder.getDirectory()
-                        + targetFolder.getFolderId());
-                // return false;
-            }
-            else {
-                EntityManagerUtil.commit();
-            }
-        }
-        catch (Exception e) {
-            logger.error("delete disk directory fail.", e);
-            if (EntityManagerUtil.isActive()) {
-                EntityManagerUtil.rollback();
-            }
-            return false;
-        }
-        finally {
-            EntityManagerUtil.closeEntityManager();
-        }
-
-        return true;
     }
 
     /**
@@ -700,7 +638,8 @@ public class FolderServiceImpl implements FolderService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
-            return false;
+            throw new UBankServiceException("shaer folder database exception.",
+                    e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -714,8 +653,11 @@ public class FolderServiceImpl implements FolderService {
      *            target folder object id
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean cancelShareFolder(Long folderId) {
+    public boolean cancelShareFolder(Long folderId)
+            throws UBankServiceException {
         if (Validity.isNullOrZero(folderId)) {
             return false;
         }
@@ -732,7 +674,8 @@ public class FolderServiceImpl implements FolderService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
-            return false;
+            throw new UBankServiceException("shaer folder database exception.",
+                    e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -940,8 +883,10 @@ public class FolderServiceImpl implements FolderService {
      *            user id
      * @return root Folder node
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public FolderNode getShareTree(Long userId) {
+    public FolderNode getShareTree(Long userId) throws UBankServiceException {
         if (Validity.isNullOrZero(userId)) {
             return null;
         }
@@ -967,6 +912,7 @@ public class FolderServiceImpl implements FolderService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
+            throw new UBankServiceException("generate share tree exception.", e);
         }
         return shareRoot;
     }

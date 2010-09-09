@@ -64,14 +64,16 @@ public interface FileService {
      * 
      * @param fileId
      *            the id of the file
-     * @param user who will download
+     * @param user
+     *            who will download
      * @return the response obj of download operation
      * @throws UBankServiceException
      *             the exception which do not get the file
      * @author jerome
      * @author modify by zdxue - refact the return type and method name
      */
-    public DownloadResponse download(Long fileId, User user) throws UBankServiceException;
+    public DownloadResponse download(Long fileId, User user)
+            throws UBankServiceException;
 
     /**
      * Copy file to the specified directory
@@ -82,8 +84,11 @@ public interface FileService {
      *            source FileId
      * @return success return 'true' else return 'false'
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean copyFileToFolder(Long targetFolderId, Long sourceFileId);
+    public boolean copyFileToFolder(Long targetFolderId, Long sourceFileId)
+            throws UBankServiceException;
 
     /**
      * Move file to specified directory
@@ -94,8 +99,11 @@ public interface FileService {
      *            sourceFileId
      * @return success return 'true' else return 'false'
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean moveFileToFloder(Long targetFolderId, Long sourceFileId);
+    public boolean moveFileToFloder(Long targetFolderId, Long sourceFileId)
+            throws UBankServiceException;
 
     /**
      * delete a file from database and disk
@@ -104,8 +112,10 @@ public interface FileService {
      *            file id
      * @return success return 'true' else return 'false'
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean removeFile(Long fileId);
+    public boolean removeFile(Long fileId) throws UBankServiceException;
 
     /**
      * Rename files
@@ -116,17 +126,22 @@ public interface FileService {
      *            new name
      * @return success return 'true' else return 'false'
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean renameFile(Long fileId, String newName);
-    
+    public boolean renameFile(Long fileId, String newName)
+            throws UBankServiceException;
+
     /**
-     * get file 
-     *
-     * @param fileId file id
+     * get file
+     * 
+     * @param fileId
+     *            file id
      * @return FileBean
-     * @throws UBankServiceException occur exception, throw it 
+     * @throws UBankServiceException
+     *             occur exception, throw it
      * @author zdxue
      */
-    public FileBean getFile(long fileId) throws UBankServiceException ;
+    public FileBean getFile(long fileId) throws UBankServiceException;
 
 }

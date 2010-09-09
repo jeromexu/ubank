@@ -26,7 +26,6 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.common;
 
-import java.applet.AudioClip;
 import java.util.ArrayList;
 import java.util.List;
 

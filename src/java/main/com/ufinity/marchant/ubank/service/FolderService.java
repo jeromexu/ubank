@@ -35,7 +35,7 @@ import com.ufinity.marchant.ubank.vo.FileOrFolderJsonEntity;
 import com.ufinity.marchant.ubank.vo.FolderNode;
 
 /**
- * {description of method or object}
+ * folder service
  * 
  * @author bxji
  * @version 2010-8-20
@@ -83,9 +83,11 @@ public interface FolderService {
      *            current directory layer number
      * @return FileOrFolderJsonEntity list
      * @author bxji
+     * @throws UBankServiceException
+     *             ubank service exception
      */
     public List<FileOrFolderJsonEntity> getAllFromFolder(Long folderId,
-            Long layer);
+            Long layer) throws UBankServiceException;
 
     /**
      * this method is removed 'Folder' from the disk and database
@@ -109,8 +111,11 @@ public interface FolderService {
      *            source Folder object identification
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean moveFolderTo(Long targetFolderId, Long sourceFolderId);
+    public boolean moveFolderTo(Long targetFolderId, Long sourceFolderId)
+            throws UBankServiceException;
 
     /**
      * Copy all the contents of the source directory to the destination folder,
@@ -122,8 +127,11 @@ public interface FolderService {
      *            source Folder object identification
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId);
+    public boolean copyFolderTo(Long targetFolderId, Long sourceFolderId)
+            throws UBankServiceException;
 
     /**
      * This method is used to rename a folder
@@ -134,8 +142,11 @@ public interface FolderService {
      *            new name
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean renameFolder(Long folderId, String newName);
+    public boolean renameFolder(Long folderId, String newName)
+            throws UBankServiceException;
 
     /**
      * this method can Sharing a directory
@@ -156,8 +167,11 @@ public interface FolderService {
      *            target folder object id
      * @return success return true else return false
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean cancelShareFolder(Long folderId);
+    public boolean cancelShareFolder(Long folderId)
+            throws UBankServiceException;
 
     /**
      * get user root directory
@@ -176,7 +190,9 @@ public interface FolderService {
      *            user id
      * @return root Folder node
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public FolderNode getShareTree(Long userId);
+    public FolderNode getShareTree(Long userId) throws UBankServiceException;
 
 }

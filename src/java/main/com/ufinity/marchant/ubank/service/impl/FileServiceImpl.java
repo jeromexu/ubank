@@ -261,8 +261,8 @@ public class FileServiceImpl implements FileService {
         }
         catch (Exception e) {
             logger.error("get fileBean excepiton!", e);
-            if(EntityManagerUtil.isActive()){
-                EntityManagerUtil.rollback();                
+            if (EntityManagerUtil.isActive()) {
+                EntityManagerUtil.rollback();
             }
             throw new UBankServiceException("get file exception by fileId!");
         }
@@ -391,8 +391,11 @@ public class FileServiceImpl implements FileService {
      *            source FileId
      * @return success return 'true' else return 'false'
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean copyFileToFolder(Long targetFolderId, Long sourceFileId) {
+    public boolean copyFileToFolder(Long targetFolderId, Long sourceFileId)
+            throws UBankServiceException {
         if (Validity.isNullOrZero(targetFolderId)
                 || Validity.isNullOrZero(sourceFileId)) {
             return false;
@@ -436,6 +439,7 @@ public class FileServiceImpl implements FileService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
+            throw new UBankServiceException("copy file exception", e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -477,8 +481,11 @@ public class FileServiceImpl implements FileService {
      *            sourceFileId
      * @return success return 'true' else return 'false'
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean moveFileToFloder(Long targetFolderId, Long sourceFileId) {
+    public boolean moveFileToFloder(Long targetFolderId, Long sourceFileId)
+            throws UBankServiceException {
         if (Validity.isNullOrZero(targetFolderId)
                 || Validity.isNullOrZero(sourceFileId)) {
             return false;
@@ -524,7 +531,7 @@ public class FileServiceImpl implements FileService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
-            return false;
+            throw new UBankServiceException("move file exception", e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -538,8 +545,10 @@ public class FileServiceImpl implements FileService {
      *            file id
      * @return success return 'true' else return 'false'
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean removeFile(Long fileId) {
+    public boolean removeFile(Long fileId) throws UBankServiceException {
         if (Validity.isNullOrZero(fileId)) {
             return false;
         }
@@ -564,7 +573,7 @@ public class FileServiceImpl implements FileService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
-            return false;
+            throw new UBankServiceException("remove file exception", e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();
@@ -581,8 +590,11 @@ public class FileServiceImpl implements FileService {
      *            new name
      * @return success return 'true' else return 'false'
      * @author bxji
+     * @throws UBankServiceException
+     *             UBank Service Exception
      */
-    public boolean renameFile(Long fileId, String newName) {
+    public boolean renameFile(Long fileId, String newName)
+            throws UBankServiceException {
         if (Validity.isNullOrZero(fileId) || Validity.isNullAndEmpty(newName)) {
             return false;
         }
@@ -611,6 +623,7 @@ public class FileServiceImpl implements FileService {
             if (EntityManagerUtil.isActive()) {
                 EntityManagerUtil.rollback();
             }
+            throw new UBankServiceException("rename file exception", e);
         }
         finally {
             EntityManagerUtil.closeEntityManager();

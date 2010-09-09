@@ -27,7 +27,8 @@
 package com.ufinity.marchant.ubank.vo;
 
 /**
- * {description of method or object}
+ * this is a general entity of the folder and fileBean object used to convert
+ * the json data
  * 
  * @author bxji
  * @version 2010-8-23
