@@ -1,9 +1,14 @@
 package com.ufinity.marchant.ubank.common;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.preferences.ConfigKeys;
 import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
@@ -343,7 +348,6 @@ public class DocumentUtil {
 		if (!Validity.isEmpty(catalinaHome)) {
 			serverPath = SystemGlobals.getString(ConfigKeys.SERVER_PATH,
 					catalinaHome);
-			serverPath = serverPath + Constant.FILE_SYSTEM_SEPARATOR;
 		}
 		return serverPath;
 	}
@@ -407,35 +411,31 @@ public class DocumentUtil {
 	 * @author jerome
 	 */
 	private static boolean copyFile(File sFile, File dFile) {
-		FileInputStream fis = null;
-		FileOutputStream fos = null;
+		BufferedReader br = null;
+		BufferedWriter bw = null;
 		try {
 			// read source file
-			fis = new FileInputStream(sFile);
-			fos = new FileOutputStream(dFile);
-			byte[] buffer = new byte[1024];
-			int bytesum = 0;
-			int byteread = 0;
-			while ((byteread = fis.read(buffer)) != -1) {
-				bytesum += byteread;
-				LOGGER.debug("file length=" + bytesum);
-				fos.write(buffer, 0, byteread);
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(sFile),"GBK")) ;
+			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dFile)));
+			String hasRead = null;
+			while ((hasRead = br.readLine()) != null) {
+				bw.write(hasRead);
 			}
-			fos.flush();
+			bw.flush();
 			return true;
 		} catch (Exception e) {
 			LOGGER.debug("copy the file exception!", e);
 		} finally {
-			if (fis != null) {
+			if (br != null) {
 				try {
-					fis.close();
+					br.close();
 				} catch (IOException e) {
 					LOGGER.error("input stream close exception!", e);
 				}
 			}
-			if (fos != null) {
+			if (bw != null) {
 				try {
-					fos.close();
+					bw.close();
 				} catch (IOException e) {
 					LOGGER.error("output stream close exception!", e);
 				}
