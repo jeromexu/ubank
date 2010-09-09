@@ -88,7 +88,7 @@
 			var isUpload = false;
 			var main = $("#mainUpload");
 			
-			window.setInterval("getIframeInfo()",1000);
+			window.setInterval("getIframeInfo()",2000);
 			
 			function getIframeInfo(){
 				for(tag in uploadTag){
