@@ -244,6 +244,20 @@ public class FileDaoImplTest {
 
     /**
      * Test method for
+     * {@link com.ufinity.marchant.ubank.dao.impl.FileDaoImpl#findTotalSizeWithFileByUser(java.lang.Long)}.
+     */
+    @Test
+    public void testFindTotalSizeWithFileByUser() {
+
+        User findUser = this.userDao.findUserByName(user.getUserName());
+        Long size = this.fileDao.findTotalSizeWithFileByUser(findUser
+                .getUserId());
+        System.out.println("---------size----------" + size);
+        assertTrue(size > 0);
+    }
+
+    /**
+     * Test method for
      * {@link com.ufinity.marchant.ubank.dao.impl.GenericDaoSupport#add(java.lang.Object)}.
      */
     @Test(expected = Exception.class)
@@ -390,7 +404,7 @@ public class FileDaoImplTest {
 
         EntityManagerUtil.begin();
 
-        //delete file bean
+        // delete file bean
         List<FileBean> list = this.fileDao.queryList(0L,
                 (long) fileDatas.length);
 
@@ -398,7 +412,7 @@ public class FileDaoImplTest {
             this.fileDao.delete(f);
         }
 
-        //delete folder
+        // delete folder
         List<Folder> folderList = this.folderDao.queryList(0L, 20L);
         if (null != folderList && folderList.size() > 0) {
             for (Folder folderTemp : folderList) {
@@ -408,7 +422,7 @@ public class FileDaoImplTest {
             }
         }
 
-        //delete user
+        // delete user
         User findUser = this.userDao.findUserByName(user.getUserName());
         if (null != findUser) {
             this.userDao.delete(findUser);

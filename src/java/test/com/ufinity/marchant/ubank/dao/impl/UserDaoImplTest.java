@@ -199,7 +199,7 @@ public class UserDaoImplTest {
      * {@link com.ufinity.marchant.ubank.dao.impl.FileDaoImpl#findUser(java.lang.String,java.lang.String)}.
      */
     @Test
-    public void testfindUserByNameAndPass() {
+    public void testFindUserByNameAndPass() {
         // init rigth data
         packageData(true);
         List<User> list = this.userDao.queryList(0L, (long) userDatas.length);
@@ -219,7 +219,7 @@ public class UserDaoImplTest {
      * {@link com.ufinity.marchant.ubank.dao.impl.FileDaoImpl#findUserByName(java.lang.String)}.
      */
     @Test
-    public void findUserByName() {
+    public void testFindUserByName() {
         // init rigth data
         packageData(true);
         List<User> list = this.userDao.queryList(0L, (long) userDatas.length);
@@ -249,6 +249,27 @@ public class UserDaoImplTest {
             userTemp.setOverSize(20);
             this.userDao.modify(userTemp);
         }
+        EntityManagerUtil.commit();
+        EntityManagerUtil.closeEntityManager();
+    }
+
+    /**
+     * Test method for
+     * {@link com.ufinity.marchant.ubank.dao.impl.FileDaoImpl#modifyPointByUserId(java.lang.Long,java.lang.Long)}.
+     */
+    @Test
+    public void testModifyPointByUserId() {
+        packageData(true);
+
+        EntityManagerUtil.begin();
+        List<User> list = this.userDao.queryList(0L, (long) userDatas.length);
+
+        for (User user : list) {
+            User userTemp = this.userDao.find(user.getUserId());
+
+            this.userDao.modifyPointByUserId(userTemp.getUserId(), -800);
+        }
+
         EntityManagerUtil.commit();
         EntityManagerUtil.closeEntityManager();
     }

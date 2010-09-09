@@ -285,15 +285,15 @@ public class FolderDaoImplTest {
 
     /**
      * Test method for
-     * {@link com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl#findRootRolderByUserId(java.lang.Long)}.
+     * {@link com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl#findRootFolderByUserId(java.lang.Long)}.
      */
-    @Test(expected = Exception.class)
-    public void testFindRootRolderByUserIdException() {
+    @Test
+    public void testFindRootFolderByUserIdException() {
         packageData(true);
 
         try {
             User userTemp = this.userDao.findUserByName(user.getUserName());
-            Folder folder = this.folderDao.findRootRolderByUserId(userTemp
+            Folder folder = this.folderDao.findRootFolderByUserId(userTemp
                     .getUserId());
             System.err.println(folder);
             assertNotNull(folder);
@@ -351,6 +351,23 @@ public class FolderDaoImplTest {
 
     /**
      * Test method for
+     * {@link com.ufinity.marchant.ubank.dao.impl.FolderDaoImpl#updateFShareByDirectory(java.lang.Boolean, java.lang.String)}.
+     */
+    @Test
+    public void testUpdateFShareByDirectory() {
+
+        EntityManagerUtil.begin();
+        
+        this.folderDao.updateFShareByDirectory(true, "\\user\\8/58");
+        
+        EntityManagerUtil.commit();
+
+        EntityManagerUtil.closeEntityManager();
+
+    }
+
+    /**
+     * Test method for
      * {@link com.ufinity.marchant.ubank.dao.impl.GenericDaoSupport#delete(java.lang.Object)}.
      */
     @Test
@@ -369,6 +386,9 @@ public class FolderDaoImplTest {
         if (null != findUser) {
             this.userDao.delete(findUser);
         }
+
+        Folder folder = this.folderDao.find(2L);
+        this.folderDao.delete(folder);
 
         EntityManagerUtil.commit();
         EntityManagerUtil.closeEntityManager();
