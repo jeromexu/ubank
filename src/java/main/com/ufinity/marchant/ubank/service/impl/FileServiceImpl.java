@@ -415,14 +415,6 @@ public class FileServiceImpl implements FileService {
                     logger.debug("copy disk file IO exception");
                     return false;
                 }
-
-                // if target folder is shared directory
-                if (folder.getShare()) {
-                    fileCopy.setShare(true);
-                }
-                else {
-                    fileCopy.setShare(false);
-                }
                 fileCopy.setFileName(fileName);
                 fileCopy.setDirectory(getDiskPath(folder));
                 fileCopy.setFolder(folder);
@@ -508,13 +500,6 @@ public class FileServiceImpl implements FileService {
             if (result != 1) {
                 logger.debug("Move disk file IO exception");
                 return false;
-            }
-            // if target folder is shared directory
-            if (folder.getShare()) {
-                file.setShare(true);
-            }
-            else {
-                file.setShare(false);
             }
             file.setFileName(fileName);
             file.setFolder(folder);

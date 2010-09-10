@@ -26,7 +26,7 @@
 	
 <a id="point" style="margin-left:200px;">积分:</a> <a
 	id="userPoint">${session_user.point}</a></span>
-&nbsp;&nbsp;UBank <a href="logout.do">退出</a> &nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;<img src="../imgs/UBank.JPG"/> <a href="logout.do">退出</a> &nbsp;&nbsp;&nbsp;&nbsp;
 </div>
 </h2>
 <div region="west" split="true" title="网络硬盘"

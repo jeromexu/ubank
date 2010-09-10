@@ -120,7 +120,7 @@ public class FolderServiceImpl implements FolderService {
             newFolder.setShare(false);
             newFolder.setUser(user);
             newFolder.setRepeatCount(0);
-            newFolder.setFShare(parentfolder.getFShare());
+            newFolder.setFolderShare(parentfolder.getFolderShare());
 
             // If there is a same name folder in the target directory
             Folder sameOldFolder = getSameNameFolder(parentfolder, folderName);
@@ -485,7 +485,7 @@ public class FolderServiceImpl implements FolderService {
         tempFolder.setModifyTime(new Date());
         tempFolder.setFolderId(null);
         tempFolder.setShare(false);
-        tempFolder.setFShare(targetFolder.getFShare());
+        tempFolder.setFolderShare(targetFolder.getFolderShare());
 
         // update database
         try {
@@ -670,7 +670,7 @@ public class FolderServiceImpl implements FolderService {
                 return true;
             }
             folder.setShare(false);
-            boolean fShare = folder.getParent().getFShare();
+            boolean fShare = folder.getParent().getFolderShare();
             folderDao.updateFShareByDirectory(fShare, folder.getDirectory());
             folderDao.modify(folder);
             EntityManagerUtil.commit();
@@ -733,7 +733,7 @@ public class FolderServiceImpl implements FolderService {
             return;
         }
         folder.setShare(false);
-        folder.setFShare(fShare);
+        folder.setFolderShare(fShare);
         folderDao.modify(folder);
         Set<FileBean> files = folder.getFiles();
         for (FileBean file : files) {
@@ -795,7 +795,7 @@ public class FolderServiceImpl implements FolderService {
             child.setModifyTime(date);
             child.setDirectory(path);
             child.setShare(false);
-            child.setFShare(fShare);
+            child.setFolderShare(fShare);
             folderDao.modify(child);
             resetChildrenDiskPathAndShare(child, fShare);
         }
@@ -985,7 +985,7 @@ public class FolderServiceImpl implements FolderService {
      */
     @SuppressWarnings("unused")
     private void setFolderFShare(Folder folder, boolean fShare) {
-        folder.setFShare(fShare);
+        folder.setFolderShare(fShare);
         folderDao.modify(folder);
         Set<Folder> children = folder.getChildren();
         for (Folder child : children) {
