@@ -187,6 +187,19 @@ function showContent(folderId, sortBy, sortType) {
 		sortOrder : 'desc',
 		idField : 'id',
 		frozenColumns : [[{
+			field : 'file_type',
+			title : '',
+			width : 20,
+			align : 'center',
+			formatter : function(value, rec) {
+				if (rec.type == '文件夹') {
+					return ('<img src="../imgs/directory.png"/>');
+				}else{
+					
+					return ('<img src="../imgs/document.png"/>');
+				}
+			}
+		            },{
 					title : '名称',
 					field : 'name',
 					width : 450,
