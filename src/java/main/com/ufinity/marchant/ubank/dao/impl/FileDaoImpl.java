@@ -90,7 +90,7 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
      */
     public Pager<FileBean> searchPaginatedForFile(int currentPage,
             int pageSize, Map<String, Object> condition) {
-        String jpaQuery = "SELECT f from FileBean f "
+        String jpaQuery = "SELECT f FROM FileBean f "
                 + getJPAQueryString(condition);
 
         if (null != condition) {
@@ -112,7 +112,7 @@ public class FileDaoImpl extends GenericDaoSupport<FileBean, Long> implements
      * @author skyqiang
      */
     private String getJPAQueryString(Map<String, Object> condition) {
-        StringBuffer jpqQuery = new StringBuffer("WHERE 1=1 AND f.share=true ");
+        StringBuffer jpqQuery = new StringBuffer("WHERE 1=1 AND f.folder.folderShare=true ");
 
         if (null != condition) {
             String fileName = (String) condition.get(Constant.FILENAME);

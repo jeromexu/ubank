@@ -368,13 +368,13 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
             logger.error("Error getHqlBean because hql is empty");
             return "";
         }
-        return "select count(*) "
+        return "SELECT COUNT(*) "
                 + hql
-                        .substring(hql.indexOf("from"))
-                        .replace("fetch", "")
+                        .substring(hql.indexOf("FROM"))
+                        .replace("FETCH", "")
                         .replaceAll(
-                                "\\s((?mi)(left|right|inner)?\\s+join)\\s+[^\\s]*Set\\b",
-                                " ").split("order by")[0];
+                                "\\s((?mi)(LEFT|RIGHT|INNER)?\\s+JOIN)\\s+[^\\s]*SET\\b",
+                                " ").split("ORDER BY")[0];
     }
 
     /**
@@ -387,6 +387,8 @@ public abstract class GenericDaoSupport<T, PK extends Serializable> implements
      * @return Object which find
      */
     public Object getUniqueBeanResult(String hql, Map<String, Object> properties) {
+        logger.debug("Method: getUniqueBeanResult, Param:{hql : " + hql + "}");
+
         Query query = ((Session) EntityManagerUtil.getEntityManager()
                 .getDelegate()).createQuery(hql);
 
