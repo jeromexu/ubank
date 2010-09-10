@@ -469,6 +469,7 @@ public class FolderServiceImpl implements FolderService {
                     + "'targetFolder' and 'sourceFolder' can not be null.");
             return false;
         }
+        Set<FileBean> files = sourceFolder.getFiles();
         Folder tempFolder = null;
         tempFolder = (Folder) BeanUtils.cloneBean(sourceFolder);
         // If there is a same name folder in the target directory
@@ -512,7 +513,6 @@ public class FolderServiceImpl implements FolderService {
 
         // If there are some files in the directory,
         // copy the documents and save to database
-        Set<FileBean> files = sourceFolder.getFiles();
         for (FileBean file : files) {
             try {
                 EntityManagerUtil.begin();
