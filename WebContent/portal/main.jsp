@@ -17,8 +17,8 @@
 <body class="easyui-layout">
 
 <div region="north" border="false"
-	style="height: 60px; background: #78B4F0;">
-<h2 style="font-size: 20px; font-weight: bolder; font-family: Arial;">
+	style="height: 75px; background: #78B4F0;">
+<h2 style="font-size: 20px; font-weight: bolder; font-family: Arial; margin:0;">
 	<span style="float:right;margin-right:35px;">
 	
 	<a
