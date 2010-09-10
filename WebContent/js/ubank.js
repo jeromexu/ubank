@@ -347,11 +347,12 @@ function showContent(folderId, sortBy, sortType) {
 						share = currTreeNode.attributes.share;
 					}
 					if (share == 'true') {
-						$.messager.alert('提示 ', '该文件夹已经被共享', 'info');
+						$.messager.alert('提示 ', '“' + folderName + '”文件夹已经被共享',
+								'info');
 						return;
 					}
-					$.messager.confirm('My Title', '你确定要共享“' + folderName
-									+ '”文件夹吗？', function(r) {
+					$.messager.confirm('My Title', '你确定要共享“ ' + folderName
+									+ ' ”文件夹吗？', function(r) {
 								if (r) {
 									$.get(url, {
 												'folderId' : id
@@ -392,11 +393,12 @@ function showContent(folderId, sortBy, sortType) {
 						share = currTreeNode.attributes.share;
 					}
 					if (share == 'false') {
-						$.messager.alert('提示 ', '该文件夹没有独立共享，不必取消共享', 'info');
+						$.messager.alert('提示 ', '“ ' + folderName
+										+ ' ”文件夹没有独立共享，不必取消共享', 'info');
 						return;
 					}
-					$.messager.confirm('My Title', '你确定要取消“' + folderName
-									+ '”及子文件夹的共享吗？', function(r) {
+					$.messager.confirm('My Title', '你确定要取消 “ ' + folderName
+									+ ' ”及子文件夹的共享吗？', function(r) {
 								if (r) {
 									$.get(url, {
 												'folderId' : id
