@@ -228,23 +228,21 @@ public class UserServiceImpl implements UserService {
 				folder.setUser(user);
 				folderDao.add(folder);
 				logger.debug("add root folder success during initialization!");
-				// my file folder for each user
-				boolean myfileFlag = makeEachUserDir(baseFile, folder, userId,
-						sb, SystemGlobals.getString(ConfigKeys.MY_FILE_NAME));
-				// software folder for each user
-				boolean softFlag = makeEachUserDir(baseFile, folder, userId,
-						sb, SystemGlobals.getString(ConfigKeys.SOFTWARE_NAME));
-				// document folder for each user
-				boolean ducumentFlag = makeEachUserDir(baseFile, folder,
-						userId, sb, SystemGlobals
-								.getString(ConfigKeys.DOCUMENT_NAME));
-				// photo folder for each user
-				boolean photoFlag = makeEachUserDir(baseFile, folder, userId,
-						sb, SystemGlobals.getString(ConfigKeys.PHOTO_NAME));
+				String[] initFileName = new String[] {
+						SystemGlobals.getString(ConfigKeys.MY_FILE_NAME),
+						SystemGlobals.getString(ConfigKeys.SOFTWARE_NAME),
+						SystemGlobals.getString(ConfigKeys.DOCUMENT_NAME),
+						SystemGlobals.getString(ConfigKeys.PHOTO_NAME) };
+				boolean result = true;
+				for (int i = 0; i < initFileName.length; i++) {
+					boolean eachDir = makeEachUserDir(baseFile, folder, userId,
+							sb, initFileName[i]);
+					result = result && eachDir;
+				}
 
-				logger.debug("initUserDir method success complete!");
-				return (myfileFlag && softFlag && ducumentFlag && photoFlag) ? true
-						: false;
+				logger.debug("init dir space "
+						+ (result ? "success!" : "failure!"));
+				return result;
 			}
 
 		} catch (Exception e) {
@@ -276,7 +274,6 @@ public class UserServiceImpl implements UserService {
 				+ ",param[parent]=" + parent + ",param[userId]=" + userId
 				+ ",param[sb]=" + sb.toString() + ",param[folderName]="
 				+ folderName);
-		boolean result = false;
 		try {
 
 			Folder folder = new Folder();
@@ -312,17 +309,17 @@ public class UserServiceImpl implements UserService {
 						sb.length(), String.valueOf(folder.getFolderId()));
 				baseFile = new File(sb.toString());
 			}
+			boolean result = true;
 			if (!baseFile.exists()) {
 				result = baseFile.mkdir();
-			} else {
-				return true;
 			}
-			logger.debug("makeEachUserDir success complete!");
+			logger.debug("make each user dir "
+					+ (result ? "success!" : "failure!"));
+			return result;
 		} catch (Exception e) {
 			logger.error("make each user dir expcetion!", e);
 		}
-
-		return result;
+		return false;
 	}
 
 	/**
