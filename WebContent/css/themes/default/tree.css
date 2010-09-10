@@ -74,6 +74,9 @@
 	padding:1px 2px 1px 2px;
 	white-space:nowrap;
 }
+.tree-folder-shared{
+	background:url('images/tree_folder_shared.png') no-repeat;
+}
 
 .tree-node-hover{
 	background:#fafafa;

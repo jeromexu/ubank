@@ -41,6 +41,7 @@ public class JsonNode {
 	private Long id;
 	private String text;
 	private String state;
+	private String iconCls;
 	private List<JsonNode> children;
 	private HashMap<String, String> attributes;
 
@@ -52,8 +53,30 @@ public class JsonNode {
 		this.children = new ArrayList<JsonNode>();
 		this.attributes = new HashMap<String, String>();
 	}
+	
+	
 
 	/**
+     * the getter method of iconCls
+     * @return the iconCls
+     */
+    public String getIconCls() {
+        return iconCls;
+    }
+
+
+
+    /**
+     * the setter method of the iconCls
+     * @param iconCls the iconCls to set
+     */
+    public void setIconCls(String iconCls) {
+        this.iconCls = iconCls;
+    }
+
+
+
+    /**
 	 * the getter method of id
 	 * 
 	 * @return the id

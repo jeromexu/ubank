@@ -65,6 +65,9 @@ public class NodeUtil {
         if (folderNode.getParentId() == null || 0l == folderNode.getParentId()) {
             jsonNode.setState("open");
         }
+        if(folderNode.getShare()){
+            jsonNode.setIconCls("tree-folder-shared");
+        }
         jsonNode.setText(folderNode.getFolderName());
         List<FolderNode> subNodes = folderNode.getSubNodes();
         if (subNodes.size() > 0) {
