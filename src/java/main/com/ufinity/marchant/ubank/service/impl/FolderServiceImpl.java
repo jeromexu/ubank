@@ -120,7 +120,7 @@ public class FolderServiceImpl implements FolderService {
             newFolder.setShare(false);
             newFolder.setUser(user);
             newFolder.setRepeatCount(0);
-            newFolder.setFolderShare(parentfolder.getFolderShare());
+            newFolder.setFolderShare(parentfolder.isFolderShare());
 
             // If there is a same name folder in the target directory
             Folder sameOldFolder = getSameNameFolder(parentfolder, folderName);
@@ -485,7 +485,7 @@ public class FolderServiceImpl implements FolderService {
         tempFolder.setModifyTime(new Date());
         tempFolder.setFolderId(null);
         tempFolder.setShare(false);
-        tempFolder.setFolderShare(targetFolder.getFolderShare());
+        tempFolder.setFolderShare(targetFolder.isFolderShare());
 
         // update database
         try {
@@ -670,7 +670,7 @@ public class FolderServiceImpl implements FolderService {
                 return true;
             }
             folder.setShare(false);
-            boolean fShare = folder.getParent().getFolderShare();
+            boolean fShare = folder.getParent().isFolderShare();
             folderDao.updateFShareByDirectory(fShare, folder.getDirectory());
             folderDao.modify(folder);
             EntityManagerUtil.commit();
