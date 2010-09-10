@@ -215,8 +215,9 @@ public class UserServiceImpl implements UserService {
 				folder.setFolderName(String.valueOf(userId));
 				Date date = new Date();
 				folder.setCreateTime(date);
-				folder.setDirectory(SystemGlobals
-						.getString(ConfigKeys.USER_SPACE_ROOT_DIR));
+				folder.setDirectory(Constant.FILE_SYSTEM_SEPARATOR
+						+ SystemGlobals
+								.getString(ConfigKeys.USER_SPACE_ROOT_DIR));
 				folder.setModifyTime(date);
 				folder.setFolderType(Constant.FOLDER_TYPE_ROOT);
 				folder.setShare(false);
@@ -285,8 +286,8 @@ public class UserServiceImpl implements UserService {
 			folder.setModifyTime(date);
 			folder.setFolderType(Constant.FOLDER_TYPE_INIT);
 			folder.setShare(false);
-			folder.setDirectory(Constant.FILE_SYSTEM_SEPARATOR + SystemGlobals
-					.getString(ConfigKeys.USER_SPACE_ROOT_DIR)
+			folder.setDirectory(Constant.FILE_SYSTEM_SEPARATOR
+					+ SystemGlobals.getString(ConfigKeys.USER_SPACE_ROOT_DIR)
 					+ Constant.FILE_SYSTEM_SEPARATOR + userId);
 
 			Folder parentFolder = new Folder();
