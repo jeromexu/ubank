@@ -69,7 +69,7 @@ $(function() {
 											reload();
 											showContent(parentId);
 										} else {
-											returnResult(false);
+											returnResult(false, data);
 										}
 									});
 						}
@@ -420,8 +420,7 @@ function addFolder() {
 							'folderName' : encodeURI(name),
 							'layer' : layer
 						}, function(data) {
-							
-							
+
 							if (data == 'success') {
 								returnResult(true, "");
 								reload();
@@ -465,7 +464,7 @@ function deleteFolderOrFile() {
 										}
 										showContent(pid);
 									} else {
-										returnResult(false);
+										returnResult(false, data);
 									}
 								});
 					}
@@ -507,7 +506,7 @@ function shareFolder() {
 										returnResult(true);
 										reload();
 									} else {
-										returnResult(false);
+										returnResult(false, data);
 									}
 								});
 					}
@@ -551,7 +550,7 @@ function cancelShare() {
 										returnResult(true);
 										reload();
 									} else {
-										returnResult(false);
+										returnResult(false, data);
 									}
 								});
 					}
