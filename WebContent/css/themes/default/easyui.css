@@ -961,20 +961,20 @@ a.s-btn-plain-active .s-btn-downarrow{
 	width:16px;
 	height:18px;
 	vertical-align:middle;
-	background:url('images/tree_arrows.gif') no-repeat -18px 0px;
+	background:url('images/opened.png') no-repeat ;
 }
 .tree-expanded-hover{
-	background:url('images/tree_arrows.gif') no-repeat -50px 0px;
+	background:url('images/opened.png') no-repeat ;
 }
 .tree-collapsed{
 	display:inline-block;
 	width:16px;
 	height:18px;
 	vertical-align:middle;
-	background:url('images/tree_arrows.gif') no-repeat 0px 0px;
+	background:url('images/closed.png') no-repeat;
 }
 .tree-collapsed-hover{
-	background:url('images/tree_arrows.gif') no-repeat -32px 0px;
+	background:url('images/closed.png') no-repeat;
 }
 .tree-folder{
 	display:inline-block;
