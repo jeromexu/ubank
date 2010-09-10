@@ -68,7 +68,7 @@ public class Folder implements Serializable {
     private Date modifyTime;
     private String directory;
     private Boolean share;
-    private Boolean folderShare;
+    private boolean folderShare;
     private String folderType;
     private int repeatCount;
 
@@ -166,7 +166,7 @@ public class Folder implements Serializable {
      * @return the folderShare
      */
     @Column(name = "F_SHARE", nullable = false, columnDefinition = "bool default false")
-    public Boolean getFolderShare() {
+    public boolean isFolderShare() {
         return folderShare;
     }
 
@@ -174,7 +174,7 @@ public class Folder implements Serializable {
      * @param folderShare
      *            the folderShare to set
      */
-    public void setFolderShare(Boolean folderShare) {
+    public void setFolderShare(boolean folderShare) {
         this.folderShare = folderShare;
     }
 
