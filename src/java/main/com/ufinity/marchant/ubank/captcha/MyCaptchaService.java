@@ -69,8 +69,11 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 	private final Logger logger = Logger.getInstance(MyCaptchaService.class);
 	// Singleton instance of this class
 	private static MyCaptchaService INSTANCE = new MyCaptchaService();
+	@SuppressWarnings("unchecked")
 	private ArrayList textPasterList;
+	@SuppressWarnings("unchecked")
 	private ArrayList backgroundGeneratorList;
+	@SuppressWarnings("unchecked")
 	private ArrayList fontGeneratorList;
 	private ImageCaptcha imageCaptcha = null;
 

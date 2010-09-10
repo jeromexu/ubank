@@ -85,7 +85,7 @@ public class Validity {
      *            any Collection
      * @return boolean return collenction is null or no elements
      */
-    public static boolean isEmpty(Collection c) {
+    public static boolean isEmpty(Collection<?> c) {
         return ((c == null) || (c.size() == 0));
     }
 
@@ -96,7 +96,7 @@ public class Validity {
      *            any List
      * @return boolean return list is null or no elements
      */
-    public static boolean isEmpty(List list) {
+    public static boolean isEmpty(List<?> list) {
         return ((list == null) || (list.size() == 0));
     }
 
@@ -112,7 +112,7 @@ public class Validity {
             return true;
         if (obj instanceof String && ((String) obj).trim().equals(""))
             return true;
-        if (obj instanceof Collection && ((Collection) obj).isEmpty())
+        if (obj instanceof Collection<?> && ((Collection<?>) obj).isEmpty())
             return true;
         return false;
     }
@@ -147,7 +147,7 @@ public class Validity {
      *            any Collection
      * @return boolean return not null
      */
-    public static boolean isNotEmpty(Collection c) {
+    public static boolean isNotEmpty(Collection<?> c) {
         return ((c != null) && (c.size() > 0));
     }
 
