@@ -160,6 +160,10 @@ $(function() {
 
 function reload() {
 	$('#dirTree').tree('reload');
+	if (currTreeNode != null && currTreeNode != undefined) {
+		$('#dirTree').tree('select', currTreeNode.target);
+		$('#dirTree').tree('expand', currTreeNode.target);
+	}
 }
 
 function showContent(folderId, sortBy, sortType) {
@@ -302,11 +306,12 @@ function showContent(folderId, sortBy, sortType) {
 					}
 				}],
 		onSortColumn : function(sort, order) {
-			showContent(param, sort, order);
+			showContent(folderId, sort, order);
 		},
 		onDblClickRow : function(rowIndex, rowData) {
 			if (rowData.type == '文件夹') {
 				showContent(rowData.id);
+				selectNode(rowData.id);
 			}
 		}
 	});
@@ -369,7 +374,6 @@ function generateNavigation(folderId) {
 	if (folderId != undefined && folderId != null) {
 		fid = folderId;
 	}
-	var nodeDom = $("#" + fid);
 	navigations.length = 0;
 	var i = 0;
 	while (true) {
@@ -388,14 +392,10 @@ function generateNavigation(folderId) {
 	var length = navigations.length;
 	var naviStr = '网络硬盘 > <a href="#" onclick="showContent()">我的网盘</a>';
 	for (var i = length - 3; i >= 0; i--) {
-		naviStr = naviStr + ' > ' + '<a href="#" onclick="showContent('
+		naviStr = naviStr + ' > ' + '<a href="#" onclick="navigate('
 				+ navigations[i].id + ')")>' + navigations[i].text + '</a>';
 	}
 	$("div.panel-title").eq(1).html(naviStr);
-	$('#dirTree').tree('select', nodeDom);
-	$('#dirTree').tree('expand', nodeDom);
-	currTreeNode = $('#dirTree').tree('getSelected');
-
 }
 
 function addFolder() {
@@ -420,9 +420,8 @@ function addFolder() {
 							'folderName' : encodeURI(name),
 							'layer' : layer
 						}, function(data) {
-
 							if (data == 'success') {
-								returnResult(true, "");
+								returnResult(true);
 								reload();
 								showContent(parentId);
 							} else {
@@ -611,4 +610,22 @@ function rename() {
 					}
 				});
 	}
+}
+
+function selectNode(folderId) {
+	var fid = 0;
+	if (folderId != undefined && folderId != null) {
+		fid = folderId;
+	}
+	if (fid != 0) {
+		var nodeDom = $("#" + fid);
+		$('#dirTree').tree('expand', nodeDom);
+		$('#dirTree').tree('select', nodeDom);
+		currTreeNode = $('#dirTree').tree('getSelected');
+	}
+}
+
+function navigate(folderId) {
+	showContent(folderId);
+	selectNode(folderId);
 }

@@ -631,9 +631,7 @@ public class FolderServiceImpl implements FolderService {
             }
             folder.setShare(true);
             folder.setFolderShare(true);
-            String directory = folder.getDirectory();
-            directory = directory.replace("\\", "\\\\");
-            folderDao.updateFShareByDirectory(true, directory);
+            folderDao.updateFShareByDirectory(true, getDiskPath(folder));
             folderDao.modify(folder);
             EntityManagerUtil.commit();
             return true;
@@ -669,15 +667,10 @@ public class FolderServiceImpl implements FolderService {
         try {
             EntityManagerUtil.begin();
             Folder folder = folderDao.find(folderId);
-            if (!folder.getShare()) {
-                return true;
-            }
             folder.setShare(false);
             folder.setFolderShare(false);
             boolean fShare = folder.getParent().isFolderShare();
-            String directory = folder.getDirectory();
-            directory = directory.replace("\\", "\\\\");
-            folderDao.updateFShareByDirectory(fShare, directory);
+            folderDao.updateFShareByDirectory(fShare, getDiskPath(folder));
             folderDao.modify(folder);
             EntityManagerUtil.commit();
             return true;
