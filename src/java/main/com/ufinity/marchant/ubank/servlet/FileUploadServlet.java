@@ -189,6 +189,7 @@ public class FileUploadServlet extends AbstractServlet {
      *            request
      */
     private void pause(HttpServletRequest request) {
+        logger.debug("pause upload.");
         String filedName = request.getParameter(UploadConstant.FILED_NAME);
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
                 UploadConstant.PROGRESS_INFO + filedName);
@@ -206,6 +207,7 @@ public class FileUploadServlet extends AbstractServlet {
      *            request
      */
     private void continueUpload(HttpServletRequest request) {
+        logger.debug("continue upload.");
         String filedName = request.getParameter(UploadConstant.FILED_NAME);
         ProgressInfo pi = (ProgressInfo) request.getSession().getAttribute(
                 UploadConstant.PROGRESS_INFO + filedName);
@@ -240,6 +242,7 @@ public class FileUploadServlet extends AbstractServlet {
      */
     @SuppressWarnings("unchecked")
     private void doUpload(HttpServletRequest request, HttpServletResponse response) {
+        logger.debug("begin upload...");
         ProgressInfo pi = new ProgressInfo();
         
         try {
@@ -287,6 +290,7 @@ public class FileUploadServlet extends AbstractServlet {
                 pi.setCurrentTime(System.currentTimeMillis());
                 pi.setBytesRead(fileSize);
                 pi.setCompleted(true);
+                logger.debug("end upload.");
             }
         } catch (Exception e) {
             pi.setInProgress(false);
