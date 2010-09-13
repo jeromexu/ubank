@@ -116,7 +116,7 @@ public class CollectionUtil {
 								if (as instanceof String) {
 									String va = (String) as;
 									String vb = (String) bs;
-									if (sortWay.equals("asc")) {
+									if (sortWay.equalsIgnoreCase("asc")) {
 										flag = va.compareTo(vb);
 									} else {
 										flag = vb.compareTo(va);
@@ -125,7 +125,7 @@ public class CollectionUtil {
 								if (as instanceof Date) {
 									Date va = (Date) as;
 									Date vb = (Date) bs;
-									if (sortWay.equals("asc")) {
+									if (sortWay.equalsIgnoreCase("asc")) {
 										flag = va.compareTo(vb);
 									} else {
 										flag = vb.compareTo(va);
@@ -134,7 +134,7 @@ public class CollectionUtil {
 								if (as instanceof Integer) {
 									Integer ai = (Integer) as;
 									Integer bi = (Integer) bs;
-									if (sortWay.equals("asc")) {
+									if (sortWay.equalsIgnoreCase("asc")) {
 										flag = ai.compareTo(bi);
 									} else {
 										flag = bi.compareTo(ai);
