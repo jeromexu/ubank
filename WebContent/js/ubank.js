@@ -16,8 +16,11 @@ function dirTree() {
 					if (node.text != '共享文件夹') {
 						var target = node.target;
 						currTreeNode = node;
-						showContent(node.id);
 						setFolderId(node.id);
+						showContent(node.id);
+					}
+					if (newWindow != undefined){
+						newWindow.location.replace(newWindow.location.href);
 					}
 				}
 			});
