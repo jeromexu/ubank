@@ -96,23 +96,23 @@ public class CollectionUtil {
 				String name = "get" + property;
 				Method method = FileOrFolderJsonEntity.class.getMethod(name,
 						new Class[] {});
-
+				int flag = 0;
 				public int compare(FileOrFolderJsonEntity a,
 						FileOrFolderJsonEntity b) {
 					if (a == null || b == null) {
-						return 0;
+						return flag;
 					} else {
-						int flag = 0;
+
 						try {
 							Object as = method.invoke(a, new Object[] {});
 							Object bs = method.invoke(b, new Object[] {});
-							if (as == null && bs == null)
-								return 0;
-							else if (as == null)
-								return -1;
-							else if (bs == null)
-								return 1;
-							else {
+							if (as == null && bs == null) {
+								flag = 0;
+							} else if (as == null) {
+								flag = -1;
+							} else if (bs == null) {
+								flag = 1;
+							} else {
 								if (as instanceof String) {
 									String va = (String) as;
 									String vb = (String) bs;
@@ -144,19 +144,24 @@ public class CollectionUtil {
 
 							}
 						} catch (IllegalArgumentException e) {
-							LOGGER.error("Sort list : IllegalArgumentException ",e);
+							LOGGER.error(
+									"Sort list : IllegalArgumentException ", e);
 						} catch (IllegalAccessException e) {
-							LOGGER.error("Sort list : IllegalAccessException ",e);
+							LOGGER.error("Sort list : IllegalAccessException ",
+									e);
 						} catch (InvocationTargetException e) {
-							LOGGER.error("Sort list : InvocationTargetException ",e);
+							LOGGER
+									.error(
+											"Sort list : InvocationTargetException ",
+											e);
 						}
 						return flag;
 					}
-					
+
 				}
 			});
 		} catch (NoSuchMethodException e) {
-			LOGGER.error("Sort list : NoSuchMethodException ",e);
+			LOGGER.error("Sort list : NoSuchMethodException ", e);
 			return;
 		}
 	}
