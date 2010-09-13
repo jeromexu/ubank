@@ -66,7 +66,7 @@ public class DocumentUtil {
 			if (folder != null) {
 				folderName = String.valueOf(folder.getFolderId());
 				folderDirectory = folder.getDirectory();
-				File baseFile = createFile(folderName, folderDirectory);
+				File baseFile = createFile(folderDirectory, folderName);
 				if (!baseFile.exists()) {
 					return baseFile.mkdir() ? 1 : 0;
 				}
