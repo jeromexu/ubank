@@ -201,7 +201,7 @@
 				  	
 				  	$("#controlbutton"+filedName).hide();
 				  	if(uploadInfo.completed == "true"){
-				  		 $("#progressBarText"+filedName).html('花费时间: <b>' + secondsElapsed + '</b> 秒;平局速度: <b>' + speed + 'KB/s</b><br/>上传 <b>' + uploadInfo.curFileName + '.. [100%]</b>');
+				  		 $("#progressBarText"+filedName).html('花费时间: <b>' + secondsElapsed + '</b> 秒;平均速度: <b>' + speed + 'KB/s</b><br/>上传 <b>' + uploadInfo.curFileName + '.. [100%]</b>');
 				  		 $("#progressBarBoxContent"+filedName).attr("style","width:"+ parseInt(100 * 3.5) + "px");
 				  		 $("#progressBarBoxContent"+filedName).append('<br><font color="red"><b>文件上传已完毕</b></font><br/>');
 				  		 window.opener.showContent(${currentFolderId});
