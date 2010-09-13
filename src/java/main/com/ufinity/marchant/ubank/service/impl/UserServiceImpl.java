@@ -109,8 +109,9 @@ public class UserServiceImpl implements UserService {
 
 				return initFlag ? MessageKeys.REGISTER_SUCCESS
 						: MessageKeys.REGISTER_FAILURE;
+			} else {
+				return MessageKeys.REGISTER_USER_EXIST;
 			}
-			logger.debug("doRegister complete!");
 
 		} catch (Exception e) {
 			logger.error("user register exception!", e);
@@ -121,8 +122,6 @@ public class UserServiceImpl implements UserService {
 		} finally {
 			EntityManagerUtil.closeEntityManager();
 		}
-		// user exist,do not register
-		return MessageKeys.REGISTER_FAILURE;
 
 	}
 

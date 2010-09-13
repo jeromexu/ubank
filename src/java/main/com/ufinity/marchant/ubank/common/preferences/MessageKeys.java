@@ -46,15 +46,16 @@ public class MessageKeys {
     public static final String CAPTCHA_ERR_MSG = "captchaCode.register.not.valid";
 
     // register failue message
-    public static final String REGISTER_FAILURE = "user.exist";
+    public static final String REGISTER_FAILURE = "register.failure";
+    
+    // user exist
+    public static final String REGISTER_USER_EXIST = "user.exit";
 
     // register success msg
     public static final String REGISTER_SUCCESS = "register.success";
 
     // upload exception msg
     public static final String UPLOAD_EXECEPTION = "upload.exception";
-
-    public static final String REGISTER_EXCEPTION = "register.exception";
 
     // upload size is to max
     public static final String UPLOAD_SIZE_MAX = "upload.size.max";

@@ -26,10 +26,6 @@ import com.ufinity.marchant.ubank.bean.Folder;
 public class DocumentUtil {
 	// the path of root folder in disk
 	static String DOCUMENT_PATH = "";
-	public static String FOLDERNAME = null;
-	public static String FILE_DIRECTORY = null;
-	public static String FOLDER_DIRECTORY = null;
-	public static String FILENAME = null;
 
 	// Logger for this class
 	protected final static Logger LOGGER = Logger
@@ -64,15 +60,17 @@ public class DocumentUtil {
 	 * @author jerome
 	 */
 	public static int addNewFolder(Folder folder) {
+		String folderName = null;
+		String folderDirectory = null;
 		try {
 			if (folder != null) {
-				FOLDERNAME = String.valueOf(folder.getFolderId());
-				FOLDER_DIRECTORY = folder.getDirectory();
-				File baseFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
+				folderName = String.valueOf(folder.getFolderId());
+				folderDirectory = folder.getDirectory();
+				File baseFile = createFile(folderName, folderDirectory);
 				if (!baseFile.exists()) {
 					return baseFile.mkdir() ? 1 : 0;
 				}
-				
+
 			}
 		} catch (Exception e) {
 			LOGGER.error("add new folder exception!", e);
@@ -91,12 +89,14 @@ public class DocumentUtil {
 	 * @author jerome
 	 */
 	public static int renameFile(FileBean fileBean, String newName) {
+		String fileName = null;
+		String fileDirecotry = null;
 		try {
 			if (fileBean != null) {
-				FILENAME = fileBean.getFileName();
-				FILE_DIRECTORY = fileBean.getDirectory();
-				File sFile = createFile(FILE_DIRECTORY, FILENAME);
-				File dFile = createFile(FILE_DIRECTORY, newName);
+				fileName = fileBean.getFileName();
+				fileDirecotry = fileBean.getDirectory();
+				File sFile = createFile(fileDirecotry, fileName);
+				File dFile = createFile(fileDirecotry, newName);
 				if (sFile.exists()) {
 					return sFile.renameTo(dFile) ? 1 : 0;
 				}
@@ -118,11 +118,13 @@ public class DocumentUtil {
 	 * @author jerome
 	 */
 	public static int renameFolder(Folder folder, String newFolder) {
+		String folderName = null;
+		String folderDirectory = null;
 		try {
 			if (folder != null) {
-				FOLDERNAME = String.valueOf(folder.getFolderId());
-				FOLDER_DIRECTORY = folder.getDirectory();
-				File sFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
+				folderName = String.valueOf(folder.getFolderId());
+				folderDirectory = folder.getDirectory();
+				File sFile = createFile(folderDirectory, folderName);
 				return (sFile.exists()) ? 1 : 0;
 			}
 		} catch (Exception e) {
@@ -150,18 +152,22 @@ public class DocumentUtil {
 	 */
 	public static Integer moveOrCopyFileTo(FileBean fileBean, Folder folder,
 			boolean isMoveOrCopy, String newName) {
+		String folderName = null;
+		String folderDirectory = null;
+		String fileName = null;
+		String fileDirecotry = null;
 		try {
 			if (fileBean != null && folder != null) {
-				FILENAME = fileBean.getFileName();
-				FILE_DIRECTORY = fileBean.getDirectory();
-				FOLDERNAME = String.valueOf(folder.getFolderId());
-				FOLDER_DIRECTORY = folder.getDirectory();
-				File sFile = createFile(FILE_DIRECTORY, FILENAME);
+				fileName = fileBean.getFileName();
+				fileDirecotry = fileBean.getDirectory();
+				folderName = String.valueOf(folder.getFolderId());
+				folderDirectory = folder.getDirectory();
+				File sFile = createFile(fileDirecotry, fileName);
 				// source file exists
 				if (!sFile.exists()) {
 					return 0;
 				}
-				File dFile = createFile(FOLDER_DIRECTORY, FOLDERNAME);
+				File dFile = createFile(folderDirectory, folderName);
 				if (!dFile.exists()) {
 					dFile.mkdirs();
 				}
@@ -191,25 +197,27 @@ public class DocumentUtil {
 	 */
 	public static int moveOrCopyFolderTo(Folder folder, Folder newFolder,
 			boolean isMoveOrCopy) {
+		String folderName = null;
+		String folderDirectory = null;
 		try {
 			String newFolderName = null;
 			String newFolderDirecotry = null;
 			if (folder != null && newFolder != null) {
-				FOLDERNAME = String.valueOf(folder.getFolderId());
-				FOLDER_DIRECTORY = folder.getDirectory();
+				folderName = String.valueOf(folder.getFolderId());
+				folderDirectory = folder.getDirectory();
 				newFolderName = String.valueOf(newFolder.getFolderId());
 				newFolderDirecotry = newFolder.getDirectory();
 				String serverPath = getApplicationPath();
 				if (serverPath != null) {
 					StringBuffer olderPath = new StringBuffer();
-					if (FOLDER_DIRECTORY
+					if (folderDirectory
 							.endsWith(Constant.FILE_SYSTEM_SEPARATOR)) {
-						olderPath.append(serverPath).append(FOLDER_DIRECTORY)
-								.append(FOLDERNAME);
+						olderPath.append(serverPath).append(folderDirectory)
+								.append(folderName);
 					} else {
-						olderPath.append(serverPath).append(FOLDER_DIRECTORY)
+						olderPath.append(serverPath).append(folderDirectory)
 								.append(Constant.FILE_SYSTEM_SEPARATOR).append(
-										FOLDERNAME);
+										folderName);
 					}
 					File oldFile = new File(olderPath.toString());
 					if (!oldFile.exists()) {
@@ -228,10 +236,10 @@ public class DocumentUtil {
 					LOGGER.debug("olderPath=" + olderPath + ", newPath="
 							+ newPath);
 					newPath.append(Constant.FILE_SYSTEM_SEPARATOR).append(
-							FOLDERNAME);
+							folderName);
 					// copy the folder
-					boolean copyResult = copyFolder(olderPath.toString(), newPath
-							.toString());
+					boolean copyResult = copyFolder(olderPath.toString(),
+							newPath.toString());
 					// move operation
 					if (isMoveOrCopy) {
 						// move: first copy and then delete the folder
@@ -259,11 +267,13 @@ public class DocumentUtil {
 	 * @author jerome
 	 */
 	public static int removeFile(FileBean fileBean) {
+		String fileName = null;
+		String fileDirecotry = null;
 		try {
 			if (fileBean != null) {
-				FILENAME = fileBean.getFileName();
-				FILE_DIRECTORY = fileBean.getDirectory();
-				File baseFile = createFile(FILE_DIRECTORY, FILENAME);
+				fileName = fileBean.getFileName();
+				fileDirecotry = fileBean.getDirectory();
+				File baseFile = createFile(fileDirecotry, fileName);
 				if (baseFile.exists()) {
 					return baseFile.delete() ? 1 : 0;
 				}
@@ -284,20 +294,22 @@ public class DocumentUtil {
 	 * @author jerome
 	 */
 	public static int removeFolder(Folder folder) {
+		String folderName = null;
+		String folderDirectory = null;
 		try {
 			if (folder != null) {
-				FOLDERNAME = String.valueOf(folder.getFolderId());
-				FOLDER_DIRECTORY = folder.getDirectory();
+				folderName = String.valueOf(folder.getFolderId());
+				folderDirectory = folder.getDirectory();
 
 				StringBuffer path = new StringBuffer(getApplicationPath());
 				if (path != null) {
-					if (FOLDER_DIRECTORY
+					if (folderDirectory
 							.endsWith(Constant.FILE_SYSTEM_SEPARATOR)) {
-						path.append(FOLDER_DIRECTORY).append(FOLDERNAME);
+						path.append(folderDirectory).append(folderName);
 					} else {
-						path.append(FOLDER_DIRECTORY).append(
+						path.append(folderDirectory).append(
 								Constant.FILE_SYSTEM_SEPARATOR).append(
-								FOLDERNAME);
+								folderName);
 					}
 					File baseFile = new File(path.toString());
 					if (baseFile.exists()) {
@@ -344,54 +356,6 @@ public class DocumentUtil {
 	}
 
 	/**
-	 * get disk file name
-	 * 
-	 * @param realDir
-	 *            dest dir name
-	 * @param fileName
-	 *            file name
-	 * @param index
-	 *            repeat index
-	 * @return file
-	 * @author jerome
-	 */
-	private static String getNewName(String realDir, String fileName, int index) {
-
-		try {
-			StringBuffer newName = new StringBuffer();
-			if (index != 0) {
-				if (fileName.lastIndexOf(".") != -1) {
-					String prefix = fileName.substring(0, fileName
-							.lastIndexOf("."));
-					String suffix = fileName.substring(fileName
-							.lastIndexOf("."), fileName.length());
-					newName.append(prefix).append("(").append(index)
-							.append(")").append(suffix);
-				} else {
-					newName.append(fileName).append("(").append(index).append(
-							")");
-				}
-			} else {
-				newName.append(fileName);
-			}
-			String serverPath = getApplicationPath();
-			if (serverPath != null) {
-				File file = new File(serverPath + realDir
-						+ Constant.FILE_SYSTEM_SEPARATOR + newName.toString());
-				if (file.exists()) {
-					index++;
-					return getNewName(realDir, fileName, index);
-				} else {
-					return file.getName();
-				}
-			}
-		} catch (Exception e) {
-			LOGGER.error("get disk file name exception!", e);
-		}
-		return null;
-	}
-
-	/**
 	 * 
 	 * copy source file to the dest folder
 	 * 
@@ -402,21 +366,23 @@ public class DocumentUtil {
 	 * @return success:1 failure:0
 	 * @author jerome
 	 */
-	private static boolean copyFile(File sFile, File dFile) {
+	public static boolean copyFile(File sFile, File dFile) {
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 		try {
-			// read source file
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(
-					sFile), "GBK"));
-			bw = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(dFile)));
-			String hasRead = null;
-			while ((hasRead = br.readLine()) != null) {
-				bw.write(hasRead);
+			if(sFile.exists() && dFile != null){
+				// read source file
+				br = new BufferedReader(new InputStreamReader(new FileInputStream(
+						sFile), "GBK"));
+				bw = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream(dFile)));
+				String hasRead = null;
+				while ((hasRead = br.readLine()) != null) {
+					bw.write(hasRead);
+				}
+				bw.flush();
+				return true;
 			}
-			bw.flush();
-			return true;
 		} catch (Exception e) {
 			LOGGER.error("copy the file exception!", e);
 		} finally {
@@ -450,7 +416,7 @@ public class DocumentUtil {
 	 * @return success:1 failure:0
 	 * @author jerome
 	 */
-	private static boolean copyFolder(String oldPath, String newPath) {
+	public static boolean copyFolder(String oldPath, String newPath) {
 		FileInputStream input = null;
 		FileOutputStream output = null;
 		try {
@@ -519,13 +485,15 @@ public class DocumentUtil {
 	 * @return true:delete success false: delete failure
 	 * @author jerome
 	 */
-	private static boolean delFolder(String folderPath) {
+	public static boolean delFolder(String folderPath) {
 		try {
-			// delete all files of the folder
-			boolean delResult = delAllFile(folderPath);
-			File myFilePath = new File(folderPath);
-			// delete the empty folder
-			return (delResult && myFilePath.delete());
+			if(folderPath != null){
+				// delete all files of the folder
+				boolean delResult = delAllFile(folderPath);
+				File myFilePath = new File(folderPath);
+				// delete the empty folder
+				return (delResult && myFilePath.delete());
+			}
 		} catch (Exception e) {
 			LOGGER.debug("delete file exception", e);
 		}
@@ -537,9 +505,10 @@ public class DocumentUtil {
 	 * 
 	 * @param path
 	 *            String the folder path for example c:/hello
+	 * @return del success or not
 	 * @author jerome
 	 */
-	private static boolean delAllFile(String path) {
+	public static boolean delAllFile(String path) {
 		try {
 			File file = new File(path);
 			if (!file.exists() && !file.isDirectory()) {
@@ -587,11 +556,12 @@ public class DocumentUtil {
 	 * @return a file object
 	 * @author jerome
 	 */
-	private static File createFile(String folderPath, String folderName) {
+	public static File createFile(String folderPath, String folderName) {
+		
 		File file = null;
 		String serverPath = getApplicationPath();
-		StringBuffer sb = new StringBuffer();
 		if (serverPath != null) {
+			StringBuffer sb = new StringBuffer();
 			if (folderPath.endsWith(Constant.FILE_SYSTEM_SEPARATOR)) {
 				file = new File(sb.append(serverPath).append(folderPath)
 						.append(folderName).toString());
@@ -602,6 +572,54 @@ public class DocumentUtil {
 			}
 		}
 		return file;
+	}
+
+	/**
+	 * get disk file name
+	 * 
+	 * @param realDir
+	 *            dest dir name
+	 * @param fileName
+	 *            file name
+	 * @param index
+	 *            repeat index
+	 * @return file
+	 * @author jerome
+	 */
+	private static String getNewName(String realDir, String fileName, int index) {
+
+		try {
+			StringBuffer newName = new StringBuffer();
+			if (index != 0) {
+				if (fileName.lastIndexOf(".") != -1) {
+					String prefix = fileName.substring(0, fileName
+							.lastIndexOf("."));
+					String suffix = fileName.substring(fileName
+							.lastIndexOf("."), fileName.length());
+					newName.append(prefix).append("(").append(index)
+							.append(")").append(suffix);
+				} else {
+					newName.append(fileName).append("(").append(index).append(
+							")");
+				}
+			} else {
+				newName.append(fileName);
+			}
+			String serverPath = getApplicationPath();
+			if (serverPath != null) {
+				File file = new File(serverPath + realDir
+						+ Constant.FILE_SYSTEM_SEPARATOR + newName.toString());
+				if (file.exists()) {
+					index++;
+					return getNewName(realDir, fileName, index);
+				} else {
+					return file.getName();
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("get disk file name exception!", e);
+		}
+		return null;
 	}
 
 }
