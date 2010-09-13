@@ -1,6 +1,6 @@
 // upload window
 var newWindow;
-var currTreeNode;
+var currTreeNode = null;
 var navigations = new Array();
 
 $(function() {
@@ -13,13 +13,11 @@ function dirTree() {
 	$('#dirTree').tree({
 				url : '/ubank/portal/showTree.do',
 				onClick : function(node) {
-					if (node.text != '共享文件夹') {
-						var target = node.target;
-						currTreeNode = node;
-						setFolderId(node.id);
-						showContent(node.id);
-					}
-					if (newWindow != undefined){
+					var target = node.target;
+					currTreeNode = node;
+					setFolderId(node.id);
+					showContent(node.id);
+					if (newWindow != undefined) {
 						newWindow.location.replace(newWindow.location.href);
 					}
 				}
@@ -30,13 +28,21 @@ $(function() {
 			$('#moveTo').dialog({
 				height : 350,
 				width : 200,
-				modal : true,
+				modal : false,
 				title : '移动到...',
 				buttons : [{
 					text : '确定',
 					iconCls : 'icon-ok',
 					handler : function() {
+						var result = executeCheck(currTreeNode, record);
+						if (!result) {
+							return;
+						}
 						var node = $('#tt1').tree('getSelected');
+						if (!node) {
+							$.messager.alert('提示 ', '你没有选择要操作的目录', 'info');
+							return;
+						}
 						if (node) {
 							if (node.attributes.type == 'R') {
 								$.messager.alert('提示 ', '不能移到根目录下!', 'info');
@@ -71,6 +77,7 @@ $(function() {
 											returnResult(true);
 											reload();
 											showContent(parentId);
+											selectAndExpandNode(id);
 										} else {
 											returnResult(false, data);
 										}
@@ -92,15 +99,19 @@ $(function() {
 			$('#copyTo').dialog({
 				height : 350,
 				width : 200,
-				modal : true,
+				modal : false,
 				title : '复制到...',
 				buttons : [{
 					text : '确定',
 					iconCls : 'icon-ok',
 					handler : function() {
+						var result = executeCheck(currTreeNode, record);
+						if (!result) {
+							return;
+						}
 						var node = $('#tt3').tree('getSelected');
 						if (!node) {
-							$.messager.alert('提示 ', '你没有选择操作的目录', 'info');
+							$.messager.alert('提示 ', '你没有选择要操作的目录', 'info');
 							return;
 						}
 						if (node) {
@@ -144,6 +155,8 @@ $(function() {
 											returnResult(true);
 											reload();
 											showContent(parentId);
+											selectAndExpandNode(id);
+
 										} else {
 											returnResult(false, data);
 										}
@@ -163,10 +176,6 @@ $(function() {
 
 function reload() {
 	$('#dirTree').tree('reload');
-	if (currTreeNode != null && currTreeNode != undefined) {
-		$('#dirTree').tree('select', currTreeNode.target);
-		$('#dirTree').tree('expand', currTreeNode.target);
-	}
 }
 
 function showContent(folderId, sortBy, sortType) {
@@ -184,6 +193,9 @@ function showContent(folderId, sortBy, sortType) {
 	}
 	if (sortBy != undefined && sortColType != undefined) {
 		reqUrl = reqUrl + "&sortBy=" + sortColumn + "&sortType=" + sortColType;
+	}
+	if (currTreeNode != null && currTreeNode.text == '共享文件夹') {
+		return;
 	}
 	$('#test').datagrid({
 		height : 570,
@@ -314,7 +326,7 @@ function showContent(folderId, sortBy, sortType) {
 		onDblClickRow : function(rowIndex, rowData) {
 			if (rowData.type == '文件夹') {
 				showContent(rowData.id);
-				selectNode(rowData.id);
+				selectAndExpandNode(rowData.id);
 			}
 		}
 	});
@@ -345,10 +357,12 @@ function executeCheck(node, record) {
 			return false;
 		}
 	} else {
-		if (node != null && node.attributes.type != 'C') {
+		if (node != null
+				&& (node.attributes.type != 'C' || node.text == '共享文件夹')) {
 			$.messager.alert('提示 ', '不能对系统初始目录操作!', 'info');
 			return false;
 		}
+
 	}
 	return true;
 }
@@ -403,7 +417,7 @@ function generateNavigation(folderId) {
 
 function addFolder() {
 	if (!currTreeNode || currTreeNode.attributes.type == 'R') {
-		$.messager.alert('提示', '根目录下能创建子目录!', 'warning');
+		$.messager.alert('提示', '根目录下不能创建子目录!', 'warning');
 		return;
 	}
 	var layer = currTreeNode.attributes.layer;
@@ -427,6 +441,7 @@ function addFolder() {
 								returnResult(true);
 								reload();
 								showContent(parentId);
+								selectAndExpandNode(parentId);
 							} else {
 								returnResult(false, data);
 							}
@@ -451,20 +466,18 @@ function deleteFolderOrFile() {
 							}
 						} else {
 							id = currTreeNode.id;
-							pid = currTreeNode.pid;
+							pid = currTreeNode.attributes.pid;
 							type = 'folder';
 						}
 						$.get(url, {
 									'id' : id,
 									'type' : type
 								}, function(data) {
-
 									if (data == 'success') {
 										returnResult(true);
-										if (record == null) {
-											reload();
-										}
+										reload();
 										showContent(pid);
+										selectAndExpandNode(pid);
 									} else {
 										returnResult(false, data);
 									}
@@ -507,6 +520,7 @@ function shareFolder() {
 									if (data == 'success') {
 										returnResult(true);
 										reload();
+										selectAndExpandNode(id);
 									} else {
 										returnResult(false, data);
 									}
@@ -551,6 +565,7 @@ function cancelShare() {
 									if (data == 'success') {
 										returnResult(true);
 										reload();
+										selectAndExpandNode(id);
 									} else {
 										returnResult(false, data);
 									}
@@ -606,6 +621,7 @@ function rename() {
 										returnResult(true, '');
 										reload();
 										showContent(parentId);
+										selectAndExpandNode(parentId);
 									} else {
 										returnResult(false, data);
 									}
@@ -615,20 +631,27 @@ function rename() {
 	}
 }
 
-function selectNode(folderId) {
+function selectAndExpandNode(folderId) {
 	var fid = 0;
 	if (folderId != undefined && folderId != null) {
 		fid = folderId;
 	}
+	var nodeDom = $("#" + fid);
+	$('#dirTree').tree('select', nodeDom);
 	if (fid != 0) {
-		var nodeDom = $("#" + fid);
-		$('#dirTree').tree('expand', nodeDom);
-		$('#dirTree').tree('select', nodeDom);
+		while (true) {
+			var fid = $("#" + fid).attr("pid");
+			var nodeDom = $("#" + fid);
+			$('#dirTree').tree('expand', nodeDom);
+			if (fid == null) {
+				break;
+			}
+		}
 		currTreeNode = $('#dirTree').tree('getSelected');
 	}
 }
 
 function navigate(folderId) {
 	showContent(folderId);
-	selectNode(folderId);
+	selectAndExpandNode(folderId);
 }
