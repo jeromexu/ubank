@@ -39,6 +39,9 @@ import com.ufinity.marchant.ubank.vo.FileOrFolderJsonEntity;
  * @author zdxue
  */
 public class CollectionUtil {
+	// Logger for this class
+	protected final static Logger LOGGER = Logger
+			.getInstance(CollectionUtil.class);
 
 	/**
 	 * Add a String array to the String List
@@ -123,53 +126,37 @@ public class CollectionUtil {
 									Date va = (Date) as;
 									Date vb = (Date) bs;
 									if (sortWay.equals("asc")) {
-										if (va.before(vb)) {
-											return -1;
-										} else {
-											return 1;
-										}
+										flag = va.compareTo(vb);
 									} else {
-										if (va.before(vb)) {
-											return 1;
-										} else {
-											return -1;
-										}
+										flag = vb.compareTo(va);
 									}
 								}
 								if (as instanceof Integer) {
-									int ai = (Integer) as;
-									int bi = (Integer) bs;
+									Integer ai = (Integer) as;
+									Integer bi = (Integer) bs;
 									if (sortWay.equals("asc")) {
-										if (ai >= bi) {
-											return 1;
-										} else {
-											return -1;
-										}
+										flag = ai.compareTo(bi);
 									} else {
-										if (ai >= bi) {
-											return -1;
-										} else {
-											return 1;
-										}
+										flag = bi.compareTo(ai);
 									}
 
 								}
 
 							}
-
 						} catch (IllegalArgumentException e) {
-							e.printStackTrace();
+							LOGGER.error("Sort list : IllegalArgumentException ",e);
 						} catch (IllegalAccessException e) {
-							e.printStackTrace();
+							LOGGER.error("Sort list : IllegalAccessException ",e);
 						} catch (InvocationTargetException e) {
-							e.printStackTrace();
+							LOGGER.error("Sort list : InvocationTargetException ",e);
 						}
 						return flag;
 					}
+					
 				}
 			});
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			LOGGER.error("Sort list : NoSuchMethodException ",e);
 			return;
 		}
 	}
