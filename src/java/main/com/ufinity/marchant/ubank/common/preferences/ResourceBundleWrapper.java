@@ -27,6 +27,8 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import com.ufinity.marchant.ubank.common.Logger;
+
 /**
  * ResourceBundleWrapper
  * 
@@ -34,6 +36,8 @@ import java.util.ResourceBundle;
  * @author zdxue
  */
 public class ResourceBundleWrapper {
+    private final Logger logger = Logger.getInstance(ResourceBundleWrapper.class);
+    
     private ResourceBundle rb;
 
     /**
@@ -47,6 +51,7 @@ public class ResourceBundleWrapper {
         try{
             rb = ResourceBundle.getBundle(baseName, locale);
         }catch(Exception e) {
+            logger.error("init ResourceBundle exception with - " + baseName, e);
             throw new RuntimeException("init ResourceBundle exception with - " + baseName);
         }
     }
@@ -62,6 +67,7 @@ public class ResourceBundleWrapper {
         try{
             return rb.getString(key);
         }catch(Exception e) {
+            logger.error("getValue exception with - " + key, e);
             return "";
         }
     }
@@ -78,6 +84,7 @@ public class ResourceBundleWrapper {
         try{
             return MessageFormat.format(rb.getString(key), arguments);
         }catch(Exception e) {
+            logger.error("getValue exception with - " + key + " , args - " + arguments, e);
             return "";
         }
     }
