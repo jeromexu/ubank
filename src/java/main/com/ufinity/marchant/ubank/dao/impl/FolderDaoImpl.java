@@ -61,7 +61,7 @@ public class FolderDaoImpl extends GenericDaoSupport<Folder, Long> implements
                 + "a.FOLDER_TYPE,a.MODIFIED_TIME,a.SHARE,a.USER_ID,a.PARENT_ID,a.REPEAT_COUNT FROM U_FOLDER a "
                 + "LEFT JOIN U_FOLDER b on a.PARENT_ID = b.PARENT_ID WHERE a.USER_ID = :userId ";
 
-        String sqlQueryEnd = "ORDER BY a.PARENT_ID , a.CREATE_TIME DESC";
+        String sqlQueryEnd = "ORDER BY a.PARENT_ID , a.CREATE_TIME , a.FOLDER_NAME DESC";
         String sqlQueryAppend = " AND a.share = :share ";
 
         Query query = null;
