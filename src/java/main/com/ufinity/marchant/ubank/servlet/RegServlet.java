@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import com.ufinity.marchant.ubank.bean.User;
-import com.ufinity.marchant.ubank.captcha.MyCaptchaService;
+import com.ufinity.marchant.ubank.captcha.CaptchaService;
 import com.ufinity.marchant.ubank.common.Constant;
 import com.ufinity.marchant.ubank.common.Logger;
 import com.ufinity.marchant.ubank.common.Validity;
@@ -132,7 +132,7 @@ public class RegServlet extends AbstractServlet {
 		}
 		HttpSession session = request.getSession();
 		// retrieve the response
-		boolean isValidateCode = MyCaptchaService.getInstance()
+		boolean isValidateCode = CaptchaService.getInstance()
 				.validateCaptchaResponse(captchaCode.trim(), session);
 		return isValidateCode;
 	}

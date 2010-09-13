@@ -30,7 +30,7 @@ public class ImageCaptchaServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		// gernate the captcha code
-		MyCaptchaService.getInstance().writeCaptchaImage(request, response);   
+		CaptchaService.getInstance().writeCaptchaImage(request, response);   
 	}
 
 }

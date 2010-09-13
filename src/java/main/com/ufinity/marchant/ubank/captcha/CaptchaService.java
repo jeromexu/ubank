@@ -64,11 +64,11 @@ import com.ufinity.marchant.ubank.common.preferences.SystemGlobals;
  * @version 1.0
  * @since 2010-8-20
  */
-public class MyCaptchaService extends ListImageCaptchaEngine {
+public class CaptchaService extends ListImageCaptchaEngine {
 
-	private final Logger logger = Logger.getInstance(MyCaptchaService.class);
+	private final Logger logger = Logger.getInstance(CaptchaService.class);
 	// Singleton instance of this class
-	private static MyCaptchaService INSTANCE = new MyCaptchaService();
+	private static CaptchaService INSTANCE = new CaptchaService();
 	@SuppressWarnings("unchecked")
 	private ArrayList textPasterList;
 	@SuppressWarnings("unchecked")
@@ -83,7 +83,7 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 	 * 
 	 * @return the instance
 	 */
-	public static MyCaptchaService getInstance() {
+	public static CaptchaService getInstance() {
 		return INSTANCE;
 	}
 
@@ -137,7 +137,7 @@ public class MyCaptchaService extends ListImageCaptchaEngine {
 			WordGenerator words = new RandomWordGenerator(SystemGlobals
 					.getString(ConfigKeys.NUMBERIC_CHARS)
 					+ SystemGlobals.getString(ConfigKeys.UPPER_ASCII_CHARS));
-
+			
 			for (Iterator fontIter = fontGeneratorList.iterator(); fontIter
 					.hasNext();) {
 				FontGenerator font = (FontGenerator) fontIter.next();
