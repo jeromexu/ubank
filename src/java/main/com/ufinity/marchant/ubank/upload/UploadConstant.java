@@ -62,4 +62,6 @@ public interface UploadConstant {
     
     //upload buffer size
     int BUFFER_SIZE = 8 * 1024;
+    
+    long PAUSE_TIME = 1200000;
 }

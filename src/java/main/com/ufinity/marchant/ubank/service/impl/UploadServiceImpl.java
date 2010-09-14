@@ -122,24 +122,28 @@ public class UploadServiceImpl implements UploadService {
 
             logger.debug("Upload fldName :" + fldName
                     + ",just was uploaded len:" + fileSize);
-
-            Folder folder = new Folder();
-            folder.setFolderId(folderId);
-
-            FileBean fb = new FileBean();
-            fb.setFolder(folder);
-            fb.setFileName(file.getName());
-            fb.setFileType(type);
-            Date now = new Date();
-            fb.setCreateTime(now);
-            fb.setModifyTime(now);
-            fb.setRepeatCount(0);
-            fb.setShare(currentFolder.getShare());
-            fb.setDirectory(folderDir + File.separator + folderId);
-            // kb
-            fb.setSize(fileSize / 1024);
-
-            this.saveFile(fb);
+            
+            if(pi.isInProgress()){
+                Folder folder = new Folder();
+                folder.setFolderId(folderId);
+    
+                FileBean fb = new FileBean();
+                fb.setFolder(folder);
+                fb.setFileName(file.getName());
+                fb.setFileType(type);
+                Date now = new Date();
+                fb.setCreateTime(now);
+                fb.setModifyTime(now);
+                fb.setRepeatCount(0);
+                fb.setShare(currentFolder.getShare());
+                fb.setDirectory(folderDir + File.separator + folderId);
+                // kb
+                fb.setSize(fileSize / 1024);
+    
+                this.saveFile(fb);
+            }else{
+                throw new UBankServiceException("Pause is out of the time.");
+            }
         } catch (Exception e) {
             // remove file
             if (file !=null && file.exists()) {

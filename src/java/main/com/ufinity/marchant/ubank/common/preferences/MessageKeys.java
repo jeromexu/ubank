@@ -56,6 +56,8 @@ public class MessageKeys {
 
     // upload exception msg
     public static final String UPLOAD_EXECEPTION = "upload.exception";
+    
+    public static final String UPLOAD_PAUSE_TIME = "upload.pause.time";
 
     // upload size is to max
     public static final String UPLOAD_SIZE_MAX = "upload.size.max";

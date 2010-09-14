@@ -26,7 +26,12 @@
 // -------------------------------------------------------------------------
 package com.ufinity.marchant.ubank.upload;
 
+import java.util.Date;
+
 import org.apache.commons.fileupload.ProgressListener;
+
+import com.ufinity.marchant.ubank.common.preferences.MessageKeys;
+import com.ufinity.marchant.ubank.common.preferences.MessageResource;
 
 /**
  * 
@@ -64,7 +69,14 @@ public class UploadListener implements ProgressListener {
         
         while(pi.isPause()){
             try {
-                Thread.sleep(50);
+                long now = new Date().getTime();
+                if(now - pi.getStartTime() > UploadConstant.PAUSE_TIME){
+                    pi.setInProgress(false);
+                    pi.setErrorMsg(MessageResource.getText(MessageKeys.UPLOAD_PAUSE_TIME));
+                    return;
+                }
+               
+                Thread.sleep(100);
             } catch (InterruptedException e) {}
         }
         
