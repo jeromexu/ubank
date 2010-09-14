@@ -241,6 +241,8 @@ public class FolderServlet extends AbstractServlet {
                 result = MessageResource.getText(
                         MessageKeys.CAN_NOT_CONTAIN_SPECIAL_CHAR,
                         Validity.SPECIAL_CHARACTER);
+                logger
+                        .debug("new folder name can not contains  special char .");
                 returnResp(result, resp);
                 return;
             }

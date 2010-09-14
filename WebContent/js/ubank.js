@@ -77,7 +77,7 @@ $(function() {
 											returnResult(true);
 											reload();
 											showContent(parentId);
-											selectAndExpandNode(id);
+											selectNode(id);
 										} else {
 											returnResult(false, data);
 										}
@@ -155,7 +155,7 @@ $(function() {
 											returnResult(true);
 											reload();
 											showContent(parentId);
-											selectAndExpandNode(id);
+											selectNode(id);
 
 										} else {
 											returnResult(false, data);
@@ -304,6 +304,7 @@ function showContent(folderId, sortBy, sortType) {
 							$('#tt1').tree({
 										url : '/ubank/portal/showTree.do'
 									});
+							$('#tt1').tree('reload');
 						}
 					}
 				}, {
@@ -317,6 +318,7 @@ function showContent(folderId, sortBy, sortType) {
 							$('#tt3').tree({
 										url : '/ubank/portal/showTree.do'
 									});
+							$('#tt3').tree('reload');
 						}
 					}
 				}],
@@ -441,13 +443,14 @@ function addFolder() {
 								returnResult(true);
 								reload();
 								showContent(parentId);
-								selectAndExpandNode(parentId);
+								selectNode(parentId);
 							} else {
 								returnResult(false, data);
 							}
 						});
 			});
 }
+
 function deleteFolderOrFile() {
 	var record = $('#test').datagrid('getSelected');
 	var result = executeCheck(currTreeNode, record);
@@ -474,10 +477,10 @@ function deleteFolderOrFile() {
 									'type' : type
 								}, function(data) {
 									if (data == 'success') {
-										returnResult(true);
 										reload();
 										showContent(pid);
-										selectAndExpandNode(pid);
+										returnResult(true);
+										selectNode(pid);
 									} else {
 										returnResult(false, data);
 									}
@@ -518,9 +521,12 @@ function shareFolder() {
 									'folderId' : id
 								}, function(data) {
 									if (data == 'success') {
-										returnResult(true);
+										var domNode = $("#" + id + ">span")
+												.eq(3)
+												.addClass("tree-folder tree-folder-shared tree-folder-open");
 										reload();
-										selectAndExpandNode(id);
+										returnResult(true);
+										selectNode(id);
 									} else {
 										returnResult(false, data);
 									}
@@ -563,9 +569,12 @@ function cancelShare() {
 									'folderId' : id
 								}, function(data) {
 									if (data == 'success') {
+										var domNode = $("#" + id + ">span")
+												.eq(3)
+												.addClass("tree-folder tree-folder-open");
 										returnResult(true);
 										reload();
-										selectAndExpandNode(id);
+										selectNode(id);
 									} else {
 										returnResult(false, data);
 									}
@@ -618,10 +627,13 @@ function rename() {
 									'parentId' : parentId
 								}, function(data) {
 									if (data == 'success') {
-										returnResult(true, '');
+										// var domNode = $("#" + id + ">span")
+										// .filter(".tree-title")
+										// .html(name);;
 										reload();
+										returnResult(true, '');
 										showContent(parentId);
-										selectAndExpandNode(parentId);
+										selectNode(parentId);
 									} else {
 										returnResult(false, data);
 									}
@@ -631,14 +643,31 @@ function rename() {
 	}
 }
 
+function selectNode(folderId) {
+	if (folderId) {
+		var nodeDom = undefined;
+		var fid = folderId;
+		try {
+			nodeDom = $("#" + fid + ">span").eq(3).attr('class');
+		} catch (e) {
+		}
+		if (!nodeDom) {
+			setTimeout("selectNode(" + fid + ")", 500);
+			return;
+		}
+		selectAndExpandNode(fid);
+	}
+}
 function selectAndExpandNode(folderId) {
 	var fid = 0;
 	if (folderId != undefined && folderId != null) {
 		fid = folderId;
 	}
-	var nodeDom = $("#" + fid);
-	$('#dirTree').tree('select', nodeDom);
 	if (fid != 0) {
+		var nodeDom = $("#" + fid);
+		$('#dirTree').tree('select', nodeDom);
+		$('#dirTree').tree('expand', nodeDom);
+
 		while (true) {
 			var fid = $("#" + fid).attr("pid");
 			var nodeDom = $("#" + fid);
