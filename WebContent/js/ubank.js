@@ -2,6 +2,8 @@
 var newWindow;
 var currTreeNode = null;
 var navigations = new Array();
+var moveToFlag = true;
+var copyToFlag = true;
 
 $(function() {
 			// 初始用户目录树
@@ -30,6 +32,7 @@ $(function() {
 				width : 200,
 				modal : false,
 				title : '移动到...',
+				closable : false,
 				buttons : [{
 					text : '确定',
 					iconCls : 'icon-ok',
@@ -83,12 +86,14 @@ $(function() {
 										}
 									});
 						}
+						$('#tt1').html('');
 						$('#moveTo').dialog('close');
 					}
 				}, {
 					text : '取消',
 					handler : function() {
 						$('#moveTo').dialog('close');
+						$('#tt1').html('');
 					}
 				}]
 			});
@@ -101,6 +106,7 @@ $(function() {
 				width : 200,
 				modal : false,
 				title : '复制到...',
+				closable : false,
 				buttons : [{
 					text : '确定',
 					iconCls : 'icon-ok',
@@ -162,11 +168,13 @@ $(function() {
 										}
 									});
 						}
+						$('#tt3').html('');
 						$('#copyTo').dialog('close');
 					}
 				}, {
 					text : '取消',
 					handler : function() {
+						$('#tt3').html('');
 						$('#copyTo').dialog('close');
 					}
 				}]
@@ -300,11 +308,16 @@ function showContent(folderId, sortBy, sortType) {
 						var record = $('#test').datagrid('getSelected');
 						var result = executeCheck(currTreeNode, record);
 						if (result) {
+							if (moveToFlag) {
+								$('#tt1').tree({
+											url : '/ubank/portal/showTree.do'
+										});
+								moveToFlag = false
+							} else {
+								$('#tt1').tree('reload');
+							}
 							$('#moveTo').dialog('open');
-							$('#tt1').tree({
-										url : '/ubank/portal/showTree.do'
-									});
-							$('#tt1').tree('reload');
+
 						}
 					}
 				}, {
@@ -314,11 +327,15 @@ function showContent(folderId, sortBy, sortType) {
 						var record = $('#test').datagrid('getSelected');
 						var result = executeCheck(currTreeNode, record);
 						if (result) {
+							if (copyToFlag) {
+								$('#tt3').tree({
+											url : '/ubank/portal/showTree.do'
+										});
+								copyToFlag = false
+							} else {
+								$('#tt3').tree('reload');
+							}
 							$('#copyTo').dialog('open');
-							$('#tt3').tree({
-										url : '/ubank/portal/showTree.do'
-									});
-							$('#tt3').tree('reload');
 						}
 					}
 				}],
@@ -521,9 +538,6 @@ function shareFolder() {
 									'folderId' : id
 								}, function(data) {
 									if (data == 'success') {
-										var domNode = $("#" + id + ">span")
-												.eq(3)
-												.addClass("tree-folder tree-folder-shared tree-folder-open");
 										reload();
 										returnResult(true);
 										selectNode(id);
@@ -569,9 +583,6 @@ function cancelShare() {
 									'folderId' : id
 								}, function(data) {
 									if (data == 'success') {
-										var domNode = $("#" + id + ">span")
-												.eq(3)
-												.addClass("tree-folder tree-folder-open");
 										returnResult(true);
 										reload();
 										selectNode(id);
@@ -627,9 +638,6 @@ function rename() {
 									'parentId' : parentId
 								}, function(data) {
 									if (data == 'success') {
-										// var domNode = $("#" + id + ">span")
-										// .filter(".tree-title")
-										// .html(name);;
 										reload();
 										returnResult(true, '');
 										showContent(parentId);
